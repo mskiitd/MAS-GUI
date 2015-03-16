@@ -1,7 +1,6 @@
 package mas.globalSchedulingproxy.plan;
 
 import java.io.IOException;
-
 import mas.job.job;
 import mas.util.MessageIds;
 import jade.core.behaviours.Behaviour;
@@ -23,10 +22,10 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 	private MessageTemplate mt;
 	private job JobToSend;
 	private static final long serialVersionUID = 1L;
-
+	
 	@Override
 	public EndState getEndState() {
-		return null;
+		return EndState.SUCCESSFUL;
 	}
 
 	@Override
@@ -82,7 +81,6 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 	//			try {
 	//				System.out.println("Min Bid is:"+((job)(min.getContentObject())).BidByLSA);
 	//			} catch (UnreadableException e1) {
-	//				// TODO Auto-generated catch block
 	//				e1.printStackTrace();
 	//			}
 				

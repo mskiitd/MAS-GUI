@@ -8,7 +8,7 @@ public class AskForWaitingTime extends RootAskForWaitingTime {
 
 	@Override
 	public ACLMessage ChooseWaitingTimeToSend(ACLMessage[] WaitingTime){
-		//takes array of msg got froms all LSAs
+		//takes array of msg got froms all LSA
 //		super.log.info("chooseing waiting time");
 		return super.ChooseWaitingTimeToSend(WaitingTime);
 	}

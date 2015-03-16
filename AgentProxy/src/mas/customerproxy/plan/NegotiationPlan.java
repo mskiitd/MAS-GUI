@@ -2,7 +2,9 @@ package mas.customerproxy.plan;
 
 import javax.swing.SwingUtilities;
 
-import mas.customerproxy.CustomerAgent;
+import mas.customerproxy.agent.CustomerAgent;
+import mas.customerproxy.gui.CustomerNegotiateProxyGUI;
+import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.job.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -10,8 +12,6 @@ import mas.util.ZoneDataUpdate;
 
 import org.apache.logging.log4j.Logger;
 
-import customerProxy.CustomerNegotiateProxyGUI;
-import customerProxy.CustomerProxyGUI;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;

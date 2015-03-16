@@ -95,7 +95,7 @@ public class WaitTimeBehvr extends Behaviour {
 
 				}
 				else{
-					log.info(JobToSend.getDuedate());
+					log.info(JobToSend.getJobDuedate());
 					ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation, JobToSend);
 					AgentUtil.sendZoneDataUpdate(this.bba, NegotiationUpdate, myAgent);
 					/*replyToCust.setContentObject(JobToSend);												

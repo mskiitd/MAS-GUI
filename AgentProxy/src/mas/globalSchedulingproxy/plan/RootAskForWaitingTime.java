@@ -103,7 +103,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 								
 				ACLMessage max=ChooseWaitingTimeToSend(WaitingTime);
 				job JobToSend=(job)(max.getContentObject());
-				log.info(JobToSend.getDuedate());
 				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation, JobToSend);
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);
 
