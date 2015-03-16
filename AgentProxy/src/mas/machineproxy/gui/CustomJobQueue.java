@@ -1,4 +1,4 @@
-package mas.machine.gui;
+package mas.machineproxy.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;

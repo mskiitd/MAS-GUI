@@ -1,4 +1,4 @@
-package mas.machine.gui;
+package mas.machineproxy.gui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

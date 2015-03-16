@@ -25,4 +25,8 @@ public class Labels {
 	public class GSLabels {
 		public static final String queryForJobLabel = "Query Job";
 	}
+	
+	public class MaintenanceLabels {
+		public static final String repairTimeLabel = "Repair Time (in minutes)";
+	}
 }
