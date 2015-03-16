@@ -55,7 +55,7 @@ public class Jobloader {
 			job j = new job.Builder(jobIdList.get(index))
 			.jobCPN(jobCPNs.get(index))
 			.jobOperation(this.jobOperations.get(index))
-			.jobPenalty(this.jobPenaltyRate.get(index))
+			.jobPenaltyRate(this.jobPenaltyRate.get(index))
 			.build() ;
 
 			j.setJobNo(countJob++);
