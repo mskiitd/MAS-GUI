@@ -30,6 +30,14 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB, j);
 	}
 	
+	public void cancelOrder(job j) {
+		
+	}
+	
+	public void changeDueDate(job j) {
+		
+	}
+	
 	public void confirmJob(job j) {
 		ZoneDataUpdate confirmedJobDataUpdate = new ZoneDataUpdate(
 				ID.Customer.ZoneData.customerConfirmedJobs,

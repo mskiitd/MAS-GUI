@@ -69,7 +69,11 @@ public class DefineJobFrame extends JFrame{
 	private JTextField txtNumOps;
 	private JTextField txtPenalty;
 
-	public DefineJobFrame(CustomerAgent cAgent) {
+	private job populatingJob;
+	
+	public DefineJobFrame(CustomerAgent cAgent, job populatingJob) {
+
+		this.populatingJob = populatingJob;
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
@@ -139,7 +143,36 @@ public class DefineJobFrame extends JFrame{
 
 		this.scroller = new JScrollPane(myPanel);
 		add(scroller);
+		_populate();
 		showGui();
+	}
+
+	private void _populate() {
+		if(populatingJob != null) {
+			txtJobID.setText(populatingJob.getJobID());
+			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
+			txtPenalty.setText(String.valueOf(populatingJob.getPenaltyRate()));
+			txtDueDate.setText(String.valueOf(populatingJob.getJobDuedate()));
+			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
+		}
+	}
+
+	private void createJobFromParams() {
+		if(generatedJob == null) {
+			generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+		}
+		
+		generatedJob.setPenaltyRate(10);
+		generatedJob.setCPN(1);
+		generatedJob.setGenerationTime(new Date());
+		generatedJob.setJobDuedate(new Date());
+		
+//		.jobOperation(this.jobOperations)
+		generatedJob.setJobNo(CustomerProxyGUI.countJob);
+	}
+	
+	private void checkPenaltyRate() {
+		if(txtPenalty.)
 	}
 
 	class AddOperationListener implements ActionListener {
@@ -147,6 +180,9 @@ public class DefineJobFrame extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			NumOps = Integer.parseInt(txtNumOps.getText());
+			if(generatedJob == null) {
+				createJobFromParams();
+			}
 			DefineJobOperationsFrame ops = new 
 					DefineJobOperationsFrame(generatedJob, NumOps);
 		}
@@ -159,12 +195,12 @@ public class DefineJobFrame extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource().equals(sendJob)) {
 				// build the job
-				job jobToSend = new job.Builder(JobID).
-						build();
+				createJobFromParams();
 
-				cAgent.addJobToBeliefBase(jobToSend);
+				cAgent.addJobToBeliefBase(generatedJob);
 				cAgent.addGoal(new dispatchJobGoal());
 
+				CustomerProxyGUI.countJob++ ;
 				dispose();
 			}
 		}

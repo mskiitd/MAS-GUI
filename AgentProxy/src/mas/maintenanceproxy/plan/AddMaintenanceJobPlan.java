@@ -76,7 +76,7 @@ public class AddMaintenanceJobPlan extends OneShotBehaviour implements PlanBody 
 					
 					this.maintenanceJob = new job.Builder("0").
 							jobGenTime(System.currentTimeMillis()).
-							jobPenaltyRate(1).
+							jobPenalty(1).
 							jobDueDateTime(duedate).
 							build();
 

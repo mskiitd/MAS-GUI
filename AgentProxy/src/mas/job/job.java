@@ -50,7 +50,7 @@ public class job implements Serializable{
 		private String jobID;
 		private double CPN;
 		private double Cost;
-		private double PenaltyRate;
+		private double Penalty;
 		private Date dDate;
 		private Date genTime;
 		// Optional parameters - initialized to default values
@@ -67,8 +67,8 @@ public class job implements Serializable{
 		public Builder jobCPN(double val)
 		{ CPN = val; return this; }
 
-		public Builder jobPenaltyRate(double val)
-		{ PenaltyRate = val; return this; }
+		public Builder jobPenalty(double val)
+		{ Penalty = val; return this; }
 
 		public Builder jobDueDateTime(Date val)
 		{ dDate = val; return this; }
@@ -94,7 +94,7 @@ public class job implements Serializable{
 		jobNo = builder.jobNo;
 		CPN = builder.CPN;
 		Cost = builder.Cost;
-		penaltyRate = builder.PenaltyRate;
+		penaltyRate = builder.Penalty;
 		jobDuedate = builder.dDate;
 		generationTime = builder.genTime;
 		this.operations = new ArrayList<jobOperation>();
