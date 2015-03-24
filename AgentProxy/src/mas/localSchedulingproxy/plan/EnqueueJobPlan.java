@@ -3,10 +3,14 @@ package mas.localSchedulingproxy.plan;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
 import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import mas.job.job;
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.util.ID;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
@@ -55,7 +59,7 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 
 	@Override
 	public void action() {
-//		log.info(comingJob.getBidWinnerLSA());
+		//		log.info(comingJob.getBidWinnerLSA());
 		if(comingJob.getBidWinnerLSA().equals(myAgent.getAID())){
 			log.info("Adding the job to queue of machine of " + myAgent.getLocalName());
 			jobQueue.add(comingJob);
@@ -63,6 +67,13 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 			 * update the belief base
 			 */
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue, jobQueue);	
+
+			/**
+			 * update the machine GUI with new job
+			 */
+			if(LocalSchedulingAgent.mGUI != null) {
+				LocalSchedulingAgent.mGUI.updateQueue(jobQueue);
+			}
 		}
 	}
 }

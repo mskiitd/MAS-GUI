@@ -7,23 +7,25 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import mas.job.job;
+import mas.localSchedulingproxy.goal.JobSchedulingGoal;
+import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
+import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
+import mas.localSchedulingproxy.plan.EnqueueJobPlan;
+import mas.localSchedulingproxy.plan.JobSchedulingPlan;
+import mas.localSchedulingproxy.plan.ReceiveCompletedJobPlan;
+import mas.localSchedulingproxy.plan.RegisterLSAgentServicePlan;
+import mas.localSchedulingproxy.plan.RegisterLSAgentToBlackboardPlan;
+import mas.localSchedulingproxy.plan.SendBidPlan;
+import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
+import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
+import mas.localSchedulingproxy.plan.StatsTracker;
+import mas.util.ID;
+import mas.util.MessageIds;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import mas.job.job;
-import mas.localScheduling.goal.RegisterLSAgentServiceGoal;
-import mas.localScheduling.goal.RegisterLSAgentToBlackboardGoal;
-import mas.localScheduling.plan.ReceiveCompletedJobPlan;
-import mas.localScheduling.plan.RegisterLSAgentServicePlan;
-import mas.localScheduling.plan.RegisterLSAgentToBlackboardPlan;
-import mas.localScheduling.plan.SendBidPlan;
-import mas.localScheduling.plan.EnqueueJobPlan;
-import mas.localScheduling.plan.SendJobToMachinePlan;
-import mas.localScheduling.plan.SendWaitingTimePlan;
-import mas.localScheduling.plan.StatsTracker;
-import mas.util.AgentUtil;
-import mas.util.ID;
-import mas.util.MessageIds;
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.TransientBelief;
 import bdi4jade.core.BeliefBase;
@@ -79,6 +81,9 @@ public class AbstractbasicCapability extends Capability {
 
 		Belief<ArrayList<job> > jobSet = new TransientBelief<ArrayList<job> >(
 				ID.LocalScheduler.BeliefBaseConst.jobQueue);
+		
+		Belief<Double> regretThreshold = new TransientBelief<Double>(
+				ID.LocalScheduler.BeliefBaseConst.regretThreshold);
 
 		ArrayList<job> jobList = new ArrayList<job>();
 		jobSet.setValue(jobList);
@@ -89,7 +94,8 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(myMcMaintAgent);
 		beliefs.add(mygsAgent);
 		beliefs.add(dtrack);
-
+		beliefs.add(regretThreshold);
+		
 		return beliefs;
 	}
 
@@ -116,6 +122,8 @@ public class AbstractbasicCapability extends Capability {
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgaskJobFromLSA),
 				SendJobToMachinePlan.class));
+		
+		plans.add(new SimplePlan(JobSchedulingGoal.class,JobSchedulingPlan.class));
 
 		return plans;
 	}	
@@ -124,7 +132,8 @@ public class AbstractbasicCapability extends Capability {
 	protected void setup() {
 		myAgent.addGoal(new RegisterLSAgentServiceGoal());
 		myAgent.addGoal(new RegisterLSAgentToBlackboardGoal());
-
+		myAgent.addGoal(new JobSchedulingGoal());
+		
 		log.info("plans are : " +  getPlans() );
 		/*	myAgent.addGoal(new SendBidGoal());
 		myAgent.addGoal(new SendJobGoal());

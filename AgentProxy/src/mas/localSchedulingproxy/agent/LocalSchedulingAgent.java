@@ -15,7 +15,8 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 
 	private static final long serialVersionUID = 1L;
 	private Logger log;
-	private MachineGUI mGUI;
+	public static MachineGUI mGUI;
+	public static long schedulingPeriod = 5000;
 
 	public void UpdateJobQueue(ArrayList<job> newQueue) {
 		if(mGUI != null) {

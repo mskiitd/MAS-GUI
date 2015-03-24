@@ -20,7 +20,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private BeliefBase bfBase;
-	private CustomerProxyGUI mygui;
+	public static CustomerProxyGUI mygui;
 	private AID blackboard;
 	
 

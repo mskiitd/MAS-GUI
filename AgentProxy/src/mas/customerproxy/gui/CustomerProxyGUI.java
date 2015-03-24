@@ -38,7 +38,7 @@ public class CustomerProxyGUI extends JFrame{
 
 	private Vector<String> acceptedJobTableHeaderVector;
 	private Vector<String> completeJobTableHeaderVector;
-	
+
 	private JTable jobChooserTable;
 	private Jobloader loader;
 	private tableModel jobChooserTableModel;
@@ -63,7 +63,7 @@ public class CustomerProxyGUI extends JFrame{
 	// menu items here
 	private JMenuItem menuItemCancel ;
 	private JMenuItem menuItemChangeDueDate ;
-	
+
 	public static int countJob = 0;
 
 	public CustomerProxyGUI(CustomerAgent cAgent) {
@@ -111,7 +111,7 @@ public class CustomerProxyGUI extends JFrame{
 		this.loader.readFile();
 		this.jobVector = this.loader.getjobVector();
 		this.tableHeadersVector = this.loader.getJobHeaders();
-		
+
 		this.acceptedJobTableHeaderVector = this.loader.getAcceptedJobTableHeader();
 		this.completeJobTableHeaderVector = this.loader.getCompleteJobTableHeader();
 
@@ -155,10 +155,6 @@ public class CustomerProxyGUI extends JFrame{
 		// setup second tab for accepted jobs
 		acceptedJobsPanel = new JPanel(new BorderLayout());
 		acceptedJobVector = new Vector<Object>();
-		
-		acceptedJobVector.addElement(new job.Builder("_id").
-				jobCPN(10).
-				build());
 
 		acceptedJobsTableModel = new AcceptedJobsTableModel();
 		acceptedJobsTable = new JTable(acceptedJobsTableModel);
@@ -226,9 +222,6 @@ public class CustomerProxyGUI extends JFrame{
 		// setup third tab for completed jobs
 		completedJobsPanel = new JPanel(new BorderLayout());
 		completedJobVector = new Vector<Object>();
-		completedJobVector.addElement(new job.Builder("_id").
-				jobCPN(10).
-				build());
 
 		completedJobTableModel = new CompletedJobsTableModel();
 		completedJobsTable = new JTable(completedJobTableModel);
@@ -256,6 +249,19 @@ public class CustomerProxyGUI extends JFrame{
 		super.setVisible(true);
 	}
 
+	public void addCompletedJob(job j) {
+		if(acceptedJobVector.contains(j)) {
+			acceptedJobVector.remove(j);
+		}
+		completedJobVector.addElement(j);
+		completedJobsTable.revalidate();
+	}
+
+	public void addAcceptedJob(job j) {
+		acceptedJobVector.addElement(j);
+		acceptedJobsTable.revalidate();
+	}
+
 	class rightClickListener implements ActionListener {
 
 		@Override
@@ -264,11 +270,11 @@ public class CustomerProxyGUI extends JFrame{
 			if (menu == menuItemCancel) {
 				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
 				cAgent.cancelOrder((job) acceptedJobVector.get(currentAcceptedSelectedJob));
-				
+
 			} else if (menu == menuItemChangeDueDate) {
 				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
 				cAgent.changeDueDate((job) acceptedJobVector.get(currentAcceptedSelectedJob));
-				
+
 			} 
 		}
 	}

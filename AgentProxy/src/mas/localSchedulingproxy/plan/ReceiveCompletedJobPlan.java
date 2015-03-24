@@ -47,7 +47,7 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 		try {
 			j = (job)((MessageGoal)pInstance.getGoal()).getMessage().getContentObject();
 			
-		} catch (UnreadableException e) {			
+		} catch (UnreadableException e) {		
 			e.printStackTrace();
 		}
 		

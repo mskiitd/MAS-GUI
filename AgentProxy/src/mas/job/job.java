@@ -36,7 +36,7 @@ public class job implements Serializable{
 	private int position;
 	private double BidByLSA ;
 
-	private double waitingTime;
+	private long waitingTime;
 	private double profit;
 	private AID WinnerLSA;
 	private AID LSABidder;
@@ -321,11 +321,11 @@ public class job implements Serializable{
 		this.acceptance = acceptance;
 	}
 
-	public double getWaitingTime() {
+	public long getWaitingTime() {
 		return waitingTime;
 	}
 
-	public void setWaitingTime(double waitingTime) {
+	public void setWaitingTime(long waitingTime) {
 		this.waitingTime = waitingTime;
 	}
 

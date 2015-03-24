@@ -61,6 +61,7 @@ public class ID implements Serializable{
 			public static final String dataTracker = "LSABeliefBase_data-tracker";
 			public static final String ProcessingCost = "ProcessingCost";
 			public static final String supportedOperations = "supportedOperations";
+			public static final String regretThreshold = "regret_threshold";
 		}
 
 		public class ZoneData {
