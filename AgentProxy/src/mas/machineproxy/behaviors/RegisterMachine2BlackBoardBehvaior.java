@@ -1,20 +1,16 @@
 package mas.machineproxy.behaviors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import jade.core.AID;
+import jade.core.behaviours.OneShotBehaviour;
 import mas.blackboard.nameZoneData.NamedZoneData;
 import mas.machineproxy.Simulator;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.SubscriptionForm;
-import jade.core.AID;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 

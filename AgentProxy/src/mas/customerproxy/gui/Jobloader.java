@@ -34,7 +34,7 @@ public class Jobloader {
 	private ArrayList<ArrayList<jobOperation> > jobOperations;
 	int countJob = 0;
 	private String[] tableHeaders = {"Job ID" , "Operations",
-			"CPN" , "Penalty Rate", "Due Date"};
+			"CPN" , "Penalty Rate"};
 
 	public Jobloader() {
 		this.jobIdList = new ArrayList<String>();
@@ -56,6 +56,7 @@ public class Jobloader {
 			.jobCPN(jobCPNs.get(index))
 			.jobOperation(this.jobOperations.get(index))
 			.jobPenalty(this.jobPenaltyRate.get(index))
+			.jobDueDateTime(this.jobDueDates.get(index))
 			.build() ;
 
 			j.setJobNo(countJob++);
@@ -75,13 +76,35 @@ public class Jobloader {
 		return headers;
 	}
 
+	public Vector<String> getAcceptedJobTableHeader() {
+		Vector<String> headers = new Vector<String>();
+
+		for(int index = 0 ; index < tableHeaders.length ; index ++){
+			headers.add(tableHeaders[index]);
+		}
+
+		headers.add("Due Date");
+		return headers;
+	}
+
+	public Vector<String> getCompleteJobTableHeader() {
+		Vector<String> headers = new Vector<String>();
+
+		for(int index = 0 ; index < tableHeaders.length ; index ++){
+			headers.add(tableHeaders[index]);
+		}
+
+		headers.add("Due Date");
+		return headers;
+	}
+
 	public void readFile() {
 		XSSFWorkbook wb;
 		try{
 			FileInputStream file=new FileInputStream(this.jobFilePath +
 					"\\jobdata.xlsx");	
 			wb = new XSSFWorkbook(file);
-			
+
 			this.NumJobs = wb.getNumberOfSheets();
 
 			XSSFSheet localSheet;
@@ -150,7 +173,11 @@ public class Jobloader {
 				switch(count) {
 				case 0:
 					// Operation type for the job
-					currOperation.setJobOperationType(OperationType.Operation_1);
+					String op = cell.getStringCellValue();
+//					System.out.println(op + " *|||---- : "+ op.length());
+					if(op != null && op.length() > 0 ) {
+						currOperation.setJobOperationType(OperationType.valueOf(op));
+					}
 					break;
 
 				case 1:

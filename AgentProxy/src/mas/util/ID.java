@@ -59,6 +59,8 @@ public class ID implements Serializable{
 			public static final String maintAgent = "LSABeliefBase_maintenanceAgent";
 			public static final String globalSchAgent = "LSABeliefBase_gsAgent";
 			public static final String dataTracker = "LSABeliefBase_data-tracker";
+			public static final String ProcessingCost = "ProcessingCost";
+			public static final String supportedOperations = "supportedOperations";
 		}
 
 		public class ZoneData {
@@ -73,6 +75,8 @@ public class ID implements Serializable{
 
 			// update the job for machine here
 			public static final String jobForMachine = "LSA_jobForMachine";
+
+			public static final String finishedJob="LSA_finishedJob";
 		}
 	}
 
@@ -101,6 +105,12 @@ public class ID implements Serializable{
 		public class BeliefBaseConst {
 			public static final String blackboardAgent = "GSA_blackboard-agent";
 			public static final String NoOfMachines = "NoOfMachines";
+			public static final String DueDateCalcMethod = "DueDateCalc";
+		}
+		
+		public class OtherConst{
+			public static final String LocalDueDate="Local";
+			public static final String GlobalDueDate = "Global";
 		}
 	}
 

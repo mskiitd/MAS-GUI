@@ -1,14 +1,14 @@
 package mas.machineproxy.behaviors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import jade.core.behaviours.Behaviour;
 import mas.job.job;
 import mas.machineproxy.Simulator;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class HandleCompletedJobBehavior extends Behaviour{
 
@@ -31,9 +31,12 @@ public class HandleCompletedJobBehavior extends Behaviour{
 			/**
 			 * update zone-data for completed jobs from machine
 			 */
-			ZoneDataUpdate completedJobUpdate = new ZoneDataUpdate(
+			ZoneDataUpdate completedJobUpdate = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.finishedJob)
+				.value(completedJob).Build();
+			
+			/*ZoneDataUpdate completedJobUpdate = new ZoneDataUpdate(
 					ID.Machine.ZoneData.finishedJob,
-					completedJob);
+					completedJob);*/
 
 			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 					completedJobUpdate, myAgent);
@@ -41,8 +44,8 @@ public class HandleCompletedJobBehavior extends Behaviour{
 			log.info("Job no: '"+ completedJob.getJobNo() + 
 					"Job ID : " + completedJob.getJobID() + 
 					"'\n--> completion : " + completedJob.getCompletionTime() + 
-					"\nStarting time : " + completedJob.getStartTime() + 
-					"\nDue date : " + completedJob.getJobDuedate());
+					"\nStarting time : " + completedJob.getStartTimeByCust() + 
+					"\nDue date : " + completedJob.getJobDuedatebyCust());
 			log.info("sending completed job to blackboard");
 
 			step = 1;

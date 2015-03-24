@@ -67,15 +67,13 @@ public class ZoneSpace implements ZoneSpaceIFace, Serializable{
 	public void dropZone() {
 		Zdata = null;
 	}
-	@Override
+	/*@Override
 	public void insertItem(NamedZoneData var, Object obj) {
 		if(findZoneData(var)==null){
 			createZoneData(var);
 		}
 		findZoneData(var).addItem(obj);
-		
-		
-	}
+	}*/
 	@Override
 	public void removeItem(Object obj) {
 		Zdata.remove(obj);

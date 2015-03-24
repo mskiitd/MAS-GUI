@@ -9,6 +9,7 @@ package mas.globalSchedulingproxy.plan;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import mas.job.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -16,6 +17,7 @@ import mas.util.ZoneDataUpdate;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.UnreadableException;
+import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -46,7 +48,10 @@ public class Negotiate extends OneShotBehaviour implements PlanBody {
 
 	@Override
 	public void action() {
-		ZoneDataUpdate update=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation, JobUnderNegotiation); 
+		ZoneDataUpdate update=new ZoneDataUpdate.Builder(
+				ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation).
+				value(JobUnderNegotiation).
+				Build(); 
 		//Negotiation logic under development
 		AgentUtil.sendZoneDataUpdate(bb, update, myAgent);
 	}

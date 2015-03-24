@@ -22,9 +22,10 @@ public class SendMaintenanceJobBehavior extends Behaviour{
 	@Override
 	public void action() {
 
-		ZoneDataUpdate maintenanceJob = new ZoneDataUpdate(
-				ID.Maintenance.ZoneData.preventiveMaintJob,
-				this.maintJob);
+		ZoneDataUpdate maintenanceJob = new ZoneDataUpdate.Builder(
+				ID.Maintenance.ZoneData.preventiveMaintJob).
+				value(this.maintJob).
+				Build();
 
 		AgentUtil.sendZoneDataUpdate(this.bbAgent ,maintenanceJob, myAgent);
 		step = 1;

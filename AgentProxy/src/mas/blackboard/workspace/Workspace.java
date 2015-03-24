@@ -46,12 +46,12 @@ public class Workspace<T> extends Belief<T>implements WorkspaceIFace{
 		return ZSpaces.get(title);
 	}
 
-	@Override
+/*	@Override
 	public boolean insertItem(NamedZoneSpace zSpaceName,NamedZoneData var, Object obj) {
 		findZoneSpace(zSpaceName).insertItem(var, obj);
 		return false;
 	}
-
+*/
 	@Override
 	public void removeItem(Object obj) {
 		

@@ -4,27 +4,29 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Vector;
-
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
-
+import net.miginfocom.swing.MigLayout;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.job.job;
 import uiconstants.Labels;
@@ -35,6 +37,11 @@ public class GSAproxyGUI extends JFrame{
 	private JScrollPane scroller;
 	private JPanel queryJobsPanel;
 	private JButton btnQueryJob;
+
+	private JTabbedPane tPanes;
+	private String[] tabTitles = {"Jobs in the System","dummy tab"};
+	private JPanel[] panelsForTab;
+
 	private JTable jobsInSystemTable;
 	private tableModel jobsQueryTableModel;
 	private String[] tableHeaders = {"Job No","Job ID" , "CPN" , "Penalty Rate",
@@ -46,9 +53,25 @@ public class GSAproxyGUI extends JFrame{
 	private listModel jobsQueryListModel;
 	private GlobalSchedulingAgent gAgent;
 
+	// menu items here
+	private JMenuItem menuItemQuery ;
+	private int currentSelecetdQueryJob = -1;
+
 	public GSAproxyGUI(GlobalSchedulingAgent gAgent) {
 
 		this.gAgent = gAgent;
+
+		menuItemQuery = new JMenuItem("Query Order");
+
+		menuItemQuery.addActionListener(new menuItemClickListener());
+
+		this.tPanes = new JTabbedPane(JTabbedPane.TOP);
+		this.panelsForTab = new JPanel[tabTitles.length];
+
+		for (int i = 0, n = tabTitles.length; i < n; i++ ) {
+			panelsForTab[i] = new JPanel(new MigLayout());
+		}
+
 		this.queryJobsPanel = new JPanel(new BorderLayout());
 		this.btnQueryJob = new JButton(Labels.GSLabels.queryForJobLabel);
 
@@ -74,14 +97,36 @@ public class GSAproxyGUI extends JFrame{
 
 		queryJobsPanel.add(jobsInSystemTable.getTableHeader(), BorderLayout.NORTH);
 		queryJobsPanel.add(jobsInSystemTable);
-		//		queryJobsPanel.add(btnQueryJob);
 
-		this.scroller = new JScrollPane(queryJobsPanel);
-		add(this.scroller);
+		panelsForTab[0].add(queryJobsPanel);
+
+		this.scroller = new JScrollPane(panelsForTab[0]);
+		this.tPanes.addTab(tabTitles[0],this.scroller );
+
+		this.tPanes.addTab(tabTitles[1], panelsForTab[1]);
+
+		add(this.tPanes);
 
 		addJobToList(new job.Builder("1").jobCPN(1).jobDueDateTime(new Date()).build());
 		addJobToList(new job.Builder("2").jobCPN(1).jobDueDateTime(new Date()).build());
 		showGui();
+	}
+
+	public void showQueryResult() {
+
+	}
+
+	class menuItemClickListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			JMenuItem menu = (JMenuItem) event.getSource();
+			if (menu == menuItemQuery) {
+				currentSelecetdQueryJob = jobsInSystemTable.getSelectedRow();
+				gAgent.queryJob((job) acceptedJobs.get(currentSelecetdQueryJob));
+
+			} 
+		}
 	}
 
 	class rightClickListener implements MouseListener {
@@ -102,7 +147,10 @@ public class GSAproxyGUI extends JFrame{
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
 			int r = jobsInSystemTable.rowAtPoint(e.getPoint());
 			if (r >= 0 && r < jobsInSystemTable.getRowCount()) {
 				jobsInSystemTable.setRowSelectionInterval(r, r);
@@ -113,22 +161,20 @@ public class GSAproxyGUI extends JFrame{
 			int rowindex = jobsInSystemTable.getSelectedRow();
 			if (rowindex < 0)
 				return;
-			
 			if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
-				JPopupMenu popup = new JPopupMenu();
+				JPopupMenu popup = createPopUpMenu();
+
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
-			JTable table =(JTable) e.getSource();
-			Point p = e.getPoint();
-			int row = table.rowAtPoint(p);
-			System.out.println("clicked");
 		}
+	}
 
-		@Override
-		public void mouseReleased(MouseEvent e) {
+	private JPopupMenu createPopUpMenu(){
+		JPopupMenu menu = new JPopupMenu();
 
-		}
+		menu.add(menuItemQuery);
 
+		return menu;
 	}
 
 	public void addJobToList(job j) {
@@ -181,7 +227,7 @@ public class GSAproxyGUI extends JFrame{
 				value = j.getPenaltyRate();
 				break;
 			case 4:
-				value = j.getJobDuedate();
+				value = j.getJobDuedatebyCust();
 				break;
 			case 5:
 				value = j.getOperations();
@@ -226,7 +272,7 @@ public class GSAproxyGUI extends JFrame{
 
 			job entry = (job) value;
 			setText("Job No :" + entry.getJobNo() + " Job ID :" + entry.getJobID() + 
-					" Due Date: " + entry.getJobDuedate() + " CPN : "+ entry.getCPN() +
+					" Due Date: " + entry.getJobDuedatebyCust() + " CPN : "+ entry.getCPN() +
 					" Penalty Rate : " + entry.getPenaltyRate() );
 			//					" Operations : " + entry.getOperations());
 			if (isSelected) {

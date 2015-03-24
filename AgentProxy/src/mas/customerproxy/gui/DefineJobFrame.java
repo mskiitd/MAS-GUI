@@ -7,29 +7,27 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
-
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.job.job;
 import net.miginfocom.swing.MigLayout;
-
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-
 import uiconstants.Labels;
 
 @SuppressWarnings("serial")
@@ -70,7 +68,9 @@ public class DefineJobFrame extends JFrame{
 	private JTextField txtPenalty;
 
 	private job populatingJob;
-	
+	private boolean dataOk = false;
+	private boolean operationDataOk = false;
+
 	public DefineJobFrame(CustomerAgent cAgent, job populatingJob) {
 
 		this.populatingJob = populatingJob;
@@ -127,6 +127,9 @@ public class DefineJobFrame extends JFrame{
 		myPanel.add(lblCPN);
 		myPanel.add(txtCPN,"wrap");
 
+		myPanel.add(lblPenalty);
+		myPanel.add(txtPenalty,"wrap");
+
 		myPanel.add(lblDueDate);
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
@@ -152,41 +155,148 @@ public class DefineJobFrame extends JFrame{
 			txtJobID.setText(populatingJob.getJobID());
 			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
 			txtPenalty.setText(String.valueOf(populatingJob.getPenaltyRate()));
-			txtDueDate.setText(String.valueOf(populatingJob.getJobDuedate()));
+			txtDueDate.setText(String.valueOf(populatingJob.getJobDuedatebyCust()));
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
+
 		}
 	}
 
 	private void createJobFromParams() {
+		boolean x1 = true;
 		if(generatedJob == null) {
-			generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+			if(txtJobID.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Please enter job ID !!");
+				x1 = false;
+			}else {
+				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+				boolean x2 = checkPenaltyRate();
+				boolean x3 = checkCPN();
+				generatedJob.setGenerationTime(new Date());
+				generatedJob.setJobNo(CustomerProxyGUI.countJob);
+				boolean x4 = checkDueDate();
+
+				dataOk = x1&x2&x3&x4;
+			}
 		}
-		
-		generatedJob.setPenaltyRate(10);
-		generatedJob.setCPN(1);
-		generatedJob.setGenerationTime(new Date());
-		generatedJob.setJobDuedate(new Date());
-		
-//		.jobOperation(this.jobOperations)
-		generatedJob.setJobNo(CustomerProxyGUI.countJob);
+		else {
+			boolean x2 = checkPenaltyRate();
+			boolean x3 = checkCPN();
+			generatedJob.setGenerationTime(new Date());
+			generatedJob.setJobNo(CustomerProxyGUI.countJob);
+			boolean x4 = checkDueDate();
+			boolean x5 = checkJobOperations();
+
+			dataOk = x1&x2&x3&x4&x5;
+		}
+
 	}
-	
-	private void checkPenaltyRate() {
-		if(txtPenalty.)
+
+	private boolean checkJobOperations() {
+		boolean status = true;
+		if(generatedJob.getOperations() == null ) {
+			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		}else {
+			if(generatedJob.getOperations().isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
+						"Error" , JOptionPane.ERROR_MESSAGE );
+				status = false;
+			}
+		}
+		return status;
+	}
+
+	private boolean checkDueDate() {
+		boolean status = true;
+		Date time = (Date) timeSpinner.getValue();
+		Date jobDueDate = (Date) datePicker.getModel().getValue();
+
+		if(time == null || jobDueDate == null) {
+			JOptionPane.showMessageDialog(this, "Invalid input for due date !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		} else {
+
+			Calendar c1 = Calendar.getInstance();
+			Calendar c2 = Calendar.getInstance();
+			c1.setTime(time);
+			c2.setTime(jobDueDate);
+
+			Calendar calTime = Calendar.getInstance();
+			calTime.set(
+					c2.get(Calendar.YEAR), c2.get(Calendar.MONTH),c2.get(Calendar.DAY_OF_MONTH),
+					c1.get(Calendar.HOUR_OF_DAY), c1.get(Calendar.MINUTE), c1.get(Calendar.SECOND));
+
+			if(calTime.getTimeInMillis() < System.currentTimeMillis()) {
+				JOptionPane.showMessageDialog(this, "Please enter a due date after current Date !!",
+						"Error" , JOptionPane.ERROR_MESSAGE );
+				status = false;
+			}else {
+				generatedJob.setJobDuedatebyCust(calTime.getTime());
+			}
+		}
+		return status;
+	}
+
+	private boolean checkPenaltyRate() {
+		boolean status = true;
+		if(! txtPenalty.getText().matches("-?\\d+(\\.\\d+)?") ) {
+			JOptionPane.showMessageDialog(this, "Invalid input for penalty rate !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		}else {
+			generatedJob.setPenaltyRate(Double.parseDouble(
+					txtPenalty.getText() ) );
+		}
+		return status;
+	}
+
+	private boolean checkCPN() {
+		boolean status = true;
+		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
+			JOptionPane.showMessageDialog(this, "Invalid input for CPN !!", 
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		}else {
+			generatedJob.setCPN(Double.parseDouble(
+					txtCPN.getText() ) );
+		}
+		return status;
 	}
 
 	class AddOperationListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			NumOps = Integer.parseInt(txtNumOps.getText());
-			if(generatedJob == null) {
-				createJobFromParams();
-			}
-			DefineJobOperationsFrame ops = new 
-					DefineJobOperationsFrame(generatedJob, NumOps);
-		}
+			checkOperations();
 
+			if(operationDataOk) {
+				DefineJobOperationsFrame ops = new 
+						DefineJobOperationsFrame(generatedJob, NumOps, populatingJob);
+			}
+		}
+	}
+
+	private void checkOperations() {
+		boolean x1 = true, x2 = true;
+		if(generatedJob == null) {
+			if(txtJobID.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Please enter job ID !!",
+						"Error" , JOptionPane.ERROR_MESSAGE );
+				x1 = false;
+			}else {
+				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+			}
+		}
+		if(! txtNumOps.getText().matches("-?\\d+?")) {
+			JOptionPane.showMessageDialog(this, "Invalid input for number of operations !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			x2 = false;
+		} else {
+			NumOps = Integer.parseInt(txtNumOps.getText());
+		}
+		operationDataOk = x1&x2;
 	}
 
 	class sendJobListener implements ActionListener {
@@ -197,11 +307,14 @@ public class DefineJobFrame extends JFrame{
 				// build the job
 				createJobFromParams();
 
-				cAgent.addJobToBeliefBase(generatedJob);
-				cAgent.addGoal(new dispatchJobGoal());
+				if(dataOk) {
+					System.out.println("Sending the generated job !!");
+					cAgent.addJobToBeliefBase(generatedJob);
+					cAgent.addGoal(new dispatchJobGoal());
 
-				CustomerProxyGUI.countJob++ ;
-				dispose();
+					CustomerProxyGUI.countJob++ ;
+					dispose();
+				}
 			}
 		}
 	}

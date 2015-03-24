@@ -6,7 +6,6 @@ public class Labels {
 	public static final String sendJobButton = "Submit";
 	
 	public class CustomerLabels {
-		public static final String jobOperationsHeading = "Job-Operations Data";
 		public static final String jobGenerateHeading = "Parameters of job ";
 		public static final String jobPriority = "CPN :";
 		public static final String jobPenalty = "Penalty Rate (/time) :";

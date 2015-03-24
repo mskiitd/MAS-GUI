@@ -21,7 +21,7 @@ public class AddJobBehavior extends Behaviour {
 	private String maintJobID = "0";
 	private Logger log;
 	private int step = 0;
-	private double processingTime;
+	private long processingTime;
 	private Simulator machineSimulator = null;
 	private ScheduledThreadPoolExecutor executor;
 
@@ -58,14 +58,14 @@ public class AddJobBehavior extends Behaviour {
 
 				comingJob.setCurrentOperationProcessingTime((long)newProcessingTime) ;
 
-				processingTime = comingJob.getCurrentOperationProcessTime();
+				processingTime = (long)(comingJob.getCurrentOperationProcessTime()*1000);
 
 				log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time : " + comingJob.getCurrentOperationProcessTime());
 
 				machineSimulator.setStatus(MachineStatus.PROCESSING);
 
-				comingJob.setJobStartTime(System.currentTimeMillis());
+				comingJob.setCurrentOperationProcessingTime(System.currentTimeMillis());
 
 				if( processingTime > 0 ) {
 					executor = new ScheduledThreadPoolExecutor(1);
@@ -101,7 +101,7 @@ public class AddJobBehavior extends Behaviour {
 		case 2:
 			if( processingTime <= 0) {
 				IsJobComplete = true;
-				log.info("Job No:" + comingJob.getJobNo() + " completed");
+				log.info("Job No:" + comingJob.getJobNo() +" operation No."+ comingJob.getCurrentOperationNumber()+" completed");
 				ProcessJobBehavior process = new ProcessJobBehavior(comingJob);
 				process.setDataStore(getDataStore());
 				myAgent.addBehaviour(process);
@@ -127,9 +127,10 @@ public class AddJobBehavior extends Behaviour {
 			 * Executor will just keep scheduling this task
 			 * 
 			 */
+//			log.info("remProcessingTime="+processingTime);
 			if( processingTime > 0 &&
-					machineSimulator.getStatus() != MachineStatus.FAILED ) {
-
+				machineSimulator.getStatus() != MachineStatus.FAILED ) {
+				
 				processingTime = processingTime - Simulator.TIME_STEP; 
 				machineSimulator.AgeComponents(Simulator.TIME_STEP);
 			} else if( processingTime <= 0 &&

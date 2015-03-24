@@ -1,5 +1,9 @@
 package mas.machineproxy.behaviors;
 
+import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -11,10 +15,6 @@ import mas.util.ZoneDataUpdate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import jade.core.behaviours.Behaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 public class HandleSimulatorFailedBehavior extends Behaviour{
 
@@ -45,9 +45,12 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			/**
 			 * update zone data for machine's failure
 			 */
-			ZoneDataUpdate machineFailureUpdate = new ZoneDataUpdate(
+			
+			ZoneDataUpdate machineFailureUpdate  = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.myHealth)
+				.value(machineSimulator).Build();
+		/*	ZoneDataUpdate machineFailureUpdate = new ZoneDataUpdate(
 					ID.Machine.ZoneData.myHealth,
-					machineSimulator);
+					machineSimulator);*/
 
 			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 					machineFailureUpdate, myAgent);

@@ -1,10 +1,5 @@
 package mas.customerproxy.plan;
 
-import javax.swing.SwingUtilities;
-
-import mas.customerproxy.agent.CustomerAgent;
-import mas.customerproxy.gui.CustomerNegotiateProxyGUI;
-import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.job.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -28,7 +23,7 @@ public class NegotiationPlan extends Behaviour implements PlanBody {
 	private BeliefBase bfBase;
 	private AID bba;
 	private job negotiationJob;
-	private CustomerNegotiateProxyGUI mygui;
+	private String replyWith;
 
 	@Override
 	public EndState getEndState() {
@@ -51,20 +46,54 @@ public class NegotiationPlan extends Behaviour implements PlanBody {
 		this.bba = (AID) bfBase
 				.getBelief(ID.Customer.BeliefBaseConst.blackboardAgent)
 				.getValue();
+		
+		replyWith=((MessageGoal)(pInstance.getGoal())).
+				getMessage().getReplyWith();
 	}
 
 	@Override
 	public void action() {
-		/**
-		 * show the message to the user that this job needs to be negotiated
-		 */
-		SwingUtilities.invokeLater(new Runnable() {
 
-			@Override
-			public void run() {
-				mygui = new CustomerNegotiateProxyGUI((CustomerAgent)myAgent, negotiationJob);
-			}
-		});
+		setNegotiation(negotiationJob);
+
+	}
+
+	public void setNegotiation(job j) {
+		/**
+		 *  Write your own negotiation logic here. You have job j to negotiate with scheduler.
+		 *  Take this job as input and change due date or profit or some other parameter
+		 *  and return that job from this method.
+		 *  first check if the sent negotiation is acceptable or not.
+		 *  if it is acceptable, then job is simply being sent back to blackboard.
+		 */
+
+		long newDueDate = (long) (j.getJobDuedatebyCust().getTime()); //1.1 time of absolute time is wrong 
+		double newprofit = 0.9 * j.getProfit();
+
+		if(newDueDate < j.getJobDuedatebyCust().getTime() ){
+			ZoneDataUpdate negotiationJobDataUpdate=new ZoneDataUpdate.Builder(ID.Customer.ZoneData.customerConfirmedJobs)
+				.value(negotiationJob).setReplyWith(replyWith).Build();
+			
+			/*ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate(
+					ID.Customer.ZoneData.customerConfirmedJobs,
+					negotiationJob);*/
+
+			AgentUtil.sendZoneDataUpdate(this.bba,negotiationJobDataUpdate, myAgent);
+
+			return;
+		}else {
+			j.setJobDuedatebyCust(newDueDate);
+			j.setProfit(newprofit);
+			log.info("************"+negotiationJob.getJobDuedatebyCust());
+			ZoneDataUpdate negotiationJobDataUpdate=new ZoneDataUpdate.Builder(ID.Customer.ZoneData.customerJobsUnderNegotiation)
+				.value(negotiationJob).setReplyWith(replyWith).Build();
+			
+/*			ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate(
+					ID.Customer.ZoneData.customerJobsUnderNegotiation,
+					negotiationJob);*/
+
+			AgentUtil.sendZoneDataUpdate(this.bba,negotiationJobDataUpdate, myAgent);
+		}
 	}
 
 	@Override

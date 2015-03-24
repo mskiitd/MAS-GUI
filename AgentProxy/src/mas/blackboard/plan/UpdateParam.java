@@ -3,6 +3,7 @@ package mas.blackboard.plan;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mas.blackboard.nameZoneData.NamedZoneData;
+import mas.blackboard.util.MessageParams;
 import mas.blackboard.zonedata.ZoneData;
 import mas.blackboard.zonespace.ZoneSpace;
 import mas.util.AgentUtil;
@@ -34,6 +36,7 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 	private ZoneDataUpdate info;
 	private BeliefBase BBBeliefBase;
 	private Logger log;
+	private MessageParams msgStruct;
 	@Override
 	public EndState getEndState() {
 		return null;
@@ -45,6 +48,8 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 		MessageGoal goal=(MessageGoal) arg0.getGoal();
 		msg=goal.getMessage();
 		Agent=msg.getSender();
+		
+		msgStruct=new MessageParams.Builder().replyWithParam(msg.getReplyWith()).Build();
 		
 		try {
 			info=(ZoneDataUpdate) msg.getContentObject();
@@ -75,7 +80,7 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 
 							if(zs.findZoneData(nzd)!=null){
 							
-								zs.findZoneData(nzd).addItem(info.getValue());
+								zs.findZoneData(nzd).addItem(info.getValue(), msgStruct);
 
 							}
 							else{

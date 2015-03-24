@@ -111,7 +111,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.scroller = new JScrollPane(this.myPanel);
 
 		txtCPN.setText(myJob.getCPN() + "");
-		txtDueDate.setText(myJob.getJobDuedate() +"");
+		txtDueDate.setText(myJob.getJobDuedatebyCust() +"");
 		txtJobID.setText(myJob.getJobID());
 		txtPenaltyRate.setText(myJob.getPenaltyRate() + "");
 		txtNumOps.setText(myJob.getOperations().size() + "");

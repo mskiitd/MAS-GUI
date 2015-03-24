@@ -21,10 +21,13 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import mas.job.job;
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 
 @SuppressWarnings("serial")
 public class MachineGUI extends JFrame {
 
+	private LocalSchedulingAgent lSchAgent;
+	
 	private JSplitPane parentPanel;
 	private JPanel mcPanel;
 	private JPanel machineSubPanel;
@@ -33,8 +36,12 @@ public class MachineGUI extends JFrame {
 	private JLabel lblMachineStatus;
 	private BufferedImage machineIcon;
 	private CustomJobQueue queuePanel;
+	private ArrayList<job> jobQ;
 
-	public MachineGUI() {
+	public MachineGUI(LocalSchedulingAgent lAgent) {
+		
+		this.lSchAgent = lAgent;
+		
 		this.mcPanel = new JPanel(new GridBagLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
@@ -65,23 +72,23 @@ public class MachineGUI extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		List<job> q = new ArrayList<job>();
-		q.add(new job.Builder("1").build());
-		q.add(new job.Builder("2").build());
-		q.add(new job.Builder("3").build());
-		q.add(new job.Builder("4").build());
-		q.add(new job.Builder("5").build());
-		q.add(new job.Builder("6").build());
-		q.add(new job.Builder("7").build());
-		q.add(new job.Builder("8").build());
-		q.add(new job.Builder("9").build());
-		q.add(new job.Builder("10").build());
-		q.add(new job.Builder("11").build());
-		q.add(new job.Builder("12").build());
-		q.add(new job.Builder("13").build());
-		q.add(new job.Builder("14").build());
+		jobQ = new ArrayList<job>();
+		jobQ.add(new job.Builder("1").build());
+		jobQ.add(new job.Builder("2").build());
+		jobQ.add(new job.Builder("3").build());
+		jobQ.add(new job.Builder("4").build());
+		jobQ.add(new job.Builder("5").build());
+		jobQ.add(new job.Builder("6").build());
+		jobQ.add(new job.Builder("7").build());
+		jobQ.add(new job.Builder("8").build());
+		jobQ.add(new job.Builder("9").build());
+		jobQ.add(new job.Builder("10").build());
+		jobQ.add(new job.Builder("11").build());
+		jobQ.add(new job.Builder("12").build());
+		jobQ.add(new job.Builder("13").build());
+		jobQ.add(new job.Builder("14").build());
 
-		this.queuePanel = new CustomJobQueue(q);
+		this.queuePanel = new CustomJobQueue(jobQ);
 		queuePanel.setBorder((new EmptyBorder(10,10,10,10) ));
 		this.queueScroller = new JScrollPane(queuePanel);
 		
@@ -105,6 +112,16 @@ public class MachineGUI extends JFrame {
 
 	public void machineIdle() {
 		this.lblMachineStatus.setText("Idle");
+	}
+	
+	/**
+	 * Update the current queue for the machine with the new queue in the GUI
+	 * @param newQueue
+	 */
+	public void updateQueue(ArrayList<job> newQueue) {
+		jobQ.clear();
+		jobQ.addAll(newQueue);
+		queuePanel.revalidate();
 	}
 
 	private void showGui() {

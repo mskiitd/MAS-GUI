@@ -1,5 +1,9 @@
 package mas.machineproxy.behaviors;
 
+import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+
 import java.util.StringTokenizer;
 
 import mas.job.job;
@@ -12,10 +16,6 @@ import mas.util.ZoneDataUpdate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import jade.core.behaviours.Behaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 public class HandleInspectionJobBehavior extends Behaviour{
 
@@ -48,9 +48,12 @@ public class HandleInspectionJobBehavior extends Behaviour{
 				machineSimulator = (Simulator) getDataStore().
 						get(Simulator.simulatorStoreName);
 			}
-			ZoneDataUpdate inspectionZoneUpdate = new ZoneDataUpdate(
+			
+			ZoneDataUpdate inspectionZoneUpdate = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.inspectionStart)
+				.value(comingJob).Build();
+			/*ZoneDataUpdate inspectionZoneUpdate = new ZoneDataUpdate(
 					ID.Machine.ZoneData.inspectionStart,
-					comingJob);
+					comingJob);*/
 
 			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 					inspectionZoneUpdate, myAgent);

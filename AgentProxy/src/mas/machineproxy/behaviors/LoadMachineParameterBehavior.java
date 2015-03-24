@@ -1,5 +1,7 @@
 package mas.machineproxy.behaviors;
 
+import jade.core.behaviours.OneShotBehaviour;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import jade.core.behaviours.OneShotBehaviour;
 
 public class LoadMachineParameterBehavior extends OneShotBehaviour {
 

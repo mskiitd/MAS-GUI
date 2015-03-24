@@ -70,9 +70,10 @@ public class CorrectiveMachineComponentsRepairPlan extends Behaviour implements 
 
 				correctiveMaintData = repaitKit.getCoorectiveMaintenanceData();
 
-				ZoneDataUpdate correctiveRepairUpdate = new ZoneDataUpdate(
-						ID.Maintenance.ZoneData.correctiveMaintdata,
-						correctiveMaintData);
+				ZoneDataUpdate correctiveRepairUpdate = new ZoneDataUpdate.Builder(
+						ID.Maintenance.ZoneData.correctiveMaintdata).
+						value(correctiveMaintData).
+						Build();
 
 				AgentUtil.sendZoneDataUpdate(blackboard ,correctiveRepairUpdate, myAgent);
 

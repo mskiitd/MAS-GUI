@@ -39,18 +39,20 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	}
 	
 	public void confirmJob(job j) {
-		ZoneDataUpdate confirmedJobDataUpdate = new ZoneDataUpdate(
-				ID.Customer.ZoneData.customerConfirmedJobs,
-				j);
+		
+		ZoneDataUpdate confirmedJobDataUpdate = new ZoneDataUpdate.Builder(
+				ID.Customer.ZoneData.customerConfirmedJobs).
+				value(j).Build();
 
 		AgentUtil.sendZoneDataUpdate( blackboard,
 				confirmedJobDataUpdate,CustomerAgent.this);
 	}
 	
 	public void negotiateJob(job j) {
-		ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate(
-				ID.Customer.ZoneData.customerJobsUnderNegotiation,
-				j);
+		
+		ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.Builder(
+				ID.Customer.ZoneData.customerJobsUnderNegotiation).
+				value(j).Build();
 
 		AgentUtil.sendZoneDataUpdate( blackboard,
 				negotiationJobDataUpdate,CustomerAgent.this);

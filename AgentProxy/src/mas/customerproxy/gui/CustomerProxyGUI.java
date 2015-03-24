@@ -36,6 +36,9 @@ public class CustomerProxyGUI extends JFrame{
 	private String[] tabTitles = {"Generator","Confirmed Job", "Completed Jobs"};
 	private JPanel[] panelsForTab;
 
+	private Vector<String> acceptedJobTableHeaderVector;
+	private Vector<String> completeJobTableHeaderVector;
+	
 	private JTable jobChooserTable;
 	private Jobloader loader;
 	private tableModel jobChooserTableModel;
@@ -108,6 +111,9 @@ public class CustomerProxyGUI extends JFrame{
 		this.loader.readFile();
 		this.jobVector = this.loader.getjobVector();
 		this.tableHeadersVector = this.loader.getJobHeaders();
+		
+		this.acceptedJobTableHeaderVector = this.loader.getAcceptedJobTableHeader();
+		this.completeJobTableHeaderVector = this.loader.getCompleteJobTableHeader();
 
 		this.createJob = new JButton(Labels.createJobButton);
 		this.createJob.addActionListener(new createJobListener());
@@ -116,7 +122,6 @@ public class CustomerProxyGUI extends JFrame{
 		this.jobChooserTable = new JTable(this.jobChooserTableModel);
 		this.jobChooserTable.getColumnModel().getColumn(1).setMinWidth(350);
 		this.jobChooserTable.getColumnModel().getColumn(3).setMinWidth(130);
-		this.jobChooserTable.getColumnModel().getColumn(4).setMinWidth(100);
 		this.jobChooserTable.setRowHeight(30);
 		this.jobChooserTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.jobChooserTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -142,7 +147,6 @@ public class CustomerProxyGUI extends JFrame{
 						if(selectedRow.length > 0 )
 							currentJobToSend = selectedRow[0];
 
-						System.out.println("Selected: " + selectedRow[0]);
 					}
 				});
 	}
@@ -151,6 +155,7 @@ public class CustomerProxyGUI extends JFrame{
 		// setup second tab for accepted jobs
 		acceptedJobsPanel = new JPanel(new BorderLayout());
 		acceptedJobVector = new Vector<Object>();
+		
 		acceptedJobVector.addElement(new job.Builder("_id").
 				jobCPN(10).
 				build());
@@ -312,10 +317,7 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getCPN();
 				break;
 			case 3:
-				value = j.getJobDuedate();
-				break;
-			case 4:
-				value = j.getCost();
+				value = j.getPenaltyRate();
 				break;
 			default:
 				value = "null";
@@ -334,7 +336,7 @@ public class CustomerProxyGUI extends JFrame{
 
 		@Override
 		public int getColumnCount() {
-			return tableHeadersVector.size();
+			return acceptedJobTableHeaderVector.size();
 		}
 
 		@Override
@@ -357,10 +359,10 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getCPN();
 				break;
 			case 3:
-				value = j.getJobDuedate();
+				value = j.getPenaltyRate();
 				break;
 			case 4:
-				value = j.getCost();
+				value = j.getJobDuedatebyCust();
 				break;
 			default:
 				value = "null";
@@ -371,7 +373,7 @@ public class CustomerProxyGUI extends JFrame{
 
 		@Override
 		public String getColumnName(int column) {
-			return tableHeadersVector.get(column);
+			return acceptedJobTableHeaderVector.get(column);
 		}
 	}
 
@@ -380,7 +382,7 @@ public class CustomerProxyGUI extends JFrame{
 
 		@Override
 		public int getColumnCount() {
-			return tableHeadersVector.size();
+			return completeJobTableHeaderVector.size();
 		}
 
 		@Override
@@ -403,10 +405,10 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getCPN();
 				break;
 			case 3:
-				value = j.getJobDuedate();
+				value = j.getPenaltyRate();
 				break;
 			case 4:
-				value = j.getCost();
+				value = j.getJobDuedatebyCust();
 				break;
 			default:
 				value = "null";
@@ -417,7 +419,7 @@ public class CustomerProxyGUI extends JFrame{
 
 		@Override
 		public String getColumnName(int column) {
-			return tableHeadersVector.get(column);
+			return completeJobTableHeaderVector.get(column);
 		}
 	}
 

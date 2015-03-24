@@ -2,11 +2,16 @@ package mas.globalSchedulingproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import mas.job.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -20,7 +25,6 @@ import bdi4jade.plan.PlanInstance.EndState;
 
 public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
-	private static final long serialVersionUID = 1L;
 	private job j;
 	private AID blackboard;
 	private int NoOfMachines;
@@ -31,6 +35,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	protected Logger log;
 	private ACLMessage[] WaitingTime;
 	private int repliesCnt = 0; // The counter of replies from seller agents
+
+
 
 	@Override
 	public void init(PlanInstance PI) {
@@ -46,10 +52,10 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 		
 		msgReplyID=Integer.toString(j.getJobNo());
-		/*mt=MessageTemplate.and(
+		mt=MessageTemplate.and(
 				MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime),
-				MessageTemplate.MatchReplyWith(msgReplyID));*/
-		mt=MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime);
+				MessageTemplate.MatchReplyWith(msgReplyID));
+//		mt=MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime);
 
 	}
 
@@ -63,7 +69,9 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			
 			if(MachineCount!=0){
 //				log.info(j.getDuedate());
-				ZoneDataUpdate update=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GetWaitingTime, j);
+//				ZoneDataUpdate update=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GetWaitingTime, j);
+				ZoneDataUpdate update=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GetWaitingTime)
+					.value(j).setReplyWith(msgReplyID).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard, update, myAgent);
 				WaitingTime=new ACLMessage[MachineCount];
 				step = 1;
@@ -73,7 +81,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			break;
 		case 1:
 //			log.info("step="+step);
-			
+//			log.info("expecting reply ID : "+msgReplyID);
 			try{
 				
 				ACLMessage reply = myAgent.receive(mt);
@@ -103,7 +111,10 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 								
 				ACLMessage max=ChooseWaitingTimeToSend(WaitingTime);
 				job JobToSend=(job)(max.getContentObject());
-				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation, JobToSend);
+//				log.info(JobToSend.getJobDuedatebyCust());
+//				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation, JobToSend);
+				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation)
+					.value(JobToSend).setReplyWith(msgReplyID).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);
 
 			} catch (UnreadableException e) {
@@ -138,6 +149,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 	@Override
 	public boolean done() {
+
 		return (step==3);
 	}
 	
@@ -149,6 +161,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		else{
 			return EndState.FAILED;
 		}
+		
 	}
-	
 }

@@ -1,0 +1,42 @@
+package mas.localSchedulingproxy.agent;
+
+import java.util.ArrayList;
+import jade.core.AID;
+import mas.job.job;
+import mas.localSchedulingproxy.capability.LocalSchedulingBasicCapability;
+import mas.machineproxy.gui.MachineGUI;
+import mas.util.AgentUtil;
+import mas.util.ID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import bdi4jade.core.Capability;
+
+public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
+
+	private static final long serialVersionUID = 1L;
+	private Logger log;
+	private MachineGUI mGUI;
+
+	public void UpdateJobQueue(ArrayList<job> newQueue) {
+		if(mGUI != null) {
+			mGUI.updateQueue(newQueue);
+			log.info("Updating queue in machine's GUI ");
+		}
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+		mGUI = new MachineGUI(this);
+		log = LogManager.getLogger();
+
+		// Add capability to agent 
+		Capability bCap = new LocalSchedulingBasicCapability();
+		addCapability(bCap);
+
+		AID bba = AgentUtil.findBlackboardAgent(this);
+		bCap.getBeliefBase().updateBelief(
+				ID.LocalScheduler.BeliefBaseConst.blackboardAgent, bba);
+
+	}
+}

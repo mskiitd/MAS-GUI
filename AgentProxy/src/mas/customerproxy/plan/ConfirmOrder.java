@@ -18,11 +18,11 @@ import jade.lang.acl.UnreadableException;
 
 public class ConfirmOrder extends OneShotBehaviour implements PlanBody{
 
-	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private BeliefBase bfBase;
 	private AID bba;
 	private job ConfirmedJob;
+	private String replyWith;
 
 	@Override
 	public EndState getEndState() {
@@ -43,13 +43,19 @@ public class ConfirmOrder extends OneShotBehaviour implements PlanBody{
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
+		
+		replyWith=((MessageGoal)(pInstance.getGoal())).
+				getMessage().getReplyWith();
+		
 	}
 
 	@Override
 	public void action() {
-		ZoneDataUpdate ConfirmedOrderZoneDataUpdate = new ZoneDataUpdate(
-				ID.Customer.ZoneData.customerConfirmedJobs,
-				ConfirmedJob);
+		
+		ZoneDataUpdate ConfirmedOrderZoneDataUpdate=new ZoneDataUpdate.Builder(ID.Customer.ZoneData.customerConfirmedJobs)
+		.value(ConfirmedJob).setReplyWith(replyWith).Build();
+		
+		
 		AgentUtil.sendZoneDataUpdate(bba, ConfirmedOrderZoneDataUpdate, myAgent);
 	}
 }

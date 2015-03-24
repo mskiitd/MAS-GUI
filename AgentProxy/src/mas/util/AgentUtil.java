@@ -117,6 +117,7 @@ public class AgentUtil {
 			e.printStackTrace();
 		}
 		update.setConversationId(MessageIds.UpdateParameter);
+		update.setReplyWith(zdu.getReplyWith());
 		Sender.send(update);
 //		log.info(update);
 	}

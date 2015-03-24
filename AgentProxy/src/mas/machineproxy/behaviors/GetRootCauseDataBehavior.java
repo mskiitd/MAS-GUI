@@ -15,12 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import mas.machineproxy.Simulator;
 import mas.machineproxy.parametrer.RootCause;
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GetRootCauseDataBehavior extends OneShotBehaviour{
 

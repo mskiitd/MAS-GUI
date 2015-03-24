@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import mas.blackboard.nameZoneData.NamedZoneData;
+import mas.blackboard.util.MessageParams;
 import mas.util.MessageIds;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -74,7 +75,7 @@ public class ZoneData implements ZoneDataIFace, Serializable{
 	}
 
 	@Override
-	public void addItem(Object obj) {
+	public void addItem(Object obj, MessageParams msgStruct) {
 		if(getAppendValues()){
 //			log.info(getAppendValues());
 			this.data.add(obj);
@@ -88,7 +89,7 @@ public class ZoneData implements ZoneDataIFace, Serializable{
 			this.data.add(obj);
 		}
 //		log.info(data);
-		sendUpdate();
+		sendUpdate(msgStruct);
 	
 	}
 
@@ -131,16 +132,15 @@ public class ZoneData implements ZoneDataIFace, Serializable{
 	}
 	
 	public Object getData(){
-//		log.info(data);
 		return data.pop();
 		
 	}
-	public void sendUpdate(){
-		
+	public void sendUpdate(MessageParams msgStruct){
 		
 		ACLMessage update=new ACLMessage(ACLMessage.INFORM);		
 		update.setConversationId(UpdateMessageID);
-	
+		update.setReplyWith(msgStruct.getReplyWith());
+		
 		for(AID reciever : getSubscribers()){
 			log.info("adding reciever "+reciever.getLocalName());
 			update.addReceiver(reciever);

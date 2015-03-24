@@ -6,6 +6,7 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.PlatformController;
+
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -15,10 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
-import mas.customerproxy.agent.CustomerAgent;
+
+import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +36,8 @@ public class AgentStarter {
 
 	static {
 		agents = new HashMap<String, Agent>();
-		agents.put("customer", new CustomerAgent());
+//		agents.put("customer", new CustomerAgent());
+		agents.put("maint", new LocalMaintenanceAgent());
 	};
 
 	public static void setUIFont (javax.swing.plaf.FontUIResource f){
@@ -79,10 +84,10 @@ public class AgentStarter {
 			e.printStackTrace();
 		}
 
-		//		MachineGUI gui = new  MachineGUI();
+//				MachineGUI gui = new  MachineGUI();
 		new AgentStarter();
-		//		GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
-		//		MaintenanceGUI mgui = new MaintenanceGUI();
+//				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
+//				MaintenanceGUI mgui = new MaintenanceGUI();
 	}
 
 	public AgentStarter() {

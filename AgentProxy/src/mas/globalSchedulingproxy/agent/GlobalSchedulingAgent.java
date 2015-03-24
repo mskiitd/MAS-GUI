@@ -17,13 +17,23 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 	private Logger log;
 
 	public static void addConfirmedJob(job j) {
-		mygui.addJobToList(j);
+		if(mygui != null) {
+			mygui.addJobToList(j);
+		}
 	}
-	
+
 	public static void addCompletedJob(job j) {
-		mygui.completedJob(j);
+		if(mygui != null) {
+			mygui.completedJob(j);
+		}
 	}
-	
+
+	public void queryJob(job j) {
+		if(mygui != null) {
+			mygui.showQueryResult();
+		}
+	}
+
 	@Override
 	protected void init() {
 		super.init();		
@@ -36,10 +46,10 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 				mygui = new GSAproxyGUI(GlobalSchedulingAgent.this);
 			}
 		});
-		
+
 		Capability bCap=  new BasicCapability();
 		addCapability(bCap);
-		
+
 		AID bba = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(
 				ID.GlobalScheduler.BeliefBaseConst.blackboardAgent, bba);

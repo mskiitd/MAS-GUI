@@ -1,16 +1,16 @@
 package mas.machineproxy.behaviors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import mas.job.job;
-import mas.machineproxy.MachineStatus;
-import mas.machineproxy.Simulator;
-import mas.util.MessageIds;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import mas.job.job;
+import mas.machineproxy.MachineStatus;
+import mas.machineproxy.Simulator;
+import mas.util.MessageIds;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AcceptJobBehavior extends CyclicBehaviour {
 
@@ -40,8 +40,8 @@ public class AcceptJobBehavior extends CyclicBehaviour {
 					this.jobToProcess = (job) msg.getContentObject();
 
 					log.info(" Job No : '" + jobToProcess.getJobNo() +
-							"'accepted with expected starting time : " +
-							jobToProcess.getStartTime()+jobToProcess.getBidWinnerLSA());
+							"'accepted with starting time : " +
+							jobToProcess.getStartTimeByCust()+" due date: "+jobToProcess.getJobDuedatebyCust());
 
 					AddJobBehavior addjob = new AddJobBehavior(this.jobToProcess);
 					addjob.setDataStore(getDataStore());

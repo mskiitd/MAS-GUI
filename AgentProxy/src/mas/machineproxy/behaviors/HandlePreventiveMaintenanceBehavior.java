@@ -1,5 +1,9 @@
 package mas.machineproxy.behaviors;
 
+import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -13,10 +17,6 @@ import mas.util.ZoneDataUpdate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import jade.core.behaviours.Behaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 /**
  * 
@@ -55,9 +55,12 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 						get(Simulator.simulatorStoreName);
 			}
 
-			ZoneDataUpdate maintenanceStartUpdate = new ZoneDataUpdate(
+			ZoneDataUpdate maintenanceStartUpdate = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.maintenanceStart)
+				.value(comingJob).Build();
+			
+			/*ZoneDataUpdate maintenanceStartUpdate = new ZoneDataUpdate(
 					ID.Machine.ZoneData.maintenanceStart,
-					comingJob);
+					comingJob);*/
 
 			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 					maintenanceStartUpdate, myAgent);

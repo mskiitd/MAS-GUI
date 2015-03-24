@@ -16,7 +16,7 @@ public interface WorkspaceIFace extends Serializable
 //	public void createZoneSpace(NamedZoneSpace title);
 	public void dropZoneSpace(NamedZoneSpace title);
 	public ZoneSpace findZoneSpace(NamedZoneSpace title);
-	public boolean insertItem(NamedZoneSpace zSpaceName,NamedZoneData var, Object obj);
+//	public boolean insertItem(NamedZoneSpace zSpaceName,NamedZoneData var, Object obj);
 	public void removeItem(Object obj);
 	
 }

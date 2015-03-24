@@ -8,9 +8,6 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-
-import javafx.scene.layout.Border;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,11 +19,14 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import net.miginfocom.swing.MigLayout;
 
 public class MaintenanceGUI extends JFrame{
 
 	private static final long serialVersionUID = 1L;
+	
+	private LocalMaintenanceAgent mAgent;
 	
 	private JTabbedPane tPanes;
 	private String[] tabTitles = {"Main","Maintenance Schedules"};
@@ -47,6 +47,8 @@ public class MaintenanceGUI extends JFrame{
 
 	private JSpinner jSpinnerMonth;
 	private JSpinner jSpinnerYear;
+	
+	private CorrectiveMaintenanceGUI correctivePanel;
 
 	private CalendarPanel calendarPanel;
 	private JPanel schedulePanel;
@@ -58,7 +60,11 @@ public class MaintenanceGUI extends JFrame{
 	
 	private ArrayList<Date> preventiveMaintenanceSchedule;
 
-	public MaintenanceGUI() {
+	public MaintenanceGUI(LocalMaintenanceAgent lmAgent) {
+		
+		this.mAgent = lmAgent;
+				
+		correctivePanel = new CorrectiveMaintenanceGUI(mAgent);
 		
 		mainPanel = new JPanel(new BorderLayout());
 		schedulePanel = new JPanel(new BorderLayout());
@@ -74,7 +80,7 @@ public class MaintenanceGUI extends JFrame{
 		}
 
 		mainPanel.add(btnSendPrevMaint, BorderLayout.CENTER);
-		panelsForTab[0].add(mainPanel);
+		panelsForTab[0].add(correctivePanel);
 		
 		schedulePanel.add(jpNorth,BorderLayout.NORTH);
 		schedulePanel.add(calendarPanel);

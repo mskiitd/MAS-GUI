@@ -1,12 +1,12 @@
 package mas.machineproxy.behaviors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import jade.core.behaviours.CyclicBehaviour;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Methods;
 import mas.machineproxy.Simulator;
-import jade.core.behaviours.CyclicBehaviour;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Anand Prajapati
