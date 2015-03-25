@@ -57,7 +57,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody{
 //		r=new Random();
 		
 		this.blackboard = (AID) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID).
 				getValue();
 
 		msg = ((MessageGoal)pInstance.getGoal()).getMessage();

@@ -1,41 +1,32 @@
 package mas.util;
 
 import jade.core.AID;
-
-import java.util.ArrayList;
-
-import mas.job.jobOperation;
+import mas.job.job;
 
 public class JobQueryObject {
 
-	private ArrayList<jobOperation> operationsDone;
-	private jobOperation currentOperation;
+	private job currentJob;
 	private AID currentMachine;
 	
-	public JobQueryObject() {
-		this.operationsDone = new ArrayList<jobOperation>();
+	public JobQueryObject(job j) {
+		this.setCurrentJob(j);
 		currentMachine = new AID();
-		currentOperation = new jobOperation();
 	}
 	
-	public ArrayList<jobOperation> getOperationsDone() {
-		return operationsDone;
-	}
-	public void setOperationsDone(ArrayList<jobOperation> operationsDone) {
-		this.operationsDone = operationsDone;
-	}
-	public jobOperation getCurrentOperation() {
-		return currentOperation;
-	}
-	public void setCurrentOperation(jobOperation currentOperation) {
-		this.currentOperation = currentOperation;
-	}
 	public AID getCurrentMachine() {
 		return currentMachine;
 	}
+	
 	public void setCurrentMachine(AID currentMachine) {
 		this.currentMachine = currentMachine;
 	}
-	
+
+	public job getCurrentJob() {
+		return currentJob;
+	}
+
+	public void setCurrentJob(job currentJob) {
+		this.currentJob = currentJob;
+	}
 	
 }

@@ -56,7 +56,7 @@ public class AbstractbasicCapability extends Capability {
 		LSAExcelFileReader fileReader=new LSAExcelFileReader();
 		
 		Belief<AID> bboard = new TransientBelief<AID>(
-				ID.LocalScheduler.BeliefBaseConst.blackboardAgent);
+				ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID);
 		
 		Belief<AID> myMachine = new TransientBelief<AID>(
 				ID.LocalScheduler.BeliefBaseConst.machine);
@@ -65,7 +65,7 @@ public class AbstractbasicCapability extends Capability {
 				ID.LocalScheduler.BeliefBaseConst.maintAgent);
 		
 		Belief<AID> mygsAgent = new TransientBelief<AID>(
-				ID.LocalScheduler.BeliefBaseConst.globalSchAgent);
+				ID.LocalScheduler.BeliefBaseConst.globalSchAgentAID);
 
 		Belief<StatsTracker> dtrack = new TransientBelief<StatsTracker>(
 				ID.LocalScheduler.BeliefBaseConst.dataTracker);

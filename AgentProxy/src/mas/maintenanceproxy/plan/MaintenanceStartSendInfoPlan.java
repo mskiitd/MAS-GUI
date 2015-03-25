@@ -5,7 +5,7 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.machineproxy.IMachine;
+import mas.machineproxy.SimulatorInternals;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -25,18 +25,13 @@ import bdi4jade.plan.PlanInstance.EndState;
  */
 public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private BeliefBase bfBase;
 	private MessageTemplate msgTemplate;
 	private int step = 0;
 	private ACLMessage msg;
-	private ACLMessage reply;
-	private IMachine machine;
+	private SimulatorInternals machine;
 	private RepairKit solver;
 	private AID bba;
 
@@ -53,7 +48,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 		solver = new RepairKit();
 		
 		this.bba = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).
+				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
 				getValue();
 	}
 
@@ -64,7 +59,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 			msg = myAgent.receive(msgTemplate);
 			if(msg != null) {
 				try {
-					machine = (IMachine) msg.getContentObject();
+					machine = (SimulatorInternals) msg.getContentObject();
 					solver.setMachine(machine);
 					step++;
 				} catch (UnreadableException e) {
@@ -78,9 +73,9 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 		case 1:
 			
 			String maintenanceData = solver.getPreventiveMaintenanceData();
-			ZoneDataUpdate maintenanceStartData = new ZoneDataUpdate.Builder(
-					ID.Maintenance.ZoneData.prevMaintData).
-					value(maintenanceData).Build();
+			
+			ZoneDataUpdate maintenanceStartData = new ZoneDataUpdate.Builder(ID.Maintenance.ZoneData.prevMaintData)
+				.value(maintenanceData).Build();
 
 			AgentUtil.sendZoneDataUpdate(this.bba ,maintenanceStartData, myAgent);
 			

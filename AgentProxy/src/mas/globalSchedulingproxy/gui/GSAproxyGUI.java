@@ -1,8 +1,6 @@
 package mas.globalSchedulingproxy.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -12,34 +10,31 @@ import java.awt.event.MouseListener;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Vector;
-import javax.swing.AbstractListModel;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
-import net.miginfocom.swing.MigLayout;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.job.job;
-import uiconstants.Labels;
+import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
 public class GSAproxyGUI extends JFrame{
 
+	private GlobalSchedulingAgent gAgent;
+
 	private JScrollPane scroller;
 	private JPanel queryJobsPanel;
-	private JButton btnQueryJob;
+	private JPanel completedJobsPanel;
 
 	private JTabbedPane tPanes;
-	private String[] tabTitles = {"Jobs in the System","dummy tab"};
+	private String[] tabTitles = {"Jobs in the System","Completed Jobs"};
 	private JPanel[] panelsForTab;
 
 	private JTable jobsInSystemTable;
@@ -47,11 +42,13 @@ public class GSAproxyGUI extends JFrame{
 	private String[] tableHeaders = {"Job No","Job ID" , "CPN" , "Penalty Rate",
 			"Due Date", "Operations"};
 
+	private JTable completedJobsTable;
+	private CompletedJobsTableModel completedJobsTableModel;
+
 	private Vector<String> tableHeadersVector;
 
-	private Vector<Object> acceptedJobs;
-	private listModel jobsQueryListModel;
-	private GlobalSchedulingAgent gAgent;
+	private Vector<Object> acceptedJobVector;
+	private Vector<Object> completedJobVector; 
 
 	// menu items here
 	private JMenuItem menuItemQuery ;
@@ -73,9 +70,8 @@ public class GSAproxyGUI extends JFrame{
 		}
 
 		this.queryJobsPanel = new JPanel(new BorderLayout());
-		this.btnQueryJob = new JButton(Labels.GSLabels.queryForJobLabel);
 
-		acceptedJobs = new Vector<Object>();
+		acceptedJobVector = new Vector<Object>();
 		tableHeadersVector = new Vector<String>();
 		Collections.addAll(tableHeadersVector, tableHeaders);
 
@@ -103,17 +99,55 @@ public class GSAproxyGUI extends JFrame{
 		this.scroller = new JScrollPane(panelsForTab[0]);
 		this.tPanes.addTab(tabTitles[0],this.scroller );
 
+		//---------------------------------------------------------
+		initCompletedJobPane();
+		panelsForTab[1].add(completedJobsPanel);
 		this.tPanes.addTab(tabTitles[1], panelsForTab[1]);
 
 		add(this.tPanes);
 
-		addJobToList(new job.Builder("1").jobCPN(1).jobDueDateTime(new Date()).build());
-		addJobToList(new job.Builder("2").jobCPN(1).jobDueDateTime(new Date()).build());
+		addAcceptedJobToList(new job.Builder("1").jobCPN(1).jobDueDateTime(new Date()).build());
+		
 		showGui();
 	}
 
+	private void initCompletedJobPane() {
+		completedJobsPanel = new JPanel(new BorderLayout());
+		completedJobVector = new Vector<Object>();
+
+		completedJobsTableModel = new CompletedJobsTableModel();
+		completedJobsTable = new JTable(completedJobsTableModel);
+
+		this.completedJobsTable.getColumnModel().getColumn(1).setMinWidth(350);
+		this.completedJobsTable.getColumnModel().getColumn(3).setMinWidth(130);
+		this.completedJobsTable.getColumnModel().getColumn(4).setMinWidth(100);
+		this.completedJobsTable.setRowHeight(30);
+		this.completedJobsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		completedJobsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		completedJobsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		completedJobsPanel.add(completedJobsTable.getTableHeader(), BorderLayout.NORTH);
+		completedJobsPanel.add(completedJobsTable,BorderLayout.CENTER);
+	}
+
+	/**
+	 * shows the result of the query for the job from table
+	 */
 	public void showQueryResult() {
 
+	}
+	
+	public void addAcceptedJobToList(job j) {
+		acceptedJobVector.addElement(j);
+		revalidate();
+	}
+
+	/**
+	 * @param j
+	 */
+	public void addCompletedJob(job j) {
+		completedJobVector.addElement(j);
+		revalidate();
 	}
 
 	class menuItemClickListener implements ActionListener {
@@ -123,7 +157,7 @@ public class GSAproxyGUI extends JFrame{
 			JMenuItem menu = (JMenuItem) event.getSource();
 			if (menu == menuItemQuery) {
 				currentSelecetdQueryJob = jobsInSystemTable.getSelectedRow();
-				gAgent.queryJob((job) acceptedJobs.get(currentSelecetdQueryJob));
+				gAgent.queryJob((job) acceptedJobVector.get(currentSelecetdQueryJob));
 
 			} 
 		}
@@ -137,12 +171,10 @@ public class GSAproxyGUI extends JFrame{
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-
 		}
 
 		@Override
@@ -177,15 +209,6 @@ public class GSAproxyGUI extends JFrame{
 		return menu;
 	}
 
-	public void addJobToList(job j) {
-		acceptedJobs.addElement(j);
-		revalidate();
-	}
-
-	public void completedJob(job j) {
-
-	}
-
 	private void showGui() {
 		setPreferredSize(new Dimension(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -206,13 +229,13 @@ public class GSAproxyGUI extends JFrame{
 
 		@Override
 		public int getRowCount() {
-			return acceptedJobs.size();
+			return acceptedJobVector.size();
 		}
 
 		@Override
 		public Object getValueAt(int row, int col) {
 			Object value;
-			job j = (job) acceptedJobs.get(row);
+			job j = (job) acceptedJobVector.get(row);
 			switch(col) {
 			case 0:
 				value =j.getJobNo();
@@ -245,44 +268,49 @@ public class GSAproxyGUI extends JFrame{
 		}
 	}
 
-	class listModel extends AbstractListModel<Object> {
+	class CompletedJobsTableModel extends AbstractTableModel {
 
 		@Override
-		public Object getElementAt(int index) {
-			return acceptedJobs.get(index);
+		public int getColumnCount() {
+			return tableHeadersVector.size();
 		}
 
 		@Override
-		public int getSize() {
-			return acceptedJobs.size();
-		}
-	}
-
-	class customListRenderer extends JLabel  implements ListCellRenderer<Object> {
-
-		private final Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
-
-		public customListRenderer() {
-			setOpaque(true);
-			setIconTextGap(12);
+		public int getRowCount() {
+			return completedJobVector.size();
 		}
 
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-
-			job entry = (job) value;
-			setText("Job No :" + entry.getJobNo() + " Job ID :" + entry.getJobID() + 
-					" Due Date: " + entry.getJobDuedatebyCust() + " CPN : "+ entry.getCPN() +
-					" Penalty Rate : " + entry.getPenaltyRate() );
-			//					" Operations : " + entry.getOperations());
-			if (isSelected) {
-				setBackground(HIGHLIGHT_COLOR);
-				setForeground(Color.white);
-			} else {
-				setBackground(Color.white);
-				setForeground(Color.black);
+		@Override
+		public Object getValueAt(int row, int col) {
+			Object value;
+			job j = (job) completedJobVector.get(row);
+			switch(col) {
+			case 0:
+				value = j.getJobID();
+				break;
+			case 1:
+				value = j.getOperations();
+				break;
+			case 2:
+				value = j.getCPN();
+				break;
+			case 3:
+				value = j.getPenaltyRate();
+				break;
+			case 4:
+				value = j.getJobDuedatebyCust();
+				break;
+			default:
+				value = "null";
+				break;
 			}
-			return this;
+			return value;
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			return tableHeadersVector.get(column);
 		}
 	}
+
 }

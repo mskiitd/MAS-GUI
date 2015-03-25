@@ -21,6 +21,8 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
+import mas.globalSchedulingproxy.gui.GSAproxyGUI;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 
 import org.apache.logging.log4j.LogManager;
@@ -85,8 +87,8 @@ public class AgentStarter {
 		}
 
 //				MachineGUI gui = new  MachineGUI();
-		new AgentStarter();
-//				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
+//		new AgentStarter();
+				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
 //				MaintenanceGUI mgui = new MaintenanceGUI();
 	}
 

@@ -67,7 +67,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 				getValue();
 
 		this.blackboard = (AID) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID).
 				getValue();
 		
 		replyWith=msg.getReplyWith();

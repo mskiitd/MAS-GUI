@@ -2,10 +2,6 @@ package mas.maintenanceproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.lang.acl.ACLMessage;
-
-import java.io.IOException;
-
 import mas.blackboard.nameZoneData.NamedZoneData;
 import mas.util.AgentUtil;
 import mas.util.ID;

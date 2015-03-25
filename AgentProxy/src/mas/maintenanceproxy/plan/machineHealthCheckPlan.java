@@ -1,11 +1,10 @@
 package mas.maintenanceproxy.plan;
 
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.machineproxy.IMachine;
+import mas.machineproxy.SimulatorInternals;
 import mas.util.ID;
 import mas.util.MessageIds;
 
@@ -24,7 +23,7 @@ public class machineHealthCheckPlan extends CyclicBehaviour implements PlanBody 
 	 */
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
-	private IMachine myMachine;
+	private SimulatorInternals myMachine;
 	private ACLMessage msg;
 	private int step = 0;
 	private Logger log;
@@ -46,8 +45,8 @@ public class machineHealthCheckPlan extends CyclicBehaviour implements PlanBody 
 			msg = myAgent.receive(machineHealth);
 			if(msg != null){
 				try {
-					myMachine = (IMachine) msg.getContentObject();
-					log.info("updating belief base of machine's health : " + myMachine.getStatus());
+					myMachine = (SimulatorInternals) msg.getContentObject();
+					log.info("updating belief base of machine's health : " + myMachine );
 					step = 1;
 				} catch (UnreadableException e) {
 					e.printStackTrace();

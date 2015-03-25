@@ -1,8 +1,6 @@
 package mas.machineproxy.component;
 
-import jade.util.leap.Serializable;
-
-public interface IComponent extends Serializable{
+public interface IComponent {
 
 	public double getEta();
 	public double getBeta();

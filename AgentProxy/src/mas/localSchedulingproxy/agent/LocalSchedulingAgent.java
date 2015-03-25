@@ -37,7 +37,7 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 
 		AID bba = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(
-				ID.LocalScheduler.BeliefBaseConst.blackboardAgent, bba);
+				ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID, bba);
 
 	}
 }

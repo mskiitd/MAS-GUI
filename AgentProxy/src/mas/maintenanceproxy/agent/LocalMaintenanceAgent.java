@@ -16,6 +16,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private AID blackboard;
+	public static int prevMaintPeriod = 5000;
 	
 	private MaintenanceGUI mgui = null;
 
@@ -45,7 +46,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 
 		blackboard = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(
-				ID.Maintenance.BeliefBaseConst.blackboardAgent, blackboard);
+				ID.Maintenance.BeliefBaseConst.blackboardAgentAID, blackboard);
 
 	}
 }

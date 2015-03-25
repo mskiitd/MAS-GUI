@@ -53,15 +53,16 @@ public class ID implements Serializable{
 		public static final String LocalName = "Local_Scheduling_Agent";
 
 		public class BeliefBaseConst {
-			public static final String blackboardAgent = "LSABeliefBase_blackboard-agent";
+			public static final String blackboardAgentAID = "LSABeliefBase_blackboard-agent";
 			public static final String machine = "LSABeliefBase_machine";
 			public static final String jobQueue = "LSABeliefBase_job-list";
 			public static final String maintAgent = "LSABeliefBase_maintenanceAgent";
-			public static final String globalSchAgent = "LSABeliefBase_gsAgent";
+			public static final String globalSchAgentAID = "LSABeliefBase_gsAgent";
 			public static final String dataTracker = "LSABeliefBase_data-tracker";
 			public static final String ProcessingCost = "ProcessingCost";
 			public static final String supportedOperations = "supportedOperations";
 			public static final String regretThreshold = "regret_threshold";
+			
 		}
 
 		public class ZoneData {
@@ -137,9 +138,9 @@ public class ID implements Serializable{
 		}
 
 		public class BeliefBaseConst {
-			public static final String blackboardAgent = "Maintenance_blackboard-agent";
+			public static final String blackboardAgentAID = "Maintenance_blackboard-agent";
 			public static final String machine = "Maintenance_machine";
-			public static final String globalSchAgent = "Maintenance_gsAgent";
+			public static final String globalSchAgentAID = "Maintenance_gsAgent";
 			public static final String dataTracker = "Maintenance_data-tracker";
 			public static final String maintenanceJob = "Maintenance_machine-maintenance-tracker";
 		}

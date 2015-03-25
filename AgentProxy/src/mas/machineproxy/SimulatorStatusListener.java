@@ -3,10 +3,10 @@ package mas.machineproxy;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
 
 public class SimulatorStatusListener implements PropertyChangeListener {
 

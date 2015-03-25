@@ -36,13 +36,13 @@ public class RootMaintenanceBasicCapability extends Capability{
 		Set<Belief<?>> beliefs = new HashSet<Belief<?>>();
 
 		Belief<AID> bboard = new TransientBelief<AID>(
-				ID.Maintenance.BeliefBaseConst.blackboardAgent);
+				ID.Maintenance.BeliefBaseConst.blackboardAgentAID);
 		
 		Belief<AID> myMachine = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.machine);
 		
 		Belief<AID> mygsAgent = new TransientBelief<AID>(
-				ID.Maintenance.BeliefBaseConst.globalSchAgent);
+				ID.Maintenance.BeliefBaseConst.globalSchAgentAID);
 		
 		Belief<AID> maintJob  = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.maintenanceJob);

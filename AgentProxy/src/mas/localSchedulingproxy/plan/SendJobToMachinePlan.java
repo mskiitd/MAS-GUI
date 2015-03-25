@@ -53,7 +53,7 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 				getValue();
 
 		blackboard = (AID) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID).
 				getValue();
 		
 		replyWith= msg.getReplyWith();

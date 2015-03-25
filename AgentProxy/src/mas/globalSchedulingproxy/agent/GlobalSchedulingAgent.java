@@ -18,13 +18,13 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 
 	public static void addConfirmedJob(job j) {
 		if(mygui != null) {
-			mygui.addJobToList(j);
+			mygui.addAcceptedJobToList(j);
 		}
 	}
 
 	public static void addCompletedJob(job j) {
 		if(mygui != null) {
-			mygui.completedJob(j);
+			mygui.addCompletedJob(j);
 		}
 	}
 
