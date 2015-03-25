@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,13 +22,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
+
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.job.job;
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
 import uiconstants.Labels;
 
 @SuppressWarnings("serial")
@@ -71,7 +77,11 @@ public class DefineJobFrame extends JFrame{
 	private boolean dataOk = false;
 	private boolean operationDataOk = false;
 
+	private Logger log;
+
 	public DefineJobFrame(CustomerAgent cAgent, job populatingJob) {
+
+		log = LogManager.getLogger();
 
 		this.populatingJob = populatingJob;
 
@@ -303,18 +313,15 @@ public class DefineJobFrame extends JFrame{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getSource().equals(sendJob)) {
-				// build the job
-				createJobFromParams();
-
-				if(dataOk) {
-					System.out.println("Sending the generated job !!");
-					cAgent.addJobToBeliefBase(generatedJob);
-					cAgent.addGoal(new dispatchJobGoal());
-
-					CustomerProxyGUI.countJob++ ;
-					dispose();
-				}
+			// build the job
+			createJobFromParams();
+			log.info("data format : " + dataOk);
+			if(dataOk) {
+				log.info("Sending the job : " + generatedJob);
+				cAgent.addJobToBeliefBase(generatedJob);
+				
+				CustomerProxyGUI.countJob++ ;
+				dispose();
 			}
 		}
 	}

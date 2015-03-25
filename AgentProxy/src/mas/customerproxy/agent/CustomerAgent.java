@@ -3,7 +3,9 @@ package mas.customerproxy.agent;
 import javax.swing.SwingUtilities;
 
 import jade.core.AID;
+import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.gui.CustomerProxyGUI;
+import mas.customerproxy.plan.DispatchJobPlan;
 import mas.job.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -14,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
+import bdi4jade.plan.PlanInstance;
 
 public class CustomerAgent extends AbstractCustomerAgent {
 
@@ -23,19 +26,33 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	public static CustomerProxyGUI mygui;
 	private AID blackboard;
 	
-
 	public void addJobToBeliefBase(job j) {
 		log.info("Adding job " + j + " to belief base");
 		bfBase = getRootCapability().getBeliefBase();
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB, j);
+		
+		log.info("dispatching goal " );
+		
+		String replyWith = Integer.toString(j.getJobNo());
+		
+		ZoneDataUpdate jobOrderZoneDataUpdate = new ZoneDataUpdate.
+				Builder(ID.Customer.ZoneData.newWorkOrderFromCustomer).
+				value(j).
+				setReplyWith(replyWith).
+				Build();
+
+		/*for(int i=0;i<jobToDispatch.getOperations().size();i++){
+			log.info(jobToDispatch.getOperations().get(i).getProcessingTime());
+		}*/
+		AgentUtil.sendZoneDataUpdate(this.blackboard,jobOrderZoneDataUpdate, this);
+		
+//		addGoal(new dispatchJobGoal());
 	}
 	
 	public void cancelOrder(job j) {
-		
 	}
 	
 	public void changeDueDate(job j) {
-		
 	}
 	
 	public void confirmJob(job j) {
@@ -62,6 +79,16 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	protected void init() {
 		
 		super.init();
+
+		Capability bCap = new basicCapability();
+		addCapability(bCap);
+		log = LogManager.getLogger();
+
+		blackboard = AgentUtil.findBlackboardAgent(this);
+		
+		bCap.getBeliefBase().updateBelief(
+				ID.Customer.BeliefBaseConst.blackboardAgent, blackboard);
+		
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -69,14 +96,6 @@ public class CustomerAgent extends AbstractCustomerAgent {
 				mygui = new CustomerProxyGUI(CustomerAgent.this);
 			}
 		});
-
-		Capability bCap = new basicCapability();
-		addCapability(bCap);
-		log = LogManager.getLogger();
-
-		AID bba = AgentUtil.findBlackboardAgent(this);
-		bCap.getBeliefBase().updateBelief(
-				ID.Customer.BeliefBaseConst.blackboardAgent, bba);
 
 	}
 }

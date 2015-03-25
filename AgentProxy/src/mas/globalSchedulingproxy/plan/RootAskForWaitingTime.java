@@ -18,6 +18,7 @@ import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
 import bdi4jade.core.BDIAgent;
+import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -36,26 +37,30 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	private ACLMessage[] WaitingTime;
 	private int repliesCnt = 0; // The counter of replies from seller agents
 
-
+	private BeliefBase bfBase;
 
 	@Override
 	public void init(PlanInstance PI) {
 		log=LogManager.getLogger();
-		
+
 		try {
 			j=(job)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
 		} catch (UnreadableException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		blackboard=(AID)PI.getBeliefBase().getBelief(ID.Blackboard.LocalName).getValue();
+		blackboard=(AID)PI.getBeliefBase().
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
+				getValue();
 
-		
+
 		msgReplyID=Integer.toString(j.getJobNo());
 		mt=MessageTemplate.and(
 				MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime),
 				MessageTemplate.MatchReplyWith(msgReplyID));
-//		mt=MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime);
+
+		this.bfBase = PI.getBeliefBase();
+		//		mt=MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime);
 
 	}
 
@@ -63,27 +68,32 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	public void action() {
 		switch (step) {
 		case 0:
-			
-			this.MachineCount=(int)((BDIAgent)myAgent).getRootCapability().getBeliefBase().getBelief(ID.Blackboard.BeliefBaseConst.NoOfMachines).getValue();
-//			log.info(MachineCount);
-			
-			if(MachineCount!=0){
-//				log.info(j.getDuedate());
-//				ZoneDataUpdate update=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GetWaitingTime, j);
-				ZoneDataUpdate update=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GetWaitingTime)
-					.value(j).setReplyWith(msgReplyID).Build();
+
+			this.MachineCount = (int) bfBase.
+			getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
+			getValue();
+			//			log.info(MachineCount);
+
+			if(MachineCount != 0){
+				//				log.info(j.getDuedate());
+				//				ZoneDataUpdate update=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GetWaitingTime, j);
+				ZoneDataUpdate update = new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GetWaitingTime).
+						value(j).
+						setReplyWith(msgReplyID).
+						Build();
+				
 				AgentUtil.sendZoneDataUpdate(blackboard, update, myAgent);
-				WaitingTime=new ACLMessage[MachineCount];
+				WaitingTime = new ACLMessage[MachineCount];
 				step = 1;
 
 			}
-			
+
 			break;
 		case 1:
-//			log.info("step="+step);
-//			log.info("expecting reply ID : "+msgReplyID);
+			//			log.info("step="+step);
+			//			log.info("expecting reply ID : "+msgReplyID);
 			try{
-				
+
 				ACLMessage reply = myAgent.receive(mt);
 				if (reply != null) {
 					WaitingTime[repliesCnt]=reply;
@@ -104,17 +114,17 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			}
 			break;
 		case 2:
-//			log.info("step="+step);
+			//			log.info("step="+step);
 			try {
-				
-				 
-								
+
+
+
 				ACLMessage max=ChooseWaitingTimeToSend(WaitingTime);
 				job JobToSend=(job)(max.getContentObject());
-//				log.info(JobToSend.getJobDuedatebyCust());
-//				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation, JobToSend);
+				//				log.info(JobToSend.getJobDuedatebyCust());
+				//				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation, JobToSend);
 				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation)
-					.value(JobToSend).setReplyWith(msgReplyID).Build();
+				.value(JobToSend).setReplyWith(msgReplyID).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);
 
 			} catch (UnreadableException e) {
@@ -152,7 +162,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 		return (step==3);
 	}
-	
+
 	@Override
 	public EndState getEndState() {
 		if(step==3){
@@ -161,6 +171,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		else{
 			return EndState.FAILED;
 		}
-		
+
 	}
 }

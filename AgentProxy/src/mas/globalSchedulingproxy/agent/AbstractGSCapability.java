@@ -2,16 +2,20 @@ package mas.globalSchedulingproxy.agent;
 
 import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import mas.globalSchedulingproxy.goal.GetNoOfMachinesGoal;
 import mas.globalSchedulingproxy.goal.RegisterAgentGoal;
 import mas.globalSchedulingproxy.goal.RegisterServiceGoal;
 import mas.globalSchedulingproxy.plan.*;
 import mas.util.ID;
 import mas.util.MessageIds;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.BeliefSet;
 import bdi4jade.belief.TransientBelief;
@@ -41,10 +45,17 @@ public abstract class AbstractGSCapability  extends Capability {
 		BB_AID.setValue(new AID(ID.Blackboard.LocalName,AID.ISLOCALNAME));
 
 		//no of machines = no of LSA
-		BeliefSet<Integer> NoOfMachines = new 
-				TransientBeliefSet<Integer>(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines);		
+		Belief<Integer> NoOfMachines = new 
+				TransientBelief<Integer>(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines);
+
+		Belief<String> DueDateCalcMethod = 
+				new TransientBelief<String>(ID.GlobalScheduler.BeliefBaseConst.DueDateCalcMethod);
+		
+		DueDateCalcMethod.setValue(ID.GlobalScheduler.OtherConst.LocalDueDate);
+
 		beliefs.add(BB_AID);
 		beliefs.add(NoOfMachines);
+		beliefs.add(DueDateCalcMethod);
 
 		return beliefs;
 	}

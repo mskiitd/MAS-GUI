@@ -84,6 +84,9 @@ public class AbstractbasicCapability extends Capability {
 		
 		Belief<Double> regretThreshold = new TransientBelief<Double>(
 				ID.LocalScheduler.BeliefBaseConst.regretThreshold);
+		
+		double threshVal = 0;
+		regretThreshold.setValue(threshVal);
 
 		ArrayList<job> jobList = new ArrayList<job>();
 		jobSet.setValue(jobList);
@@ -134,7 +137,6 @@ public class AbstractbasicCapability extends Capability {
 		myAgent.addGoal(new RegisterLSAgentToBlackboardGoal());
 		myAgent.addGoal(new JobSchedulingGoal());
 		
-		log.info("plans are : " +  getPlans() );
 		/*	myAgent.addGoal(new SendBidGoal());
 		myAgent.addGoal(new SendJobGoal());
 		myAgent.addGoal(new SendWaitingTimeGoal());

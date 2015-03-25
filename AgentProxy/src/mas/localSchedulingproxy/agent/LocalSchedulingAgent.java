@@ -28,7 +28,7 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 	@Override
 	protected void init() {
 		super.init();
-		mGUI = new MachineGUI(this);
+		
 		log = LogManager.getLogger();
 
 		// Add capability to agent 
@@ -38,6 +38,11 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 		AID bba = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(
 				ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID, bba);
-
+		
+		if(mGUI == null) {
+			mGUI = new MachineGUI(LocalSchedulingAgent.this);
+		}
 	}
+	
+	
 }

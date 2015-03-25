@@ -1,7 +1,6 @@
 package mas.globalSchedulingproxy.agent;
 
 import jade.lang.acl.MessageTemplate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bdi4jade.util.plan.SimplePlan;

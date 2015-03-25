@@ -52,20 +52,24 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 	private int repliesCnt = 0; // The counter of replies from seller agents
 	private job order;
 	private String dueDateMethod=null;
+	
+	private BeliefBase bfBase;
 
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
+		bfBase = PI.getBeliefBase();
 		log.info("triggered by "+((MessageGoal) PI.getGoal()).getMessage().getSender().getLocalName());
-		dueDateMethod=(String)PI.getBeliefBase().getBelief(ID.GlobalScheduler.BeliefBaseConst.DueDateCalcMethod).getValue();
-		
+		dueDateMethod = (String)PI.getBeliefBase().getBelief(ID.GlobalScheduler.BeliefBaseConst.DueDateCalcMethod).getValue();
+
 		try {
 			order = (job) ((MessageGoal) PI.getGoal()).getMessage()
 					.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
-		blackboard = (AID) PI.getBeliefBase()
-				.getBelief(ID.Blackboard.LocalName).getValue();
+		blackboard = (AID) PI.getBeliefBase().
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
+				getValue();
 
 		msgReplyID = Integer.toString(order.getJobNo());
 
@@ -76,28 +80,30 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 	@Override
 	public void action() {
 
-		
+
 		switch (step) {
 		case 0:
-			
-			this.MachineCount = (int) ((BDIAgent) myAgent).getRootCapability()
-					.getBeliefBase()
-					.getBelief(ID.Blackboard.BeliefBaseConst.NoOfMachines)
-					.getValue();
+
+			this.MachineCount = (int) bfBase
+			.getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines)
+			.getValue();
 			// log.info(MachineCount);
 
 			if (MachineCount != 0) {
-//				log.info("due date: "+order.getDuedate());
+				//				log.info("due date: "+order.getDuedate());
 				/*ZoneDataUpdate zdu = new ZoneDataUpdate(
 						ID.GlobalScheduler.ZoneData.askBidForJobFromLSA, order);*/
 				order.setJobStartTimeByCust(new Date(System.currentTimeMillis()));
 				order=SetDueDates(order);
-				
-				ZoneDataUpdate zdu=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.askBidForJobFromLSA)
-					.value(order).setReplyWith(msgReplyID).Build();
-						
+
+				ZoneDataUpdate zdu = new ZoneDataUpdate.
+						Builder(ID.GlobalScheduler.ZoneData.askBidForJobFromLSA).
+						value(order).
+						setReplyWith(msgReplyID).
+						Build();
+
 				AgentUtil.sendZoneDataUpdate(blackboard, zdu, myAgent);
-				
+
 				LSAbids = new ACLMessage[MachineCount];
 				step = 1;
 				// log.info("mt="+mt);
@@ -112,7 +118,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				if (reply != null) {
 					LSAbids[repliesCnt] = reply;
 					repliesCnt++;
-					
+
 
 					if (repliesCnt == MachineCount) {
 						step = 2;
@@ -128,14 +134,17 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			break;
 		case 2:
 			try {
-				
+
 				ACLMessage BestBid = ChooseBid(LSAbids);
 				job JobForBidWinner = (job) (BestBid.getContentObject());
 				JobForBidWinner.setBidWinnerLSA(JobForBidWinner.getLSABidder());
 				log.info(JobForBidWinner.getLSABidder().getLocalName()+" won bid with "+JobForBidWinner.getBidByLSA());
-				ZoneDataUpdate jobForLSAUpdate=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.jobForLSA)
-					.value(JobForBidWinner).setReplyWith(msgReplyID).Build();
-				
+				ZoneDataUpdate jobForLSAUpdate=new ZoneDataUpdate.
+						Builder(ID.GlobalScheduler.ZoneData.jobForLSA).
+						value(JobForBidWinner).
+						setReplyWith(msgReplyID).
+						Build();
+
 				AgentUtil.sendZoneDataUpdate(blackboard, jobForLSAUpdate,
 						myAgent);
 
@@ -158,7 +167,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		long slack=totalAvailableTime-totalProcessingTime;
 		int NoOfOps=jobForBidWinner.getOperations().size();
 		long currTime=jobForBidWinner.getStartTimeByCust().getTime();
-		
+
 		if(dueDateMethod==ID.GlobalScheduler.OtherConst.LocalDueDate){
 			long slack_perOperation=(long)((double)slack)/(NoOfOps);
 
@@ -179,7 +188,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			}
 		}
 		return jobForBidWinner;
-		
+
 	}
 
 	private ACLMessage ChooseBid(ACLMessage[] LSA_bids) {
@@ -187,7 +196,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		for (int i = 0; i < LSA_bids.length; i++) {
 			try {
 				log.info(((job) (LSA_bids[i].getContentObject())).getLSABidder().getLocalName() +" sent bid= "+ ((job) (LSA_bids[i].getContentObject())).getBidByLSA());
-				
+
 				if (((job) (LSA_bids[i].getContentObject())).getBidByLSA() < ((job) (MinBid
 						.getContentObject())).getBidByLSA()) {
 					MinBid = LSA_bids[i];

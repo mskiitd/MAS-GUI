@@ -16,7 +16,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private AID blackboard;
-	public static int prevMaintPeriod = 5000;
+	public static long prevMaintPeriod = 1 * 60 * 1000;
 	
 	private MaintenanceGUI mgui = null;
 
@@ -36,7 +36,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 		super.init();
 		
 		if(mgui == null) {
-			mgui = new MaintenanceGUI(this);
+			mgui = new MaintenanceGUI(LocalMaintenanceAgent.this);
 		}
 		log = LogManager.getLogger();
 

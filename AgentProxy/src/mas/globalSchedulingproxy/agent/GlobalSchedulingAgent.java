@@ -39,13 +39,6 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		super.init();		
 
 		log = LogManager.getLogger();
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				mygui = new GSAproxyGUI(GlobalSchedulingAgent.this);
-			}
-		});
 
 		Capability bCap=  new BasicCapability();
 		addCapability(bCap);
@@ -53,6 +46,13 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		AID bba = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(
 				ID.GlobalScheduler.BeliefBaseConst.blackboardAgent, bba);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				mygui = new GSAproxyGUI(GlobalSchedulingAgent.this);
+			}
+		});
 
 	}
 }

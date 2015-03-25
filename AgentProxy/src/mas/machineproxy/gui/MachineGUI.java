@@ -38,9 +38,9 @@ public class MachineGUI extends JFrame {
 	private CustomJobQueue queuePanel;
 	private ArrayList<job> jobQ;
 
-	public MachineGUI(LocalSchedulingAgent lAgent) {
+	public MachineGUI(LocalSchedulingAgent agent) {
 		
-		this.lSchAgent = lAgent;
+		this.lSchAgent = agent;
 		
 		this.mcPanel = new JPanel(new GridBagLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
@@ -73,20 +73,6 @@ public class MachineGUI extends JFrame {
 			e.printStackTrace();
 		}
 		jobQ = new ArrayList<job>();
-		jobQ.add(new job.Builder("1").build());
-		jobQ.add(new job.Builder("2").build());
-		jobQ.add(new job.Builder("3").build());
-		jobQ.add(new job.Builder("4").build());
-		jobQ.add(new job.Builder("5").build());
-		jobQ.add(new job.Builder("6").build());
-		jobQ.add(new job.Builder("7").build());
-		jobQ.add(new job.Builder("8").build());
-		jobQ.add(new job.Builder("9").build());
-		jobQ.add(new job.Builder("10").build());
-		jobQ.add(new job.Builder("11").build());
-		jobQ.add(new job.Builder("12").build());
-		jobQ.add(new job.Builder("13").build());
-		jobQ.add(new job.Builder("14").build());
 
 		this.queuePanel = new CustomJobQueue(jobQ);
 		queuePanel.setBorder((new EmptyBorder(10,10,10,10) ));

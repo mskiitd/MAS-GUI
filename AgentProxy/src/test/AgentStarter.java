@@ -21,9 +21,13 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import mas.blackboard.blackboard;
+import mas.customerproxy.agent.CustomerAgent;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
-import mas.globalSchedulingproxy.gui.GSAproxyGUI;
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.machineproxy.Simulator;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
+import mas.util.ID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,8 +42,13 @@ public class AgentStarter {
 
 	static {
 		agents = new HashMap<String, Agent>();
-//		agents.put("customer", new CustomerAgent());
-		agents.put("maint", new LocalMaintenanceAgent());
+		agents.put("blackboard", new blackboard());
+		agents.put("customer", new CustomerAgent());
+		
+		agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
+		agents.put(ID.Machine.LocalName+"#1", new Simulator());
+		agents.put(ID.LocalScheduler.LocalName+"#1", new LocalSchedulingAgent());
+		agents.put(ID.Maintenance.LocalName+"#1", new LocalMaintenanceAgent());
 	};
 
 	public static void setUIFont (javax.swing.plaf.FontUIResource f){
@@ -86,10 +95,8 @@ public class AgentStarter {
 			e.printStackTrace();
 		}
 
-//				MachineGUI gui = new  MachineGUI();
-//		new AgentStarter();
-				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
-//				MaintenanceGUI mgui = new MaintenanceGUI();
+		new AgentStarter();
+		//				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
 	}
 
 	public AgentStarter() {

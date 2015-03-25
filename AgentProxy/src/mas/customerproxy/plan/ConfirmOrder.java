@@ -55,7 +55,6 @@ public class ConfirmOrder extends OneShotBehaviour implements PlanBody{
 		ZoneDataUpdate ConfirmedOrderZoneDataUpdate=new ZoneDataUpdate.Builder(ID.Customer.ZoneData.customerConfirmedJobs)
 		.value(ConfirmedJob).setReplyWith(replyWith).Build();
 		
-		
 		AgentUtil.sendZoneDataUpdate(bba, ConfirmedOrderZoneDataUpdate, myAgent);
 	}
 }
