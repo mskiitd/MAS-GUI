@@ -36,7 +36,7 @@ public class DispatchJobPlan extends OneShotBehaviour implements PlanBody{
 
 		//		log.info(bfBase.getBelief(basicCapability.CURR_JOB));
 		jobToDispatch = (job) bfBase
-				.getBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB)
+				.getBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND)
 				.getValue();
 
 		this.bba = (AID) bfBase
@@ -60,9 +60,6 @@ public class DispatchJobPlan extends OneShotBehaviour implements PlanBody{
 				setReplyWith(replyWith).
 				Build();
 
-		/*for(int i=0;i<jobToDispatch.getOperations().size();i++){
-			log.info(jobToDispatch.getOperations().get(i).getProcessingTime());
-		}*/
 		AgentUtil.sendZoneDataUpdate(this.bba,jobOrderZoneDataUpdate, myAgent);
 	}
 }

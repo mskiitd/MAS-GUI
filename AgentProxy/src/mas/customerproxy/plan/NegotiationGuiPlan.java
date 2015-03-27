@@ -1,6 +1,7 @@
 package mas.customerproxy.plan;
 
 import mas.customerproxy.agent.CustomerAgent;
+import mas.customerproxy.gui.CustomerNegotiateProxyGUI;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -18,7 +19,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class NegotiationPlan extends Behaviour implements PlanBody {
+public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private BeliefBase bfBase;
@@ -55,8 +56,10 @@ public class NegotiationPlan extends Behaviour implements PlanBody {
 	@Override
 	public void action() {
 
-		setNegotiation(negotiationJob);
-
+		if(CustomerAgent.mygui != null) {
+			CustomerNegotiateProxyGUI nego = new CustomerNegotiateProxyGUI(
+					(CustomerAgent)myAgent, negotiationJob);
+		}
 	}
 
 	public void setNegotiation(job j) {

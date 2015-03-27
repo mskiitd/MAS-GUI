@@ -1,8 +1,8 @@
-package mas.customerproxy.goal;
+package mas.customerproxy.gui;
 
 import bdi4jade.goal.Goal;
 
-public class NegotiateGoal implements Goal{
+public class CancelOrderGoal implements Goal{
 
 	private static final long serialVersionUID = 1L;
 

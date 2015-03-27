@@ -18,6 +18,12 @@ public class MessageIds {
 
 	// accepted jobs by GSA
 	public static final String msgcustomerConfirmedJobs = "customer_jobsAccepted";
+	
+	// canceled orders by customer
+	public static final String msgcustomerCanceledOrders = "customer_canceledOrders";
+
+	// orders with changed due dates
+	public static final String msgcustomerChangeDDorders = "customer_Changed_duedate_orders";
 
 	//-----------------------------------------------------------------------------------------------------------------
 
@@ -112,7 +118,7 @@ public class MessageIds {
 
 	//operation n is finished. now send job to GSA for n+1th operation
 	public static String msgLSAfinishedJobs="finished_job_fromLSA";
-	
+
 
 	//	// Local scheduling Agent id's here
 	//	public static final String LSJobForMachine = "LSJobForMachine";

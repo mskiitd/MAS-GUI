@@ -2,7 +2,8 @@ package mas.customerproxy.agent;
 
 import jade.lang.acl.MessageTemplate;
 import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
-import mas.customerproxy.plan.NegotiationPlan;
+import mas.customerproxy.goal.SendNegotiationJobGoal;
+import mas.customerproxy.plan.NegotiationGuiPlan;
 import mas.util.MessageIds;
 import bdi4jade.util.plan.SimplePlan;
 
@@ -13,8 +14,15 @@ public class basicCapability extends parentBasicCapability{
 	public basicCapability() {
 		super();
 
+		/**
+		 * add two plans: one for opening gui for negotiation
+		 * other for sending negotiation job back to the GSA 
+		 */
 		getPlanLibrary().addPlan(new SimplePlan(MessageTemplate.MatchConversationId(
-				MessageIds.msgGSAjobsUnderNegaotiation),NegotiationPlan.class));
+				MessageIds.msgGSAjobsUnderNegaotiation),NegotiationGuiPlan.class));
+
+		getPlanLibrary().addPlan(new SimplePlan(SendNegotiationJobGoal.class,
+				NegotiationGuiPlan.class));
 	}
 
 	@Override

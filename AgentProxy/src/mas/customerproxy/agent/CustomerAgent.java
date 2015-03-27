@@ -1,22 +1,19 @@
 package mas.customerproxy.agent;
 
 import javax.swing.SwingUtilities;
-
 import jade.core.AID;
+import mas.customerproxy.goal.SendNegotiationJobGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
+import mas.customerproxy.gui.CancelOrderGoal;
+import mas.customerproxy.gui.ChangeDueDateGoal;
 import mas.customerproxy.gui.CustomerProxyGUI;
-import mas.customerproxy.plan.DispatchJobPlan;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
-import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
-import bdi4jade.plan.PlanInstance;
 
 public class CustomerAgent extends AbstractCustomerAgent {
 
@@ -27,47 +24,36 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	private AID blackboard;
 	
 	public void addJobToBeliefBase(job j) {
-		log.info("Adding job " + j + " to belief base");
-		bfBase = getRootCapability().getBeliefBase();
-		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB, j);
+		log.info("Adding generated job " + j + " to belief base");
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, j);
 		
-		log.info("dispatching goal " );
-		
-		String replyWith = Integer.toString(j.getJobNo());
-		
-		ZoneDataUpdate jobOrderZoneDataUpdate = new ZoneDataUpdate.
-				Builder(ID.Customer.ZoneData.newWorkOrderFromCustomer).
-				value(j).
-				setReplyWith(replyWith).
-				Build();
-
-		AgentUtil.sendZoneDataUpdate(this.blackboard,jobOrderZoneDataUpdate, this);
+		addGoal(new dispatchJobGoal());
 	}
 	
 	public void cancelOrder(job j) {
+		log.info("Cancelling order : " + j + " adding belief base");
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CANCEL_ORDER, j);
+		
+		addGoal(new CancelOrderGoal());
 	}
 	
 	public void changeDueDate(job j) {
+		log.info("Change due date for order : " + j + " adding belief base");
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB, j);
+		
+		addGoal(new ChangeDueDateGoal());
 	}
 	
 	public void confirmJob(job j) {
+		log.info("Adding Confirmed job " + j + " to belief base");
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB, j);
 		
-		ZoneDataUpdate confirmedJobDataUpdate = new ZoneDataUpdate.Builder(
-				ID.Customer.ZoneData.customerConfirmedJobs).
-				value(j).Build();
-
-		AgentUtil.sendZoneDataUpdate( blackboard,
-				confirmedJobDataUpdate,CustomerAgent.this);
+		addGoal(new SendNegotiationJobGoal());
 	}
 	
 	public void negotiateJob(job j) {
-		
-		ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.Builder(
-				ID.Customer.ZoneData.customerJobsUnderNegotiation).
-				value(j).Build();
-
-		AgentUtil.sendZoneDataUpdate( blackboard,
-				negotiationJobDataUpdate,CustomerAgent.this);
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB, j);
+		this.addGoal(new SendNegotiationJobGoal());
 	}
 	
 	@Override
@@ -81,7 +67,8 @@ public class CustomerAgent extends AbstractCustomerAgent {
 
 		blackboard = AgentUtil.findBlackboardAgent(this);
 		
-		bCap.getBeliefBase().updateBelief(
+		bfBase = getRootCapability().getBeliefBase();
+		bfBase.updateBelief(
 				ID.Customer.BeliefBaseConst.blackboardAgent, blackboard);
 		
 		SwingUtilities.invokeLater(new Runnable() {

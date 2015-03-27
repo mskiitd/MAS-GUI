@@ -1,6 +1,6 @@
 package mas.util;
 
-import java.io.Serializable;
+import jade.util.leap.Serializable;
 
 public class ID implements Serializable{
 
@@ -32,7 +32,11 @@ public class ID implements Serializable{
 			public static final String JobList = "customerBeliefBase_JobList";
 			public static final String JOB_GENERATOR = "customerBeliefBase_JOB-GENERATOR";
 			public static final String blackboardAgent = "customerBeliefBase_blackboard-agent";
-			public static final String CURRENT_JOB = "customerBeliefBase_Current-job";
+			public static final String CURRENT_JOB2SEND = "customerBeliefBase_Current-job";
+			public static final String CURRENT_NEGOTIATION_JOB = "customerBeliefBase_Current_negotitaion_job";
+			public static final String CURRENT_CONFIRMED_JOB = "customerBeliefBase_Current_confirmed_job";
+			public static final String CANCEL_ORDER = "customerBeliefBase_Cancel_job";
+			public static final String CHANGE_DUEDATE_JOB = "customerBeliefBase_Change_DueDate_job";
 		}
 
 		public class ZoneData {
@@ -45,6 +49,12 @@ public class ID implements Serializable{
 
 			// accepted jobs by GSA
 			public static final String customerConfirmedJobs = "customer_jobsAccepted";
+			
+			// order cancelled by customer
+			public static final String customerCanceledOrders = "customer_cancelledOrders";
+			
+			// order for which due date is changed
+			public static final String customerChangeDDorders = "customer_Change_due_date_orders";
 		}
 	}
 
@@ -63,7 +73,6 @@ public class ID implements Serializable{
 			public static final String supportedOperations = "supportedOperations";
 			public static final String regretThreshold = "regret_threshold";
 			public static final String currentJobOnMachine="jobCurrentlyProcessingOnMachine";
-
 		}
 
 		public class ZoneData {
@@ -105,9 +114,12 @@ public class ID implements Serializable{
 
 			// advertise job for getting waiting time from LSA's
 			public static final String GetWaitingTime = "GSA_LocalSchedulingwaiting-time";
-
 			//query job information from LSA
-			public static final String QueryRequest = "QueryRequestAbtLSAfromGSA"; 
+			public static final String QueryRequest = "QueryRequestAbtLSAfromGSA";
+
+			public static final String CallBackJobs = "CallBackJobs";
+
+			public static final String completedJobByGSA = "completedJobs"; 
 		}
 
 		public class BeliefBaseConst {
