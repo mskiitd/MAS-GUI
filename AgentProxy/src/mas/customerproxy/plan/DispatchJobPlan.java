@@ -34,7 +34,6 @@ public class DispatchJobPlan extends OneShotBehaviour implements PlanBody{
 		log = LogManager.getLogger();
 		bfBase = pInstance.getBeliefBase();
 
-		//		log.info(bfBase.getBelief(basicCapability.CURR_JOB));
 		jobToDispatch = (job) bfBase
 				.getBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND)
 				.getValue();

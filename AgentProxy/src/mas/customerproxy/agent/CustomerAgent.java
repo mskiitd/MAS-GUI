@@ -1,7 +1,9 @@
 package mas.customerproxy.agent;
 
 import javax.swing.SwingUtilities;
+
 import jade.core.AID;
+import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.SendNegotiationJobGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.gui.CancelOrderGoal;
@@ -10,8 +12,10 @@ import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
 
@@ -48,7 +52,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		log.info("Adding Confirmed job " + j + " to belief base");
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB, j);
 		
-		addGoal(new SendNegotiationJobGoal());
+		addGoal(new SendConfirmedOrderGoal());
 	}
 	
 	public void negotiateJob(job j) {

@@ -21,7 +21,7 @@ public class BasicCapability extends AbstractGSCapability{
 
 	@Override
 	protected void setup() {
-		log=LogManager.getLogger();
+		log = LogManager.getLogger();
 		super.setup();
 	}
 }

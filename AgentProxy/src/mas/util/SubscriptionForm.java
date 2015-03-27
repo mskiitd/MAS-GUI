@@ -7,9 +7,6 @@ import java.util.ArrayList;
 
 public class SubscriptionForm implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<parameterSubscription> subscriptionReq
 			= new ArrayList<parameterSubscription>();

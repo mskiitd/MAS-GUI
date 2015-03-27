@@ -24,6 +24,7 @@ import javax.swing.table.AbstractTableModel;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.job;
+import mas.util.JobQueryObject;
 import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
@@ -135,7 +136,7 @@ public class GSAproxyGUI extends JFrame{
 	/**
 	 * shows the result of the query for the job from table
 	 */
-	public void showQueryResult() {
+	public static void showQueryResult(JobQueryObject response) {
 
 	}
 	
@@ -159,6 +160,7 @@ public class GSAproxyGUI extends JFrame{
 			JMenuItem menu = (JMenuItem) event.getSource();
 			if (menu == menuItemQuery) {
 				currentSelecetdQueryJob = jobsInSystemTable.getSelectedRow();
+				
 				gAgent.queryJob((job) acceptedJobVector.get(currentSelecetdQueryJob));
 
 			} 

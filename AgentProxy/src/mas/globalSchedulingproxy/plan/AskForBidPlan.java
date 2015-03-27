@@ -1,7 +1,6 @@
 package mas.globalSchedulingproxy.plan;
 
 import java.io.IOException;
-
 import mas.jobproxy.job;
 import mas.util.MessageIds;
 import jade.core.behaviours.Behaviour;
@@ -23,7 +22,7 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 	private MessageTemplate mt;
 	private job JobToSend;
 	private static final long serialVersionUID = 1L;
-	
+
 	@Override
 	public EndState getEndState() {
 		return EndState.SUCCESSFUL;
@@ -38,65 +37,60 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public void action() {
-		
+
 		switch (step) {
-			case 0:
+		case 0:
 			/*		numLSA = (Integer) bfBase.getBelief(AbstractGSCapability
 								.MACHINES).getValue();*/
-					
-					bids = new ACLMessage[numLSA];
-					step = 1;
-				break;
-				
-			case 1:
-				try{
-					ACLMessage reply = myAgent.receive(mt);
-					if (reply != null) {
-						bids[repliesCnt]=reply;
-						repliesCnt++;				
-						if (repliesCnt == numLSA) {				
-							step = 2; 
-						}
-					} else {
-							block();
-						}
-					} catch (Exception e3) {
-					
+
+			bids = new ACLMessage[numLSA];
+			step = 1;
+			break;
+
+		case 1:
+			try{
+				ACLMessage reply = myAgent.receive(mt);
+				if (reply != null) {
+					bids[repliesCnt] = reply;
+					repliesCnt++;				
+					if (repliesCnt == numLSA) {				
+						step = 2; 
 					}
-				break;
-				
-			case 2:			
-				
-				ACLMessage min = bids[0];			
-				for(int i = 0; i < bids.length;i++){
-		//				if(Double.parseDouble(Bids[i].getContent())<Double.parseDouble(min.getContent())){
-					try {
-						if(((job)(bids[i].getContentObject())).getBidByLSA() > 
-								((job)(min.getContentObject())).getBidByLSA()){
-								min = bids[i];
-							}
-					} catch (UnreadableException e) {
-						e.printStackTrace();
-						}
+				} else {
+					block();
 				}
-	//			try {
-	//				System.out.println("Min Bid is:"+((job)(min.getContentObject())).BidByLSA);
-	//			} catch (UnreadableException e1) {
-	//				e1.printStackTrace();
-	//			}
-				
-				ACLMessage OrderToLSA = new ACLMessage(ACLMessage.REQUEST);
+			} catch (Exception e3) {
+
+			}
+			break;
+
+		case 2:			
+
+			ACLMessage min = bids[0];			
+			for(int i = 0; i < bids.length;i++){
 				try {
-					OrderToLSA.setContentObject(JobToSend);
-				} catch (IOException e) {
+					if(((job)(bids[i].getContentObject())).getBidByLSA() > 
+					((job)(min.getContentObject())).getBidByLSA()){
+						min = bids[i];
+					}
+				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
-				OrderToLSA.addReceiver(min.getSender());
-				OrderToLSA.setConversationId(MessageIds.msgbidResultJob);
-				myAgent.send(OrderToLSA);
-	//			System.out.println("OrderToLSA" + OrderToLSA);
-				step = 3;
-				break;
+			}
+
+			ACLMessage OrderToLSA = new ACLMessage(ACLMessage.REQUEST);
+			try {
+				OrderToLSA.setContentObject(JobToSend);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			OrderToLSA.addReceiver(min.getSender());
+			OrderToLSA.setConversationId(MessageIds.msgbidResultJob);
+			myAgent.send(OrderToLSA);
+			
+			//			System.out.println("OrderToLSA" + OrderToLSA);
+			step = 3;
+			break;
 
 		}   
 	}

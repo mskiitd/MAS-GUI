@@ -154,7 +154,6 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace{
 		RecursiveSolver(this.rootNode);
 		/** reverse the sequence as the correct schedule in the tree goes from
 		 * bottom to top
-		 * 
 		 */
 		Collections.reverse(this.best);
 		this.best.add(0,fixedJob);

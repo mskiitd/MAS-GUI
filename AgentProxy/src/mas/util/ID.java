@@ -119,13 +119,17 @@ public class ID implements Serializable{
 
 			public static final String CallBackJobs = "CallBackJobs";
 
-			public static final String completedJobByGSA = "completedJobs"; 
+			public static final String completedJobByGSA = "completedJobs";
+
+			public static final String Current_Negotiation_Job = "GSA_currentNegJob"; 
 		}
 
 		public class BeliefBaseConst {
 			public static final String blackboardAgent = "GSA_blackboard-agent";
 			public static final String NoOfMachines = "NoOfMachines";
 			public static final String DueDateCalcMethod = "DueDateCalc";
+			public static final String Current_Negotiation_Job = "GSA_negotiatin_job";
+			public static final String GSAqueryJob = "GSA_query_job";
 		}
 		
 		public class OtherConst{
