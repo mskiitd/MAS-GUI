@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import test.AgentStarter;
-import mas.job.job;
+import mas.jobproxy.job;
 
 @SuppressWarnings("serial")
 public class CustomJobQueue extends JPanel {
@@ -21,12 +21,13 @@ public class CustomJobQueue extends JPanel {
 	private int remainderComps;
 	private int arcWidth = 6;
 	private int arcHeight = arcWidth;
-	private int cWidth = 58;
+	private int cWidth = 78;
 	private int cHeight = 50;
 	public static final int padding = 8;
 	private List<job> jQueue;
 	public static Color boxColor = new Color(123,104,238);
 	public static Color stringColor = Color.BLACK;
+	public static Color firstJobColor = new Color(46, 139, 87);
 
 	public CustomJobQueue(List<job> q) {
 		this.jQueue = q;
@@ -61,6 +62,10 @@ public class CustomJobQueue extends JPanel {
 			graphics.translate(padding, (i + 1)*padding);
 			// draw components
 			for( int c = 0 ; c < componentsInOneLine ; c++) {
+				
+				if(i == 0 && c == 0 ) {
+					graphics.setColor(firstJobColor);
+				}
 				graphics.fillRoundRect(c * cWidth  , i*cHeight ,
 						cWidth , cHeight, arcWidth, arcHeight);
 
@@ -80,6 +85,11 @@ public class CustomJobQueue extends JPanel {
 		// draw remaining components
 		g.translate(padding, (i+1)*padding);
 		for ( int j = 0; j < remainderComps; j++ ) {
+			
+			if(j== 0 && numLines ==0 ) {
+				g.setColor(firstJobColor);
+			}
+			
 			g.fillRoundRect(j * cWidth  , i*cHeight ,
 					cWidth, cHeight, arcWidth, arcHeight);
 

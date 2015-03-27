@@ -6,7 +6,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -15,12 +14,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-import mas.job.OperationType;
-import mas.job.job;
-import mas.job.jobAttribute;
-import mas.job.jobDimension;
-import mas.job.jobOperation;
+import mas.jobproxy.OperationType;
+import mas.jobproxy.job;
+import mas.jobproxy.jobDimension;
+import mas.jobproxy.jobOperation;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -121,7 +118,7 @@ public class DefineJobOperationsFrame extends JFrame{
 
 			JTextField att = new JTextField(Labels.defaultJTextSize);
 			if(jobOps != null && i < jobOps.size()) {
-				att.setText(String.valueOf(jobOps.get(i).getjAttributes().get(0).getName()));
+				att.setText(String.valueOf(jobOps.get(i).getjDims().get(0).getAttribute()));
 			}
 
 			txtAttributeList.add(att);
@@ -162,8 +159,6 @@ public class DefineJobOperationsFrame extends JFrame{
 
 			x1 = x1 & checkDimension(op, i);
 
-			x1 = x1 & checkAttributes(op, i);
-
 			if(x1)
 				operations.add(op);
 		}
@@ -172,20 +167,6 @@ public class DefineJobOperationsFrame extends JFrame{
 		
 		dataOk = x1;
 	}
-
-	private boolean checkAttributes(jobOperation op,int i) {
-		boolean status = true;
-		if( ! txtAttributeList.get(i).getText().isEmpty()) {
-			String attribute = txtAttributeList.get(i).getText();
-			jobAttribute jatt = new jobAttribute(attribute);
-			op.addjAttrubute(jatt);
-		}else {
-			JOptionPane.showMessageDialog(this, "Invalid input for Attribute !!");
-			status = false;
-		}
-		return status;
-	}
-
 
 	private boolean checkDimension(jobOperation op,int i) {
 		boolean status = true;

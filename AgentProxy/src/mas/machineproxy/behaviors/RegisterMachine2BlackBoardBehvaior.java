@@ -94,12 +94,13 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 		 */
 		
 		SubscriptionForm lMaintenanceSubForm = new SubscriptionForm();
-		AID lMaintenanceTarget = new AID(ID.Maintenance.LocalName, AID.ISLOCALNAME);
+		AID lMaintenanceTarget = new AID(ID.Maintenance.LocalName + "#" + suffix,
+			 	AID.ISLOCALNAME);
 
 		String[] lMaintenanceParams = {ID.Maintenance.ZoneData.correctiveMaintdata,
 				ID.Maintenance.ZoneData.prevMaintData, ID.Maintenance.ZoneData.inspectionJobData};
 
-		lSchedulingSubForm.AddSubscriptionReq(lMaintenanceTarget, lMaintenanceParams);
+		lMaintenanceSubForm.AddSubscriptionReq(lMaintenanceTarget, lMaintenanceParams);
 
 		AgentUtil.subscribeToParam(myAgent, bb_aid, lMaintenanceSubForm);
 		

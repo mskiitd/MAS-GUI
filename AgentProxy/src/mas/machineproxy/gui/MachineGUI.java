@@ -20,14 +20,14 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 
 @SuppressWarnings("serial")
 public class MachineGUI extends JFrame {
 
 	private LocalSchedulingAgent lSchAgent;
-	
+
 	private JSplitPane parentPanel;
 	private JPanel mcPanel;
 	private JPanel machineSubPanel;
@@ -39,9 +39,9 @@ public class MachineGUI extends JFrame {
 	private ArrayList<job> jobQ;
 
 	public MachineGUI(LocalSchedulingAgent agent) {
-		
+
 		this.lSchAgent = agent;
-		
+
 		this.mcPanel = new JPanel(new GridBagLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
@@ -58,15 +58,15 @@ public class MachineGUI extends JFrame {
 			statusConstraints.fill = GridBagConstraints.HORIZONTAL;
 			statusConstraints.gridx = 0;
 			statusConstraints.gridy = 0;
-			
+
 			GridBagConstraints iconConstraints = new GridBagConstraints();
 			iconConstraints.fill = GridBagConstraints.HORIZONTAL;
 			iconConstraints.gridx = 0;
 			iconConstraints.gridy = 1;
-			
+
 			machineSubPanel.add(lblMachineStatus, statusConstraints);
 			machineSubPanel.add(lblMachineIcon, iconConstraints);
-			
+
 			mcPanel.add(machineSubPanel);
 			mcPanel.setBorder((new EmptyBorder(10,10,10,10) ));
 		} catch (IOException e) {
@@ -76,8 +76,9 @@ public class MachineGUI extends JFrame {
 
 		this.queuePanel = new CustomJobQueue(jobQ);
 		queuePanel.setBorder((new EmptyBorder(10,10,10,10) ));
+
 		this.queueScroller = new JScrollPane(queuePanel);
-		
+
 		this.parentPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mcPanel, queueScroller);
 		machineIdle();
 		add(parentPanel);
@@ -99,7 +100,7 @@ public class MachineGUI extends JFrame {
 	public void machineIdle() {
 		this.lblMachineStatus.setText("Idle");
 	}
-	
+
 	/**
 	 * Update the current queue for the machine with the new queue in the GUI
 	 * @param newQueue
@@ -108,6 +109,21 @@ public class MachineGUI extends JFrame {
 		jobQ.clear();
 		jobQ.addAll(newQueue);
 		queuePanel.revalidate();
+		queuePanel.repaint();
+	}
+
+	public void addJobToQueue(job comingJob) {
+		jobQ.add(comingJob);
+		queuePanel.revalidate();
+		queuePanel.repaint();
+	}
+
+	public void removeFromQueue(job j) {
+		if(jobQ.contains(j)) {
+			jobQ.remove(j);
+			queuePanel.revalidate();
+			queuePanel.repaint();
+		}
 	}
 
 	private void showGui() {
@@ -120,4 +136,5 @@ public class MachineGUI extends JFrame {
 		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
 		super.setVisible(true);
 	}
+
 }

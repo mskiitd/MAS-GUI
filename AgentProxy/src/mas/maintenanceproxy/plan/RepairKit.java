@@ -1,7 +1,6 @@
 package mas.maintenanceproxy.plan;
 
 import java.util.Random;
-
 import mas.MAS;
 import mas.machineproxy.SimulatorInternals;
 import mas.machineproxy.component.IComponent;
@@ -22,7 +21,7 @@ public class RepairKit {
 		 * @param x
 		 * @return
 		 */
-		
+
 		private double f(double x) {
 			return Math.exp(- Math.pow(x/this.eta, this.beta) );
 		}
@@ -67,7 +66,7 @@ public class RepairKit {
 		}
 	}
 
-	double[] residualLife(double t) {
+	public double[] residualLife(double t) {
 
 		CalculateMTTF temp = new CalculateMTTF();
 		int numComponents = myMachine.getComponents().size();
@@ -75,7 +74,7 @@ public class RepairKit {
 		double[] remainingLife = new double[numComponents];
 
 		for (int i = 0; i < numComponents; i++) {
-//			System.out.println("Current life :" + myMachine.getComponents().get(i).getAge());
+			//			System.out.println("Current life :" + myMachine.getComponents().get(i).getAge());
 			remainingLife[i] = temp.reliability( myMachine.getComponents().get(i).getAge(),
 					myMachine.getComponents().get(i).getEta(),
 					myMachine.getComponents().get(i).getBeta());
@@ -83,7 +82,7 @@ public class RepairKit {
 		return remainingLife;
 	}
 
-	double[] yellowZone(double t) {
+	public double[] yellowZone(double t) {
 		double[] remainingLife = residualLife(t);
 		int numComponents = myMachine.getComponents().size();
 		double[] yZone = new double[numComponents];
@@ -97,7 +96,7 @@ public class RepairKit {
 		return yZone;
 	}
 
-	double[] redZone(double t) {
+	public double[] redZone(double t) {
 		double[] rtemp = residualLife(t);
 		int n = myMachine.getComponents().size();
 		double[] rZone = new double[n];
@@ -152,6 +151,7 @@ public class RepairKit {
 				time = time + myMachine.getComponents().get(i).getTTR(); // repair time
 			}
 		}
+		
 		return time;
 	}
 
@@ -167,10 +167,9 @@ public class RepairKit {
 		for (int i=0; i < numComponents;i++) {
 			if (0 >= rzone[i] ||
 					0 >= yzone[i]) {
-				data.append(i);
+				data.append(" " + i);
 			}
 		}
-
 		//		for (int k = 0; k < brokencomp.length; k++) {
 		//			if (0 < rzone[brokencomp[k]] && 0 < yzone[brokencomp[k]]) {
 		//				data=data+" "+brokencomp[k];
@@ -312,7 +311,7 @@ public class RepairKit {
 		//SystemyMachine.out.println("Found="+found +" signchange1="+signchange1+" signchange2="+signchange2+" required_red_Zone=" +required_solution);		
 		return required_solution;			
 	}
-	
+
 	/**
 	 * @param minProfitPerTime
 	 * @param averageSlack
@@ -320,7 +319,7 @@ public class RepairKit {
 	 * @return solution for break even equation(if it exists) to decide starting time
 	 *  for yellow zone of the machine
 	 */
-	
+
 	public double breakEvenMachineYellowZone(double minProfitPerTime,
 			double averageSlack, double averagePenalty) {	
 
@@ -368,7 +367,7 @@ public class RepairKit {
 				fineIterations[j] = breakEvenEquation(required_life1+
 						(required_life2-required_life1)*j/MICRO_ITERATIONS,
 						minProfitPerTime, averageSlack,averagePenalty);
-				
+
 				if (j > 1 && j < MICRO_ITERATIONS &&
 						iterations[j]*iterations[j-1]<=0) {
 

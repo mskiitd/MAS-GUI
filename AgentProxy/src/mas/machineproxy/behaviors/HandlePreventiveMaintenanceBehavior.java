@@ -7,7 +7,7 @@ import jade.lang.acl.MessageTemplate;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
 import mas.util.AgentUtil;

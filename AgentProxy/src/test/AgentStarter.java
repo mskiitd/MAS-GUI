@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -24,13 +25,17 @@ import javax.swing.UnsupportedLookAndFeelException;
 import mas.blackboard.blackboard;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
+import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
+import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.ID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.alee.laf.WebLookAndFeel;
 
 public class AgentStarter {
 
@@ -44,7 +49,7 @@ public class AgentStarter {
 		agents = new HashMap<String, Agent>();
 		agents.put("blackboard", new blackboard());
 		agents.put("customer", new CustomerAgent());
-		
+
 		agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
 		agents.put(ID.Machine.LocalName+"#1", new Simulator());
 		agents.put(ID.LocalScheduler.LocalName+"#1", new LocalSchedulingAgent());
@@ -65,36 +70,41 @@ public class AgentStarter {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
 
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		try {
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("resources/Inconsolata.otf")));
+		SwingUtilities.invokeLater(new Runnable() {
 
-			File font_file = new File("resources/Inconsolata.otf");
-			font = Font.createFont(Font.TRUETYPE_FONT, font_file).
-					deriveFont(Font.PLAIN, 18f);
+			@Override
+			public void run() {
+				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+				try {
+					ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("resources/Inconsolata.otf")));
 
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
+					File font_file = new File("resources/Inconsolata.otf");
+					font = Font.createFont(Font.TRUETYPE_FONT, font_file).
+							deriveFont(Font.PLAIN, 18f);
+					
+					  WebLookAndFeel.install ();
+//
+//					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//						if ("Nimbus".equals(info.getName())) {
+//							UIManager.setLookAndFeel(info.getClassName());
+//							break;
+//						}
+//					}
+					setUIFont (new javax.swing.plaf.FontUIResource(font));
+				} catch (FontFormatException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
 			}
-			setUIFont (new javax.swing.plaf.FontUIResource(font));
+		} );
 
-		} catch (FontFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-
+		//		MachineGUI m = new MachineGUI(new LocalSchedulingAgent());
+		//		ArrayList<job> j = new ArrayList<job>();
+		//		j.add(new job.Builder("1").jobCPN(1).build());
+		//		
+		//		j.add(new job.Builder("2").jobCPN(2).build());
+		//		m.updateQueue(j);
 		new AgentStarter();
 		//				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
 	}

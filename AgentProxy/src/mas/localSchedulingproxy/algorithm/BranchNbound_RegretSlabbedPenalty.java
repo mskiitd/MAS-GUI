@@ -2,7 +2,8 @@ package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import mas.job.job;
+
+import mas.jobproxy.job;
 
 public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace{
 	/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 

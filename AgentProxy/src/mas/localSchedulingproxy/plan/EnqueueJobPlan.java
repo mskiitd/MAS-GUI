@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.util.ID;
 import bdi4jade.core.BeliefBase;
@@ -68,11 +68,8 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 			 */
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue, jobQueue);	
 
-			/**
-			 * update the machine GUI with new job
-			 */
 			if(LocalSchedulingAgent.mGUI != null) {
-				LocalSchedulingAgent.mGUI.updateQueue(jobQueue);
+				LocalSchedulingAgent.mGUI.addJobToQueue(comingJob);
 			}
 		}
 	}

@@ -3,11 +3,18 @@ package mas.machineproxy.behaviors;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
+import mas.machineproxy.SimulatorInternals;
+import mas.machineproxy.behaviors.AddJobBehavior.timeProcessing;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -23,16 +30,24 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 	private int step = 0;
 	private MessageTemplate correctiveDataMsgTemplate;
 	private ACLMessage correctiveDataMsg;
-	private StringTokenizer token;
+	private String[] repairData;
 	private long repairTime;
-	private ArrayList<Integer> componentsToRepair;
-	private Simulator machineSimulator;
-	private long remaintingTimeMillis;
 
-	public HandleSimulatorFailedBehavior() {
+	private ScheduledThreadPoolExecutor executor;
+
+	private ArrayList<Integer> componentsToRepair;
+	private SimulatorInternals machineInternals;
+	private Simulator machineSimulator;
+
+	private long remainingTimeMillis;
+
+	public HandleSimulatorFailedBehavior(Simulator sim,
+			SimulatorInternals internals) {
+
 		log = LogManager.getLogger();
-		this.machineSimulator = (Simulator) getParent().
-				getDataStore().get(Simulator.simulatorStoreName);
+		this.machineInternals = internals;
+		this.machineSimulator = sim;
+
 		correctiveDataMsgTemplate = MessageTemplate.MatchConversationId(
 				MessageIds.msgcorrectiveMaintdata);
 	}
@@ -45,12 +60,12 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			/**
 			 * update zone data for machine's failure
 			 */
-			
-			ZoneDataUpdate machineFailureUpdate  = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.myHealth)
-				.value(machineSimulator).Build();
-		/*	ZoneDataUpdate machineFailureUpdate = new ZoneDataUpdate(
-					ID.Machine.ZoneData.myHealth,
-					machineSimulator);*/
+			LocalSchedulingAgent.mGUI.machineFailed();
+			log.info("******************** failure machine  : "  + machineInternals);
+			ZoneDataUpdate machineFailureUpdate  = new ZoneDataUpdate.
+					Builder(ID.Machine.ZoneData.machineFailures).
+					value(machineInternals).
+					Build();
 
 			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 					machineFailureUpdate, myAgent);
@@ -64,16 +79,30 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			correctiveDataMsg = myAgent.receive(correctiveDataMsgTemplate);
 			if(correctiveDataMsg != null) {
 
-				token = new StringTokenizer(correctiveDataMsg.getContent());
-				repairTime = Long.parseLong(token.nextToken());
-				remaintingTimeMillis = repairTime;
-//				block(repairTime);
-				componentsToRepair = new ArrayList<Integer>();
+				String data;
+				try {
+					data = (String) correctiveDataMsg.getContentObject();
+					repairData = data.split(" ");
+					log.info("Maintenance arrived ~~~~~~ repair time " + repairData[0]);
+					repairTime = (long) Double.parseDouble(repairData[0]);
+					remainingTimeMillis = repairTime;
 
-				while(token.hasMoreTokens()) {
-					componentsToRepair.add(Integer.parseInt(token.nextToken()));
+					componentsToRepair = new ArrayList<Integer>();
+
+					for(int i=1; i < repairData.length; i++ ) {
+						componentsToRepair.add(Integer.parseInt(repairData[i]));
+					}
+
+					if( remainingTimeMillis > 0 ) {
+						LocalSchedulingAgent.mGUI.machineMaintenance();
+						executor = new ScheduledThreadPoolExecutor(1);
+						executor.scheduleAtFixedRate(new timeProcessing(), 0,
+								Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
+						step = 2;
+					}
+				} catch (UnreadableException e) {
+					e.printStackTrace();
 				}
-				step = 2;
 			}
 			else{
 				block();
@@ -81,19 +110,13 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			break;
 
 		case 2:
-			/**
-			 * keep the machine blocked for the required repairing time
-			 */
-			if(remaintingTimeMillis >= 0){
-				
-				remaintingTimeMillis = remaintingTimeMillis - Simulator.TIME_STEP;
-				block(Simulator.TIME_STEP);
-				
-			} else if( remaintingTimeMillis <= 0) {
-				step = 3;
-			}
+			// block for some time in order to avoid too much CPU usage
+			// this won't affect working of the behavior however
+			block(15);
 		case 3:
+			log.info("repairing components age ");
 			machineSimulator.repair(componentsToRepair);
+			LocalSchedulingAgent.mGUI.machineIdle();
 			step = 4;
 			break;
 		}
@@ -102,6 +125,20 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 	@Override
 	public boolean done() {
 		return step > 3;
+	}
+
+	class timeProcessing implements Runnable {
+
+		@Override
+		public void run() {
+
+			if( remainingTimeMillis > 0 ) {
+				remainingTimeMillis = remainingTimeMillis - Simulator.TIME_STEP; 
+			} else if( remainingTimeMillis <= 0  ) {
+				step = 3;
+				executor.shutdown();
+			} 
+		}
 	}
 
 }

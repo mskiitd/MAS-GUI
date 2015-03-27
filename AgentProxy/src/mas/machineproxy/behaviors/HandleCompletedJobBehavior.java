@@ -1,7 +1,7 @@
 package mas.machineproxy.behaviors;
 
 import jade.core.behaviours.Behaviour;
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.machineproxy.Simulator;
 import mas.util.AgentUtil;
 import mas.util.ID;

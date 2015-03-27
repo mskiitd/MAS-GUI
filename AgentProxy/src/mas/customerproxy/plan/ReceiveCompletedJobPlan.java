@@ -2,11 +2,12 @@ package mas.customerproxy.plan;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import mas.customerproxy.agent.CustomerAgent;
-import mas.job.job;
+import mas.jobproxy.job;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;

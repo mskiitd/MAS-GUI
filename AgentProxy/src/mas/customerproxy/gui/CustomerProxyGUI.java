@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -21,8 +22,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+
 import mas.customerproxy.agent.CustomerAgent;
-import mas.job.job;
+import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -64,7 +66,7 @@ public class CustomerProxyGUI extends JFrame{
 	private JMenuItem menuItemCancel ;
 	private JMenuItem menuItemChangeDueDate ;
 
-	public static int countJob = 0;
+	public static int countJob = 1;
 
 	public CustomerProxyGUI(CustomerAgent cAgent) {
 
@@ -255,11 +257,13 @@ public class CustomerProxyGUI extends JFrame{
 		}
 		completedJobVector.addElement(j);
 		completedJobsTable.revalidate();
+		completedJobsTable.repaint();
 	}
 
 	public void addAcceptedJob(job j) {
 		acceptedJobVector.addElement(j);
 		acceptedJobsTable.revalidate();
+		acceptedJobsTable.repaint();
 	}
 
 	class rightClickListener implements ActionListener {

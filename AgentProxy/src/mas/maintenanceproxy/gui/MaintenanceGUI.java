@@ -64,7 +64,7 @@ public class MaintenanceGUI extends JFrame{
 		
 		this.mAgent = lmAgent;
 				
-		correctivePanel = new CorrectiveMaintenanceGUI(mAgent);
+		correctivePanel = new CorrectiveMaintenanceGUI(lmAgent);
 		
 		mainPanel = new JPanel(new BorderLayout());
 		schedulePanel = new JPanel(new BorderLayout());
@@ -80,6 +80,7 @@ public class MaintenanceGUI extends JFrame{
 		}
 
 		mainPanel.add(btnSendPrevMaint, BorderLayout.CENTER);
+		correctivePanel.setVisible(false);
 		panelsForTab[0].add(correctivePanel);
 		
 		schedulePanel.add(jpNorth,BorderLayout.NORTH);
@@ -128,7 +129,10 @@ public class MaintenanceGUI extends JFrame{
 				calendarPanel.setYear(((Integer)spinnerNumberModel.getValue()).intValue());
 			}
 		});
-		
+	}
+	
+	public void showRepairTimeInput() {
+		correctivePanel.setVisible(true);
 	}
 
 	private void showGui() {

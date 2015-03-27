@@ -2,7 +2,7 @@ package mas.machineproxy;
 
 import java.util.EnumSet;
 
-import mas.job.OperationType;
+import mas.jobproxy.OperationType;
 
 public class SupportedOperations {
 	

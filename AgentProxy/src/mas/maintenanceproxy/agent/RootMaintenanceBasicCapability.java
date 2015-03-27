@@ -12,6 +12,7 @@ import mas.maintenanceproxy.goal.RegisterMaintenanceAgentToBlackboardGoal;
 import mas.maintenanceproxy.goal.machineHealthCheckGoal;
 import mas.maintenanceproxy.plan.CorrectiveMachineComponentsRepairPlan;
 import mas.maintenanceproxy.plan.MaintenanceStartSendInfoPlan;
+import mas.maintenanceproxy.plan.ManualMachineRepairPlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentServicePlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentToBlackboardPlan;
 import mas.maintenanceproxy.plan.machineHealthCheckPlan;
@@ -68,7 +69,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 				machineHealthCheckPlan.class));
 
 		plans.add(new SimplePlan(CorrectiveMachineComponentsRepairGoal.class,
-				CorrectiveMachineComponentsRepairPlan.class));
+				ManualMachineRepairPlan.class));
 
 		plans.add(new SimplePlan(MaintenanceStartSendInfoGoal.class,
 				MaintenanceStartSendInfoPlan.class));

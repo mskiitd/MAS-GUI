@@ -5,10 +5,9 @@ import jade.core.behaviours.OneShotBehaviour;
 import java.util.ArrayList;
 import java.util.Date;
 
-import mas.job.job;
-import mas.job.jobAttribute;
-import mas.job.jobDimension;
-import mas.job.jobOperation;
+import mas.jobproxy.job;
+import mas.jobproxy.jobDimension;
+import mas.jobproxy.jobOperation;
 import mas.machineproxy.Methods;
 import mas.machineproxy.Simulator;
 
@@ -44,6 +43,11 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 		int numDims = jDimensions.size();
 		int dIndex;
 
+		BinomialDistribution bernoulli =
+				new BinomialDistribution(1, machineSimulator.getFractionDefective());
+
+		boolean conforming;
+
 		for(dIndex = 0; dIndex < numDims; dIndex++) {
 
 			jDimensions.get(dIndex).setTargetDimension(
@@ -51,30 +55,13 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 					Methods.normalRandom(machineSimulator.getMean_shift(),
 							machineSimulator.getSd_shift()));
 
-			//			jDimensions.get(dIndex).add(jDimensions.get(dIndex) + 3*Simulator.sd_shift);
-			//			jDimensions.get(dIndex).add(jDimensions.get(dIndex) - 3*Simulator.sd_shift);
+			conforming = (bernoulli.sample()==1)? Boolean.TRUE :Boolean.FALSE;
+			jDimensions.get(dIndex).setConforming(conforming);
 		}
 		comingJob.setCurrentOperationDimension(jDimensions);
-
-		// Assign attributes to the job
-		ArrayList<jobAttribute> jAttributes = comingJob.getCurrentOperationAttributes();
-		int numAttributes = jAttributes.size();
-		int AttIndex;
-
-		BinomialDistribution bernoulli =
-				new BinomialDistribution(1, machineSimulator.getFractionDefective());
-
-		boolean conforming;
-
-		for(AttIndex = 0; AttIndex < numAttributes; AttIndex++) {
-
-			conforming = (bernoulli.sample()==1)? Boolean.TRUE :Boolean.FALSE;
-			jAttributes.get(AttIndex).setConforming(conforming);
-		}
-		comingJob.setCurrentOperationAttributes(jAttributes);
-		//		log.info("Dimensions and attributes assigned");
 		comingJob.setCompletionTime(System.currentTimeMillis());
-		log.info("start time was "+new Date(comingJob.getStartTimeByCust().getTime()));
+		
+		log.info("start time was " + new Date(comingJob.getStartTimeByCust().getTime()));
 		log.info("processed for "+ (comingJob.getCompletionTime().getTime()-comingJob.getStartTimeByCust().getTime()));
 
 		// send completed job to blackboard in handleCompletedJobBehavior

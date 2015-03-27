@@ -4,7 +4,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
 import mas.util.MessageIds;

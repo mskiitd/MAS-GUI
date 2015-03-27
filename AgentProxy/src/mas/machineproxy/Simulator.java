@@ -5,6 +5,7 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
 
 import java.beans.PropertyChangeListener;
@@ -16,9 +17,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
-import mas.job.OperationType;
+import mas.jobproxy.OperationType;
 import mas.machineproxy.behaviors.AcceptJobBehavior;
 import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
+import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
 import mas.machineproxy.behaviors.LoadMachineComponentBehavior;
 import mas.machineproxy.behaviors.LoadMachineParameterBehavior;
 import mas.machineproxy.behaviors.LoadSimulatorParamsBehavior;
@@ -60,7 +62,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 	// details about simulator
 	private SimulatorInternals internals;
-	
+
 	// property change support for status of simulator
 	protected transient PropertyChangeSupport statusChangeSupport;
 
@@ -116,9 +118,10 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		//		log = LogManager.getLogger();
 		statusChangeSupport = new PropertyChangeSupport(this);
 		
+		tbf = new  ThreadedBehaviourFactory();
 		internals = new SimulatorInternals();
 		internals.setEpochTime(System.currentTimeMillis() );
-		
+
 		machineParameters = new ArrayList<Parameter>();
 		mParameterRootcauses = new ArrayList<ArrayList<RootCause> >();
 	}
@@ -137,6 +140,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private transient Behaviour machineParameterShifter;
 
 	private transient ParallelBehaviour functionality ;
+	private transient ThreadedBehaviourFactory tbf;
 
 	@Override
 	protected void setup() {
@@ -178,24 +182,23 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 
 		functionality.addSubBehaviour(acceptIncomingJobs);
-		
+
 		functionality.addSubBehaviour(reportHealth);
 		functionality.addSubBehaviour(processDimensionShifter);
 		//		functionality.addSubBehaviour(machineParameterShifter);
 
-		addBehaviour(functionality);
-		
+		addBehaviour(tbf.wrap(functionality));
+
 		/**
 		 *  Adding a listener to the change in value of the status of simulator 
 		 */
 		statusChangeSupport.addPropertyChangeListener (
 				new SimulatorStatusListener(Simulator.this) );
-		
-		try {
-			new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(Simulator.this);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	}
+
+	public void HandleFailure() {
+		addBehaviour(tbf.wrap(new HandleSimulatorFailedBehavior(Simulator.this,
+				internals) ));
 	}
 
 	class ReportHealthBehavior extends TickerBehaviour {
@@ -211,8 +214,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 			ZoneDataUpdate machineHealthUpdate = new ZoneDataUpdate.Builder(
 					ID.Machine.ZoneData.myHealth).
-			value(internals).
-			Build();
+					value(internals).
+					Build();
 
 			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 					machineHealthUpdate, myAgent);

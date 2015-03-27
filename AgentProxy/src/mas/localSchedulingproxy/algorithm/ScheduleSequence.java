@@ -2,7 +2,7 @@ package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
 
-import mas.job.job;
+import mas.jobproxy.job;
 
 public class ScheduleSequence {
 	

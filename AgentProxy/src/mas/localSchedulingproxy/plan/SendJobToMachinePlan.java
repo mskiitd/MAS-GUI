@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -53,7 +53,7 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 				getValue();
 
 		blackboard = (AID) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 		
 		replyWith= msg.getReplyWith();
@@ -64,15 +64,20 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 		if("1".equals(status)) {
 			
 			if(jobQueue.size() > 0) {
-				log.info("Sending job to machine "+ myAgent.getLocalName() +" "+ jobQueue.get(0).getJobNo());
+				job jobToSend=jobQueue.get(0);
+				log.info("Sending job to machine "+ myAgent.getLocalName() +" "+ jobToSend.getJobNo());
 				ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.jobForMachine)
-					.value(jobQueue.get(0)).setReplyWith(replyWith).Build();
+					.value(jobToSend).setReplyWith(replyWith).Build();
 			/*	ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate(
 						ID.LocalScheduler.ZoneData.jobForMachine,
 						jobQueue.get(0));*/
 
 				jobQueue.remove(0);
 				AgentUtil.sendZoneDataUpdate(blackboard ,bidForJobUpdate, myAgent);
+				
+				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine, jobToSend);
+				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue, jobQueue);
+				
 				step = 1;
 			} else {
 				block(SleepTime);

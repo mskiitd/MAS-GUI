@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.localSchedulingproxy.goal.JobSchedulingGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
@@ -56,7 +56,7 @@ public class AbstractbasicCapability extends Capability {
 		LSAExcelFileReader fileReader=new LSAExcelFileReader();
 		
 		Belief<AID> bboard = new TransientBelief<AID>(
-				ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID);
+				ID.LocalScheduler.BeliefBaseConst.blackboardAgent);
 		
 		Belief<AID> myMachine = new TransientBelief<AID>(
 				ID.LocalScheduler.BeliefBaseConst.machine);
@@ -65,7 +65,7 @@ public class AbstractbasicCapability extends Capability {
 				ID.LocalScheduler.BeliefBaseConst.maintAgent);
 		
 		Belief<AID> mygsAgent = new TransientBelief<AID>(
-				ID.LocalScheduler.BeliefBaseConst.globalSchAgentAID);
+				ID.LocalScheduler.BeliefBaseConst.globalSchAgent);
 
 		Belief<StatsTracker> dtrack = new TransientBelief<StatsTracker>(
 				ID.LocalScheduler.BeliefBaseConst.dataTracker);

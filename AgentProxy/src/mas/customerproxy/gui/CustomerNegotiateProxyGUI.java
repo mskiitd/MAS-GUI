@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 
 import uiconstants.Labels;
 import mas.customerproxy.agent.CustomerAgent;
-import mas.job.job;
+import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 
 public class CustomerNegotiateProxyGUI extends JFrame{

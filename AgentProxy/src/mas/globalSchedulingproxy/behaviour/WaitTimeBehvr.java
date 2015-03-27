@@ -7,8 +7,9 @@ package mas.globalSchedulingproxy.behaviour;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BDIAgent;
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;

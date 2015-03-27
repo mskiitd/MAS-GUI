@@ -1,7 +1,7 @@
 package mas.customerproxy.plan;
 
 import mas.customerproxy.agent.CustomerAgent;
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -83,6 +83,7 @@ public class NegotiationPlan extends Behaviour implements PlanBody {
 			AgentUtil.sendZoneDataUpdate(this.bba,negotiationJobDataUpdate, myAgent);
 
 			// Update this job in the list of completed jobs of customer GUI
+			log.info("Updating accepted jobs in the queue of customer");
 			CustomerAgent.mygui.addAcceptedJob(j);
 
 			return;

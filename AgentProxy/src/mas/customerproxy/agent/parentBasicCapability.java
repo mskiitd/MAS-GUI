@@ -9,7 +9,7 @@ import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.plan.DispatchJobPlan;
 import mas.customerproxy.plan.RegisterCustomerAgentToBlackboardPlan;
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.util.ID;
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.TransientBelief;

@@ -106,6 +106,14 @@ public class MessageIds {
 	public static final String UpdateParameter = "UpdateParam";
 	public static final String SubscribeParameter = "subscribe-parameter";
 
+	public static final String msgGSAQuery = "GSAqueriesToLSA";
+
+	public static final String msgLSQueryResponse = "ResponseToGSAQuery";
+
+	//operation n is finished. now send job to GSA for n+1th operation
+	public static String msgLSAfinishedJobs="finished_job_fromLSA";
+	
+
 	//	// Local scheduling Agent id's here
 	//	public static final String LSJobForMachine = "LSJobForMachine";
 	//	public static final String LSjobFromGS = "LSjobFromGS";

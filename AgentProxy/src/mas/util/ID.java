@@ -1,6 +1,6 @@
 package mas.util;
 
-import jade.util.leap.Serializable;
+import java.io.Serializable;
 
 public class ID implements Serializable{
 
@@ -53,16 +53,17 @@ public class ID implements Serializable{
 		public static final String LocalName = "Local_Scheduling_Agent";
 
 		public class BeliefBaseConst {
-			public static final String blackboardAgentAID = "LSABeliefBase_blackboard-agent";
+			public static final String blackboardAgent = "LSABeliefBase_blackboard-agent";
 			public static final String machine = "LSABeliefBase_machine";
 			public static final String jobQueue = "LSABeliefBase_job-list";
 			public static final String maintAgent = "LSABeliefBase_maintenanceAgent";
-			public static final String globalSchAgentAID = "LSABeliefBase_gsAgent";
+			public static final String globalSchAgent = "LSABeliefBase_gsAgent";
 			public static final String dataTracker = "LSABeliefBase_data-tracker";
 			public static final String ProcessingCost = "ProcessingCost";
 			public static final String supportedOperations = "supportedOperations";
 			public static final String regretThreshold = "regret_threshold";
-			
+			public static final String currentJobOnMachine="jobCurrentlyProcessingOnMachine";
+
 		}
 
 		public class ZoneData {
@@ -79,6 +80,8 @@ public class ID implements Serializable{
 			public static final String jobForMachine = "LSA_jobForMachine";
 
 			public static final String finishedJob="LSA_finishedJob";
+
+			public static final String QueryResponse = "ResponseToGSAQuery";
 		}
 	}
 
@@ -102,6 +105,9 @@ public class ID implements Serializable{
 
 			// advertise job for getting waiting time from LSA's
 			public static final String GetWaitingTime = "GSA_LocalSchedulingwaiting-time";
+
+			//query job information from LSA
+			public static final String QueryRequest = "QueryRequestAbtLSAfromGSA"; 
 		}
 
 		public class BeliefBaseConst {

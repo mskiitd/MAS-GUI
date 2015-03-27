@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-import mas.job.OperationType;
-import mas.job.job;
-import mas.job.jobAttribute;
-import mas.job.jobDimension;
-import mas.job.jobOperation;
+import mas.jobproxy.OperationType;
+import mas.jobproxy.job;
+import mas.jobproxy.jobDimension;
+import mas.jobproxy.jobOperation;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -20,7 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Jobloader {
 
 	// processing time is input as seconds. Convert it into milliseconds
-	private int timeUnitConversion = 1; //keep this 1 as it helps in debugging ~Nikhil
+	private long timeUnitConversion = 1000;
 
 	private int NumJobs;
 	private ArrayList<XSSFSheet> sheets;
@@ -32,7 +31,7 @@ public class Jobloader {
 	private ArrayList<Integer> jobQuantity;
 	private ArrayList<Double> jobPenaltyRate;
 	private ArrayList<ArrayList<jobOperation> > jobOperations;
-	int countJob = 0;
+	int countJob = 1;
 	private String[] tableHeaders = {"Job ID" , "Operations",
 			"CPN" , "Penalty Rate"};
 
@@ -136,7 +135,7 @@ public class Jobloader {
 
 			switch(count) {
 			case 0:
-				jobIdList.add(cell.getNumericCellValue() + "");
+				jobIdList.add((int)cell.getNumericCellValue() + "");
 				break;
 			case 1:
 				jobQuantity.add((int) cell.getNumericCellValue());
@@ -207,13 +206,12 @@ public class Jobloader {
 					String Attr=cell.getStringCellValue();
 					String tempAttr[]=Attr.split(",");
 
-					ArrayList<jobAttribute> tempAttrList = new ArrayList<jobAttribute>();
+					ArrayList<String> tempAttrList = new ArrayList<String>();
 
 					for(int i=0; i < tempAttr.length; i++){
-						jobAttribute tempAttribute = new jobAttribute(tempAttr[i]);
-						tempAttrList.add(tempAttribute );
+						tempAttrList.add(tempAttr[i] );
 					}
-					currOperation.setjAttributes(tempAttrList);
+//					currOperation.getjDims().get(0).setAttribute(tempAttrList);
 
 					break;
 				}

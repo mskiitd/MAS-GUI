@@ -1,7 +1,8 @@
 package mas.globalSchedulingproxy.plan;
 
 import java.io.IOException;
-import mas.job.job;
+
+import mas.jobproxy.job;
 import mas.util.MessageIds;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;

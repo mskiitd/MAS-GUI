@@ -25,7 +25,7 @@ import javax.swing.SpinnerDateModel;
 
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.goal.dispatchJobGoal;
-import mas.job.job;
+import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
@@ -74,7 +74,7 @@ public class DefineJobFrame extends JFrame{
 	private JTextField txtPenalty;
 
 	private job populatingJob;
-	private boolean dataOk = false;
+	private boolean dataOk = true;
 	private boolean operationDataOk = false;
 
 	private Logger log;
@@ -179,23 +179,40 @@ public class DefineJobFrame extends JFrame{
 				x1 = false;
 			}else {
 				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
-				boolean x2 = checkPenaltyRate();
-				boolean x3 = checkCPN();
+				boolean x2 = false,x3 = false,x4 = false,x5 = false;
+				x2 = checkPenaltyRate();
+				if(x2) {
+					x3 = checkCPN();
+				}
 				generatedJob.setGenerationTime(new Date());
 				generatedJob.setJobNo(CustomerProxyGUI.countJob);
-				boolean x4 = checkDueDate();
-
-				dataOk = x1&x2&x3&x4;
+				if(x2 & x3) {
+					x4 = checkDueDate();
+					
+					if(x4) {
+						x5 = checkJobOperations();
+					}
+				}
+				
+				dataOk = x2&x3&x4&x5;
 			}
 		}
 		else {
-			boolean x2 = checkPenaltyRate();
-			boolean x3 = checkCPN();
+			boolean x2 = false,x3 = false,x4 = false,x5 = false;
+			x2 = checkPenaltyRate();
+			if(x2) {
+				x3 = checkCPN();
+			}
 			generatedJob.setGenerationTime(new Date());
 			generatedJob.setJobNo(CustomerProxyGUI.countJob);
-			boolean x4 = checkDueDate();
-			boolean x5 = checkJobOperations();
-
+			if(x2 & x3) {
+				x4 = checkDueDate();
+				
+				if(x4) {
+					x5 = checkJobOperations();
+				}
+			}
+			
 			dataOk = x1&x2&x3&x4&x5;
 		}
 
@@ -319,7 +336,6 @@ public class DefineJobFrame extends JFrame{
 			if(dataOk) {
 				log.info("Sending the job : " + generatedJob);
 				cAgent.addJobToBeliefBase(generatedJob);
-				
 				CustomerProxyGUI.countJob++ ;
 				dispose();
 			}

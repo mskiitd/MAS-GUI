@@ -2,11 +2,13 @@ package mas.globalSchedulingproxy.gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import mas.job.job;
+
+import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 

@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Vector;
+
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -20,8 +21,9 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
-import mas.job.job;
+import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")

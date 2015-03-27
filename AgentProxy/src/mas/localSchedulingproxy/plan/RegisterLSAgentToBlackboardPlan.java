@@ -23,7 +23,8 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 	private static final long serialVersionUID = 1L;
 	private int step;
 	private Logger log=LogManager.getLogger();
-
+	private AID bb_aid = null;
+	private PlanInstance PI=null;
 	@Override
 	public EndState getEndState() {
 		return EndState.SUCCESSFUL;
@@ -32,12 +33,20 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 	@Override
 	public void init(PlanInstance planInstance) {
 		step = 0;
+		PI=planInstance;
+		
+		
 	}
 
 	@Override
 	public void action() {
 
-		AID bb_aid = AgentUtil.findBlackboardAgent(myAgent);
+		bb_aid = AgentUtil.findBlackboardAgent(myAgent);
+		PI.getBeliefBase().updateBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent, bb_aid);
+		
+		String machineLocalname=ID.Machine.LocalName+"#"+myAgent.getLocalName().split("#")[1];
+		AID machineAID=new AID(machineLocalname,false);
+		PI.getBeliefBase().updateBelief(ID.LocalScheduler.BeliefBaseConst.machine, machineAID);
 
 		NamedZoneData ZoneDataName1 = 
 				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.bidForJob).
@@ -63,8 +72,20 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 				appendValue(false).
 				build();
 
+		NamedZoneData ZoneDataName5 = 
+				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.finishedJob)
+		.MsgID(MessageIds.msgLSAfinishedJobs).appendValue(false)
+		.build();
+		
+		NamedZoneData ZoneDataName6 =
+				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.QueryResponse).
+				MsgID(MessageIds.msgLSQueryResponse)
+				.appendValue(false).
+				build();
+		
+		
 		NamedZoneData[] ZoneDataNames =  { ZoneDataName1,
-				ZoneDataName2, ZoneDataName3, ZoneDataName4 };
+				ZoneDataName2, ZoneDataName3, ZoneDataName4, ZoneDataName5 };
 
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 
@@ -73,14 +94,16 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 		String suffix=myAgent.getLocalName().split("#")[1];
 
 		AID simulatorTarget = new AID(ID.Machine.LocalName+"#"+suffix, AID.ISLOCALNAME);
-
+		
+		AID maintenanceTarget = new AID(ID.Maintenance.LocalName +"#" + suffix,
+				AID.ISLOCALNAME);
 
 		// subscription form for global scheduling agent
 		log.info(myAgent.getLocalName()+" subscribing "+simulatorTarget.getLocalName());
 		SubscriptionForm gSchedulingSubform = new SubscriptionForm();
 		String[] gSchedulingParams = { ID.GlobalScheduler.ZoneData.askBidForJobFromLSA,
 				ID.GlobalScheduler.ZoneData.GetWaitingTime , ID.GlobalScheduler.ZoneData.jobForLSA,
-				ID.GlobalScheduler.ZoneData.GSAConfirmedOrder };
+				ID.GlobalScheduler.ZoneData.GSAConfirmedOrder, ID.GlobalScheduler.ZoneData.QueryRequest };
 		gSchedulingSubform.AddSubscriptionReq(gSchedulingTarget, gSchedulingParams);
 
 		AgentUtil.subscribeToParam(myAgent, bb_aid, gSchedulingSubform);
@@ -92,5 +115,13 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 		simulatorSubform.AddSubscriptionReq(simulatorTarget, simulatorParams);
 
 		AgentUtil.subscribeToParam(myAgent, bb_aid, simulatorSubform);
+		
+		// subscription form for maintenance agent
+		SubscriptionForm maintSubform = new SubscriptionForm();
+		String[] maintParams = { ID.Maintenance.ZoneData.preventiveMaintJob,
+				ID.Maintenance.ZoneData.inspectionJob };
+		maintSubform.AddSubscriptionReq(maintenanceTarget, maintParams);
+
+		AgentUtil.subscribeToParam(myAgent, bb_aid, maintSubform);
 	}
 }

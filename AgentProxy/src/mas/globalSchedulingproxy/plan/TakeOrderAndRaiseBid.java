@@ -1,7 +1,7 @@
 package mas.globalSchedulingproxy.plan;
 
-public class TakeOrderAndRaiseBid extends RootTakeOrderAndRaiseBid {
+import bdi4jade.plan.PlanBody;
 
-	private static final long serialVersionUID = 1L;
+public class TakeOrderAndRaiseBid extends RootTakeOrderAndRaiseBid {
 
 }

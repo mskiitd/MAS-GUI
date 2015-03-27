@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -67,7 +67,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 				getValue();
 
 		this.blackboard = (AID) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgentAID).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 		
 		replyWith=msg.getReplyWith();

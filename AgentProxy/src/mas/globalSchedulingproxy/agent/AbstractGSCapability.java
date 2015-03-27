@@ -9,7 +9,12 @@ import java.util.Set;
 import mas.globalSchedulingproxy.goal.GetNoOfMachinesGoal;
 import mas.globalSchedulingproxy.goal.RegisterAgentGoal;
 import mas.globalSchedulingproxy.goal.RegisterServiceGoal;
-import mas.globalSchedulingproxy.plan.*;
+import mas.globalSchedulingproxy.plan.GetNoOfMachinesPlan;
+import mas.globalSchedulingproxy.plan.HandleCompletedOrderbyLSA;
+import mas.globalSchedulingproxy.plan.Negotiate;
+import mas.globalSchedulingproxy.plan.RegisterAgentToBlackboard;
+import mas.globalSchedulingproxy.plan.RegisterServicePlan;
+import mas.globalSchedulingproxy.plan.TakeOrderAndRaiseBid;
 import mas.util.ID;
 import mas.util.MessageIds;
 
@@ -17,9 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bdi4jade.belief.Belief;
-import bdi4jade.belief.BeliefSet;
 import bdi4jade.belief.TransientBelief;
-import bdi4jade.belief.TransientBeliefSet;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
 import bdi4jade.core.PlanLibrary;
@@ -65,14 +68,18 @@ public abstract class AbstractGSCapability  extends Capability {
 		plans.add(new SimplePlan(GetNoOfMachinesGoal.class,GetNoOfMachinesPlan.class));
 		plans.add(new SimplePlan(RegisterServiceGoal.class, RegisterServicePlan.class));
 		plans.add(new SimplePlan(RegisterAgentGoal.class,RegisterAgentToBlackboard.class));
-
+		
 		plans.add(new SimplePlan(
 				MessageTemplate.MatchConversationId(MessageIds.msgcustomerConfirmedJobs),
 				TakeOrderAndRaiseBid.class));
-
+		
+		plans.add(new SimplePlan(
+				MessageTemplate.MatchConversationId(MessageIds.msgLSAfinishedJobs),
+				HandleCompletedOrderbyLSA.class));
+		
 		plans.add(new SimplePlan
 				(MessageTemplate.MatchConversationId(
-						MessageIds.msgcustomerJobsUnderNegotiation),Negotiate.class));
+				MessageIds.msgcustomerJobsUnderNegotiation),Negotiate.class));
 
 		//		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime, )))
 

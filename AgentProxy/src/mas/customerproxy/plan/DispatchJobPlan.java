@@ -2,9 +2,11 @@ package mas.customerproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import mas.job.job;
+
+import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;

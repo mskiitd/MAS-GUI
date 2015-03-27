@@ -5,7 +5,7 @@ import jade.core.behaviours.TickerBehaviour;
 
 import java.util.ArrayList;
 
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.algorithm.ScheduleSequence;
 import mas.util.ID;
@@ -14,9 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bdi4jade.core.BeliefBase;
-import bdi4jade.plan.PlanBody;
-import bdi4jade.plan.PlanInstance;
-import bdi4jade.plan.PlanInstance.EndState;
 
 public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
@@ -35,6 +32,8 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			BeliefBase bfBase) {
 		super(myAgent, schedulingPeriod);
 		this.bfBase = bfBase;
+		
+		log = LogManager.getLogger();
 	}
 
 	@Override

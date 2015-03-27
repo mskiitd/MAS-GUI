@@ -1,6 +1,7 @@
 package mas.globalSchedulingproxy.plan;
 
 import java.io.IOException;
+
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -14,17 +15,19 @@ import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
 public class RegisterAgentToBlackboard extends OneShotBehaviour implements PlanBody {
-	private static final long serialVersionUID = 1L;
 	int step;
 
 	@Override
 	public EndState getEndState() {
+
 		return EndState.SUCCESSFUL;
 	}
 
 	@Override
 	public void init(PlanInstance planInstance) {
-		step = 0;
+		step=0;
+
+
 	}
 
 	@Override
@@ -58,6 +61,11 @@ public class RegisterAgentToBlackboard extends OneShotBehaviour implements PlanB
 				ID.GlobalScheduler.ZoneData.jobForLSA).
 				MsgID(MessageIds.msgjobForLSA).
 				build();
+		
+		NamedZoneData ZoneDataName6 = new NamedZoneData.Builder(
+				ID.GlobalScheduler.ZoneData.QueryRequest).
+				MsgID(MessageIds.msgGSAQuery).build();
+		
 
 		NamedZoneData[] ZoneDataNames={ZoneDataName1, ZoneDataName2,
 				ZoneDataName3,ZoneDataName4,
@@ -68,7 +76,11 @@ public class RegisterAgentToBlackboard extends OneShotBehaviour implements PlanB
 			e1.printStackTrace();
 		}
 
+
+
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
+
+
 
 		SubscriptionForm subform = new SubscriptionForm();
 		AID target = new AID(ID.Customer.LocalName, AID.ISLOCALNAME);
@@ -77,13 +89,20 @@ public class RegisterAgentToBlackboard extends OneShotBehaviour implements PlanB
 		subform.AddSubscriptionReq(target, params);
 		
 		AID target_LSA=new AID(ID.LocalScheduler.LocalName+"#1",AID.ISLOCALNAME);
-		String[] LSAparams={ID.LocalScheduler.ZoneData.WaitingTime, ID.LocalScheduler.ZoneData.bidForJob};
+		String[] LSAparams={ID.LocalScheduler.ZoneData.WaitingTime, ID.LocalScheduler.ZoneData.bidForJob,
+				ID.LocalScheduler.ZoneData.finishedJob, ID.LocalScheduler.ZoneData.QueryResponse};
 		subform.AddSubscriptionReq(target_LSA, LSAparams);
 		
+
 		AID target_LSA2=new AID(ID.LocalScheduler.LocalName+"#2",AID.ISLOCALNAME);
-		String[] LSAparams2={ID.LocalScheduler.ZoneData.WaitingTime, ID.LocalScheduler.ZoneData.bidForJob};
+		String[] LSAparams2={ID.LocalScheduler.ZoneData.WaitingTime, ID.LocalScheduler.ZoneData.bidForJob,
+				ID.LocalScheduler.ZoneData.finishedJob, ID.LocalScheduler.ZoneData.QueryResponse};
 		subform.AddSubscriptionReq(target_LSA2, LSAparams2);
+		
+		
 
 		AgentUtil.subscribeToParam(myAgent, bb_aid, subform);
+
 	}
+
 }

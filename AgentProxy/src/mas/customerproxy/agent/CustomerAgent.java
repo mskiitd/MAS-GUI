@@ -6,7 +6,7 @@ import jade.core.AID;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.customerproxy.plan.DispatchJobPlan;
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -41,12 +41,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 				setReplyWith(replyWith).
 				Build();
 
-		/*for(int i=0;i<jobToDispatch.getOperations().size();i++){
-			log.info(jobToDispatch.getOperations().get(i).getProcessingTime());
-		}*/
 		AgentUtil.sendZoneDataUpdate(this.blackboard,jobOrderZoneDataUpdate, this);
-		
-//		addGoal(new dispatchJobGoal());
 	}
 	
 	public void cancelOrder(job j) {
@@ -90,7 +85,6 @@ public class CustomerAgent extends AbstractCustomerAgent {
 				ID.Customer.BeliefBaseConst.blackboardAgent, blackboard);
 		
 		SwingUtilities.invokeLater(new Runnable() {
-
 			@Override
 			public void run() {
 				mygui = new CustomerProxyGUI(CustomerAgent.this);

@@ -1,12 +1,12 @@
 package mas.localSchedulingproxy.plan;
 
 import jade.core.behaviours.Behaviour;
-import java.util.ArrayList;
-import mas.job.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.behavior.JobSchedulingTickerBehavior;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;

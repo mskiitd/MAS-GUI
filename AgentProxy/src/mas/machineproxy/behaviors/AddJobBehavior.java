@@ -5,7 +5,8 @@ import jade.core.behaviours.Behaviour;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import mas.job.job;
+import mas.jobproxy.job;
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Methods;
 import mas.machineproxy.Simulator;
@@ -42,6 +43,11 @@ public class AddJobBehavior extends Behaviour {
 					this.machineSimulator = (Simulator) getDataStore().
 							get(Simulator.simulatorStoreName);
 				}
+				
+				machineSimulator.setStatus(MachineStatus.PROCESSING);
+				
+				LocalSchedulingAgent.mGUI.machineProcessing();
+				
 				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessTime()/1000.0;
 						
 			/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
@@ -70,8 +76,6 @@ public class AddJobBehavior extends Behaviour {
 
 				log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time : " + comingJob.getCurrentOperationProcessTime());
-
-				machineSimulator.setStatus(MachineStatus.PROCESSING);
 
 				if( processingTime > 0 ) {
 					executor = new ScheduledThreadPoolExecutor(1);
@@ -112,8 +116,8 @@ public class AddJobBehavior extends Behaviour {
 				process.setDataStore(getDataStore());
 				myAgent.addBehaviour(process);
 				machineSimulator.setStatus(MachineStatus.IDLE);
+				LocalSchedulingAgent.mGUI.machineIdle();
 			}
-
 			break;
 		}
 	}
@@ -131,8 +135,8 @@ public class AddJobBehavior extends Behaviour {
 			/**
 			 * If machine is failed it won't do anything.
 			 * Executor will just keep scheduling this task
-			 * 
 			 */
+			
 //			log.info("remProcessingTime="+processingTime);
 			if( processingTime > 0 &&
 				machineSimulator.getStatus() != MachineStatus.FAILED ) {

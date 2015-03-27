@@ -4,8 +4,13 @@ import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import mas.job.job;
+
+import mas.jobproxy.job;
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.util.AgentUtil;
 import mas.util.ID;
+import mas.util.ZoneDataUpdate;
+import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.UnreadableException;
 import bdi4jade.core.BeliefBase;
@@ -20,45 +25,48 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 	 * Takes the complete job from the simulator
 	 * 
 	 */
-	
+
 	private static final long serialVersionUID = 1L;
 	private job j;
 	private ArrayList<job> jobQueue;
 	private BeliefBase bfBase;
 	private StatsTracker sTracker;
 	private Logger log;
-	
-	@Override
-	public void action() {
-		
-		sTracker.addSize(jobQueue.size());
-		sTracker.storeJob(j,j.currentOperationNumber);
-				
-		log.info("updating belief for stats tracker :" + sTracker);
-		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.dataTracker, sTracker);
-	}
+	private AID blackboard_AID;
+
 
 	@Override
 	public void init(PlanInstance pInstance) {
-		
+
 		log = LogManager.getLogger();
+		blackboard_AID=(AID)pInstance.getBeliefBase().
+				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).getValue();
 		bfBase = pInstance.getBeliefBase();
-		
+
 		try {
 			j = (job)((MessageGoal)pInstance.getGoal()).getMessage().getContentObject();
-			
-		} catch (UnreadableException e) {		
+
+		} catch (UnreadableException e) {			
 			e.printStackTrace();
 		}
+
+
+	}
+
+
+	@Override
+	public void action() {
+		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine, null);
+
+		j.IncrementOperationNumber();
+		ZoneDataUpdate CompletedJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedJob)
+		.value(j).setReplyWith(Integer.toString(j.getJobNo())).Build();
+
+		AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedJobUpdate, myAgent);
 		
-		jobQueue = (ArrayList<job>) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
-				getValue();
-		
-		sTracker = (StatsTracker) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.dataTracker).
-				getValue();
-		
+		if(LocalSchedulingAgent.mGUI != null) {
+			LocalSchedulingAgent.mGUI.removeFromQueue(j);
+		}
 	}
 
 	@Override

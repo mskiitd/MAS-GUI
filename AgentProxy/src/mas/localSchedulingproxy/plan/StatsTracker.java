@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import mas.job.job;
+import mas.jobproxy.job;
 
 /**
  * @author Anand Prajapati

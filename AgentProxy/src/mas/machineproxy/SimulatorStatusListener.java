@@ -1,5 +1,7 @@
 package mas.machineproxy;
 
+import jade.core.Agent;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -11,10 +13,10 @@ import org.apache.logging.log4j.Logger;
 public class SimulatorStatusListener implements PropertyChangeListener {
 
 	private transient Logger log;
-	private Simulator sim;
+	private Simulator machineSimulator;
 
 	public SimulatorStatusListener(Simulator sim) {
-		this.sim = sim;
+		this.machineSimulator = sim;
 		log = LogManager.getLogger();
 	}
 
@@ -25,7 +27,7 @@ public class SimulatorStatusListener implements PropertyChangeListener {
 			if(evt.getNewValue().equals(MachineStatus.FAILED)) {
 				log.info("Simulator is in failed state :" );
 
-				sim.addBehaviour(new HandleSimulatorFailedBehavior());
+				machineSimulator.HandleFailure();
 			} 
 			else if(evt.getNewValue().equals(MachineStatus.IDLE)) {
 				log.info("Simulator is idle " );

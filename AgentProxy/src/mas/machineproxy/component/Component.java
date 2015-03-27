@@ -7,6 +7,9 @@ import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
 
 import org.apache.commons.math3.distribution.WeibullDistribution;
+import org.apache.commons.math3.random.GaussianRandomGenerator;
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +17,6 @@ import org.apache.logging.log4j.Logger;
  * @author Anand Prajapati
  * The weibull distribution being used here follows a constructor
  * weibull ( shape parameter, scale parameter)
- * weibull ( alpha , beta)
  * weibull ( beta  , eta )
  * 
  * The variable keep track of age is currentAge. Initial age is used to model
@@ -27,6 +29,11 @@ import org.apache.logging.log4j.Logger;
 public class Component implements IComponent,Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private transient static RandomGenerator jdkRndGenerator;
+	private transient static GaussianRandomGenerator gaussianGen;
+	private transient static Logger log;
+	
 	private String ComponentID;
 	private double initialAge;
 	private double currentAge;
@@ -47,11 +54,16 @@ public class Component implements IComponent,Serializable {
 	private long lastMaintTime;
 	private double lifeToFailure;
 	private transient Simulator mySimulator;
-	private transient static Logger log;
 
 	public Component(Builder builder, Simulator s) {
 		
 		log = LogManager.getLogger();
+		
+		if(jdkRndGenerator == null) {
+			jdkRndGenerator = new JDKRandomGenerator();
+			gaussianGen = new GaussianRandomGenerator(jdkRndGenerator);
+		}
+		
 		this.beta = builder.beta;
 		this.eta = builder.eta;
 		this.RestorationFactor = builder.RestorationFactor;
@@ -173,6 +185,15 @@ public class Component implements IComponent,Serializable {
 		}
 		this.currentAge = this.initialAge;
 	}
+	
+	/**
+	 * @param mean
+	 * @param sd
+	 * @return a random number with mean 'mean' and standard deviation 'sd'
+	 */
+	public static double normalRandom(double mean, double sd) {				
+		return (mean + gaussianGen.nextNormalizedDouble()*sd );
+	}
 
 	/**
 	 * generate new initial age for the component after being repaired based on
@@ -263,7 +284,7 @@ public class Component implements IComponent,Serializable {
 
 	@Override
 	public double getTTR() {
-		return this.TTR_sd;
+		return normalRandom(this.MTTR, this.TTR_sd);
 	}
 
 	@Override

@@ -1,6 +1,11 @@
 package mas.maintenanceproxy.agent;
 
+import java.util.ArrayList;
+
 import jade.core.AID;
+import mas.machineproxy.SimulatorInternals;
+import mas.machineproxy.component.Component;
+import mas.machineproxy.component.IComponent;
 import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -16,15 +21,26 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private AID blackboard;
+	private Capability bCap;
 	public static long prevMaintPeriod = 1 * 60 * 1000;
 	
-	private MaintenanceGUI mgui = null;
+	public static MaintenanceGUI mgui = null;
 
 	public void sendCorrectiveMaintenanceRepairTime(long mtime) {
+		
+		SimulatorInternals machine =  (SimulatorInternals) bCap.getBeliefBase().
+				getBelief(ID.Maintenance.BeliefBaseConst.machine).getValue();
+		
+		ArrayList<IComponent> machineComponents = machine.getComponents();
+		String repairData = String.valueOf(mtime);
+		
+		for(int i = 0 ; i < machineComponents.size(); i++) {
+			repairData += " " + i;
+		}
 
 		ZoneDataUpdate correctiveRepairUpdate = new ZoneDataUpdate.Builder(
 				ID.Maintenance.ZoneData.correctiveMaintdata).
-				value(mtime).
+				value(repairData).
 				Build();
 
 		AgentUtil.sendZoneDataUpdate(blackboard ,correctiveRepairUpdate,
@@ -41,7 +57,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 		log = LogManager.getLogger();
 
 		// Add capability to agent 
-		Capability bCap = new MaitenanceBasicCapability();
+		bCap = new MaitenanceBasicCapability();
 		addCapability(bCap);
 
 		blackboard = AgentUtil.findBlackboardAgent(this);

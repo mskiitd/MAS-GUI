@@ -46,7 +46,7 @@ public class machineHealthCheckPlan extends CyclicBehaviour implements PlanBody 
 			if(msg != null){
 				try {
 					myMachine = (SimulatorInternals) msg.getContentObject();
-					log.info("updating belief base of machine's health : " + myMachine );
+//					log.info("updating belief base of machine's health : " + myMachine );
 					step = 1;
 				} catch (UnreadableException e) {
 					e.printStackTrace();

@@ -2,10 +2,17 @@ package mas.maintenance.behavior;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import mas.job.job;
+import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
+/**
+ * @author Anand Prajapati
+ * 
+ * Behavior to send the generated preventive maintenance job to blackboard
+ *
+ */
 
 public class SendMaintenanceJobBehavior extends Behaviour{
 
@@ -22,11 +29,9 @@ public class SendMaintenanceJobBehavior extends Behaviour{
 	@Override
 	public void action() {
 
-		ZoneDataUpdate maintenanceJob = new ZoneDataUpdate.Builder(
-				ID.Maintenance.ZoneData.preventiveMaintJob).
-				value(this.maintJob).
-				Build();
-
+		ZoneDataUpdate maintenanceJob = new ZoneDataUpdate.Builder(ID.Maintenance.ZoneData.preventiveMaintJob)
+			.value(this.maintJob).Build();
+		
 		AgentUtil.sendZoneDataUpdate(this.bbAgent ,maintenanceJob, myAgent);
 		step = 1;
 	}

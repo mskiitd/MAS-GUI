@@ -80,6 +80,8 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 			AgentUtil.sendZoneDataUpdate(this.bba ,maintenanceStartData, myAgent);
 			
 			log.info("sending maintenance job data");
+			
+			// update the maintenance performed in the maintenance GUI
 			break;
 		}
 	}

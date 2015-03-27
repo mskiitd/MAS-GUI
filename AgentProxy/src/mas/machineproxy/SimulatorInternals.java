@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
-import mas.job.OperationType;
+import mas.jobproxy.OperationType;
 import mas.machineproxy.component.IComponent;
 
 public class SimulatorInternals implements Serializable{
