@@ -118,11 +118,16 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		
 		txtJobID.setEnabled(false);
 		
+		buttonListener clickListener = new buttonListener();
+		confirmJob.addActionListener(clickListener);
+		negotiateJob.addActionListener(clickListener);
+		
 		add(scroller);
 		showGui();
 	}
 
 	private void showGui() {
+		setTitle("Customer - Negotiation Job");
 		setPreferredSize(new Dimension(600,500));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();

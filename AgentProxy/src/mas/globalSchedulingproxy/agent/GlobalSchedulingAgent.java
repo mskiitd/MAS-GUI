@@ -1,9 +1,7 @@
 package mas.globalSchedulingproxy.agent;
 
 import jade.core.AID;
-
 import javax.swing.SwingUtilities;
-
 import mas.customerproxy.goal.SendNegotiationJobGoal;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
@@ -11,10 +9,8 @@ import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.JobQueryObject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
 

@@ -127,6 +127,7 @@ public class MachineGUI extends JFrame {
 	}
 
 	private void showGui() {
+		setTitle(" Machine GUI ");
 		setPreferredSize(new Dimension(600,500));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();

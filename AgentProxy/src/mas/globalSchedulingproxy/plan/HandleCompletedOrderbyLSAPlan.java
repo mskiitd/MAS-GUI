@@ -5,14 +5,20 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+
 import java.util.Date;
+
+import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
+import mas.globalSchedulingproxy.gui.GSAproxyGUI;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -61,15 +67,15 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 
 		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(MessageIds.msgbidForJob),
 				MessageTemplate.MatchReplyWith(msgReplyID));
+		
+		if(order.isComplete()){
+			step = 3;
+		}
 	}
 
 	@Override
 	public void action() {
 
-		if(order.isComplete()){
-			step = 3;
-		}
-		
 		switch (step) {
 		case 0:
 			this.MachineCount = (int) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
@@ -128,11 +134,11 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 						Build();
 
 				AgentUtil.sendZoneDataUpdate(blackboard, jobForLSAUpdate,myAgent);
-				
+
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
-			step = 3;
+			step = 4;
 			break;
 
 		case 3:
@@ -140,6 +146,10 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			Builder(ID.GlobalScheduler.ZoneData.completedJobByGSA).setReplyWith(msgReplyID).
 			value(order).Build();
 
+			AgentUtil.sendZoneDataUpdate( blackboard ,
+					jobCompletionNotification, myAgent);
+			
+			GlobalSchedulingAgent.mygui.addCompletedJob(order);
 			step = 4;
 			log.info("all operations of " + order.getJobNo() + " completed");
 			break;

@@ -58,7 +58,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	// name of data store used in behavior's to update this object
 	public transient static String simulatorStoreName = "simulatorStoreName";
 
-	public static long healthReportTimeMillis = 5000;
+	public static long healthReportTimeMillis = 35000;
 
 	// details about simulator
 	private SimulatorInternals internals;

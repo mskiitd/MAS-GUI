@@ -6,7 +6,6 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.PlatformController;
-
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -16,25 +15,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import mas.blackboard.blackboard;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
-import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
-import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.ID;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.alee.laf.WebLookAndFeel;
 
 public class AgentStarter {
@@ -100,11 +91,6 @@ public class AgentStarter {
 		} );
 
 		//		MachineGUI m = new MachineGUI(new LocalSchedulingAgent());
-		//		ArrayList<job> j = new ArrayList<job>();
-		//		j.add(new job.Builder("1").jobCPN(1).build());
-		//		
-		//		j.add(new job.Builder("2").jobCPN(2).build());
-		//		m.updateQueue(j);
 		new AgentStarter();
 		//				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
 	}

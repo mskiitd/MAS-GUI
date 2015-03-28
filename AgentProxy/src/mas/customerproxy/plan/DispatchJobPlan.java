@@ -1,11 +1,9 @@
 package mas.customerproxy.plan;
 
 import jade.core.AID;
-import jade.core.behaviours.OneShotBehaviour;
-
+import jade.core.behaviours.Behaviour;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -15,7 +13,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class DispatchJobPlan extends OneShotBehaviour implements PlanBody{
+public class DispatchJobPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
@@ -23,6 +21,7 @@ public class DispatchJobPlan extends OneShotBehaviour implements PlanBody{
 	private AID bba;
 	private Logger log;
 	private String replyWith;
+	private boolean done = false;
 
 	@Override
 	public EndState getEndState() {
@@ -49,16 +48,32 @@ public class DispatchJobPlan extends OneShotBehaviour implements PlanBody{
 	@Override
 	public void action() {
 
-		log.info("customer - sending job : " + jobToDispatch.getJobDuedatebyCust());
+		if(jobToDispatch != null) {
+			log.info("customer - sending job : " + jobToDispatch);
 
-		replyWith = Integer.toString(jobToDispatch.getJobNo());
-		
-		ZoneDataUpdate jobOrderZoneDataUpdate = new ZoneDataUpdate.
-				Builder(ID.Customer.ZoneData.newWorkOrderFromCustomer).
-				value(jobToDispatch).
-				setReplyWith(replyWith).
-				Build();
+			replyWith = Integer.toString(jobToDispatch.getJobNo());
 
-		AgentUtil.sendZoneDataUpdate(this.bba,jobOrderZoneDataUpdate, myAgent);
+			ZoneDataUpdate jobOrderZoneDataUpdate = new ZoneDataUpdate.
+					Builder(ID.Customer.ZoneData.newWorkOrderFromCustomer).
+					value(jobToDispatch).
+					setReplyWith(replyWith).
+					Build();
+
+			AgentUtil.sendZoneDataUpdate(this.bba,jobOrderZoneDataUpdate, myAgent);
+			
+			bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, null);
+			done = true;
+		} else {
+			log.info("customer - sending job :  " + bfBase);
+			jobToDispatch = (job) bfBase
+					.getBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND)
+					.getValue();
+			block(1000);
+		}
+	}
+
+	@Override
+	public boolean done() {
+		return done;
 	}
 }

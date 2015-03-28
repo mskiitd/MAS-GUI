@@ -74,7 +74,7 @@ public class RegisterAgentToBlackboardPlan extends OneShotBehaviour implements P
 
 		NamedZoneData[] ZoneDataNames={ZoneDataName1, ZoneDataName2,
 				ZoneDataName3,ZoneDataName4,
-				ZoneDataName5,ZoneDataName6, ZoneDataName7 };
+				ZoneDataName5,ZoneDataName6, ZoneDataName7, ZoneDataName8 };
 		try {
 			msg2.setContentObject(ZoneDataNames);
 		} catch (IOException e1) {

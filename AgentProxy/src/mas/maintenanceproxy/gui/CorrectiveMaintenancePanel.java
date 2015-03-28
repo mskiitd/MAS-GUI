@@ -19,7 +19,7 @@ import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
-public class CorrectiveMaintenanceGUI extends JPanel{
+public class CorrectiveMaintenancePanel extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 
@@ -36,7 +36,7 @@ public class CorrectiveMaintenanceGUI extends JPanel{
 
 	private boolean dataOk = true;
 
-	public CorrectiveMaintenanceGUI(LocalMaintenanceAgent mAgent) {
+	public CorrectiveMaintenancePanel(LocalMaintenanceAgent mAgent) {
 
 		log = LogManager.getLogger();
 		this.myPanel = new JPanel(new MigLayout());
@@ -59,9 +59,8 @@ public class CorrectiveMaintenanceGUI extends JPanel{
 	}
 
 	private void showGui() {
+		
 		setPreferredSize(new Dimension(600,500));
-		//		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		//		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;
 		int centerY = (int)screenSize.getHeight() / 2;
@@ -92,7 +91,7 @@ public class CorrectiveMaintenanceGUI extends JPanel{
 				if(dataOk) {
 					log.info("sending corrective maintenance data !!");
 					mAgent.sendCorrectiveMaintenanceRepairTime(repairTime);
-					CorrectiveMaintenanceGUI.this.setVisible(false);
+					CorrectiveMaintenancePanel.this.setVisible(false);
 				}
 			}
 		}

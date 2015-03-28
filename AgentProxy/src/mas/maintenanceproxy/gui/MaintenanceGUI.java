@@ -48,7 +48,7 @@ public class MaintenanceGUI extends JFrame{
 	private JSpinner jSpinnerMonth;
 	private JSpinner jSpinnerYear;
 	
-	private CorrectiveMaintenanceGUI correctivePanel;
+	private CorrectiveMaintenancePanel correctivePanel;
 
 	private CalendarPanel calendarPanel;
 	private JPanel schedulePanel;
@@ -64,7 +64,7 @@ public class MaintenanceGUI extends JFrame{
 		
 		this.mAgent = lmAgent;
 				
-		correctivePanel = new CorrectiveMaintenanceGUI(lmAgent);
+		correctivePanel = new CorrectiveMaintenancePanel(lmAgent);
 		
 		mainPanel = new JPanel(new BorderLayout());
 		schedulePanel = new JPanel(new BorderLayout());
@@ -136,6 +136,8 @@ public class MaintenanceGUI extends JFrame{
 	}
 
 	private void showGui() {
+		
+		setTitle(" Local Maintenance Agent ");
 		setPreferredSize(new Dimension(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();

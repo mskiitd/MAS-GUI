@@ -27,8 +27,8 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	public static CustomerProxyGUI mygui;
 	private AID blackboard;
 	
-	public void addJobToBeliefBase(job j) {
-		log.info("Adding generated job " + j + " to belief base");
+	public void sendGeneratedJob(job j) {
+//		log.info("Adding generated job " + j + " to belief base : " +bfBase);
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, j);
 		
 		addGoal(new dispatchJobGoal());
@@ -53,6 +53,9 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB, j);
 		
 		addGoal(new SendConfirmedOrderGoal());
+		
+		// update the accepted in the GUI
+		CustomerAgent.mygui.addAcceptedJob(j);
 	}
 	
 	public void negotiateJob(job j) {
@@ -67,11 +70,12 @@ public class CustomerAgent extends AbstractCustomerAgent {
 
 		Capability bCap = new basicCapability();
 		addCapability(bCap);
+		
 		log = LogManager.getLogger();
 
 		blackboard = AgentUtil.findBlackboardAgent(this);
 		
-		bfBase = getRootCapability().getBeliefBase();
+		bfBase = bCap.getBeliefBase();
 		bfBase.updateBelief(
 				ID.Customer.BeliefBaseConst.blackboardAgent, blackboard);
 		

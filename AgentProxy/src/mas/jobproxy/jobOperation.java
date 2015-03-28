@@ -75,7 +75,7 @@ public class jobOperation implements operationInterface,Serializable {
 	@Override
 	public String toString() {
 		return new StringBuilder().
-				append(jobOperationType.toString()).
+				append(jobOperationType).
 				toString();
 	}
 

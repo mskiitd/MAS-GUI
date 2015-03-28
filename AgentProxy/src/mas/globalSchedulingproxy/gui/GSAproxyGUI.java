@@ -137,20 +137,30 @@ public class GSAproxyGUI extends JFrame{
 	 * shows the result of the query for the job from table
 	 */
 	public static void showQueryResult(JobQueryObject response) {
-
+		JobQueryReplyFrame reply = new JobQueryReplyFrame(response);
 	}
 	
 	public void addAcceptedJobToList(job j) {
 		acceptedJobVector.addElement(j);
-		revalidate();
+		jobsInSystemTable.revalidate();
+		jobsInSystemTable.repaint();
 	}
 
 	/**
 	 * @param j
 	 */
 	public void addCompletedJob(job j) {
+		
+		if(acceptedJobVector.contains(j)) {
+			acceptedJobVector.removeElement(j);
+			jobsInSystemTable.revalidate();
+			jobsInSystemTable.repaint();
+		}
+		
 		completedJobVector.addElement(j);
-		revalidate();
+		completedJobsTable.revalidate();
+		completedJobsTable.repaint();
+		
 	}
 
 	class menuItemClickListener implements ActionListener {
@@ -214,6 +224,7 @@ public class GSAproxyGUI extends JFrame{
 	}
 
 	private void showGui() {
+		setTitle(" Global Scheduling Agent ");
 		setPreferredSize(new Dimension(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();

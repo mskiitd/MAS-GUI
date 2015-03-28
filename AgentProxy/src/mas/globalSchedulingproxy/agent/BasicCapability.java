@@ -10,7 +10,7 @@ import mas.util.MessageIds;
 public class BasicCapability extends AbstractGSCapability{
 
 	private static final long serialVersionUID = 1L;
-	private  Logger log;
+	private Logger log;
 
 	public BasicCapability(){
 		super();

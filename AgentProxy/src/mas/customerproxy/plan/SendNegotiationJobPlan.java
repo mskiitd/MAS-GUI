@@ -47,13 +47,22 @@ public class SendNegotiationJobPlan extends Behaviour implements PlanBody{
 	public void action() {
 
 		if(negotiationJob != null) {
+			log.info("Customer:Sending job for negotiation : " + negotiationJob);
 			ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.Builder(
 					ID.Customer.ZoneData.customerJobsUnderNegotiation).
 					value(negotiationJob).Build();
 
 			AgentUtil.sendZoneDataUpdate( this.bba,
 					negotiationJobDataUpdate,myAgent);
+			
+			bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB, null);
+			
 			done = true;
+		} else {
+			this.negotiationJob = (job) bfBase.
+					getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB).
+					getValue();
+			block(50);
 		}
 	}
 

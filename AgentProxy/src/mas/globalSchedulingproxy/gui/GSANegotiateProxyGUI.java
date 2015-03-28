@@ -109,6 +109,7 @@ public class GSANegotiateProxyGUI extends JFrame{
 	}
 
 	private void showGui() {
+		setTitle(" Global Scheduling Agent - Negotiate For Job");
 		setPreferredSize(new Dimension(600,500));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();

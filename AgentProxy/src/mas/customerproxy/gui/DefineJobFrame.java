@@ -335,7 +335,7 @@ public class DefineJobFrame extends JFrame{
 			log.info("data format : " + dataOk);
 			if(dataOk) {
 				log.info("Sending the job : " + generatedJob);
-				cAgent.addJobToBeliefBase(generatedJob);
+				cAgent.sendGeneratedJob(generatedJob);
 				CustomerProxyGUI.countJob++ ;
 				dispose();
 			}
@@ -343,6 +343,7 @@ public class DefineJobFrame extends JFrame{
 	}
 
 	private void showGui() {
+		setTitle(" Define Job ");
 		setPreferredSize(new Dimension(700,500));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();

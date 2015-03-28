@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import mas.jobproxy.job;
+import mas.util.JobQueryObject;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -44,7 +45,7 @@ public class JobQueryReplyFrame extends JFrame{
 	private JLabel lblCurrentMachineHeading;
 	private JLabel lblCurrentMachine;
 	
-	public JobQueryReplyFrame( job populatingJob) {
+	public JobQueryReplyFrame( JobQueryObject response) {
 
 		this.scroller = new JScrollPane();
 		this.mainInfoPanel = new JPanel(new MigLayout());
@@ -69,13 +70,14 @@ public class JobQueryReplyFrame extends JFrame{
 		this.lblCurrentOperation = new JLabel();
 		this.lblCurrentMachine = new JLabel();
 
-		if(populatingJob != null) {
-			lblCPN.setText(String.valueOf(populatingJob.getCPN()) );
-			lblJobID.setText(populatingJob.getJobID());
-			lblDueDate.setText(String.valueOf(populatingJob.getJobDuedatebyCust()));
-			lblPenaltyRate.setText(String.valueOf(populatingJob.getPenaltyRate()));
+		if(response != null && response.getCurrentJob() != null ) {
+			job theJob = response.getCurrentJob();
+			lblCPN.setText(String.valueOf(theJob.getCPN()) );
+			lblJobID.setText(theJob.getJobID());
+			lblDueDate.setText(String.valueOf(theJob.getJobDuedatebyCust()));
+			lblPenaltyRate.setText(String.valueOf(theJob.getPenaltyRate()));
 			this.lblOperations.setText(String.valueOf(
-					populatingJob.getOperations()) );
+					theJob.getOperations()) );
 			
 			this.lblOperationsDone.setText("");
 			this.lblCurrentOperation.setText("");
@@ -115,6 +117,7 @@ public class JobQueryReplyFrame extends JFrame{
 	}
 
 	private void showGui() {
+		setTitle(" Reply for Job Query ");
 		setPreferredSize(new Dimension(700,500));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();

@@ -241,6 +241,7 @@ public class CustomerProxyGUI extends JFrame{
 	}
 
 	private void showGui() {
+		setTitle(" Customer ");
 		setPreferredSize(new Dimension(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
@@ -252,9 +253,10 @@ public class CustomerProxyGUI extends JFrame{
 	}
 
 	public void addCompletedJob(job j) {
-		if(acceptedJobVector.contains(j)) {
+		/**if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.remove(j);
 		}
+		**/
 		completedJobVector.addElement(j);
 		completedJobsTable.revalidate();
 		completedJobsTable.repaint();

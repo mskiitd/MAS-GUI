@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bdi4jade.core.BDIAgent;
+import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -38,24 +39,26 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	private int repliesCnt = 0; 
 	private job JobToSend;
 	private long CumulativeWaitingTime=0;
+	private BeliefBase bfBase;
 
 	@Override
 	public void init(PlanInstance PI) {
 		log=LogManager.getLogger();
 
 		try {
-			dummyJob=(job)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
+			dummyJob = (job)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
+			msgReplyID = Integer.toString(dummyJob.getJobNo());
+
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
-		blackboard=(AID)PI.getBeliefBase().getBelief(ID.Blackboard.LocalName).getValue();
+		bfBase = PI.getBeliefBase();
+		blackboard = (AID) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
+				getValue();
 
-		msgReplyID=Integer.toString(dummyJob.getJobNo());
-		mt=MessageTemplate.and(
+		mt = MessageTemplate.and(
 				MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime),
 				MessageTemplate.MatchReplyWith(msgReplyID));
-		//		mt=MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime);
-
 	}
 
 	@Override
@@ -63,8 +66,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		switch (step) {
 		case 0:
 
-			this.MachineCount=(int)((BDIAgent)myAgent).getRootCapability().
-			getBeliefBase().getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).getValue();
+			this.MachineCount = (int) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
+			getValue();
 
 			if(MachineCount!=0){
 				step = 1;
@@ -95,7 +98,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 					}
 				}
 				else {
-					//					log.info("mt="+mt);
 					block();
 				}
 			}
@@ -114,7 +116,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				dummyJob.IncrementOperationNumber();
 				//				log.info(dummyJob.getCurrentOperationNumber()+"/"+dummyJob.getOperations().size());
 
-				if(dummyJob.getCurrentOperationNumber()<dummyJob.getOperations().size()){
+				if(dummyJob.getCurrentOperationNumber() < dummyJob.getOperations().size()){
 					step=1;
 				}
 				else{
@@ -158,7 +160,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 					MaxwaitingTimeMsg=WaitingTime[i];
 				}
 			} catch (UnreadableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
