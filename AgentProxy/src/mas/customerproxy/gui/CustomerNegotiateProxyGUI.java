@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,14 +22,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
 import uiconstants.Labels;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.job;
+import mas.util.DateLabelFormatter;
+import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 
@@ -58,12 +63,14 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private JLabel lblDueDate;
 	private JLabel lblOpsHeading;
 	private JLabel lblPenalty;
+	private JLabel lblWaitingTimeHeading;
 	private JButton btnOperationPlus;
 
 	private JTextField txtJobID;
 	private JTextField txtJobNo;
 	private JTextField txtCPN;
 	private JTextField txtNumOps;
+	private JTextField txtWaitingTime;
 	private JTextField txtPenaltyRate;
 
 	private job populatingJob;
@@ -127,6 +134,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.lblJobNo = new JLabel(Labels.CustomerLabels.jobNo);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
+		
+		this.lblWaitingTimeHeading = new JLabel("Expected Time by GSA : ");
+		this.txtWaitingTime = new JTextField(Labels.defaultJTextSize*3);
 
 		this.txtCPN = new JTextField(Labels.defaultJTextSize);
 		this.txtJobID = new JTextField(Labels.defaultJTextSize);
@@ -148,7 +158,10 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		myPanel.add(lblPenalty);
 		myPanel.add(txtPenaltyRate,"wrap");
-
+		
+		myPanel.add(lblWaitingTimeHeading);
+		myPanel.add(txtWaitingTime,"wrap");
+		
 		myPanel.add(lblDueDate);
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
@@ -184,6 +197,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			txtJobNo.setText(String.valueOf(populatingJob.getJobNo()));
 			txtJobNo.setEnabled(false);
 
+			txtWaitingTime.setText(String.valueOf(new Date(populatingJob.getWaitingTime())) ) ;
+			txtWaitingTime.setEnabled(false);
+			
 			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
 			txtPenaltyRate.setText(String.valueOf(populatingJob.getPenaltyRate()));
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));

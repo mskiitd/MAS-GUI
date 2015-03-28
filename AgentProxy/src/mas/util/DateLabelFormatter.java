@@ -1,4 +1,4 @@
-package mas.customerproxy.gui;
+package mas.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

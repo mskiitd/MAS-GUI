@@ -1,4 +1,4 @@
-package mas.customerproxy.gui;
+package mas.util;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -20,7 +20,6 @@ import mas.jobproxy.OperationType;
 import mas.jobproxy.job;
 import mas.jobproxy.jobDimension;
 import mas.jobproxy.jobOperation;
-import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 

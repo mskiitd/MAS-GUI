@@ -4,115 +4,318 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
-
+import javax.swing.SpinnerDateModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 import uiconstants.Labels;
-import mas.customerproxy.agent.CustomerAgent;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.job;
+import mas.util.DateLabelFormatter;
+import mas.util.DefineJobOperationsFrame;
+import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 
 public class GSANegotiateProxyGUI extends JFrame{
 
 	private static final long serialVersionUID = 1L;
+	private GlobalSchedulingAgent gAgent;
+	private BufferedImage plusButtonIcon;
 
 	private JScrollPane scroller;
 	private JPanel myPanel;
+	private JPanel operationPanel;
 	private JButton negotiateJob;
-	private GlobalSchedulingAgent gAgent;
-	private job myJob;
-	
-	private String JobID;
-	private double CPN;
-	private long DueDate;
+	public UtilDateModel dateModel;
+	public Properties dateProperties;
+	private JDatePanelImpl datePanel ;
+	private JDatePickerImpl datePicker;
+	private JSpinner timeSpinner;
+
 	private int NumOps;
-	private double penaltyRate;
-	private List<Long> list_ProcessingTime ;
-	private List<Double> list_TargetDimensions; 
 
 	private JLabel lblHeading;
 	private JLabel lblJobID;
+	private JLabel lblJobNo;
 	private JLabel lblCPN;
 	private JLabel lblDueDate;
-	private JLabel lblNumOps;
-	private JLabel lblPenaltyRate;
-	private List<JLabel> list_lblOperationTitles;
+	private JLabel lblOpsHeading;
+	private JLabel lblPenalty;
+	private JButton btnOperationPlus;
 
 	private JTextField txtJobID;
+	private JTextField txtJobNo;
 	private JTextField txtCPN;
-	private JTextField txtDueDate;
 	private JTextField txtNumOps;
 	private JTextField txtPenaltyRate;
 
-	public GSANegotiateProxyGUI(GlobalSchedulingAgent gAgent, job passedJob) {
+	private job populatingJob;
+	private boolean dataOk = true;
+	private boolean operationDataOk = false;
 
+	private Logger log;
+
+	public GSANegotiateProxyGUI(GlobalSchedulingAgent cAgent, job populatingJob) {
+
+		log = LogManager.getLogger();
+
+		this.populatingJob = populatingJob;
+
+		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
-		this.gAgent = gAgent;
-		this.myJob = passedJob;
-		
+		operationPanel = new JPanel(new MigLayout());
+		this.gAgent = cAgent;
 		this.negotiateJob = new JButton("Send For Negotiation");
 
-		this.lblHeading = new JLabel(Labels.CustomerLabels.jobGenerateHeading);
-		this.list_ProcessingTime = new ArrayList<Long>();
-		this.list_TargetDimensions = new ArrayList<Double>();
+		dateModel = new UtilDateModel();
 
+		dateProperties = new Properties();
+		dateProperties.put("text.today", "Today");
+		dateProperties.put("text.month", "Month");
+		dateProperties.put("text.year", "Year");
+
+		if(populatingJob != null) {
+			Calendar dudate = Calendar.getInstance();
+			dudate.setTime(populatingJob.getJobDuedatebyCust());
+
+			dateModel.setDate(dudate.get(Calendar.YEAR),
+					dudate.get(Calendar.MONDAY),
+					dudate.get(Calendar.DAY_OF_MONTH));
+
+			dateModel.setSelected(true);
+		}
+
+		datePanel = new JDatePanelImpl(dateModel, dateProperties);
+
+		datePicker = new JDatePickerImpl(datePanel,
+				new DateLabelFormatter());
+
+		timeSpinner = new JSpinner( new SpinnerDateModel() );
+		JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm:ss");
+		timeSpinner.setEditor(timeEditor);
+		timeSpinner.setValue(new Date());
+
+		try {
+			plusButtonIcon = ImageIO.read(new File("resources/plusbutton.png"));
+			btnOperationPlus = new JButton(new ImageIcon(plusButtonIcon));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		this.lblHeading = new JLabel(Labels.CustomerLabels.jobGenerateHeading);
 		this.lblCPN = new JLabel(Labels.CustomerLabels.jobPriority);
 		this.lblDueDate = new JLabel(Labels.CustomerLabels.jobDueDate);
 		this.lblJobID = new JLabel(Labels.CustomerLabels.jobID);
-		this.lblNumOps = new JLabel(Labels.CustomerLabels.jobOperationHeading);
-		this.lblPenaltyRate = new JLabel(Labels.CustomerLabels.jobPenalty);
+		this.lblJobNo = new JLabel(Labels.CustomerLabels.jobNo);
+		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
+		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
 
 		this.txtCPN = new JTextField(Labels.defaultJTextSize);
-		this.txtDueDate = new JTextField(Labels.defaultJTextSize);
 		this.txtJobID = new JTextField(Labels.defaultJTextSize);
-		this.txtNumOps = new JTextField(Labels.defaultJTextSize);
+		this.txtJobNo = new JTextField(Labels.defaultJTextSize);
+		this.txtNumOps = new JTextField(Labels.defaultJTextSize/2);
 		this.txtPenaltyRate = new JTextField(Labels.defaultJTextSize);
-		
+
+		this.lblHeading.setFont(TableUtil.headings);
 		myPanel.add(lblHeading,"wrap");
 
 		myPanel.add(lblJobID);
 		myPanel.add(txtJobID,"wrap");
 
+		myPanel.add(lblJobNo);
+		myPanel.add(txtJobNo,"wrap");
+
 		myPanel.add(lblCPN);
 		myPanel.add(txtCPN,"wrap");
-		
-		myPanel.add(lblPenaltyRate,"wrap");
-		myPanel.add(txtPenaltyRate);
+
+		myPanel.add(lblPenalty);
+		myPanel.add(txtPenaltyRate,"wrap");
 
 		myPanel.add(lblDueDate);
-		myPanel.add(txtDueDate,"wrap");
+		myPanel.add(datePicker);
+		myPanel.add(timeSpinner,"wrap");
 
-		myPanel.add(lblNumOps);
-		myPanel.add(txtNumOps,"wrap");
+		operationPanel.add(lblOpsHeading);
+		operationPanel.add(txtNumOps);
+		operationPanel.add(btnOperationPlus,"wrap");
 
-		this.myPanel.add(negotiateJob);
-		this.scroller = new JScrollPane(this.myPanel);
+		btnOperationPlus.addActionListener(new AddOperationListener());
 
-		txtCPN.setText(myJob.getCPN() + "");
-		txtDueDate.setText(myJob.getJobDuedatebyCust() +"");
-		txtJobID.setText(myJob.getJobID());
-		txtPenaltyRate.setText(myJob.getPenaltyRate() + "");
-		txtNumOps.setText(myJob.getOperations().size() + "");
-		
-		txtJobID.setEnabled(false);
-		
-		buttonListener listner = new buttonListener();
-		negotiateJob.addActionListener(listner);
-		
+		myPanel.add(operationPanel,"wrap");
+
+		myPanel.add(negotiateJob);
+
+		this.scroller = new JScrollPane(myPanel);
 		add(scroller);
+
+		buttonListener clickListener = new buttonListener();
+		negotiateJob.addActionListener(clickListener);
+
+		_populate();
+
 		showGui();
 	}
 
+	private void _populate() {
+		if(populatingJob != null) {
+			txtJobID.setText(populatingJob.getJobID());
+			txtJobID.setEnabled(false);
+
+			txtJobNo.setText(String.valueOf(populatingJob.getJobNo()));
+			txtJobNo.setEnabled(false);
+
+			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
+			txtCPN.setEnabled(false);
+			
+			txtPenaltyRate.setText(String.valueOf(populatingJob.getPenaltyRate()));
+			txtPenaltyRate.setEnabled(false);
+			
+			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
+			txtNumOps.setEnabled(false);
+			
+			timeSpinner.setValue(populatingJob.getJobDuedatebyCust());
+		}
+	}
+
+	private void createJobFromParams() {
+		boolean x2 = true,x3 = true,x4 = true,x5 = true;
+
+		x2 = checkPenaltyRate();
+		if(x2) {
+			x3 = checkCPN();
+		}
+		if(x2 & x3) {
+			x4 = checkDueDate();
+
+			if(x4) {
+				x5 = checkJobOperations();
+			}
+		}
+
+		dataOk = x2&x3&x4&x5;
+	}
+
+
+	private boolean checkJobOperations() {
+		boolean status = true;
+		if(populatingJob.getOperations() == null ) {
+			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		}else {
+			if(populatingJob.getOperations().isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
+						"Error" , JOptionPane.ERROR_MESSAGE );
+				status = false;
+			}
+		}
+		return status;
+	}
+
+	private boolean checkDueDate() {
+		boolean status = true;
+		Date time = (Date) timeSpinner.getValue();
+		Date jobDueDate = (Date) datePicker.getModel().getValue();
+
+		if(time == null || jobDueDate == null) {
+			JOptionPane.showMessageDialog(this, "Invalid input for due date !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		} else {
+
+			Calendar c1 = Calendar.getInstance();
+			Calendar c2 = Calendar.getInstance();
+			c1.setTime(time);
+			c2.setTime(jobDueDate);
+
+			Calendar calTime = Calendar.getInstance();
+			calTime.set(
+					c2.get(Calendar.YEAR), c2.get(Calendar.MONTH),c2.get(Calendar.DAY_OF_MONTH),
+					c1.get(Calendar.HOUR_OF_DAY), c1.get(Calendar.MINUTE), c1.get(Calendar.SECOND));
+
+			if(calTime.getTimeInMillis() < System.currentTimeMillis()) {
+				JOptionPane.showMessageDialog(this, "Please enter a due date after current Date !!",
+						"Error" , JOptionPane.ERROR_MESSAGE );
+				status = false;
+			}else {
+				populatingJob.setJobDuedatebyCust(calTime.getTime());
+			}
+		}
+		return status;
+	}
+
+	private boolean checkPenaltyRate() {
+		boolean status = true;
+		if(! txtPenaltyRate.getText().matches("-?\\d+(\\.\\d+)?") ) {
+			JOptionPane.showMessageDialog(this, "Invalid input for penalty rate !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		}else {
+			populatingJob.setPenaltyRate(Double.parseDouble(
+					txtPenaltyRate.getText() ) );
+		}
+		return status;
+	}
+
+	private boolean checkCPN() {
+		boolean status = true;
+		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
+			JOptionPane.showMessageDialog(this, "Invalid input for CPN !!", 
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		}else {
+			populatingJob.setCPN(Double.parseDouble(
+					txtCPN.getText() ) );
+		}
+		return status;
+	}
+
+	class AddOperationListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			checkOperations();
+
+			if(operationDataOk) {
+				DefineJobOperationsFrame ops = new 
+						DefineJobOperationsFrame(populatingJob, NumOps, populatingJob);
+			}
+		}
+	}
+
+	private void checkOperations() {
+		boolean  x2 = true;
+
+		if(! txtNumOps.getText().matches("-?\\d+?")) {
+			JOptionPane.showMessageDialog(this, "Invalid input for number of operations !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			x2 = false;
+		} else {
+			NumOps = Integer.parseInt(txtNumOps.getText());
+		}
+		operationDataOk = x2;
+	}
+
 	private void showGui() {
-		setTitle(" Global Scheduling Agent - Negotiate For Job");
+		setTitle("Global Scheduling Agent - Negotiation Job");
 		setPreferredSize(new Dimension(600,500));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();
@@ -129,15 +332,12 @@ public class GSANegotiateProxyGUI extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			// handle create job button pressed event
 			if(e.getSource().equals(negotiateJob)) {
-				
-				CPN = Double.parseDouble(txtCPN.getText());
-				penaltyRate = Double.parseDouble(txtPenaltyRate.getText());
-				
-				myJob.setCPN(CPN);
-				myJob.setPenaltyRate(penaltyRate);
-				
-				gAgent.negotiateJob(myJob);
-				dispose();
+
+				createJobFromParams();
+				if(dataOk) {
+					gAgent.negotiateJob(populatingJob);
+					dispose();
+				}
 			}
 		}
 	};
