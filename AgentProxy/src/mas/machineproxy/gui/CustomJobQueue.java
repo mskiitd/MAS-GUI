@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import test.AgentStarter;
 import mas.jobproxy.job;
+import mas.util.TableUtil;
 
 @SuppressWarnings("serial")
 public class CustomJobQueue extends JPanel {
@@ -40,7 +41,7 @@ public class CustomJobQueue extends JPanel {
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
 		g.setColor(boxColor);
-		g.setFont(AgentStarter.font);
+		g.setFont(TableUtil.font);
 		
 		parentWidth = getParent().getWidth();
 		componentsInOneLine = parentWidth/(cWidth + 3*padding);

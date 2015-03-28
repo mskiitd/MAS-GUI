@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,18 +21,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
-
 import mas.customerproxy.agent.CustomerAgent;
-import mas.customerproxy.goal.dispatchJobGoal;
 import mas.jobproxy.job;
+import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-
 import uiconstants.Labels;
 
 @SuppressWarnings("serial")
@@ -69,7 +65,6 @@ public class DefineJobFrame extends JFrame{
 
 	private JTextField txtJobID;
 	private JTextField txtCPN;
-	private JTextField txtDueDate;
 	private JTextField txtNumOps;
 	private JTextField txtPenalty;
 
@@ -121,7 +116,6 @@ public class DefineJobFrame extends JFrame{
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
 
 		this.txtCPN = new JTextField(Labels.defaultJTextSize);
-		this.txtDueDate = new JTextField(Labels.defaultJTextSize);
 		this.txtJobID = new JTextField(Labels.defaultJTextSize);
 		this.txtNumOps = new JTextField(Labels.defaultJTextSize/2);
 		this.txtPenalty = new JTextField(Labels.defaultJTextSize);
@@ -129,6 +123,7 @@ public class DefineJobFrame extends JFrame{
 		this.sendJob = new JButton(Labels.sendJobButton);
 		sendJob.addActionListener(new sendJobListener());
 
+		this.lblHeading.setFont(TableUtil.headings);
 		myPanel.add(lblHeading,"wrap");
 
 		myPanel.add(lblJobID);
@@ -165,7 +160,6 @@ public class DefineJobFrame extends JFrame{
 			txtJobID.setText(populatingJob.getJobID());
 			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
 			txtPenalty.setText(String.valueOf(populatingJob.getPenaltyRate()));
-			txtDueDate.setText(String.valueOf(populatingJob.getJobDuedatebyCust()));
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
 
 		}

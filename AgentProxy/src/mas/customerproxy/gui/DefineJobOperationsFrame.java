@@ -20,6 +20,7 @@ import mas.jobproxy.OperationType;
 import mas.jobproxy.job;
 import mas.jobproxy.jobDimension;
 import mas.jobproxy.jobOperation;
+import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -78,12 +79,12 @@ public class DefineJobOperationsFrame extends JFrame{
 //		txtAttributeList = new ArrayList<JTextField>();
 
 		this.done = new JButton(Labels.CustomerLabels.jobOpeationsDoneButton);
-		this.lblHeading = new JLabel(Labels.CustomerLabels.jobGenerateHeading);
-		this.lblHeading.setFont(lblHeading.getFont().deriveFont(Font.BOLD));
+		this.lblHeading = new JLabel("Operations of Job");
 
 		done.addActionListener(new submitOperationsDataListener());
 
-		myPanel.add(lblHeading,"wrap");
+		this.lblHeading.setFont(TableUtil.headings);
+		myPanel.add(lblHeading,"span, wrap");
 		
 		for(int i = 0 ; i < numOps ; i++) {
 
@@ -98,6 +99,8 @@ public class DefineJobOperationsFrame extends JFrame{
 //			lblAttList.add(aName);
 
 			JLabel lblOpHeading = new JLabel("Operation-" + (i + 1));
+			lblOpHeading.setFont(TableUtil.headings);
+			
 			lblOpeartionTitleList.add(lblOpHeading);
 
 			ArrayList<String> possibleOps = new ArrayList<String>();
@@ -140,7 +143,7 @@ public class DefineJobOperationsFrame extends JFrame{
 			myPanel.add(lblOpeartionTitleList.get(i),"wrap");
 
 			myPanel.add(lblOpeartionTypeList.get(i));
-			myPanel.add(operationBoxList.get(i),"wrap");
+			myPanel.add(operationBoxList.get(i),"gapleft 30, wrap");
 
 //			myPanel.add(lblptimeList.get(i));
 //			myPanel.add(txtprocessingTimeList.get(i),"wrap");

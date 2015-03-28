@@ -1,18 +1,13 @@
 package mas.customerproxy.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
-
-import javafx.scene.layout.Border;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -26,10 +21,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.agent.Jobloader;
 import mas.jobproxy.job;
@@ -69,7 +60,6 @@ public class CustomerProxyGUI extends JFrame{
 
 	private int currentJobToSend = -1;
 	private int currentAcceptedSelectedJob = -1;
-	private int currentCompletedSelectedJob = -1;
 
 	// menu items here
 	private JMenuItem menuItemCancel ;

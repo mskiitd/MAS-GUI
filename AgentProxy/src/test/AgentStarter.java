@@ -6,17 +6,10 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.PlatformController;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import mas.blackboard.blackboard;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
@@ -24,9 +17,9 @@ import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.ID;
+import mas.util.TableUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.alee.laf.WebLookAndFeel;
 
 public class AgentStarter {
 
@@ -34,7 +27,6 @@ public class AgentStarter {
 	private ProfileImpl bootProfile;
 	private Logger log;
 	private jade.core.Runtime runtime;
-	public static Font font;
 
 	static {
 		agents = new HashMap<String, Agent>();
@@ -47,50 +39,11 @@ public class AgentStarter {
 		agents.put(ID.Maintenance.LocalName+"#1", new LocalMaintenanceAgent());
 	};
 
-	public static void setUIFont (javax.swing.plaf.FontUIResource f){
-		java.util.Enumeration keys = UIManager.getDefaults().keys();
-		while (keys.hasMoreElements()) {
-			Object key = keys.nextElement();
-			Object value = UIManager.get (key);
-			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
-				UIManager.put (key, f);
-		}
-	} 
-
 	public static void main(String[] args) {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
 
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-				try {
-					ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("resources/Inconsolata.otf")));
-
-					File font_file = new File("resources/Inconsolata.otf");
-					font = Font.createFont(Font.TRUETYPE_FONT, font_file).
-							deriveFont(Font.PLAIN, 18f);
-					
-					  WebLookAndFeel.install ();
-//
-//					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//						if ("Nimbus".equals(info.getName())) {
-//							UIManager.setLookAndFeel(info.getClassName());
-//							break;
-//						}
-//					}
-					setUIFont (new javax.swing.plaf.FontUIResource(font));
-				} catch (FontFormatException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} 
-			}
-		} );
-
-		//		MachineGUI m = new MachineGUI(new LocalSchedulingAgent());
+		TableUtil.loadFont();
 		new AgentStarter();
 		//				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
 	}
@@ -102,8 +55,6 @@ public class AgentStarter {
 		List<String> params = new ArrayList<String>();
 		//		params.add("-gui");
 		//		params.add("-detect-main:false");
-
-		log.info("parameters for console :" + params);
 
 		this.bootProfile = new BootProfileImpl(params.toArray(new String[0]));
 
