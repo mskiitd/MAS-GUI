@@ -12,6 +12,7 @@ import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.goal.JobSchedulingGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
+import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
 import mas.localSchedulingproxy.plan.EnqueueJobPlan;
 import mas.localSchedulingproxy.plan.JobSchedulingPlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedJobPlan;
@@ -21,6 +22,7 @@ import mas.localSchedulingproxy.plan.SendBidPlan;
 import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
 import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
+import mas.localSchedulingproxy.plan.UpdateOperationDatabasePlan;
 import mas.util.ID;
 import mas.util.MessageIds;
 
@@ -134,6 +136,8 @@ public class AbstractbasicCapability extends Capability {
 				SendJobToMachinePlan.class));
 		
 		plans.add(new SimplePlan(JobSchedulingGoal.class,JobSchedulingPlan.class));
+		
+		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, UpdateOperationDatabasePlan.class));
 
 		return plans;
 	}	

@@ -42,10 +42,8 @@ public class AgentStarter {
 	public static void main(String[] args) {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
-
 		TableUtil.loadFont();
 		new AgentStarter();
-		//				GSAproxyGUI ggui = new GSAproxyGUI(new GlobalSchedulingAgent());
 	}
 
 	public AgentStarter() {
