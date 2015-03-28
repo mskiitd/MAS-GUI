@@ -104,6 +104,9 @@ public class GSANegotiateProxyGUI extends JFrame{
 		
 		txtJobID.setEnabled(false);
 		
+		buttonListener listner = new buttonListener();
+		negotiateJob.addActionListener(listner);
+		
 		add(scroller);
 		showGui();
 	}

@@ -13,7 +13,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class SendNegotiationJobPlan extends Behaviour implements PlanBody {
+public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 	
 	private static final long serialVersionUID = 1L;
 	private Logger log;
@@ -45,14 +45,23 @@ public class SendNegotiationJobPlan extends Behaviour implements PlanBody {
 	public void action() {
 
 		if(negotiationJob != null) {
-			ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.Builder(
-					ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation).
+			log.info("GSA : sending negotiation reply to customer : " + negotiationJob );
+			ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.
+					Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation).
 					value(negotiationJob).
 					Build();
 
 			AgentUtil.sendZoneDataUpdate( this.bba,
 					negotiationJobDataUpdate,myAgent);
+			
+			bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job, null);
 			done = true;
+		}else {
+			log.info("GSA : reading negotiation : " + negotiationJob );
+			this.negotiationJob = (job) bfBase.
+					getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job).
+					getValue();
+			block(50);
 		}
 	}
 

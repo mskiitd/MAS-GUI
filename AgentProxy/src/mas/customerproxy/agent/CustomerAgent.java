@@ -4,7 +4,7 @@ import javax.swing.SwingUtilities;
 
 import jade.core.AID;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
-import mas.customerproxy.goal.SendNegotiationJobGoal;
+import mas.customerproxy.goal.CustomerSendNegotiationJobGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.gui.CancelOrderGoal;
 import mas.customerproxy.gui.ChangeDueDateGoal;
@@ -60,7 +60,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	
 	public void negotiateJob(job j) {
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB, j);
-		this.addGoal(new SendNegotiationJobGoal());
+		this.addGoal(new CustomerSendNegotiationJobGoal());
 	}
 	
 	@Override

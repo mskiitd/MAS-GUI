@@ -4,10 +4,8 @@ import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -15,7 +13,7 @@ import bdi4jade.plan.PlanInstance.EndState;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 
-public class SendNegotiationJobPlan extends Behaviour implements PlanBody{
+public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
 	private Logger log;
@@ -59,6 +57,7 @@ public class SendNegotiationJobPlan extends Behaviour implements PlanBody{
 			
 			done = true;
 		} else {
+			log.info("Customer : reading job negotiation : " + negotiationJob);
 			this.negotiationJob = (job) bfBase.
 					getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB).
 					getValue();

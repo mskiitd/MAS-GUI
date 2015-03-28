@@ -2,7 +2,7 @@ package mas.globalSchedulingproxy.agent;
 
 import jade.core.AID;
 import javax.swing.SwingUtilities;
-import mas.customerproxy.goal.SendNegotiationJobGoal;
+import mas.globalSchedulingproxy.goal.GSASendNegotitationGoal;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
 import mas.jobproxy.job;
@@ -51,10 +51,10 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 	}
 
 	public void negotiateJob(job myJob) {
-		
+		log.info("GSA - Sending negotitaion job : " + myJob);
 		bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job, myJob);
 		
-		addGoal(new SendNegotiationJobGoal());
+		addGoal(new GSASendNegotitationGoal());
 	}
 
 	public static void showQueryResponse(JobQueryObject response) {
