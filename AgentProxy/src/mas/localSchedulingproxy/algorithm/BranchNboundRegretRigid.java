@@ -1,18 +1,15 @@
-//package mas.localSchedulingproxy.algorithm;
-//import java.util.ArrayList;
-//import java.util.Collections;
-//
-//import mas.job.job;
-//
-//public class BranchNboundRegretRigid{
-//	/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 
-//	 *  To use it, create a node with state equal to ArrayList of a sequence of jobs
-//	 *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
-//	 *  Minimum penalty will be given by the variables "lowBound".
-//	 *  
-//	 *  @author Anand Prajapati 
-//	 *  @Email  anandprajapati389@gmail.com
-//	 */ 
+package mas.localSchedulingproxy.algorithm;
+
+
+public class BranchNboundRegretRigid{
+	/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 
+	 *  To use it, create a node with state equal to ArrayList of a sequence of jobs
+	 *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
+	 *  Minimum penalty will be given by the variables "lowBound".
+	 *  
+	 *  @author Anand Prajapati 
+	 *  @Email  anandprajapati389@gmail.com
+	 */ 
 //	
 //	private ArrayList<job> best = new ArrayList<job>();		// best solution stored in this ArrayList when algo runs
 //	private Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
@@ -207,4 +204,4 @@
 ////			System.out.println(node.state.get(i).regt +" with slack" + node.state.get(i).slack);
 //	}
 //	}
-//}
+}

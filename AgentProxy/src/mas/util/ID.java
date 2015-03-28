@@ -73,6 +73,7 @@ public class ID implements Serializable{
 			public static final String supportedOperations = "supportedOperations";
 			public static final String regretThreshold = "regret_threshold";
 			public static final String currentJobOnMachine="jobCurrentlyProcessingOnMachine";
+			public static final String operationDatabase = "operation_database";
 		}
 
 		public class ZoneData {

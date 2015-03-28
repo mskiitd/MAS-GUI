@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mas.jobproxy.job;
+import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.goal.JobSchedulingGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
@@ -85,6 +86,9 @@ public class AbstractbasicCapability extends Capability {
 		Belief<Double> regretThreshold = new TransientBelief<Double>(
 				ID.LocalScheduler.BeliefBaseConst.regretThreshold);
 		
+		Belief<OperationDataBase> operationDB = new 
+				TransientBelief<OperationDataBase>(ID.LocalScheduler.BeliefBaseConst.operationDatabase);
+		
 		double threshVal = 0;
 		regretThreshold.setValue(threshVal);
 
@@ -98,6 +102,9 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(mygsAgent);
 		beliefs.add(dtrack);
 		beliefs.add(regretThreshold);
+		beliefs.add(processingCost);
+		beliefs.add(supportedOperations);
+		beliefs.add(operationDB);
 		
 		return beliefs;
 	}
