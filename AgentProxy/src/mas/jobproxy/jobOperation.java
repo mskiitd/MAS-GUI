@@ -13,7 +13,7 @@ public class jobOperation implements operationInterface,Serializable {
 	private String machineOperated;
 	private long dueDate;
 
-	private OperationType jobOperationType;
+	private String jobOperationType;
 	private ArrayList<jobDimension> jDims;
 
 	public String getMachineOperated() {
@@ -49,11 +49,11 @@ public class jobOperation implements operationInterface,Serializable {
 		this.processingTime = processingTime;
 	}
 
-	public OperationType getJobOperationType() {
+	public String getJobOperationType() {
 		return jobOperationType;
 	}
 
-	public void setJobOperationType(OperationType jobOperationType) {
+	public void setJobOperationType(String jobOperationType) {
 		this.jobOperationType = jobOperationType;
 	}
 

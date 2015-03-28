@@ -6,12 +6,12 @@ import jade.lang.acl.MessageTemplate;
 import java.util.HashSet;
 import java.util.Set;
 
+import mas.customerproxy.goal.CancelOrderGoal;
+import mas.customerproxy.goal.ChangeDueDateGoal;
 import mas.customerproxy.goal.ReceiveCompletedJobGoal;
 import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
-import mas.customerproxy.gui.CancelOrderGoal;
-import mas.customerproxy.gui.ChangeDueDateGoal;
 import mas.customerproxy.plan.CancelOrderPlan;
 import mas.customerproxy.plan.ChangeDueDatePlan;
 import mas.customerproxy.plan.DispatchJobPlan;

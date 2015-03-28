@@ -1,4 +1,4 @@
-package mas.customerproxy.gui;
+package mas.customerproxy.agent;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -135,7 +135,7 @@ public class Jobloader {
 
 			switch(count) {
 			case 0:
-				jobIdList.add((int)cell.getNumericCellValue() + "");
+				jobIdList.add(cell.getStringCellValue());
 				break;
 			case 1:
 				jobQuantity.add((int) cell.getNumericCellValue());
@@ -173,52 +173,49 @@ public class Jobloader {
 				case 0:
 					// Operation type for the job
 					String op = cell.getStringCellValue();
-//					System.out.println(op + " *|||---- : "+ op.length());
-					if(op != null && op.length() > 0 ) {
-						currOperation.setJobOperationType(OperationType.valueOf(op));
-					}
+					currOperation.setJobOperationType(op);
 					break;
 
-				case 1:
-					// Processing time for this operation
-					currOperation.
-					setProcessingTime((long) cell.getNumericCellValue()*timeUnitConversion);
-					break;
-
-				case 2:
-					// Dimensions for this operation
-					//					log.info(cell.getCellType());
-					cell.setCellType(1);
-					String s = cell.getStringCellValue();
-					String temp[] = s.split(",");
-					//			            		  System.out.println("length="+temp.length);
-					ArrayList<jobDimension> tempDimList = new ArrayList<jobDimension>();
-					jobDimension tempDim = new jobDimension();
-					for(int i=0; i < temp.length; i++){
-						tempDim.setTargetDimension(Double.parseDouble(temp[i]));
-						tempDimList.add(tempDim );
-					}
-					currOperation.setjDims(tempDimList);
-					break;
-
-				case 3:
-					// Attributes for this operation
-					String Attr=cell.getStringCellValue();
-					String tempAttr[]=Attr.split(",");
-
-					ArrayList<String> tempAttrList = new ArrayList<String>();
-
-					for(int i=0; i < tempAttr.length; i++){
-						tempAttrList.add(tempAttr[i] );
-					}
-//					currOperation.getjDims().get(0).setAttribute(tempAttrList);
-
-					break;
+					//				case 1:
+					//					// Processing time for this operation
+					//					currOperation.
+					//					setProcessingTime((long) cell.getNumericCellValue()*timeUnitConversion);
+					//					break;
+					//
+					//				case 2:
+					//					// Dimensions for this operation
+					//					//					log.info(cell.getCellType());
+					//					cell.setCellType(1);
+					//					String s = cell.getStringCellValue();
+					//					String temp[] = s.split(",");
+					//					//			            		  System.out.println("length="+temp.length);
+					//					ArrayList<jobDimension> tempDimList = new ArrayList<jobDimension>();
+					//					jobDimension tempDim = new jobDimension();
+					//					for(int i=0; i < temp.length; i++){
+					//						tempDim.setTargetDimension(Double.parseDouble(temp[i]));
+					//						tempDimList.add(tempDim );
+					//					}
+					//					currOperation.setjDims(tempDimList);
+					//					break;
+					//
+					//				case 3:
+					//					// Attributes for this operation
+					//					String Attr=cell.getStringCellValue();
+					//					String tempAttr[]=Attr.split(",");
+					//
+					//					ArrayList<String> tempAttrList = new ArrayList<String>();
+					//
+					//					for(int i=0; i < tempAttr.length; i++){
+					//						tempAttrList.add(tempAttr[i] );
+					//					}
+					//					//					currOperation.getjDims().get(0).setAttribute(tempAttrList);
+					//
+					//					break;
 				}
 				count++;
 			}
 			opList.add(currOperation);
-			this.jobOperations.add(opList);
 		}
+		this.jobOperations.add(opList);
 	}
 }

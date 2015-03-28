@@ -3,11 +3,11 @@ package mas.customerproxy.agent;
 import javax.swing.SwingUtilities;
 
 import jade.core.AID;
+import mas.customerproxy.goal.CancelOrderGoal;
+import mas.customerproxy.goal.ChangeDueDateGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.CustomerSendNegotiationJobGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
-import mas.customerproxy.gui.CancelOrderGoal;
-import mas.customerproxy.gui.ChangeDueDateGoal;
 import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;

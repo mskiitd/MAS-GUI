@@ -1,4 +1,4 @@
-package mas.customerproxy.gui;
+package mas.customerproxy.goal;
 
 import bdi4jade.goal.Goal;
 

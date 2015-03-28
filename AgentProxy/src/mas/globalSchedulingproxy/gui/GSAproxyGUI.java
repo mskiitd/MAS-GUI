@@ -25,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.job;
 import mas.util.JobQueryObject;
+import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
@@ -32,7 +33,6 @@ public class GSAproxyGUI extends JFrame{
 
 	private GlobalSchedulingAgent gAgent;
 
-	private JScrollPane scroller;
 	private JPanel queryJobsPanel;
 	private JPanel completedJobsPanel;
 
@@ -81,36 +81,25 @@ public class GSAproxyGUI extends JFrame{
 		this.jobsQueryTableModel = new tableModel();
 		this.jobsInSystemTable = new JTable(this.jobsQueryTableModel);
 
-		this.jobsInSystemTable.getColumnModel().getColumn(0).setPreferredWidth(10);
-		this.jobsInSystemTable.getColumnModel().getColumn(1).setPreferredWidth(5);
-		this.jobsInSystemTable.getColumnModel().getColumn(2).setPreferredWidth(10);
-		this.jobsInSystemTable.getColumnModel().getColumn(3).setPreferredWidth(100);
-		this.jobsInSystemTable.getColumnModel().getColumn(4).setPreferredWidth(140);
-		this.jobsInSystemTable.getColumnModel().getColumn(5).setPreferredWidth(250);
-
 		jobsInSystemTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jobsInSystemTable.addMouseListener(new rightClickListener());
 
+		TableUtil.setColumnWidths(jobsInSystemTable);
 		this.jobsInSystemTable.setRowHeight(30);
 		this.jobsInSystemTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		queryJobsPanel.add(jobsInSystemTable.getTableHeader(), BorderLayout.NORTH);
-		queryJobsPanel.add(jobsInSystemTable);
+		queryJobsPanel.add(new JScrollPane(jobsInSystemTable),BorderLayout.CENTER);
+		panelsForTab[0].add(queryJobsPanel,BorderLayout.CENTER);
 
-		panelsForTab[0].add(queryJobsPanel);
-
-		this.scroller = new JScrollPane(panelsForTab[0]);
-		this.tPanes.addTab(tabTitles[0],this.scroller );
+		this.tPanes.addTab(tabTitles[0],panelsForTab[0] );
 
 		//---------------------------------------------------------
 		initCompletedJobPane();
-		panelsForTab[1].add(completedJobsPanel);
+		panelsForTab[1].add(completedJobsPanel,BorderLayout.CENTER);
 		this.tPanes.addTab(tabTitles[1], panelsForTab[1]);
 
 		add(this.tPanes);
 
-		addAcceptedJobToList(new job.Builder("1").jobCPN(1).jobDueDateTime(new Date()).build());
-		
 		showGui();
 	}
 
@@ -121,16 +110,13 @@ public class GSAproxyGUI extends JFrame{
 		completedJobsTableModel = new CompletedJobsTableModel();
 		completedJobsTable = new JTable(completedJobsTableModel);
 
-		this.completedJobsTable.getColumnModel().getColumn(1).setMinWidth(350);
-		this.completedJobsTable.getColumnModel().getColumn(3).setMinWidth(130);
-		this.completedJobsTable.getColumnModel().getColumn(4).setMinWidth(100);
+		TableUtil.setColumnWidths(completedJobsTable);
 		this.completedJobsTable.setRowHeight(30);
 		this.completedJobsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		completedJobsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		completedJobsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		completedJobsPanel.add(completedJobsTable.getTableHeader(), BorderLayout.NORTH);
-		completedJobsPanel.add(completedJobsTable,BorderLayout.CENTER);
+		completedJobsPanel.add(new JScrollPane(completedJobsTable),BorderLayout.CENTER);
 	}
 
 	/**
@@ -142,6 +128,7 @@ public class GSAproxyGUI extends JFrame{
 	
 	public void addAcceptedJobToList(job j) {
 		acceptedJobVector.addElement(j);
+		TableUtil.setColumnWidths(jobsInSystemTable);
 		jobsInSystemTable.revalidate();
 		jobsInSystemTable.repaint();
 	}
@@ -158,6 +145,7 @@ public class GSAproxyGUI extends JFrame{
 		}
 		
 		completedJobVector.addElement(j);
+		TableUtil.setColumnWidths(completedJobsTable);
 		completedJobsTable.revalidate();
 		completedJobsTable.repaint();
 		
@@ -301,10 +289,10 @@ public class GSAproxyGUI extends JFrame{
 			job j = (job) completedJobVector.get(row);
 			switch(col) {
 			case 0:
-				value = j.getJobID();
+				value = j.getJobNo();
 				break;
 			case 1:
-				value = j.getOperations();
+				value = j.getJobID();
 				break;
 			case 2:
 				value = j.getCPN();
@@ -314,6 +302,9 @@ public class GSAproxyGUI extends JFrame{
 				break;
 			case 4:
 				value = j.getJobDuedatebyCust();
+				break;
+			case 5:
+				value = j.getOperations();
 				break;
 			default:
 				value = "null";

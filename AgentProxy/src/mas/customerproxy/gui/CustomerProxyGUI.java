@@ -1,13 +1,17 @@
 package mas.customerproxy.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
+
+import javafx.scene.layout.Border;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,9 +26,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import mas.customerproxy.agent.CustomerAgent;
+import mas.customerproxy.agent.Jobloader;
 import mas.jobproxy.job;
+import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -80,11 +89,12 @@ public class CustomerProxyGUI extends JFrame{
 		menuItemCancel.addActionListener(new rightClickListener());
 		menuItemChangeDueDate.addActionListener(new rightClickListener());
 
-		for (int i = 0, n = tabTitles.length; i < n; i++ ) {
-			panelsForTab[i] = new JPanel(new MigLayout());
+		for (int i = 1, n = tabTitles.length; i < n; i++ ) {
+			panelsForTab[i] = new JPanel(new BorderLayout());
 		}
 
 		_initGeneratorJobsPanel();
+		panelsForTab[0] = new JPanel(new MigLayout());
 		panelsForTab[0].add(jobGenPanel,"wrap");
 		panelsForTab[0].add(buttonPanel);
 
@@ -93,13 +103,12 @@ public class CustomerProxyGUI extends JFrame{
 		this.tPanes.addTab(tabTitles[0],this.scroller );
 
 		_initAcceptedJobsPanel();
-		panelsForTab[1].add(acceptedJobsPanel);
+		panelsForTab[1].add(acceptedJobsPanel, BorderLayout.CENTER);
 
 		_initCompletedJobsPanel();
-		panelsForTab[2].add(completedJobsPanel);
+		panelsForTab[2].add(completedJobsPanel, BorderLayout.CENTER);
 
 		// start from 1 index as the 0th index has already been added
-
 		for (int i = 1, n = tabTitles.length; i < n; i++) {
 			this.tPanes.addTab(tabTitles[i],panelsForTab[i] );
 		}
@@ -109,6 +118,7 @@ public class CustomerProxyGUI extends JFrame{
 	}
 
 	private void _initGeneratorJobsPanel() {
+
 		this.loader = new Jobloader();
 		this.loader.readFile();
 		this.jobVector = this.loader.getjobVector();
@@ -161,15 +171,13 @@ public class CustomerProxyGUI extends JFrame{
 		acceptedJobsTableModel = new AcceptedJobsTableModel();
 		acceptedJobsTable = new JTable(acceptedJobsTableModel);
 
-		this.acceptedJobsTable.getColumnModel().getColumn(1).setMinWidth(350);
-		this.acceptedJobsTable.getColumnModel().getColumn(3).setMinWidth(130);
-		this.acceptedJobsTable.getColumnModel().getColumn(4).setMinWidth(100);
+		TableUtil.setColumnWidths(acceptedJobsTable);
+		
 		this.acceptedJobsTable.setRowHeight(30);
 		this.acceptedJobsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		acceptedJobsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		acceptedJobsPanel.add(acceptedJobsTable.getTableHeader(), BorderLayout.NORTH);
-		acceptedJobsPanel.add(acceptedJobsTable,BorderLayout.CENTER);
+		acceptedJobsPanel.add(new JScrollPane(acceptedJobsTable), BorderLayout.CENTER);
 		acceptedJobsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		acceptedJobsTable.addMouseListener(new MouseListener() {
@@ -228,21 +236,18 @@ public class CustomerProxyGUI extends JFrame{
 		completedJobTableModel = new CompletedJobsTableModel();
 		completedJobsTable = new JTable(completedJobTableModel);
 
-		this.completedJobsTable.getColumnModel().getColumn(1).setMinWidth(350);
-		this.completedJobsTable.getColumnModel().getColumn(3).setMinWidth(130);
-		this.completedJobsTable.getColumnModel().getColumn(4).setMinWidth(100);
+		TableUtil.setColumnWidths(completedJobsTable);
 		this.completedJobsTable.setRowHeight(30);
 		this.completedJobsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		completedJobsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		completedJobsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		completedJobsPanel.add(completedJobsTable.getTableHeader(), BorderLayout.NORTH);
-		completedJobsPanel.add(completedJobsTable,BorderLayout.CENTER);
+		completedJobsPanel.add(new JScrollPane(completedJobsTable), BorderLayout.CENTER);
 	}
 
 	private void showGui() {
 		setTitle(" Customer ");
-		setPreferredSize(new Dimension(800,600));
+		setPreferredSize(new Dimension(1000,800));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -256,14 +261,16 @@ public class CustomerProxyGUI extends JFrame{
 		/**if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.remove(j);
 		}
-		**/
+		 **/
 		completedJobVector.addElement(j);
+		TableUtil.setColumnWidths(completedJobsTable);
 		completedJobsTable.revalidate();
 		completedJobsTable.repaint();
 	}
 
 	public void addAcceptedJob(job j) {
 		acceptedJobVector.addElement(j);
+		TableUtil.setColumnWidths(acceptedJobsTable);
 		acceptedJobsTable.revalidate();
 		acceptedJobsTable.repaint();
 	}

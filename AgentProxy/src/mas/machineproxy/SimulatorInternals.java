@@ -25,8 +25,8 @@ public class SimulatorInternals implements Serializable{
 	
 	public SimulatorInternals() {
 		this.myComponents = new ArrayList<IComponent>();
-		this.supportedOperations = EnumSet.of( OperationType.Operation_1,
-				OperationType.Operation_2, OperationType.Operation_3 );
+//		this.supportedOperations = EnumSet.of( OperationType.Operation_1,
+//				OperationType.Operation_2, OperationType.Operation_3 );
 		
 		this.status = MachineStatus.IDLE;
 	}

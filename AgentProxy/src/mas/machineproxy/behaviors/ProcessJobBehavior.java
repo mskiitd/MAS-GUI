@@ -39,26 +39,26 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 
 		jobOperation ops = comingJob.getCurrentOperation();
 		// Assign dimensions to the job
-		ArrayList<jobDimension> jDimensions = ops.getjDims();
-		int numDims = jDimensions.size();
-		int dIndex;
-
-		BinomialDistribution bernoulli =
-				new BinomialDistribution(1, machineSimulator.getFractionDefective());
-
-		boolean conforming;
-
-		for(dIndex = 0; dIndex < numDims; dIndex++) {
-
-			jDimensions.get(dIndex).setTargetDimension(
-					jDimensions.get(dIndex).getTargetDimension() +
-					Methods.normalRandom(machineSimulator.getMean_shift(),
-							machineSimulator.getSd_shift()));
-
-			conforming = (bernoulli.sample()==1)? Boolean.TRUE :Boolean.FALSE;
-			jDimensions.get(dIndex).setConforming(conforming);
-		}
-		comingJob.setCurrentOperationDimension(jDimensions);
+//		ArrayList<jobDimension> jDimensions = ops.getjDims();
+//		int numDims = jDimensions.size();
+//		int dIndex;
+//
+//		BinomialDistribution bernoulli =
+//				new BinomialDistribution(1, machineSimulator.getFractionDefective());
+//
+//		boolean conforming;
+//
+//		for(dIndex = 0; dIndex < numDims; dIndex++) {
+//
+//			jDimensions.get(dIndex).setTargetDimension(
+//					jDimensions.get(dIndex).getTargetDimension() +
+//					Methods.normalRandom(machineSimulator.getMean_shift(),
+//							machineSimulator.getSd_shift()));
+//
+//			conforming = (bernoulli.sample()==1)? Boolean.TRUE :Boolean.FALSE;
+//			jDimensions.get(dIndex).setConforming(conforming);
+//		}
+//		comingJob.setCurrentOperationDimension(jDimensions);
 		comingJob.setCompletionTime(System.currentTimeMillis());
 		
 		log.info("start time was " + new Date(comingJob.getStartTimeByCust().getTime()));
