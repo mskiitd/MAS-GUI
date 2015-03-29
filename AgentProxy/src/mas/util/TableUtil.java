@@ -7,6 +7,8 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -60,6 +62,14 @@ public class TableUtil {
 				} 
 			}
 		} );
+	}
+	
+	public static boolean checkIfExists(JComponent parent,JComponent child) {
+		
+		if(child.getParent() == null)
+			return false;
+		
+		return child.getParent().equals(parent);
 	}
 
 	public static void setColumnWidths(JTable table) {

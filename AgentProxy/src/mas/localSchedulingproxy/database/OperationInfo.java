@@ -13,10 +13,19 @@ public class OperationInfo implements Serializable{
 	private long processTime;
 	private ArrayList<jobDimension> mDimensions;
 	private ArrayList<JobGNGattribute> gngAttributes;
+	private double processingCost;
 	
 	public OperationInfo() {
 		mDimensions = new ArrayList<jobDimension>();
 		gngAttributes = new ArrayList<JobGNGattribute>();
+	}
+	
+	public double getProcessingCost() {
+		return processingCost;
+	}
+
+	public void setProcessingCost(double processingCost) {
+		this.processingCost = processingCost;
 	}
 
 	public long getProcessTime() {
@@ -42,7 +51,4 @@ public class OperationInfo implements Serializable{
 	public void setGngAttributes(ArrayList<JobGNGattribute> gngAttributes) {
 		this.gngAttributes = gngAttributes;
 	}
-	
-	
-	
 }

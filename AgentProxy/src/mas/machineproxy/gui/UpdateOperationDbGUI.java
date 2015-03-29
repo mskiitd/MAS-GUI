@@ -13,22 +13,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
@@ -36,19 +32,17 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.sun.corba.se.spi.orbutil.fsm.Action;
-
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationInfo;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
-import uiconstants.Labels;
 
-public class UpdateOperationDbGUI extends JFrame{
+public class UpdateOperationDbGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+
 	private String aName;
 	private OperationDataBase ops;
 	private ArrayList<String> operationIDs;
@@ -63,71 +57,53 @@ public class UpdateOperationDbGUI extends JFrame{
 	private JScrollPane operationsDataScroller;
 
 	private JPanel optionsPanel;
+
 	private JButton btnAddOperation;
 	private JButton btnSaveAndExit;
+
 	private BufferedImage addIcon;
 	private BufferedImage saveIcon;
 
-	private JPanel displayDataPanel;
 	private JPanel buttonPanel;
-	private JPanel addNewJobPanel;
-	private JScrollPane addNewJobScroller;
-	private JScrollPane displayDataScroller;
+	private JPanel rightPanel;
 
-	private JLabel lblAddNewHeading;
-	private JLabel lblOperationID;
-	private JLabel lblOperationPtime;
-	private JLabel lblOperationCost;
-	private JLabel lblDimensionHeading;
-	private JLabel lblAttributeHeading;
+	private DisplayOperationPanel displayDataPanel;
+	private AddNewOperationPanel addOperationPanel;
 
-	private JTextField txtOperationID;
-	private JTextField txtProcessingTime;
-	private JTextField txtOperationCost;
+	private JScrollPane rightPanelScroller;
 
-	private Queue<DimensionInputPanel> listPanelDimensions;
-	private BufferedImage iconBtnAddDimension;
-	private JButton btnAddDimension;
-	private BufferedImage iconBtnDelDimension;
-	private JButton btnDelDimension;
-	private JPanel dimensionPanel;
+	private boolean displayDataSaved = false;
+	private boolean operationDataSaved = false;
 
-	private Queue<AttributeInputPanel> listPanelAttributes;
-	private BufferedImage iconBtnAddAttribute;
-	private JButton btnAddAttribute;
-	private BufferedImage iconBtnDelAttribute;
-	private JButton btnDelAttribute;
-	private JPanel attributePanel;
-	
 	private ArrayList<jobDimension> mDimensions;
 	private ArrayList<JobGNGattribute> gngAttributes;
 
 	public UpdateOperationDbGUI(String agentName) {
 
 		this.aName = agentName;
+
 		mDimensions = new ArrayList<jobDimension>();
 		gngAttributes = new ArrayList<JobGNGattribute>();
 		operationIDs = new ArrayList<String>();
 
-		displayDataPanel = new JPanel(new BorderLayout());
-		buttonPanel = new JPanel(new BorderLayout());
+		rightPanel = new JPanel(new BorderLayout());
 
-		addNewJobPanel = new JPanel(new MigLayout());
-		addNewJobScroller = new JScrollPane(addNewJobPanel);
+		displayDataPanel = new DisplayOperationPanel();
+		addOperationPanel = new AddNewOperationPanel();
 
+		// create a placeholder for operation names on left hand side
 		operationsData = new JPanel(new MigLayout());
-		initAddNewJobPanel();
-
-		initOptionsPanel();
-		buttonPanel.add(optionsPanel, BorderLayout.CENTER);
-
-		displayDataPanel.add(buttonPanel, BorderLayout.NORTH);
-		displayDataPanel.add(addNewJobPanel,BorderLayout.CENTER);
-
 		this.operationsDataScroller = new JScrollPane(operationsData);
-		this.displayDataScroller = new JScrollPane(displayDataPanel);
 
-		hSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, operationsDataScroller, displayDataScroller);
+		// create a placeholder for components on right hand side
+		initOptionsPanel();
+		buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.add(optionsPanel, BorderLayout.CENTER);
+		rightPanel.add(buttonPanel, BorderLayout.NORTH);
+		this.rightPanelScroller = new JScrollPane(rightPanel);
+
+		// add both the place holders to split pane
+		hSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, operationsDataScroller, rightPanelScroller);
 		hSplitPane.setEnabled(false);
 
 		add(hSplitPane);
@@ -136,10 +112,11 @@ public class UpdateOperationDbGUI extends JFrame{
 	}
 
 	private class readOperationDatabase extends SwingWorker<OperationDataBase, String> {
-		String path = "resources/database/" + aName + "_db.mas";
+		String path = "resources/database/" + aName + "_db.data";
 
 		@Override
 		protected OperationDataBase doInBackground() throws Exception {
+
 			File file = new File(path);
 			FileInputStream fis;
 			try {
@@ -166,100 +143,13 @@ public class UpdateOperationDbGUI extends JFrame{
 			acceptedJobList = new JList<Object>(acceptedJobsListModel);
 
 			acceptedJobList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			acceptedJobList.addListSelectionListener(new ListSelectionHandler());
 			acceptedJobList.setCellRenderer(new customListRenderer());
 			operationsData.add(acceptedJobList);
 
-			if(operationIDs.isEmpty()) {
-				hSplitPane.setDividerLocation(0.30);
-			}
+			hSplitPane.setDividerLocation(0.35);
 			super.done();
 		}
-	}
-
-	private void initAddNewJobPanel() {
-
-		try {
-			AddDelDimensionListener dListener = new AddDelDimensionListener();
-
-			iconBtnAddDimension = ImageIO.read(new File("resources/plusbutton.png"));
-			btnAddDimension = new JButton(new ImageIcon(iconBtnAddDimension));
-			btnAddDimension.setBorder(BorderFactory.createEmptyBorder());
-			btnAddDimension.setContentAreaFilled(true);
-			btnAddDimension.addActionListener(dListener);
-
-			iconBtnDelDimension = ImageIO.read(new File("resources/del_24.png"));
-			btnDelDimension = new JButton(new ImageIcon(iconBtnDelDimension));
-			btnDelDimension.setBorder(BorderFactory.createEmptyBorder());
-			btnDelDimension.setContentAreaFilled(true);
-			btnDelDimension.addActionListener(dListener);
-			
-			AddDelAttributeListener aListener = new AddDelAttributeListener();
-
-			btnAddAttribute = new JButton(new ImageIcon(iconBtnAddDimension));
-			btnAddAttribute.setBorder(BorderFactory.createEmptyBorder());
-			btnAddAttribute.setContentAreaFilled(true);
-			btnAddAttribute.addActionListener(aListener);
-
-			btnDelAttribute = new JButton(new ImageIcon(iconBtnDelDimension));
-			btnDelAttribute.setBorder(BorderFactory.createEmptyBorder());
-			btnDelAttribute.setContentAreaFilled(true);
-			btnDelAttribute.addActionListener(aListener);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		dimensionPanel = new JPanel(new MigLayout());
-		attributePanel = new JPanel(new MigLayout());
-		
-		listPanelAttributes = new LinkedList<AttributeInputPanel>();
-		listPanelDimensions = new LinkedList<DimensionInputPanel>();
-
-		DimensionInputPanel dimPanel1 = new DimensionInputPanel();
-		listPanelDimensions.add(dimPanel1);
-		dimensionPanel.add(listPanelDimensions.peek(),"wrap");
-		
-		txtProcessingTime = new JTextField(Labels.defaultJTextSize);
-		txtOperationCost = new JTextField(Labels.defaultJTextSize);
-		txtOperationID = new JTextField(Labels.defaultJTextSize);
-
-		lblDimensionHeading = new JLabel(" Dimensions ");
-		lblDimensionHeading.setFont(TableUtil.headings);
-
-		lblAttributeHeading = new JLabel(" Attributes ");
-		lblAttributeHeading.setFont(TableUtil.headings);
-
-		lblAddNewHeading = new JLabel("Define Operation Data");
-		lblAddNewHeading.setFont(TableUtil.headings);
-
-		lblOperationID = new JLabel("Operation ID : ");
-		lblOperationCost = new JLabel("Processing Cost :");
-		lblOperationPtime = new JLabel("Processing Time : ");
-
-		addNewJobPanel.add(lblAddNewHeading, "wrap");
-
-		addNewJobPanel.add(lblOperationID);
-		addNewJobPanel.add(txtOperationID,"wrap");
-
-		addNewJobPanel.add(lblOperationCost);
-		addNewJobPanel.add(txtOperationCost, "wrap");
-
-		addNewJobPanel.add(lblOperationPtime);
-		addNewJobPanel.add(txtProcessingTime, "wrap");
-
-		addNewJobPanel.add(lblDimensionHeading);
-		addNewJobPanel.add(btnAddDimension);
-		addNewJobPanel.add(btnDelDimension, "wrap");
-		addNewJobPanel.add(dimensionPanel, "wrap");
-
-		addNewJobPanel.add(lblAttributeHeading);
-		addNewJobPanel.add(btnAddAttribute);
-		addNewJobPanel.add(btnDelAttribute, "wrap");
-		addNewJobPanel.add(attributePanel, "wrap");
-	}
-
-	private void initDisplayOpPanel() {
-
 	}
 
 	private void initOptionsPanel() {
@@ -285,59 +175,61 @@ public class UpdateOperationDbGUI extends JFrame{
 		optionsPanel.setBorder(new EmptyBorder(10,10,10,10));
 		optionsPanel.add(btnAddOperation, BorderLayout.WEST);
 		optionsPanel.add(btnSaveAndExit,BorderLayout.EAST);
+	}
 
+	private void addOperation() {
+		if(TableUtil.checkIfExists(rightPanel, displayDataPanel)) {
+			rightPanel.remove(displayDataPanel);
+			checkDisplayOperationSave(displayDataPanel);
+		}
+
+		rightPanel.add(addOperationPanel);
+		rightPanel.revalidate();
+		rightPanel.repaint();
+	}
+
+	private void checkNewOperationSave(AddNewOperationPanel comp) {
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+		int dialogResult = JOptionPane.showConfirmDialog (comp,
+				"Would You Like to Save your Previous changes First?","Warning",dialogButton);
+		if(dialogResult == JOptionPane.YES_OPTION){
+//			OperationInfo info = comp.
+		}
+	}
+	
+	private void checkDisplayOperationSave(DisplayOperationPanel comp) {
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+		int dialogResult = JOptionPane.showConfirmDialog (comp,
+				"Would You Like to Save your Previous changes First?","Warning",dialogButton);
+		if(dialogResult == JOptionPane.YES_OPTION) {
+			OperationInfo info = comp.getOperationInfo();
+			String id = comp.getOperationId();
+			ops.put(id, info);
+		}
+	}
+
+	private void showOperation(String id, OperationInfo op) {
+		if(TableUtil.checkIfExists(rightPanel, addOperationPanel)) {
+			checkNewOperationSave(addOperationPanel);
+			rightPanel.remove(addOperationPanel);
+		}
+
+		rightPanel.add(displayDataPanel);
+		displayDataPanel.populate(id,op);
+		rightPanel.revalidate();
+		rightPanel.repaint();
 	}
 
 	private void showGui() {
 		setTitle("Update Job Operation Database");
 		setPreferredSize(new Dimension(width, height));
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;
 		int centerY = (int)screenSize.getHeight() / 2;
 		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
 		super.setVisible(true);
-	}
-
-	class AddDelDimensionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-
-			if(e.getSource().equals(btnAddDimension)) {
-				DimensionInputPanel dimpanel = new DimensionInputPanel();
-				listPanelDimensions.add(dimpanel);
-				dimensionPanel.add(dimpanel,"wrap");
-
-			} else if(e.getSource().equals(btnDelDimension)) {
-				if(! listPanelDimensions.isEmpty()) {
-					dimensionPanel.remove(listPanelDimensions.poll()  );
-				}
-			}
-			dimensionPanel.revalidate();
-			dimensionPanel.repaint();
-		}
-	}
-	
-	class AddDelAttributeListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-
-			if(e.getSource().equals(btnAddAttribute)) {
-				AttributeInputPanel dimpanel = new AttributeInputPanel();
-				listPanelAttributes.add(dimpanel);
-				attributePanel.add(dimpanel,"wrap");
-
-			} else if(e.getSource().equals(btnDelAttribute)) {
-				if(! listPanelAttributes.isEmpty()) {
-					attributePanel.remove(listPanelAttributes.poll()  );
-				}
-			}
-			attributePanel.revalidate();
-			attributePanel.repaint();
-		}
 	}
 
 	class buttonClickListener implements ActionListener {
@@ -350,23 +242,17 @@ public class UpdateOperationDbGUI extends JFrame{
 
 			}
 		}
-
 	}
 
-	private void addOperation() {
-
-	}
-	
 	class ListSelectionHandler implements ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) { 
 
 			int idx = acceptedJobList.getSelectedIndex();
 			if (idx != -1) {
-
 				String opItem = operationIDs.get(idx);
 				OperationInfo info = ops.getOperationInfo(opItem);
-
+				showOperation(opItem,info);
 			}
 		}
 	}
