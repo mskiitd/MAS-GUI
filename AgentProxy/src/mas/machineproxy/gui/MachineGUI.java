@@ -4,26 +4,32 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 
 @SuppressWarnings("serial")
 public class MachineGUI extends JFrame {
-
-	private LocalSchedulingAgent lSchAgent;
 
 	private JSplitPane parentPanel;
 	private JPanel mcPanel;
@@ -34,10 +40,8 @@ public class MachineGUI extends JFrame {
 	private BufferedImage machineIcon;
 	private CustomJobQueue queuePanel;
 	private ArrayList<job> jobQ;
-
+	
 	public MachineGUI(LocalSchedulingAgent agent) {
-
-		this.lSchAgent = agent;
 
 		this.mcPanel = new JPanel(new GridBagLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
@@ -125,6 +129,7 @@ public class MachineGUI extends JFrame {
 
 	private void showGui() {
 		setTitle(" Machine GUI ");
+		setJMenuBar(createMenuBar());
 		setPreferredSize(new Dimension(600,500));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
@@ -133,5 +138,47 @@ public class MachineGUI extends JFrame {
 		int centerY = (int)screenSize.getHeight() / 2;
 		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
 		super.setVisible(true);
+	}
+
+	private JMenuBar createMenuBar() {
+		JMenuBar menuBar;
+		JMenu menu;
+		JMenuItem menuItem;
+		//Create the menu bar.
+		menuBar = new JMenuBar();
+
+		//Build the first menu.
+		menu = new JMenu("Options");
+
+		menu.setMnemonic(KeyEvent.VK_A);
+		menu.getAccessibleContext().setAccessibleDescription(
+				"The only menu in this program that has menu items");
+		menuBar.add(menu);
+
+		BufferedImage upIcon;
+		menuItemListener mListener = new menuItemListener();
+		try {
+			upIcon = ImageIO.read(new File("resources/upload_48.jpg"));
+			ImageIcon icon = new ImageIcon(upIcon);
+			menuItem = new JMenuItem("Add job to Database", icon);
+			menuItem.setMnemonic(KeyEvent.VK_B);
+			menu.add(menuItem);
+			
+			menuItem.addActionListener(mListener);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return menuBar;
+	}
+	
+	class menuItemListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI();
+		}
+		
 	}
 }

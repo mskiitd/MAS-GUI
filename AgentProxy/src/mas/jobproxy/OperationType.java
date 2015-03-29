@@ -11,6 +11,5 @@ public enum OperationType {
 	j8o1, j8o2, j8o3, j8o4, j8o5, j8o6, j8o7,
 	j9o1, j9o2, j9o3, j9o4, j9o5, j9o6, j9o7,
 	j10o1, j10o2, j10o3, j10o4, j10o5, j10o6, j10o7;
-
 	
 }

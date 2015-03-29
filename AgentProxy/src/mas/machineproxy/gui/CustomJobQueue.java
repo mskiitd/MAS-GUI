@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.List;
 
 import javax.swing.JPanel;
 
-import test.AgentStarter;
 import mas.jobproxy.job;
 import mas.util.TableUtil;
 
@@ -60,6 +60,10 @@ public class CustomJobQueue extends JPanel {
 
 		for( i = 0; i < numLines; i++ ) {
 			Graphics2D graphics = (Graphics2D) g.create();
+			
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+			
 			graphics.translate(padding, (i + 1)*padding);
 			// draw components
 			for( int c = 0 ; c < componentsInOneLine ; c++) {

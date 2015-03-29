@@ -1,13 +1,20 @@
 package mas.jobproxy;
 import java.io.Serializable;
 
+/**
+ * @author Anand Prajapati
+ * Represents a measurable dimension of a manufacturing job.
+ * It can be Go/No-Go type as well, but has to be measurable
+ *
+ */
 
 public class jobDimension implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String attribute;
+	private String name;
 	private double target;
 	private double achieved;
+	
 	private boolean Conforming;
 	
 	public jobDimension() {
@@ -22,12 +29,12 @@ public class jobDimension implements Serializable {
 		Conforming = conforming;
 	}
 
-	public String getAttribute() {
-		return attribute;
+	public String getName() {
+		return name;
 	}
 
-	public void setAttribute(String attribute) {
-		this.attribute = attribute;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setTargetDimension(double d){
