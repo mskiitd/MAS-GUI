@@ -31,6 +31,7 @@ import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 @SuppressWarnings("serial")
 public class MachineGUI extends JFrame {
 
+	private LocalSchedulingAgent lAgent;
 	private JSplitPane parentPanel;
 	private JPanel mcPanel;
 	private JPanel machineSubPanel;
@@ -43,6 +44,7 @@ public class MachineGUI extends JFrame {
 	
 	public MachineGUI(LocalSchedulingAgent agent) {
 
+		this.lAgent = agent;
 		this.mcPanel = new JPanel(new GridBagLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
@@ -70,6 +72,7 @@ public class MachineGUI extends JFrame {
 
 			mcPanel.add(machineSubPanel);
 			mcPanel.setBorder((new EmptyBorder(10,10,10,10) ));
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -177,7 +180,7 @@ public class MachineGUI extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI();
+			UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI(lAgent.getLocalName());
 		}
 		
 	}

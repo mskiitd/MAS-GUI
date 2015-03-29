@@ -2,16 +2,12 @@ package mas.machineproxy.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-
 import javax.swing.JButton;
-
-import mas.jobproxy.job;
 import mas.util.TableUtil;
 
 public class JobOperationItem extends JButton {
@@ -21,17 +17,17 @@ public class JobOperationItem extends JButton {
 	private int cHeight = 150;
 	public static final int padding = 3;
 	public static Color boxColor = new Color(192,192,192);
-	private job j;
+	private String opInfo;
 
 	public JobOperationItem() {
 	}
 
-	public JobOperationItem(job job) {
-		this.j = job;	
+	public JobOperationItem(String job) {
+		this.opInfo = job;	
 	}
 
-	public void setDisplay(job j) {
-		this.j = j;
+	public void setDisplay(String j) {
+		this.opInfo = j;
 		revalidate();
 		repaint();
 	}
@@ -59,14 +55,12 @@ public class JobOperationItem extends JButton {
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		String toDisp = j.getJobID() + "abc";
-		
 		AffineTransform affinetransform = new AffineTransform();     
 		FontRenderContext frc = new FontRenderContext(affinetransform,true,true);     
-		int textwidth = (int)(TableUtil.headings.getStringBounds(toDisp, frc).getWidth());
-		int textheight = (int)(TableUtil.headings.getStringBounds(toDisp, frc).getHeight());
+		int textwidth = (int)(TableUtil.headings.getStringBounds(opInfo, frc).getWidth());
+		int textheight = (int)(TableUtil.headings.getStringBounds(opInfo, frc).getHeight());
 		
-		graphics.drawString( toDisp,
+		graphics.drawString( opInfo,
 				0 - textwidth/2 , cHeight/2 - textheight/2);
 		
 		graphics.dispose();

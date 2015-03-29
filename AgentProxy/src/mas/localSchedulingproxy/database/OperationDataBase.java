@@ -1,6 +1,7 @@
 package mas.localSchedulingproxy.database;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class OperationDataBase implements Serializable {
@@ -30,5 +31,29 @@ public class OperationDataBase implements Serializable {
 		if(localJobData.containsKey(opt)) {
 			localJobData.remove(opt);
 		}
+	}
+
+	public ArrayList<OperationInfo> getOperationList() {
+		ArrayList<OperationInfo> arrList = new ArrayList<OperationInfo>(localJobData.values());
+
+		return arrList;
+	}
+
+	public ArrayList<String> getOperationTypes() {
+		
+		ArrayList<String> arrList = new ArrayList<String>();
+		for(String s : localJobData.keySet()) {
+			arrList.add(s);
+		}
+
+		return arrList;
+	}
+
+	public int size() {
+		return localJobData.size();
+	}
+
+	public Object get(int index) {
+		return null;
 	}
 }

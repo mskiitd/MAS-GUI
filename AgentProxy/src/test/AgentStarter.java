@@ -6,18 +6,22 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.PlatformController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import mas.blackboard.blackboard;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
+import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.ID;
 import mas.util.TableUtil;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,7 +47,8 @@ public class AgentStarter {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
 		TableUtil.loadFont();
-		new AgentStarter();
+		new MachineGUI(new LocalSchedulingAgent());
+//		new AgentStarter();
 	}
 
 	public AgentStarter() {

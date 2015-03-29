@@ -2,6 +2,8 @@ package mas.localSchedulingproxy.database;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 
 public class OperationInfo implements Serializable{
@@ -9,10 +11,12 @@ public class OperationInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private long processTime;
-	private ArrayList<jobDimension> dimensions;
+	private ArrayList<jobDimension> mDimensions;
+	private ArrayList<JobGNGattribute> gngAttributes;
 	
 	public OperationInfo() {
-		dimensions = new ArrayList<jobDimension>();
+		mDimensions = new ArrayList<jobDimension>();
+		gngAttributes = new ArrayList<JobGNGattribute>();
 	}
 
 	public long getProcessTime() {
@@ -24,11 +28,19 @@ public class OperationInfo implements Serializable{
 	}
 
 	public ArrayList<jobDimension> getDimensions() {
-		return dimensions;
+		return mDimensions;
 	}
 
 	public void setDimensions(ArrayList<jobDimension> dimensions) {
-		this.dimensions = dimensions;
+		this.mDimensions = dimensions;
+	}
+
+	public ArrayList<JobGNGattribute> getGngAttributes() {
+		return gngAttributes;
+	}
+
+	public void setGngAttributes(ArrayList<JobGNGattribute> gngAttributes) {
+		this.gngAttributes = gngAttributes;
 	}
 	
 	
