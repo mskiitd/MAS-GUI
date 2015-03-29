@@ -20,11 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
-import mas.jobproxy.jobOperation;
-import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationInfo;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
@@ -243,6 +240,7 @@ public class DisplayOperationPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			setEnabledAll(true);
+			dataSaved = false;
 		}
 	}
 
@@ -299,5 +297,17 @@ public class DisplayOperationPanel extends JPanel {
 
 	public String getOperationId() {
 		return this.operationId;
+	}
+
+	public boolean datasaved() {
+		return this.dataSaved;
+	}
+
+	public void reset() {
+		this.dataSaved = true;
+		txtOperationCost.setText("");
+		txtOperationID.setText("");
+		txtProcessingTime.setText("");
+		
 	}
 }

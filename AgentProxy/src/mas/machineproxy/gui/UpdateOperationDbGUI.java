@@ -189,33 +189,60 @@ public class UpdateOperationDbGUI extends JFrame {
 	}
 
 	private void checkNewOperationSave(AddNewOperationPanel comp) {
-		int dialogButton = JOptionPane.YES_NO_OPTION;
-		int dialogResult = JOptionPane.showConfirmDialog (comp,
-				"Would You Like to Save your Previous changes First?","Warning",dialogButton);
-		if(dialogResult == JOptionPane.YES_OPTION){
-//			OperationInfo info = comp.
+
+		if(! comp.datasaved()) {
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			int dialogResult = JOptionPane.showConfirmDialog (comp,
+					"Would You Like to Save your Previous changes First?","Warning",
+					dialogButton);
+
+			if(dialogResult == JOptionPane.YES_OPTION) {
+
+				OperationInfo info = comp.getOperationInfo();
+				String id = comp.getOperationId();
+				ops.put(id, info);
+			}
 		}
+		comp.reset();
 	}
-	
+
 	private void checkDisplayOperationSave(DisplayOperationPanel comp) {
-		int dialogButton = JOptionPane.YES_NO_OPTION;
-		int dialogResult = JOptionPane.showConfirmDialog (comp,
-				"Would You Like to Save your Previous changes First?","Warning",dialogButton);
-		if(dialogResult == JOptionPane.YES_OPTION) {
-			OperationInfo info = comp.getOperationInfo();
-			String id = comp.getOperationId();
-			ops.put(id, info);
+
+		if(! comp.datasaved()) {
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			int dialogResult = JOptionPane.showConfirmDialog (comp,
+					"Would You Like to Save your Previous changes First?","Warning",
+					dialogButton);
+
+			if(dialogResult == JOptionPane.YES_OPTION) {
+
+				OperationInfo info = comp.getOperationInfo();
+				String id = comp.getOperationId();
+				ops.put(id, info);
+			}
 		}
+		comp.reset();
 	}
 
 	private void showOperation(String id, OperationInfo op) {
+
+		// check if the panel was already added i.e. some input was being entered
+		// check if that input is saved or not
 		if(TableUtil.checkIfExists(rightPanel, addOperationPanel)) {
 			checkNewOperationSave(addOperationPanel);
 			rightPanel.remove(addOperationPanel);
+			rightPanel.add(displayDataPanel);
+			displayDataPanel.populate(id,op);
+			
+		} else if(TableUtil.checkIfExists(rightPanel, displayDataPanel)) {
+			checkDisplayOperationSave(displayDataPanel);
+			displayDataPanel.populate(id,op);
+		}
+		else {
+			rightPanel.add(displayDataPanel);
+			displayDataPanel.populate(id,op);
 		}
 
-		rightPanel.add(displayDataPanel);
-		displayDataPanel.populate(id,op);
 		rightPanel.revalidate();
 		rightPanel.repaint();
 	}
