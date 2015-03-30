@@ -31,6 +31,7 @@ public class DisplayOperationPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	private int timeUnitConversion = 1000;
 	private BufferedImage editIcon;
 	private JButton btnEditOperation;
 
@@ -146,13 +147,15 @@ public class DisplayOperationPanel extends JPanel {
 		add(btnAddAttribute);
 		add(btnDelAttribute, "wrap");
 		add(attributePanel, "wrap");
+		
+		txtOperationID.setEnabled(false);
 	}
 
 	private boolean checkDimension(OperationInfo op) {
 
 		boolean status = true;
 		ArrayList<jobDimension> dimList = new ArrayList<jobDimension>();
-		for (Iterator i = listPanelDimensions.iterator(); i.hasNext(); ) {
+		for (Iterator<DimensionInputPanel> i = listPanelDimensions.iterator(); i.hasNext(); ) {
 			jobDimension jdim = ((DimensionInputPanel) i.next() ).getDimension();
 			if(jdim != null) {
 				dimList.add(jdim);
@@ -162,6 +165,7 @@ public class DisplayOperationPanel extends JPanel {
 				break;
 			}
 		}
+		op.setDimensions(dimList);
 		return status;
 	}
 
@@ -169,7 +173,9 @@ public class DisplayOperationPanel extends JPanel {
 
 		boolean status = true;
 		ArrayList<JobGNGattribute> attList = new ArrayList<JobGNGattribute>();
-		for (Iterator i = listPanelAttributes.iterator(); i.hasNext(); ) {
+		
+		for (Iterator<AttributeInputPanel> i = listPanelAttributes.iterator(); i.hasNext(); ) {
+			
 			JobGNGattribute jAttribute = ((AttributeInputPanel) i.next() ).getAttribute();
 			if(jAttribute != null) {
 				attList.add(jAttribute);
@@ -179,14 +185,29 @@ public class DisplayOperationPanel extends JPanel {
 				break;
 			}
 		}
+		op.setGngAttributes(attList);
 		return status;
 	}
 
 	private boolean checkProcTime(OperationInfo op) {
 
 		boolean status = true;
-		if(txtProcessingTime.getText().matches("-?\\d+(\\.\\d+)?")) {
+		if(txtProcessingTime.getText().matches("-?\\d+?")) {
 			long pTime = Long.parseLong(txtProcessingTime.getText());
+			op.setProcessingTime(pTime*timeUnitConversion);
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "Invalid input for Processing time !!");
+			status = false;
+		}
+		return status;
+	}
+	
+	private boolean checkProcCost(OperationInfo op) {
+
+		boolean status = true;
+		if(txtOperationCost.getText().matches("-?\\d+(\\.\\d+)?")) {
+			double pTime = Double.parseDouble(txtOperationCost.getText());
 			op.setProcessingCost(pTime);
 		}
 		else {
@@ -195,12 +216,25 @@ public class DisplayOperationPanel extends JPanel {
 		}
 		return status;
 	}
+	
+	private boolean checkOperationId() {
+
+		boolean status = true;
+		if(txtOperationID.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please enter job ID !!");
+			status = false;
+		} else {
+			this.operationId = txtOperationID.getText();
+			status = true;
+		}
+		return status;
+	}
 
 	public void populate(String id, OperationInfo op) {
 		if(op != null) {
 			this.operationId = id;
 			txtOperationID.setText(id);
-			txtProcessingTime.setText(String.valueOf(op.getProcessTime()) );
+			txtProcessingTime.setText(String.valueOf(op.getProcessingTime()/timeUnitConversion) );
 			txtOperationCost.setText(String.valueOf(op.getProcessingCost()) );
 
 			ArrayList<JobGNGattribute> attributes = op.getGngAttributes();
@@ -208,22 +242,29 @@ public class DisplayOperationPanel extends JPanel {
 
 			listPanelAttributes.clear();
 			attributePanel.removeAll();
-			for(int i = 0 ; i < attributes.size(); i++ ){
-				listPanelAttributes.add(new AttributeInputPanel(attributes.get(i)));
+			for(int i = 0 ; i < attributes.size(); i++ ) {
+				AttributeInputPanel aInputPanel = new AttributeInputPanel(attributes.get(i));
+				listPanelAttributes.add(aInputPanel);
+				attributePanel.add(aInputPanel);
 			}
 
 			listPanelDimensions.clear();
 			dimensionPanel.removeAll();
-			for(int i = 0 ; i < dimensions.size(); i++ ){
-				listPanelDimensions.add(new DimensionInputPanel(dimensions.get(i)));
+			for(int i = 0 ; i < dimensions.size(); i++ ) {
+				DimensionInputPanel dInputPanel = new DimensionInputPanel(dimensions.get(i));
+				listPanelDimensions.add(dInputPanel);
+				dimensionPanel.add(dInputPanel);
 			}
 			setEnabledAll(false);
+			revalidate();
+			repaint();
 		}
 	}
 
 	private void setEnabledAll(boolean val) {
 		setEnabledRecursive(this, val);
 		btnEditOperation.setEnabled(true);
+		txtOperationID.setEnabled(false);
 	}
 
 	private void setEnabledRecursive(JComponent comp, boolean val) {
@@ -285,12 +326,15 @@ public class DisplayOperationPanel extends JPanel {
 	}
 
 	public OperationInfo getOperationInfo() {
+		
 		OperationInfo info = new OperationInfo();
 		boolean x1 = checkDimension(info);
 		boolean x2 = checkAttribute(info);
 		boolean x3 = checkProcTime(info);
+		boolean x4 = checkProcCost(info);
+		boolean x5 = checkOperationId();
 
-		if(x1 & x2 & x3)
+		if(x1 & x2 & x3 & x4 & x5)
 			return info;
 		return null;
 	}

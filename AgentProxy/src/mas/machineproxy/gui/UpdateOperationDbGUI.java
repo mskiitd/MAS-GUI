@@ -7,11 +7,15 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -32,19 +36,17 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import mas.jobproxy.JobGNGattribute;
-import mas.jobproxy.jobDimension;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationInfo;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 
-public class UpdateOperationDbGUI extends JFrame {
+public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private String aName;
-	private OperationDataBase ops;
+	public static OperationDataBase ops;
 	private ArrayList<String> operationIDs;
 
 	private JList<Object> acceptedJobList;
@@ -72,18 +74,12 @@ public class UpdateOperationDbGUI extends JFrame {
 
 	private JScrollPane rightPanelScroller;
 
-	private boolean displayDataSaved = false;
-	private boolean operationDataSaved = false;
-
-	private ArrayList<jobDimension> mDimensions;
-	private ArrayList<JobGNGattribute> gngAttributes;
+	String path = "resources/database/" + aName + "_db.data";
 
 	public UpdateOperationDbGUI(String agentName) {
 
 		this.aName = agentName;
 
-		mDimensions = new ArrayList<jobDimension>();
-		gngAttributes = new ArrayList<JobGNGattribute>();
 		operationIDs = new ArrayList<String>();
 
 		rightPanel = new JPanel(new BorderLayout());
@@ -108,11 +104,11 @@ public class UpdateOperationDbGUI extends JFrame {
 
 		add(hSplitPane);
 		new readOperationDatabase().execute();
+		addWindowListener(this);
 		showGui();
 	}
 
 	private class readOperationDatabase extends SwingWorker<OperationDataBase, String> {
-		String path = "resources/database/" + aName + "_db.data";
 
 		@Override
 		protected OperationDataBase doInBackground() throws Exception {
@@ -233,7 +229,7 @@ public class UpdateOperationDbGUI extends JFrame {
 			rightPanel.remove(addOperationPanel);
 			rightPanel.add(displayDataPanel);
 			displayDataPanel.populate(id,op);
-			
+
 		} else if(TableUtil.checkIfExists(rightPanel, displayDataPanel)) {
 			checkDisplayOperationSave(displayDataPanel);
 			displayDataPanel.populate(id,op);
@@ -311,7 +307,7 @@ public class UpdateOperationDbGUI extends JFrame {
 		private final Color BackGround_COLOR = new Color(238, 233, 233);
 		private final Color ForeGround_COLOR = new Color(205, 201, 201);
 
-		public Component getListCellRendererComponent(JList list, Object value,
+		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
 			String entry = (String) value;
@@ -327,5 +323,52 @@ public class UpdateOperationDbGUI extends JFrame {
 			setPreferredSize(new Dimension(width/3,height/6));
 			return this;
 		}
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+		int dialogResult = JOptionPane.showConfirmDialog (null,
+				"Save Changes ? ","Warning",dialogButton);
+
+		if(dialogResult == JOptionPane.YES_OPTION) {
+
+			try {
+				File file = new File(path);
+				FileOutputStream fos = new FileOutputStream(file);
+				ObjectOutputStream oos = new ObjectOutputStream(fos);
+				oos.writeObject(ops);
+				oos.close();
+
+			} catch (IOException iox) {
+				iox.printStackTrace();
+			}
+		}
+		dispose();
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
 	}
 }

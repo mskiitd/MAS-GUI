@@ -10,7 +10,7 @@ public class OperationInfo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	private long processTime;
+	private long processingTime;
 	private ArrayList<jobDimension> mDimensions;
 	private ArrayList<JobGNGattribute> gngAttributes;
 	private double processingCost;
@@ -28,12 +28,12 @@ public class OperationInfo implements Serializable{
 		this.processingCost = processingCost;
 	}
 
-	public long getProcessTime() {
-		return processTime;
+	public long getProcessingTime() {
+		return processingTime;
 	}
 
-	public void setProcessTime(long processTime) {
-		this.processTime = processTime;
+	public void setProcessingTime(long processTime) {
+		this.processingTime = processTime;
 	}
 
 	public ArrayList<jobDimension> getDimensions() {

@@ -3,8 +3,9 @@ package mas.machineproxy.gui;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import mas.jobproxy.jobDimension;
+import mas.util.formatter.doubleformatter.FormattedDoubleField;
+import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -15,8 +16,8 @@ public class DimensionInputPanel extends JPanel {
 	private JLabel lblTitleHeading;
 	private JLabel lblTarget;
 
-	private JTextField txtName;
-	private JTextField txtTarget;
+	private FormattedStringField txtName;
+	private FormattedDoubleField txtTarget;
 
 	private boolean status = true;
 
@@ -27,8 +28,11 @@ public class DimensionInputPanel extends JPanel {
 		lblTitleHeading = new JLabel(" Name ");
 		lblTarget = new JLabel(" Target Dimension ");
 
-		txtName = new JTextField(Labels.defaultJTextSize);
-		txtTarget = new JTextField(Labels.defaultJTextSize);
+		txtName = new FormattedStringField();
+		txtTarget = new FormattedDoubleField();
+		
+		txtName.setColumns(Labels.defaultJTextSize);
+		txtTarget.setColumns(Labels.defaultJTextSize);
 
 		add(lblTitleHeading);
 		add(txtName, "wrap");

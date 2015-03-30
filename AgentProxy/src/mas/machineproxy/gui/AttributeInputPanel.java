@@ -3,8 +3,8 @@ package mas.machineproxy.gui;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import mas.jobproxy.JobGNGattribute;
+import mas.util.formatter.stringformatter.FormattedStringField;
 import uiconstants.Labels;
 
 public class AttributeInputPanel extends JPanel {
@@ -12,14 +12,15 @@ public class AttributeInputPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private JLabel lblTitleHeading;
-	private JTextField txtName;
+	private FormattedStringField txtName;
 
 	private boolean status = true;
 
 	public AttributeInputPanel(JobGNGattribute attribute) {
 
 		lblTitleHeading = new JLabel(" Attribute Name ");
-		txtName = new JTextField(Labels.defaultJTextSize);
+		txtName = new FormattedStringField();
+		txtName.setColumns(Labels.defaultJTextSize);
 
 		add(lblTitleHeading);
 		add(txtName);

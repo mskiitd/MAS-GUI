@@ -17,20 +17,21 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import org.apache.commons.math3.stat.inference.TTest;
-
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 import mas.localSchedulingproxy.database.OperationInfo;
 import mas.util.TableUtil;
+import mas.util.formatter.doubleformatter.FormattedDoubleField;
+import mas.util.formatter.integerformatter.FormattedIntegerField;
+import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
 public class AddNewOperationPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+
+	private int timeUnitConversion = 1000;
 
 	private JLabel lblAddNewHeading;
 	private JLabel lblOperationID;
@@ -39,9 +40,9 @@ public class AddNewOperationPanel extends JPanel {
 	private JLabel lblDimensionHeading;
 	private JLabel lblAttributeHeading;
 
-	private JTextField txtOperationID;
-	private JTextField txtProcessingTime;
-	private JTextField txtOperationCost;
+	private FormattedStringField txtOperationID;
+	private FormattedIntegerField txtProcessingTime;
+	private FormattedDoubleField txtOperationCost;
 
 	private Queue<DimensionInputPanel> listPanelDimensions;
 	private BufferedImage iconBtnAddDimension;
@@ -56,6 +57,8 @@ public class AddNewOperationPanel extends JPanel {
 	private JPanel attributePanel;
 
 	private String operationId;
+	private JButton btnSave;
+	
 	private boolean dataOk = true;
 
 	private boolean datasaved = true;
@@ -103,9 +106,14 @@ public class AddNewOperationPanel extends JPanel {
 		listPanelDimensions.add(dimPanel1);
 		dimensionPanel.add(listPanelDimensions.peek(),"wrap");
 
-		txtProcessingTime = new JTextField(Labels.defaultJTextSize);
-		txtOperationCost = new JTextField(Labels.defaultJTextSize);
-		txtOperationID = new JTextField(Labels.defaultJTextSize);
+		txtProcessingTime = new FormattedIntegerField();
+		txtProcessingTime.setColumns(Labels.defaultJTextSize);
+		
+		txtOperationCost = new FormattedDoubleField();
+		txtOperationCost.setColumns(Labels.defaultJTextSize);
+		
+		txtOperationID = new FormattedStringField();
+		txtOperationID.setColumns(Labels.defaultJTextSize);
 
 		lblDimensionHeading = new JLabel(" Dimensions ");
 		lblDimensionHeading.setFont(TableUtil.headings);
@@ -117,8 +125,13 @@ public class AddNewOperationPanel extends JPanel {
 		lblAddNewHeading.setFont(TableUtil.headings);
 
 		lblOperationID = new JLabel("Operation ID : ");
+		lblOperationID.setLabelFor(txtOperationID);
 		lblOperationCost = new JLabel("Processing Cost :");
+		lblOperationCost.setLabelFor(txtOperationCost);
 		lblOperationPtime = new JLabel("Processing Time : ");
+		lblOperationPtime.setLabelFor(txtProcessingTime);
+
+		btnSave = new JButton("Save");
 
 		add(lblAddNewHeading, "wrap");
 
@@ -141,6 +154,19 @@ public class AddNewOperationPanel extends JPanel {
 		add(btnDelAttribute, "wrap");
 		add(attributePanel, "wrap");
 
+		add(btnSave);
+
+		btnSave.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				OperationInfo info = getOperationInfo();
+				if(info != null)
+					UpdateOperationDbGUI.ops.put(operationId, info);
+			}
+		});
+
 		setVisible(true);
 	}
 
@@ -148,7 +174,9 @@ public class AddNewOperationPanel extends JPanel {
 
 		boolean status = true;
 		ArrayList<jobDimension> dimList = new ArrayList<jobDimension>();
-		for (Iterator i = listPanelDimensions.iterator(); i.hasNext(); ) {
+
+		for (Iterator<DimensionInputPanel> i = listPanelDimensions.iterator(); i.hasNext(); ) {
+
 			jobDimension jdim = ((DimensionInputPanel) i.next() ).getDimension();
 			if(jdim != null) {
 				dimList.add(jdim);
@@ -158,6 +186,7 @@ public class AddNewOperationPanel extends JPanel {
 				break;
 			}
 		}
+		op.setDimensions(dimList);
 		return status;
 	}
 
@@ -165,7 +194,7 @@ public class AddNewOperationPanel extends JPanel {
 
 		boolean status = true;
 		ArrayList<JobGNGattribute> attList = new ArrayList<JobGNGattribute>();
-		for (Iterator i = listPanelAttributes.iterator(); i.hasNext(); ) {
+		for (Iterator<AttributeInputPanel> i = listPanelAttributes.iterator(); i.hasNext(); ) {
 			JobGNGattribute jAttribute = ((AttributeInputPanel) i.next() ).getAttribute();
 			if(jAttribute != null) {
 				attList.add(jAttribute);
@@ -175,14 +204,29 @@ public class AddNewOperationPanel extends JPanel {
 				break;
 			}
 		}
+		op.setGngAttributes(attList);
 		return status;
 	}
 
 	private boolean checkProcTime(OperationInfo op) {
 
 		boolean status = true;
-		if(txtProcessingTime.getText().matches("-?\\d+(\\.\\d+)?")) {
+		if(txtProcessingTime.getText().matches("-?\\d+?")) {
 			long pTime = Long.parseLong(txtProcessingTime.getText());
+			op.setProcessingTime(timeUnitConversion * pTime);
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "Invalid input for Processing time !!");
+			status = false;
+		}
+		return status;
+	}
+
+	private boolean checkProcCost(OperationInfo op) {
+
+		boolean status = true;
+		if(txtOperationCost.getText().matches("-?\\d+(\\.\\d+)?")) {
+			double pTime = Double.parseDouble(txtOperationCost.getText());
 			op.setProcessingCost(pTime);
 		}
 		else {
@@ -191,7 +235,7 @@ public class AddNewOperationPanel extends JPanel {
 		}
 		return status;
 	}
-	
+
 	class AddDelDimensionListener implements ActionListener {
 
 		@Override
@@ -238,18 +282,34 @@ public class AddNewOperationPanel extends JPanel {
 
 	public OperationInfo getOperationInfo() {
 		OperationInfo info = new OperationInfo();
+
 		boolean x1 = checkDimension(info);
 		boolean x2 = checkAttribute(info);
 		boolean x3 = checkProcTime(info);
+		boolean x4 = checkProcCost(info);
+		boolean x5 = checkOperationId();
 
 		datasaved = true;
-		dataOk = x1 & x2 & x3;
-		
-		if(x1 & x2 & x3)
+		dataOk = x1 & x2 & x3 & x4 & x5;
+
+		if(dataOk)
 			return info;
 		return null;
 	}
-	
+
+	private boolean checkOperationId() {
+
+		boolean status = true;
+		if(txtOperationID.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please enter job ID !!");
+			status = false;
+		} else {
+			this.operationId = txtOperationID.getText();
+			status = true;
+		}
+		return status;
+	}
+
 	public void reset() {
 		this.dataOk = true;
 		this.datasaved = true;
