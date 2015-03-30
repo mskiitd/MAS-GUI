@@ -34,8 +34,6 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 	public void init(PlanInstance planInstance) {
 		step = 0;
 		PI=planInstance;
-		
-		
 	}
 
 	@Override

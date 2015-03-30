@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.util.ID;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
@@ -31,6 +32,7 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 	private BeliefBase bfBase;
 	private Logger log;
 	private job comingJob;
+	private OperationDataBase operationdb;
 
 	@Override
 	public EndState getEndState() {
@@ -54,14 +56,23 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
 				getValue();
 
+		this.operationdb = (OperationDataBase) bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.operationDatabase).
+				getValue();
+
 		log = LogManager.getLogger();
 	}
 
 	@Override
 	public void action() {
 		//		log.info(comingJob.getBidWinnerLSA());
-		if(comingJob.getBidWinnerLSA().equals(myAgent.getAID())){
+		if(comingJob.getBidWinnerLSA().equals(myAgent.getAID())) {
 			log.info("Adding the job to queue of machine of " + myAgent.getLocalName());
+
+			comingJob.setCurrentOperationProcessingTime(operationdb.
+					getOperationInfo(comingJob.getCurrentOperation().getJobOperationType()).
+					getProcessingTime());
+			
 			jobQueue.add(comingJob);
 			/**
 			 * update the belief base

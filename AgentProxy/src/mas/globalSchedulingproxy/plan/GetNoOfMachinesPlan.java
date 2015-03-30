@@ -26,14 +26,16 @@ public class GetNoOfMachinesPlan extends Behaviour implements PlanBody{
 	ArrayList list_machines =  new ArrayList();
 	boolean register = true;
 	long time;
+	private boolean done = false;
 	
 	//how many seconds u want to run this Behavior
 	long limit; 
 	private BeliefBase bfBase;
 	private Logger log;
+	
 	@Override
 	public EndState getEndState() {
-		return EndState.SUCCESSFUL;
+		return (done ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override
@@ -99,10 +101,11 @@ public class GetNoOfMachinesPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public boolean done() {
-		if((System.currentTimeMillis()-time)<limit){
+		if((System.currentTimeMillis()-time) < limit) {
 			return false;
 		}
-		else{
+		else {
+			done = true;
 			return true;
 		}
 	}

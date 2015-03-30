@@ -7,14 +7,10 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.machineproxy.SimulatorInternals;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
-import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
-import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -63,12 +59,12 @@ public class ManualMachineRepairPlan extends Behaviour implements PlanBody {
 			case 1:
 				if(LocalMaintenanceAgent.mgui != null) {
 					LocalMaintenanceAgent.mgui.showRepairTimeInput();
-//					ZoneDataUpdate correctiveRepairUpdate = new ZoneDataUpdate.
-//							Builder(ID.Maintenance.ZoneData.correctiveMaintdata).
-//							value(correctiveMaintData).
-//							Build();
-//
-//					AgentUtil.sendZoneDataUpdate(blackboard ,correctiveRepairUpdate, myAgent);
+					//					ZoneDataUpdate correctiveRepairUpdate = new ZoneDataUpdate.
+					//							Builder(ID.Maintenance.ZoneData.correctiveMaintdata).
+					//							value(correctiveMaintData).
+					//							Build();
+					//
+					//					AgentUtil.sendZoneDataUpdate(blackboard ,correctiveRepairUpdate, myAgent);
 
 					step = 2;
 				}

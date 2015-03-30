@@ -37,7 +37,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public EndState getEndState() {
-		return EndState.SUCCESSFUL;
+		return (step >= 2 ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override

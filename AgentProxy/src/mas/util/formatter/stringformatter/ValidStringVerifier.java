@@ -1,6 +1,7 @@
 package mas.util.formatter.stringformatter;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 
 import javax.swing.InputVerifier;
 import javax.swing.JFormattedTextField;
@@ -30,6 +31,7 @@ public class ValidStringVerifier extends InputVerifier {
 		}
 		catch(Exception e)
 		{
+			Toolkit.getDefaultToolkit().beep();
 			jc.setForeground(INVALID_COLOR);
 			return false;
 		}

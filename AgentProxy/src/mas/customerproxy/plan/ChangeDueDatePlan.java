@@ -22,7 +22,7 @@ public class ChangeDueDatePlan extends Behaviour implements PlanBody{
 	
 	@Override
 	public EndState getEndState() {
-		return EndState.SUCCESSFUL;
+		return (done ?EndState.SUCCESSFUL : null);
 	}
 
 	@Override

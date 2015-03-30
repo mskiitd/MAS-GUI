@@ -1,9 +1,6 @@
 package mas.blackboard.namezone;
 
 import jade.core.AID;
-
-import mas.blackboard.zonedata.ZoneData;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

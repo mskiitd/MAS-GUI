@@ -1,7 +1,5 @@
 package mas.blackboard.util;
 
-import mas.util.ZoneDataUpdate;
-
 public class MessageParams {
 	
 	private String replyWith=null; 

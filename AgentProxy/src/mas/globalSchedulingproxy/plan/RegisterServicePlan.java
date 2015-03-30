@@ -20,7 +20,7 @@ public class RegisterServicePlan extends OneShotBehaviour implements PlanBody{
 
 	@Override
 	public EndState getEndState() {
-		return null;
+		return EndState.SUCCESSFUL;
 	}
 
 	@Override

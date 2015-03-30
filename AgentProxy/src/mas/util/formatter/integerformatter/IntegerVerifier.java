@@ -2,6 +2,8 @@
 package mas.util.formatter.integerformatter;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -50,12 +52,14 @@ public class IntegerVerifier extends InputVerifier {
 			int val = Integer.parseInt(text);
 			if(val < minValue || val > maxValue)
 			{
+				Toolkit.getDefaultToolkit().beep();
 				jc.setForeground(INVALID_COLOR);
 				return false;
 			}
 		}
 		catch(Exception e)
 		{
+			Toolkit.getDefaultToolkit().beep();
 			jc.setForeground(INVALID_COLOR);  
 			return false;  
 		}

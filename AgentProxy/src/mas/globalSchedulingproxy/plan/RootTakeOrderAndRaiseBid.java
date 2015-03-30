@@ -23,7 +23,6 @@ import mas.util.ZoneDataUpdate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -214,14 +213,14 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 	@Override
 	public boolean done() {
-		return (step == 3);
+		return (step >= 3);
 	}
 
 	public EndState getEndState() {
-		if (step == 3) {
+		if (step >= 3) {
 			return EndState.SUCCESSFUL;
 		} else {
-			return EndState.FAILED;
+			return null;
 		}
 	}
 

@@ -1,20 +1,14 @@
 package mas.blackboard.workspace;
 
 import java.util.HashMap;
-
 import bdi4jade.belief.Belief;
-import mas.blackboard.nameZoneData.NamedZoneData;
 import mas.blackboard.namedWorkspace.NamedWorkspace;
 import mas.blackboard.namezonespace.NamedZoneSpace;
 import mas.blackboard.zonespace.ZoneSpace;
 
 public class Workspace<T> extends Belief<T>implements WorkspaceIFace{
 
-	/*public Workspace(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
-	}*/
-
+	private static final long serialVersionUID = 1L;
 	private String WSname;
 	private HashMap<NamedZoneSpace, ZoneSpace> ZSpaces;
 	
@@ -24,18 +18,6 @@ public class Workspace<T> extends Belief<T>implements WorkspaceIFace{
 		this.ZSpaces = new HashMap<NamedZoneSpace, ZoneSpace>();
 	}
 	
-	/*public static Workspace newInstance(NamedWorkspace name){
-		return new Workspace(name.name());
-	}*/
-	
-/*	@Override
-	public void createZoneSpace(NamedZoneSpace name) {
-		if(! ZSpaces.containsKey(name)){
-			ZoneSpace zs = new ZoneSpace(name);
-			ZSpaces.put(name, zs);
-		}
-	}*/
-
 	@Override
 	public void dropZoneSpace(NamedZoneSpace title) {
 		
@@ -59,14 +41,10 @@ public class Workspace<T> extends Belief<T>implements WorkspaceIFace{
 
 	@Override
 	public T getValue() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setValue(T value) {
-		// TODO Auto-generated method stub
-		
 	}
-
 }

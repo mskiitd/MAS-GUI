@@ -18,7 +18,7 @@ public class RegisterLSAgentServicePlan extends OneShotBehaviour implements Plan
 
 	@Override
 	public EndState getEndState() {
-		return null;
+		return EndState.SUCCESSFUL;
 	}
 
 	@Override

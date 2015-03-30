@@ -170,17 +170,16 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	@Override
 	public boolean done() {
 
-		return (step==5);
+		return (step >= 5);
 	}
 
 	@Override
 	public EndState getEndState() {
-		if(step==5){
+		if(step >= 5) {
 			return EndState.SUCCESSFUL;
 		}
 		else{
-			return EndState.FAILED;
+			return null;
 		}
-
 	}
 }

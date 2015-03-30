@@ -19,30 +19,20 @@ import bdi4jade.util.plan.SimplePlan;
 
 public class CommunicationCenter extends Capability {
 
-
 	private static final long serialVersionUID = 4783226881361023418L;
 	private static Logger log;
 
 	static {
-		log=LogManager.getLogger();
-
+		log = LogManager.getLogger();
 	}
 
 	public CommunicationCenter(BDIAgent bBagent) {
 		super(new BeliefBase(getBeliefs(bBagent)), new PlanLibrary(getPlans()));
-
 	}
 
 	private static Set<Plan> getPlans() {
 
 		Set<Plan> plans = new HashSet<Plan>();
-
-		/*   	    plans.add(new SimplePlan(RegisterGoal.class, AddAgent.class));
-
-		plans.add(new SimplePlan(UpdateParameterGoal.class, UpdateParam.class));
-
-		plans.add(new SimplePlan(SubscribeParameterGoal.class, SubscribeParameter.class));*/
-
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.RegisterMe	), AddAgent.class));
 
@@ -50,23 +40,20 @@ public class CommunicationCenter extends Capability {
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.SubscribeParameter), SubscribeParameter.class));
 
-		log.info("Added plans");
+		log.info("Added plans for bloackboard");
 
 		return plans;
-
 	}
 
 	private static Set<Belief<?>> getBeliefs(BDIAgent bBagent) {
 
-		Set<Belief<?>> WorkspaceSet = new HashSet<Belief<?>>(); //  '?' means Any type extending Object (including Object)
-		//WorkspaceSet stores Workspaces
-		log.info("Added beleifs");
+		//  '?' means Any type extending Object (including Object)
+		Set<Belief<?>> WorkspaceSet = new HashSet<Belief<?>>(); 
+		// WorkspaceSet stores Workspaces
+		log.info("Added beleifs for blackboard ");
 		return WorkspaceSet;
 	}
 
 	protected void setup() {
-		//		 myAgent.addGoal(new RegisterGoal());
-		/*		 myAgent.addBehaviour(new SubscribeParameter());
-		 myAgent.addBehaviour(new UpdateParam());*/
 	}
 }

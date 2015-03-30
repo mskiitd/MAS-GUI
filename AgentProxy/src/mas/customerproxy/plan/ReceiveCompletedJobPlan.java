@@ -18,6 +18,7 @@ public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private job completedJob;
+	private boolean done = false;
 
 	@Override
 	public EndState getEndState() {
@@ -46,7 +47,7 @@ public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public boolean done() {
-		return true;
+		return done;
 	}
 
 }

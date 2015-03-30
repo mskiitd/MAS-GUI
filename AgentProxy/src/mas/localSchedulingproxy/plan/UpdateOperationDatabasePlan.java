@@ -20,10 +20,11 @@ public class UpdateOperationDatabasePlan extends Behaviour implements PlanBody {
 	private BeliefBase bfBase;
 	private Logger log;
 	private boolean done = false;
+	private String path;
 
 	@Override
 	public EndState getEndState() {
-		return EndState.SUCCESSFUL;
+		return (done ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override
@@ -35,8 +36,8 @@ public class UpdateOperationDatabasePlan extends Behaviour implements PlanBody {
 	@Override
 	public void action() {
 		OperationDataBase db;
-
-		File toRead = new File("jobdatabase.mas");
+		path = "resources/database/" + myAgent.getLocalName() + "_db.data";
+		File toRead = new File(path);
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(toRead);

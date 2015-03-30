@@ -1,11 +1,9 @@
 package mas.localSchedulingproxy.plan;
 
 import java.util.ArrayList;
-
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
-import mas.util.ID.Machine;
 import mas.util.JobQueryObject;
 import mas.util.ZoneDataUpdate;
 import jade.core.AID;
@@ -19,6 +17,7 @@ import bdi4jade.plan.PlanInstance.EndState;
 
 public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
+	private static final long serialVersionUID = 1L;
 	private int JobNo;
 	private BeliefBase beleifBase;
 	private AID machineAID=null;
@@ -26,21 +25,20 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 	@Override
 	public EndState getEndState() {
-		// TODO Auto-generated method stub
-		return null;
+		return EndState.SUCCESSFUL;
 	}
 
 	@Override
 	public void init(PlanInstance PI) {
 		try {
-			JobNo =((JobQueryObject)((MessageGoal)PI.getGoal()).getMessage().getContentObject()).
+			JobNo = ( (JobQueryObject)((MessageGoal)PI.getGoal()).getMessage().getContentObject()).
 					getCurrentJob().getJobNo();
 		} catch (UnreadableException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		beleifBase=PI.getBeliefBase();
-		blackboard_AID=(AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
+		
+		beleifBase = PI.getBeliefBase();
+		blackboard_AID = (AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 		machineAID=(AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.machine).
 				getValue();

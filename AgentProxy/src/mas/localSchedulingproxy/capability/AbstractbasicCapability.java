@@ -56,8 +56,6 @@ public class AbstractbasicCapability extends Capability {
 	public static Set<Belief<?>> getBeliefs() {
 		Set<Belief<?>> beliefs = new HashSet<Belief<?>>();
 
-		LSAExcelFileReader fileReader=new LSAExcelFileReader();
-		
 		Belief<AID> bboard = new TransientBelief<AID>(
 				ID.LocalScheduler.BeliefBaseConst.blackboardAgent);
 		
@@ -147,9 +145,9 @@ public class AbstractbasicCapability extends Capability {
 		myAgent.addGoal(new RegisterLSAgentServiceGoal());
 		myAgent.addGoal(new RegisterLSAgentToBlackboardGoal());
 		myAgent.addGoal(new JobSchedulingGoal());
+		myAgent.addGoal(new UpdateOperationDatabaseGoal());
 		
 		/*	myAgent.addGoal(new SendBidGoal());
-		myAgent.addGoal(new SendJobGoal());
 		myAgent.addGoal(new SendWaitingTimeGoal());
 		myAgent.addGoal(new EnqueueJobGoal());
 		myAgent.addGoal(new ReceiveCompletedJobGoal());*/

@@ -74,11 +74,12 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 	private JScrollPane rightPanelScroller;
 
-	String path = "resources/database/" + aName + "_db.data";
+	private String path;
 
 	public UpdateOperationDbGUI(String agentName) {
 
 		this.aName = agentName;
+		path = "resources/database/" + aName + "_db.data";
 
 		operationIDs = new ArrayList<String>();
 

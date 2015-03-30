@@ -20,10 +20,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 import mas.localSchedulingproxy.database.OperationInfo;
 import mas.util.TableUtil;
+import mas.util.formatter.doubleformatter.FormattedDoubleField;
+import mas.util.formatter.integerformatter.FormattedIntegerField;
+import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -42,9 +46,9 @@ public class DisplayOperationPanel extends JPanel {
 	private JLabel lblDimensionHeading;
 	private JLabel lblAttributeHeading;
 
-	private JTextField txtOperationID;
-	private JTextField txtProcessingTime;
-	private JTextField txtOperationCost;
+	private FormattedStringField txtOperationID;
+	private FormattedIntegerField txtProcessingTime;
+	private FormattedDoubleField txtOperationCost;
 
 	private Queue<DimensionInputPanel> listPanelDimensions;
 	private BufferedImage iconBtnAddDimension;
@@ -108,9 +112,14 @@ public class DisplayOperationPanel extends JPanel {
 		listPanelDimensions.add(dimPanel1);
 		dimensionPanel.add(listPanelDimensions.peek(),"wrap");
 
-		txtProcessingTime = new JTextField(Labels.defaultJTextSize);
-		txtOperationCost = new JTextField(Labels.defaultJTextSize);
-		txtOperationID = new JTextField(Labels.defaultJTextSize);
+		txtProcessingTime = new FormattedIntegerField();
+		txtProcessingTime.setColumns(Labels.defaultJTextSize);
+		
+		txtOperationCost = new FormattedDoubleField();
+		txtOperationCost.setColumns(Labels.defaultJTextSize);
+		
+		txtOperationID = new FormattedStringField();
+		txtOperationID.setColumns(Labels.defaultJTextSize);
 
 		lblDimensionHeading = new JLabel(" Dimensions ");
 		lblDimensionHeading.setFont(TableUtil.headings);

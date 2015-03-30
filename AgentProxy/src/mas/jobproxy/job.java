@@ -5,10 +5,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-/** Represents a manufacturing shop floor job
+/** Represents a manufacturing shop floor job-batch
  */
 
-public class job implements Serializable{
+public class job implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -22,21 +22,23 @@ public class job implements Serializable{
 	private double CPN;
 	private double Cost;
 	private double penaltyRate;
+	
 	private Date startTime;
 	private Date jobDuedateByCust;
-	private ArrayList<jobOperation> operations;
 	private Date generationTime;
 	private Date completionTime;
+	private long waitingTime;
+	
+	private ArrayList<jobOperation> operations;
+	public int currentOperationNumber = 0;
 
 	//Optional parameters initialized to default values
-	public int currentOperationNumber = 0;
+	
 	public int acceptance = 0;
 	public double slack;
 	private double regret;
 	private int position;
 	private double BidByLSA ;
-
-	private long waitingTime;
 	private double profit;
 	private AID WinnerLSA;
 	private AID LSABidder;
@@ -44,7 +46,8 @@ public class job implements Serializable{
 	private double deliveryTime;
 	private double deliveryStatus;
 
-	private boolean IsComplete=false;
+	// a flag to indicate that all operations of the job are finished
+	private boolean IsComplete = false;
 
 	public static class Builder {
 		//Required parameters

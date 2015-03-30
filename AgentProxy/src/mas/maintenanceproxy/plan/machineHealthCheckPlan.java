@@ -1,6 +1,6 @@
 package mas.maintenanceproxy.plan;
 
-import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -16,11 +16,8 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class machineHealthCheckPlan extends CyclicBehaviour implements PlanBody {
+public class machineHealthCheckPlan extends OneShotBehaviour implements PlanBody {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
 	private SimulatorInternals myMachine;
@@ -40,7 +37,7 @@ public class machineHealthCheckPlan extends CyclicBehaviour implements PlanBody 
 	@Override
 	public void action() {
 		
-		switch(step){
+		switch(step) {
 		case 0:
 			msg = myAgent.receive(machineHealth);
 			if(msg != null){
@@ -52,7 +49,7 @@ public class machineHealthCheckPlan extends CyclicBehaviour implements PlanBody 
 					e.printStackTrace();
 				}
 			}
-			else{
+			else {
 				block();
 			}
 			
@@ -67,5 +64,4 @@ public class machineHealthCheckPlan extends CyclicBehaviour implements PlanBody 
 	public EndState getEndState() {
 		return EndState.SUCCESSFUL;
 	}
-
 }

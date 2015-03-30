@@ -2,7 +2,6 @@ package mas.customerproxy.plan;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -13,7 +12,6 @@ import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.OneShotBehaviour;
 
 public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 
@@ -27,7 +25,7 @@ public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public EndState getEndState() {
-		return EndState.SUCCESSFUL;
+		return (done ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override

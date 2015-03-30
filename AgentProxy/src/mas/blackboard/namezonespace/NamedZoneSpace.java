@@ -4,8 +4,7 @@ import jade.core.AID;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class NamedZoneSpace implements ZoneSpaceName
-{
+public class NamedZoneSpace implements ZoneSpaceName {
    private AID name = null;
 
    public NamedZoneSpace(AID name) {

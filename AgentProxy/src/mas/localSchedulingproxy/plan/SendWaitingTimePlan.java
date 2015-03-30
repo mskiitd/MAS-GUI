@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mas.jobproxy.job;
+import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -25,7 +26,6 @@ import bdi4jade.plan.PlanInstance.EndState;
  *	Sends average waiting time for the new job to global scheduling agent
  *  Based on this waiting time global scheduling accepts/negotiates the job 
  *  from customer
- *
  */
 
 public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
@@ -41,6 +41,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 	private AID blackboard;
 	private Logger log;
 	private String replyWith;
+	private OperationDataBase operationdb;
 
 	@Override
 	public EndState getEndState() {
@@ -69,8 +70,12 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		this.blackboard = (AID) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
-		
-		replyWith=msg.getReplyWith();
+
+		this.operationdb = (OperationDataBase) bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.operationDatabase).
+				getValue();
+
+		replyWith = msg.getReplyWith();
 	}
 
 	@Override
@@ -78,29 +83,33 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		sTracker.addSize( jobQueue.size() );
 
 		// get average queue size and waiting time in the queue
-		/*averageQueueSize = sTracker.getAverageQueueSize().doubleValue();
+		averageQueueSize = sTracker.getAverageQueueSize().doubleValue();
 		averageProcessingTime = sTracker.getAvgProcessingTime();
 
-		long avgWaitingTime = (long) (averageProcessingTime*averageQueueSize);
-*///		log.info("waiting time is : " + avgWaitingTime);
-		
-		long WaitingTime=0;
-		
-		for(int i=0;i<jobQueue.size();i++){
-			WaitingTime=WaitingTime+jobQueue.get(i).getCurrentOperationProcessTime()*1000;
-		}
-		
-		j.setWaitingTime(/*avgWaitingTime +*/WaitingTime+ j.getCurrentOperationProcessTime());
-//		j.setStartTime(/*avgWaitingTime +*/ WaitingTime+System.currentTimeMillis()); //why do we need this???
+		long avgWaitingTime = (long) (averageProcessingTime * averageQueueSize);
 
-//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());
-		ZoneDataUpdate waitingTimeUpdate=new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.WaitingTime)
-			.value(this.j).setReplyWith(replyWith).Build();
-		
-//		log.info("replyWith = "+replyWith);
-		/*ZoneDataUpdate waitingTimeUpdate = new ZoneDataUpdate(
-				ID.LocalScheduler.ZoneData.WaitingTime,
-				this.j );*/
+		long WaitingTime = 0;
+
+		for(int i = 0; i < jobQueue.size(); i++) {
+			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessTime()*1000;
+		}
+
+		if(operationdb.contains(j.getCurrentOperation().getJobOperationType())) {
+			j.setWaitingTime(avgWaitingTime ); //WaitingTime+ j.getCurrentOperationProcessTime());
+		} else {
+			log.info("Operation" + j.getCurrentOperation().getJobOperationType() +
+					"unsupported on this machine");
+			j.setWaitingTime(Long.MAX_VALUE);
+		}
+
+		//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());
+		ZoneDataUpdate waitingTimeUpdate = new ZoneDataUpdate.
+				Builder(ID.LocalScheduler.ZoneData.WaitingTime).
+				value(this.j).
+				setReplyWith(replyWith).
+				Build();
+
+		//		log.info("replyWith = " + replyWith);
 
 		AgentUtil.sendZoneDataUpdate(blackboard ,waitingTimeUpdate, myAgent);
 	}

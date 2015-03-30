@@ -25,7 +25,7 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public EndState getEndState() {
-		return EndState.SUCCESSFUL;
+		return (step >= 3 ? EndState.SUCCESSFUL : null );
 	}
 
 	@Override

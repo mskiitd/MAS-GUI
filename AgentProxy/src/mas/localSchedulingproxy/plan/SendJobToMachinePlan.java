@@ -34,7 +34,7 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 
 	@Override
 	public EndState getEndState() {
-		return null;
+		return (step > 0 ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override
@@ -68,9 +68,6 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 				log.info("Sending job to machine "+ myAgent.getLocalName() +" "+ jobToSend.getJobNo());
 				ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.jobForMachine)
 					.value(jobToSend).setReplyWith(replyWith).Build();
-			/*	ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate(
-						ID.LocalScheduler.ZoneData.jobForMachine,
-						jobQueue.get(0));*/
 
 				jobQueue.remove(0);
 				AgentUtil.sendZoneDataUpdate(blackboard ,bidForJobUpdate, myAgent);

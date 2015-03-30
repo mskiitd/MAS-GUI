@@ -47,8 +47,8 @@ public class AgentStarter {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
 		TableUtil.loadFont();
-		new MachineGUI(new LocalSchedulingAgent());
-//		new AgentStarter();
+//		new MachineGUI(new LocalSchedulingAgent());
+		new AgentStarter();
 	}
 
 	public AgentStarter() {

@@ -2,6 +2,8 @@
 package mas.util.formatter.doubleformatter;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+
 import javax.swing.InputVerifier;
 import javax.swing.text.JTextComponent;
 
@@ -41,11 +43,13 @@ public class DoubleVerifier extends InputVerifier {
 			String text = ((JTextComponent)jc).getText();
 			double val = Double.parseDouble(text);
 			if(val < minValue || val > maxValue) {
+				Toolkit.getDefaultToolkit().beep();
 				jc.setForeground(INVALID_COLOR);
 				return false;
 			}
 		}
 		catch(Exception e) {
+			Toolkit.getDefaultToolkit().beep();
 			jc.setForeground(INVALID_COLOR);  
 			return false;  
 		}

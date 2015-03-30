@@ -26,10 +26,11 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 	private AID bba;
 	private job negotiationJob;
 	private String replyWith;
+	private boolean done = false;
 
 	@Override
 	public EndState getEndState() {
-		return EndState.SUCCESSFUL;
+		return (done ?EndState.SUCCESSFUL : null);
 	}
 
 	@Override
@@ -55,11 +56,9 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 
 	@Override
 	public void action() {
-
-		if(CustomerAgent.mygui != null) {
-			CustomerNegotiateProxyGUI nego = new CustomerNegotiateProxyGUI(
-					(CustomerAgent)myAgent, negotiationJob);
-		}
+		CustomerNegotiateProxyGUI nego = new CustomerNegotiateProxyGUI(
+				(CustomerAgent)myAgent, negotiationJob);
+		done = true;
 	}
 
 	public void setNegotiation(job j) {
@@ -105,6 +104,6 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 
 	@Override
 	public boolean done() {
-		return true;
+		return done;
 	}
 }

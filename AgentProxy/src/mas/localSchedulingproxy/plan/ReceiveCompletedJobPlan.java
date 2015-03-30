@@ -49,8 +49,6 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 		} catch (UnreadableException e) {			
 			e.printStackTrace();
 		}
-
-
 	}
 
 
