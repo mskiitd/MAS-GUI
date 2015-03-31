@@ -31,9 +31,11 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
+import mas.machineproxy.gui.custompanels.FadingPanel;
 import mas.util.TableUtil;
 
 @SuppressWarnings("serial")
@@ -41,7 +43,9 @@ public class MachineGUI extends JFrame {
 
 	private LocalSchedulingAgent lAgent;
 	private Simulator machineSimulator;
-	
+	private buttonPanelListener buttonPanelHandler;
+
+	private FadingPanel currentOpPanel;
 	private JSplitPane parentPanel;
 
 	private JPanel mcPanel;
@@ -62,7 +66,7 @@ public class MachineGUI extends JFrame {
 	private JLabel lblMachineStatus;
 	private BufferedImage machineIcon;
 	private CustomJobQueue queuePanel;
-	private ArrayList<job> jobQ;
+	private ArrayList<Batch> jobQ;
 
 	public static Color failColor = Color.RED;
 	public static Color maintenanceColor = Color.yellow;
@@ -73,10 +77,11 @@ public class MachineGUI extends JFrame {
 	public MachineGUI(LocalSchedulingAgent agent) {
 
 		this.lAgent = agent;
-		
+
 		this.mcPanel = new JPanel(new BorderLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
+		this.currentOpPanel = new FadingPanel();
 		initButtons();
 
 		try {
@@ -109,7 +114,7 @@ public class MachineGUI extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		jobQ = new ArrayList<job>();
+		jobQ = new ArrayList<Batch>();
 
 		this.queuePanel = new CustomJobQueue(jobQ);
 		queuePanel.setBorder((new EmptyBorder(10,10,10,10) ));
@@ -123,7 +128,7 @@ public class MachineGUI extends JFrame {
 		add(parentPanel);
 		showGui();
 	}
-	
+
 	public Simulator getMachineSimulator() {
 		return machineSimulator;
 	}
@@ -139,6 +144,7 @@ public class MachineGUI extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		buttonPanelHandler = new buttonPanelListener();
 		btnFailMachineButton = new JButton("Machine Failed");
 
 		btnLoadJob = new JButton("Load Job");
@@ -182,6 +188,9 @@ public class MachineGUI extends JFrame {
 		upperButtonPanel.add(btnFailMachineButton,constraints);
 		constraints.gridx = 1;
 		upperButtonPanel.add(btnRepairMachine,constraints);
+		constraints.gridy = 1;
+		constraints.gridx = 0;
+		upperButtonPanel.add(currentOpPanel,constraints);
 
 		lowerButtonPanel = new JPanel(new GridBagLayout()) {
 			@Override
@@ -195,8 +204,12 @@ public class MachineGUI extends JFrame {
 		};
 		btnUnloadJob.setEnabled(false);
 		btnRepairMachine.setEnabled(false);
-		btnLoadJob.setEnabled(false);
-		
+
+		btnLoadJob.addActionListener(buttonPanelHandler);
+		btnUnloadJob.addActionListener(buttonPanelHandler);
+		btnFailMachineButton.addActionListener(buttonPanelHandler);
+		btnRepairMachine.addActionListener(buttonPanelHandler);
+
 		constraints.gridx = 0;
 		lowerButtonPanel.add(btnLoadJob, constraints);
 		constraints.gridx = 1;
@@ -208,7 +221,8 @@ public class MachineGUI extends JFrame {
 		this.lblMachineStatus.setForeground(failColor);
 	}
 
-	public void machineProcessing() {
+	public void machineProcessing(String id, String operation) {
+		this.currentOpPanel.setCurrentOperation(id, operation);
 		this.lblMachineStatus.setText("Processing");
 		this.lblMachineStatus.setForeground(CustomJobQueue.firstJobColor);
 	}
@@ -219,6 +233,7 @@ public class MachineGUI extends JFrame {
 	}
 
 	public void machineIdle() {
+		this.currentOpPanel.reset();
 		this.lblMachineStatus.setText("Idle");
 		this.lblMachineStatus.setForeground(idleColor);
 	}
@@ -228,38 +243,61 @@ public class MachineGUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource().equals(btnLoadJob)) {
+				if(machineSimulator != null) {
+					machineSimulator.loadJob();
+					btnUnloadJob.setEnabled(true);
+					btnLoadJob.setEnabled(false);
+				}
 
 			} else if(e.getSource().equals(btnUnloadJob)) {
 
+				if(machineSimulator != null) {
+					machineSimulator.unloadJob();
+					btnUnloadJob.setEnabled(false);
+					btnLoadJob.setEnabled(true);
+				}
+
 			} else if(e.getSource().equals(btnFailMachineButton)) {
 
-				machineSimulator.FailTheMachine();
-				machineFailed();
+				if(machineSimulator != null) {
+					machineSimulator.FailTheMachine();
+					machineFailed();
+					btnFailMachineButton.setEnabled(false);
+					btnRepairMachine.setEnabled(true);
+					btnLoadJob.setEnabled(false);
+					btnUnloadJob.setEnabled(false);
+				}
+
 			} else if(e.getSource().equals(btnRepairMachine)) {
-				
+
+				if(machineSimulator != null) {
+					machineSimulator.repair();
+					btnUnloadJob.setEnabled(true);
+					btnFailMachineButton.setEnabled(true);
+					btnRepairMachine.setEnabled(false);
+				}
 			}
 		}
-
 	}
 
 	/**
 	 * Update the current queue for the machine with the new queue in the GUI
 	 * @param newQueue
 	 */
-	public void updateQueue(ArrayList<job> newQueue) {
+	public void updateQueue(ArrayList<Batch> newQueue) {
 		jobQ.clear();
 		jobQ.addAll(newQueue);
 		queuePanel.revalidate();
 		queuePanel.repaint();
 	}
 
-	public void addJobToQueue(job comingJob) {
+	public void addJobToQueue(Batch comingJob) {
 		jobQ.add(comingJob);
 		queuePanel.revalidate();
 		queuePanel.repaint();
 	}
 
-	public void removeFromQueue(job j) {
+	public void removeFromQueue(Batch j) {
 		if(jobQ.contains(j)) {
 			jobQ.remove(j);
 			queuePanel.revalidate();

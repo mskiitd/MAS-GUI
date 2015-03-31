@@ -23,9 +23,6 @@ public class GiveMeJobBehavior extends OneShotBehaviour{
 		ZoneDataUpdate giveJobIndicator = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.askJobFromLSA)
 			.value("1").Build();
 		
-		/*ZoneDataUpdate giveJobIndicator = new ZoneDataUpdate(
-				ID.Machine.ZoneData.askJobFromLSA, "1");*/
-
 		AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent,
 				giveJobIndicator, myAgent);
 	}

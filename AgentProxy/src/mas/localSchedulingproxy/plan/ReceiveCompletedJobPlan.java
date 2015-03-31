@@ -1,18 +1,17 @@
 package mas.localSchedulingproxy.plan;
 
+import jade.core.AID;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.UnreadableException;
 import java.util.ArrayList;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
-import jade.core.AID;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.lang.acl.UnreadableException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -23,12 +22,11 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 
 	/**
 	 * Takes the complete job from the simulator
-	 * 
 	 */
-
+	
 	private static final long serialVersionUID = 1L;
-	private job j;
-	private ArrayList<job> jobQueue;
+	private Batch j;
+	private ArrayList<Batch> jobQueue;
 	private BeliefBase bfBase;
 	private StatsTracker sTracker;
 	private Logger log;
@@ -44,7 +42,7 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 		bfBase = pInstance.getBeliefBase();
 
 		try {
-			j = (job)((MessageGoal)pInstance.getGoal()).getMessage().getContentObject();
+			j = (Batch)((MessageGoal)pInstance.getGoal()).getMessage().getContentObject();
 
 		} catch (UnreadableException e) {			
 			e.printStackTrace();

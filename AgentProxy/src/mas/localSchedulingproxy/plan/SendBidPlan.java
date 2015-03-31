@@ -4,16 +4,21 @@ import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
 import java.util.ArrayList;
 import java.util.Random;
+
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.algorithm.ScheduleSequence;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -31,8 +36,8 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private ACLMessage msg;
-	private job jobToBidFor;
-	private ArrayList<job> jobQueue;
+	private Batch jobToBidFor;
+	private ArrayList<Batch> jobQueue;
 	private BeliefBase bfBase;
 	private Logger log;
 	private AID blackboard;
@@ -61,7 +66,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		replyWith = msg.getReplyWith();
 
 		try {
-			jobToBidFor = (job)msg.getContentObject();
+			jobToBidFor = (Batch)msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
@@ -87,11 +92,11 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		}
 	}
 
-	private void setBid(job j){
+	private void setBid(Batch j){
 		//		Random r = new Random();	
 		//		j.setBidByLSA(r.nextDouble());
 
-		jobQueue = (ArrayList<job>) bfBase.
+		jobQueue = (ArrayList<Batch>) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
 				getValue();
 
@@ -105,13 +110,13 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		j.setCurrentOperationProcessingTime(operationdb.
 				getOperationInfo(j.getCurrentOperation().getJobOperationType()).
 				getProcessingTime() );
-		
-		ArrayList<job> tempQueue = new  ArrayList<job>();
+
+		ArrayList<Batch> tempQueue = new  ArrayList<Batch>();
 		tempQueue.addAll(jobQueue);
 		tempQueue.add(j);
 
 		ScheduleSequence sch = new ScheduleSequence(tempQueue);
-		ArrayList<job> tempqSolution = sch.getSolution();
+		ArrayList<Batch> tempqSolution = sch.getSolution();
 
 		double PenaltyAfter = getPenaltyLocalDD(tempqSolution);
 		//		log.info("PenaltyAfter="+getPenaltyLocalDD(tempqSolution));
@@ -128,7 +133,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		j.setLSABidder(myAgent.getAID());
 	}
 
-	public double getPenaltyLocalDD(ArrayList<job> sequence) {
+	public double getPenaltyLocalDD(ArrayList<Batch> sequence) {
 		long finishTime = 0;
 		long cumulativeProcessingTime = 0;//sum of processing times of jobs in Q standing ahead 
 		//in milliseconds
@@ -173,7 +178,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		return cost;
 	}
 
-	private ArrayList<job> setStartTimes(ArrayList<job> sequence) {
+	private ArrayList<Batch> setStartTimes(ArrayList<Batch> sequence) {
 		long CumulativeWaitingTime = 0;
 		for(int i=0 ; i < sequence.size(); i++) {
 			sequence.get(i).setCurrentOperationStartTime(CumulativeWaitingTime + System.currentTimeMillis());

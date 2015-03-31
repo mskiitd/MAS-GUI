@@ -20,14 +20,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 
 import mas.customerproxy.agent.CustomerAgent;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.DateLabelFormatter;
 import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
+import mas.util.formatter.doubleformatter.FormattedDoubleField;
+import mas.util.formatter.integerformatter.FormattedIntegerField;
+import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +46,7 @@ public class DefineJobFrame extends JFrame{
 
 	private CustomerAgent cAgent;
 	private job generatedJob;
+	private Batch generatedBatch;
 	private BufferedImage plusButtonIcon;
 
 	private JScrollPane scroller;
@@ -55,11 +59,7 @@ public class DefineJobFrame extends JFrame{
 	private JDatePickerImpl datePicker;
 	private JSpinner timeSpinner;
 
-	private String JobID;
-	private double CPN;
-	private long DueDate;
 	private int NumOps;
-	private double Penalty;
 
 	private JLabel lblHeading;
 	private JLabel lblJobID;
@@ -67,12 +67,14 @@ public class DefineJobFrame extends JFrame{
 	private JLabel lblDueDate;
 	private JLabel lblOpsHeading;
 	private JLabel lblPenalty;
+	private JLabel lblBatchSize;
 	private JButton btnOperationPlus;
 
-	private JTextField txtJobID;
-	private JTextField txtCPN;
-	private JTextField txtNumOps;
-	private JTextField txtPenalty;
+	private FormattedStringField txtJobID;
+	private FormattedDoubleField txtCPN;
+	private FormattedIntegerField txtNumOps;
+	private FormattedDoubleField txtPenalty;
+	private FormattedIntegerField txtBatchSize;
 
 	private job populatingJob;
 	private boolean dataOk = true;
@@ -85,6 +87,7 @@ public class DefineJobFrame extends JFrame{
 		log = LogManager.getLogger();
 
 		this.populatingJob = populatingJob;
+		this.generatedBatch = new Batch();
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
@@ -120,11 +123,23 @@ public class DefineJobFrame extends JFrame{
 		this.lblJobID = new JLabel(Labels.CustomerLabels.jobID);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
+		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
 
-		this.txtCPN = new JTextField(Labels.defaultJTextSize);
-		this.txtJobID = new JTextField(Labels.defaultJTextSize);
-		this.txtNumOps = new JTextField(Labels.defaultJTextSize/2);
-		this.txtPenalty = new JTextField(Labels.defaultJTextSize);
+		this.txtCPN = new FormattedDoubleField();
+		txtCPN.setColumns(Labels.defaultJTextSize);
+
+		this.txtJobID = new FormattedStringField();
+		txtJobID.setColumns(Labels.defaultJTextSize);
+
+		this.txtNumOps = new FormattedIntegerField();
+		txtNumOps.setColumns(Labels.defaultJTextSize/2);
+
+		this.txtPenalty = new FormattedDoubleField();
+		txtPenalty.setColumns(Labels.defaultJTextSize);
+
+		this.txtBatchSize = new FormattedIntegerField();
+		txtBatchSize.setColumns(Labels.defaultJTextSize);
+		txtBatchSize.setValue(1);
 
 		this.sendJob = new JButton(Labels.sendJobButton);
 		sendJob.addActionListener(new sendJobListener());
@@ -140,6 +155,9 @@ public class DefineJobFrame extends JFrame{
 
 		myPanel.add(lblPenalty);
 		myPanel.add(txtPenalty,"wrap");
+
+		myPanel.add(lblBatchSize);
+		myPanel.add(txtBatchSize,"wrap");
 
 		myPanel.add(lblDueDate);
 		myPanel.add(datePicker);
@@ -167,7 +185,6 @@ public class DefineJobFrame extends JFrame{
 			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
 			txtPenalty.setText(String.valueOf(populatingJob.getPenaltyRate()));
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
-
 		}
 	}
 
@@ -185,16 +202,20 @@ public class DefineJobFrame extends JFrame{
 					x3 = checkCPN();
 				}
 				generatedJob.setGenerationTime(new Date());
-				generatedJob.setJobNo(CustomerProxyGUI.countJob);
+				generatedJob.setJobNo(CustomerProxyGUI.countBatch);
 				if(x2 & x3) {
 					x4 = checkDueDate();
-					
+
 					if(x4) {
 						x5 = checkJobOperations();
 					}
 				}
-				
-				dataOk = x2&x3&x4&x5;
+
+				dataOk = x2 & x3 & x4 & x5;
+
+				if(dataOk) {
+					dataOk = dataOk & checkBatchSize();
+				}
 			}
 		}
 		else {
@@ -204,32 +225,28 @@ public class DefineJobFrame extends JFrame{
 				x3 = checkCPN();
 			}
 			generatedJob.setGenerationTime(new Date());
-			generatedJob.setJobNo(CustomerProxyGUI.countJob);
+			generatedJob.setJobNo(CustomerProxyGUI.countBatch);
 			if(x2 & x3) {
 				x4 = checkDueDate();
-				
+
 				if(x4) {
 					x5 = checkJobOperations();
 				}
 			}
-			
-			dataOk = x1&x2&x3&x4&x5;
-		}
+			dataOk = x1 & x2 & x3 & x4 & x5;
 
+			if(dataOk) {
+				dataOk = dataOk & checkBatchSize();
+			}
+		}
 	}
 
 	private boolean checkJobOperations() {
 		boolean status = true;
-		if(generatedJob.getOperations() == null ) {
+		if(generatedJob.getOperations() == null || generatedJob.getOperations().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
-		}else {
-			if(generatedJob.getOperations().isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
-				status = false;
-			}
 		}
 		return status;
 	}
@@ -292,6 +309,24 @@ public class DefineJobFrame extends JFrame{
 		return status;
 	}
 
+	private boolean checkBatchSize() {
+		boolean status = true;
+		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
+			JOptionPane.showMessageDialog(this, "Invalid input for batch size !!", 
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
+		}else {
+			generatedBatch.setBatchId(generatedJob.getJobID());
+			generatedBatch.clearAllJobs();
+			int bSize = Integer.parseInt(txtBatchSize.getText());
+			for(int i = 0; i < bSize ; i++ ) {
+				generatedBatch.addJobToBatch(generatedJob);
+			}
+		}
+
+		return status;
+	}
+
 	class AddOperationListener implements ActionListener {
 
 		@Override
@@ -334,8 +369,8 @@ public class DefineJobFrame extends JFrame{
 			createJobFromParams();
 			log.info("data format : " + dataOk);
 			if(dataOk) {
-				cAgent.sendGeneratedJob(generatedJob);
-				CustomerProxyGUI.countJob++ ;
+				cAgent.sendGeneratedBatch(generatedBatch);
+				CustomerProxyGUI.countBatch++ ;
 				dispose();
 			}
 		}

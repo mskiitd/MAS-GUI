@@ -2,9 +2,9 @@ package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
 
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 
 public interface ScheduleSequenceIFace {
 
-	public ArrayList<job> solve();
+	public ArrayList<Batch> solve();
 }

@@ -3,9 +3,10 @@ package mas.localSchedulingproxy.algorithm;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 
-public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace{
+public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace {
 	/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 
 	 *  To use it, create a node with state equal to ArrayList of a sequence of jobs
 	 *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
@@ -18,12 +19,12 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace{
 	 * depth of tree starts from zero
 	 * Level of tree with depth of 0 is ignored
 	 */
-	ArrayList<job> best = new ArrayList<job>();		// best solution stored in this ArrayList when algo runs
+	ArrayList<Batch> best = new ArrayList<Batch>();		// best solution stored in this ArrayList when algo runs
 	Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
 	public Node rootNode;
-	public job fixedJob;
+	public Batch fixedJob;
 
-	public BranchNbound_RegretSlabbedPenalty(ArrayList<job> s){
+	public BranchNbound_RegretSlabbedPenalty(ArrayList<Batch> s){
 		fixedJob = s.get(0);
 		s.remove(0);
 		/**
@@ -38,18 +39,18 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace{
 	}
 
 	public class Node {
-		ArrayList<job> state;		//sequence of jobs
+		ArrayList<Batch> state;		//sequence of jobs
 		Node[] child;				//  child nodes at any point
 		Node parent;				// parent node
 		int depth;					// depth of node in tree
 		int rank;					// to differentiate between different children at same level 
 		double penalty;				// penalty of node
 
-		public Node(ArrayList<job> s) {
+		public Node(ArrayList<Batch> s) {
 			depth = 0;		
 			rank = -1;
 			penalty = 0;
-			this.state = new ArrayList<job>(s);
+			this.state = new ArrayList<Batch>(s);
 			int n = state.size();
 			// i'th child will be equal to that of its parent and one job kept at last
 			child = new Node [n];		
@@ -68,7 +69,7 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace{
 			if (child[index] == null)
 				child[index] = new Node(this.state);
 
-			child[index].state = new ArrayList<job>(this.state);
+			child[index].state = new ArrayList<Batch>(this.state);
 			// rank is equal to node's position from left in the solution tree
 			child[index].rank = index;				
 			child[index].depth = this.depth + 1;
@@ -137,7 +138,7 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace{
 		}
 	}
 
-	public ArrayList<job> solve() {
+	public ArrayList<Batch> solve() {
 		/**
 		 * Don't forget to add the first job which is fixed throughout
 		 * in the final sequence of jobs

@@ -12,13 +12,14 @@ import mas.globalSchedulingproxy.goal.RegisterAgentToBlackBoardGoal;
 import mas.globalSchedulingproxy.goal.RegisterServiceGoal;
 import mas.globalSchedulingproxy.plan.AskForWaitingTime;
 import mas.globalSchedulingproxy.plan.CallBackChangeDueDatePlan;
+import mas.globalSchedulingproxy.plan.GSASendNegotiationJobPlan;
 import mas.globalSchedulingproxy.plan.GetNoOfMachinesPlan;
 import mas.globalSchedulingproxy.plan.HandleCompletedOrderbyLSAPlan;
 import mas.globalSchedulingproxy.plan.NegotiateViaGuiPlan;
 import mas.globalSchedulingproxy.plan.RegisterAgentToBlackboardPlan;
 import mas.globalSchedulingproxy.plan.RegisterServicePlan;
-import mas.globalSchedulingproxy.plan.GSASendNegotiationJobPlan;
 import mas.globalSchedulingproxy.plan.TakeOrderAndRaiseBidPlan;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -57,10 +58,10 @@ public abstract class AbstractGSCapability  extends Capability {
 		Belief<Integer> NoOfMachines=new TransientBelief<Integer>(ID.GlobalScheduler.
 				BeliefBaseConst.NoOfMachines);
 
-		Belief<job> query = new TransientBelief<job>(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob);
+		Belief<Batch> query = new TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob);
 		
-		Belief<job> underNegotiation = new 
-				TransientBelief<job>(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
+		Belief<Batch> underNegotiation = new 
+				TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
 
 				beliefs.add(BB_AID);
 				beliefs.add(NoOfMachines);

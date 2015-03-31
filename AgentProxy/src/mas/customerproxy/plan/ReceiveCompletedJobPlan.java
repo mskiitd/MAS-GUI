@@ -2,7 +2,6 @@ package mas.customerproxy.plan;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -18,7 +17,6 @@ public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private job completedJob;
-	private boolean done = false;
 
 	@Override
 	public EndState getEndState() {
@@ -42,8 +40,6 @@ public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
 		if(completedJob != null) {
 			log.info("Adding completed job to GUI ");
 			CustomerAgent.mygui.addCompletedJob(completedJob);
-			
-			done = true;
 		}
 	}
 

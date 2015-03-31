@@ -5,6 +5,7 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -14,7 +15,6 @@ import mas.util.ZoneDataUpdate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -25,7 +25,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 
-	private job dummyJob;
+	private Batch dummyJob;
 	private AID blackboard;
 	private int NoOfMachines;
 	private String msgReplyID;
@@ -37,7 +37,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 	// The counter of replies from seller agents
 	private int repliesCnt = 0; 
-	private job JobToSend;
+	private Batch JobToSend;
 	private long CumulativeWaitingTime=0;
 	private BeliefBase bfBase;
 
@@ -46,8 +46,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		log=LogManager.getLogger();
 
 		try {
-			dummyJob = (job)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
-			msgReplyID = Integer.toString(dummyJob.getJobNo());
+			dummyJob = (Batch)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
+			msgReplyID = Integer.toString(dummyJob.getBatchNumber());
 
 		} catch (UnreadableException e) {
 			e.printStackTrace();
@@ -109,17 +109,17 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			try {
 				ACLMessage max=getWorstWaitingTime(WaitingTime);
 				CumulativeWaitingTime=CumulativeWaitingTime+
-						((job)max.getContentObject()).getWaitingTime();
+						((Batch)max.getContentObject()).getWaitingTime();
 
-				JobToSend=(job)(max.getContentObject());
+				JobToSend=(Batch)(max.getContentObject());
 
-				dummyJob.IncrementOperationNumber();
+				dummyJob.incrementCurrentJob();
 				//				log.info(dummyJob.getCurrentOperationNumber()+"/"+dummyJob.getOperations().size());
 
-				if(dummyJob.getCurrentOperationNumber() < dummyJob.getOperations().size()){
-					step=1;
+				if(dummyJob.getCurrentJobNo() < dummyJob.getBatchCount()) {
+					step = 1;
 				}
-				else{
+				else {
 					step = 4;
 				}
 
@@ -127,19 +127,18 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				e.printStackTrace();
 			}
 
-
 			break;
 
 		case 4:
 			JobToSend.setCurrentOperationNumber(0);
 			JobToSend.setWaitingTime(CumulativeWaitingTime);
 
-			if(JobToSend.getWaitingTime()<0){
-				log.info("cannot process job no "+JobToSend.getJobNo());
+			if(JobToSend.getWaitingTime() < 0) {
+				log.info("cannot process Batch no "+JobToSend.getBatchNumber() );
 			}
 			else{
-				log.info("sending waiting time:"+CumulativeWaitingTime+" ms");
-				ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation)
+				log.info("sending waiting time:" + CumulativeWaitingTime + " ms");
+				ZoneDataUpdate NegotiationUpdate = new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation)
 				.value(JobToSend).setReplyWith(msgReplyID).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);	
 			}
@@ -169,7 +168,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 	@Override
 	public boolean done() {
-
 		return (step >= 5);
 	}
 

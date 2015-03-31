@@ -1,9 +1,10 @@
 package mas.localSchedulingproxy.agent;
 
+import jade.core.AID;
+
 import java.util.ArrayList;
 
-import jade.core.AID;
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.capability.LocalSchedulingBasicCapability;
 import mas.machineproxy.gui.MachineGUI;
 import mas.util.AgentUtil;
@@ -21,7 +22,7 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 	public static MachineGUI mGUI;
 	public static long schedulingPeriod = 5000;
 
-	public void UpdateJobQueue(ArrayList<job> newQueue) {
+	public void UpdateJobQueue(ArrayList<Batch> newQueue) {
 		if(mGUI != null) {
 			mGUI.updateQueue(newQueue);
 			log.info("Updating queue in machine's GUI ");

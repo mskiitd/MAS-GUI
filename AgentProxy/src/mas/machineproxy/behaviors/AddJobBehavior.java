@@ -23,6 +23,7 @@ public class AddJobBehavior extends Behaviour {
 	private Logger log;
 	private int step = 0;
 	private long processingTime;
+	private long passedTime;
 	private Simulator machineSimulator = null;
 	private ScheduledThreadPoolExecutor executor;
 
@@ -43,17 +44,17 @@ public class AddJobBehavior extends Behaviour {
 					this.machineSimulator = (Simulator) getDataStore().
 							get(Simulator.simulatorStoreName);
 				}
-				
+
 				machineSimulator.setStatus(MachineStatus.PROCESSING);
-				
-				LocalSchedulingAgent.mGUI.machineProcessing();
-				
+
+				LocalSchedulingAgent.mGUI.machineProcessing(comingJob.getJobID(),
+						comingJob.getCurrentOperation().getJobOperationType());
+
 				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessTime()/1000.0;
-						
-			/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
+
+				/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time before loading/unloading: " + comingJob.getCurrentOperationProcessTime());*/
 
-				
 				double newProcessingTime =
 						Methods.normalRandom(ProcessingTimeInSeconds,/*
 						getCurrentOperationProcessTime gives time in milliseconds*/
@@ -67,12 +68,13 @@ public class AddJobBehavior extends Behaviour {
 				//ex. 0.1 with be converted into 0
 
 				processingTime = comingJob.getCurrentOperationProcessTime();
-				
-				if(processingTime<=0){
-					processingTime=1;// 1 milliseconds
+				passedTime = 0;
+
+				if(processingTime <= 0) {
+					processingTime = 1;// 1 milliseconds
 					log.info("ATTENTION : -ve processing time");
 				} //if processingTime=0, this behviour goes into infinite loop
-				
+
 
 				log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time : " + comingJob.getCurrentOperationProcessTime());
@@ -109,15 +111,14 @@ public class AddJobBehavior extends Behaviour {
 			break;
 
 		case 2:
-			if( processingTime <= 0) {
-				IsJobComplete = true;
-				log.info("Job No:" + comingJob.getJobNo() +" operation "+(comingJob.getCurrentOperationNumber()+1)+"/"+comingJob.getOperations().size()+" completed");
-				ProcessJobBehavior process = new ProcessJobBehavior(comingJob);
-				process.setDataStore(getDataStore());
-				myAgent.addBehaviour(process);
-				machineSimulator.setStatus(MachineStatus.IDLE);
-				LocalSchedulingAgent.mGUI.machineIdle();
-			}
+			IsJobComplete = true;
+			log.info("Job No:" + comingJob.getJobNo() + " operation " + 
+					(comingJob.getCurrentOperationNumber() + 1 ) + "/" + comingJob.getOperations().size() + " completed");
+			ProcessJobBehavior process = new ProcessJobBehavior(comingJob);
+			process.setDataStore(getDataStore());
+			myAgent.addBehaviour(process);
+			machineSimulator.setStatus(MachineStatus.IDLE);
+			LocalSchedulingAgent.mGUI.machineIdle();
 			break;
 		}
 	}
@@ -131,18 +132,21 @@ public class AddJobBehavior extends Behaviour {
 
 		@Override
 		public void run() {
-
 			/**
 			 * If machine is failed it won't do anything.
 			 * Executor will just keep scheduling this task
+			 * 
+			 * It is stuck in calling the executor task again and again until machine is failed
+			 * or the user presses unload button
 			 */
-			
-//			log.info("remProcessingTime="+processingTime);
-			if( processingTime > 0 &&
-				machineSimulator.getStatus() != MachineStatus.FAILED ) {
-				
+
+			if(machineSimulator.getStatus() != MachineStatus.FAILED &&
+					! machineSimulator.isUnloadFlag()) {
+
 				processingTime = processingTime - Simulator.TIME_STEP; 
-			} else if( processingTime <= 0 &&
+				passedTime += Simulator.TIME_STEP;
+
+			} else if( machineSimulator.isUnloadFlag() &&
 					machineSimulator.getStatus() != MachineStatus.FAILED ) {
 				step = 2;
 				executor.shutdown();

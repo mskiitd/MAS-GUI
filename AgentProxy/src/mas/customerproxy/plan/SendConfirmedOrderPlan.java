@@ -1,17 +1,20 @@
 package mas.customerproxy.plan;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import jade.core.AID;
+import jade.core.behaviours.Behaviour;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-import jade.core.AID;
-import jade.core.behaviours.Behaviour;
 
 public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 
@@ -19,7 +22,7 @@ public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 	private Logger log;
 	private BeliefBase bfBase;
 	private AID bba;
-	private job ConfirmedJob;
+	private Batch ConfirmedJob;
 	private String replyWith;
 	private boolean done = false;
 
@@ -36,11 +39,11 @@ public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 				.getBelief(ID.Customer.BeliefBaseConst.blackboardAgent)
 				.getValue();
 
-		this.ConfirmedJob = (job) bfBase.
+		this.ConfirmedJob = (Batch) bfBase.
 				getBelief(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB).
 				getValue();
 
-		replyWith = String.valueOf(this.ConfirmedJob.getJobNo() );
+		replyWith = String.valueOf(this.ConfirmedJob.getBatchNumber() );
 
 	}
 
@@ -57,7 +60,7 @@ public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 			AgentUtil.sendZoneDataUpdate(bba, ConfirmedOrderZoneDataUpdate, myAgent);
 			done = true;
 		} else {
-			this.ConfirmedJob = (job) bfBase.
+			this.ConfirmedJob = (Batch) bfBase.
 					getBelief(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB).
 					getValue();
 		}

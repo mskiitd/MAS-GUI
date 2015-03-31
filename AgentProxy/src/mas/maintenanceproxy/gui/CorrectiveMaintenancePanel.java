@@ -4,18 +4,13 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import net.miginfocom.swing.MigLayout;
@@ -73,7 +68,7 @@ public class CorrectiveMaintenancePanel extends JPanel{
 
 	private void checkRepairTime() {
 		if(txtRepairTime.getText().matches("-?\\d+(\\.\\d+)?")) {
-			double rTime = 60*1000*Double.parseDouble(txtRepairTime.getText());
+			double rTime = 60 * 1000 * Double.parseDouble(txtRepairTime.getText());
 			repairTime = (long) rTime;
 			dataOk = true;
 		}else {

@@ -1,4 +1,4 @@
-package mas.machineproxy.gui;
+package mas.machineproxy.gui.custompanels;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;

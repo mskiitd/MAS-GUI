@@ -5,6 +5,7 @@ import jade.core.behaviours.TickerBehaviour;
 
 import java.util.ArrayList;
 
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.algorithm.ScheduleSequence;
@@ -19,7 +20,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
-	private ArrayList<job> jobQueue;
+	private ArrayList<Batch> jobQueue;
 	private double regretThreshold = 0;
 	private Logger log;
 
@@ -32,7 +33,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			BeliefBase bfBase) {
 		super(myAgent, schedulingPeriod);
 		this.bfBase = bfBase;
-		
+
 		log = LogManager.getLogger();
 	}
 
@@ -40,7 +41,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	protected void onTick() {
 
 		if(jobQueue == null) {
-			jobQueue = (ArrayList<job>) bfBase.
+			jobQueue = (ArrayList<Batch>) bfBase.
 					getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
 					getValue();
 		}
@@ -57,29 +58,36 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	}
 
 	private void calculateRegretAndSchedule() {
-		int max = jobQueue.size();
+		int qSize = jobQueue.size();
 		double lateness;			
 
 		double totalRegret = 0;
 
-		for ( int i = 0; i < max ; i++) {
-			lateness =	jobQueue.get(i).getCurrentOperationStartTime() +
-					jobQueue.get(i).getCurrentOperationProcessTime() -
-					jobQueue.get(i).getCurrentOperationDueDate();
+		for ( int i = 0; i < qSize ; i++) {
+			double batchLateness = 0;
+			Batch currentBatch = jobQueue.get(i);
+			for(int jobIndex = 0 ; jobIndex < currentBatch.getBatchCount() ; jobIndex ++ ) {
+				
+				job currentJobInBatch = currentBatch.getJobsInBatch().get(jobIndex);
+				batchLateness =	currentJobInBatch.getCurrentOperationStartTime() +
+						currentJobInBatch.getCurrentOperationProcessTime() -
+						currentJobInBatch.getCurrentOperationDueDate();
 
-			if(lateness < 0)
-				lateness = 0;
+				if(batchLateness < 0)
+					batchLateness = 0;
 
-			jobQueue.get(i).setRegret(lateness/jobQueue.get(i).getSlack());
-			totalRegret += jobQueue.get(i).getRegret();
+				currentJobInBatch.setRegret(batchLateness/currentJobInBatch.getSlack());
+				totalRegret += currentJobInBatch.getRegret();
+			}
+//			lateness += batchLateness;
 		}
 
 		if(totalRegret > regretThreshold) {
-			
+
 			reset(100 * LocalSchedulingAgent.schedulingPeriod);
 
 			ScheduleSequence scheduler = new ScheduleSequence(jobQueue);
-			ArrayList<job> newQ = scheduler.getSolution();
+			ArrayList<Batch> newQ = scheduler.getSolution();
 
 			log.info("updating belief base with the new schedule");
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue,

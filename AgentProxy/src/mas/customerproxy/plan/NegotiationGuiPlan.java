@@ -1,7 +1,12 @@
 package mas.customerproxy.plan;
 
+import jade.core.AID;
+import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.gui.CustomerNegotiateProxyGUI;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -9,10 +14,6 @@ import mas.util.ZoneDataUpdate;
 
 import org.apache.logging.log4j.Logger;
 
-import jade.core.AID;
-import jade.core.behaviours.Behaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.UnreadableException;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -24,7 +25,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 	private Logger log;
 	private BeliefBase bfBase;
 	private AID bba;
-	private job negotiationJob;
+	private Batch negotiationJob;
 	private String replyWith;
 	private boolean done = false;
 
@@ -39,7 +40,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 		ACLMessage msg = ( (MessageGoal)pInstance.getGoal()).getMessage();
 
 		try {
-			negotiationJob = (job) msg.getContentObject();
+			negotiationJob = (Batch) msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +93,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 		}else {
 			j.setJobDuedatebyCust( (myDate + newDate)/2 );
 			j.setProfit(newprofit);
-			log.info("************" + negotiationJob.getJobDuedatebyCust());
+			log.info("************" + negotiationJob.getDueDateByCustomer() );
 			ZoneDataUpdate negotiationJobDataUpdate=new ZoneDataUpdate.Builder(
 					ID.Customer.ZoneData.customerJobsUnderNegotiation).
 					value(negotiationJob).setReplyWith(replyWith).

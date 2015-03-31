@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,18 +22,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
+
+import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
+import mas.jobproxy.Batch;
+import mas.jobproxy.job;
+import mas.util.DateLabelFormatter;
+import mas.util.DefineJobOperationsFrame;
+import mas.util.TableUtil;
+import mas.util.formatter.integerformatter.FormattedIntegerField;
+import net.miginfocom.swing.MigLayout;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
+import com.sun.xml.internal.ws.org.objectweb.asm.Label;
+
 import uiconstants.Labels;
-import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
-import mas.jobproxy.job;
-import mas.util.DateLabelFormatter;
-import mas.util.DefineJobOperationsFrame;
-import mas.util.TableUtil;
-import net.miginfocom.swing.MigLayout;
 
 public class GSANegotiateProxyGUI extends JFrame{
 
@@ -59,25 +67,31 @@ public class GSANegotiateProxyGUI extends JFrame{
 	private JLabel lblDueDate;
 	private JLabel lblOpsHeading;
 	private JLabel lblPenalty;
+	private JLabel lblBatchSize;
 	private JButton btnOperationPlus;
 
 	private JTextField txtJobID;
 	private JTextField txtJobNo;
 	private JTextField txtCPN;
 	private JTextField txtNumOps;
+	private FormattedIntegerField txtBatchSize;
 	private JTextField txtPenaltyRate;
 
+	private Batch populatingBatch;
 	private job populatingJob;
 	private boolean dataOk = true;
 	private boolean operationDataOk = false;
 
 	private Logger log;
 
-	public GSANegotiateProxyGUI(GlobalSchedulingAgent cAgent, job populatingJob) {
+	public GSANegotiateProxyGUI(GlobalSchedulingAgent cAgent, Batch passedBatch) {
 
 		log = LogManager.getLogger();
-
-		this.populatingJob = populatingJob;
+		populatingBatch = passedBatch;
+		
+		if(populatingBatch != null) {
+			this.populatingJob = populatingBatch.getSampleJob();
+		}
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
@@ -127,12 +141,16 @@ public class GSANegotiateProxyGUI extends JFrame{
 		this.lblJobNo = new JLabel(Labels.CustomerLabels.jobNo);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
+		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
 
 		this.txtCPN = new JTextField(Labels.defaultJTextSize);
 		this.txtJobID = new JTextField(Labels.defaultJTextSize);
 		this.txtJobNo = new JTextField(Labels.defaultJTextSize);
 		this.txtNumOps = new JTextField(Labels.defaultJTextSize/2);
 		this.txtPenaltyRate = new JTextField(Labels.defaultJTextSize);
+		
+		this.txtBatchSize = new FormattedIntegerField();
+		txtBatchSize.setColumns(Labels.defaultJTextSize/2);
 
 		this.lblHeading.setFont(TableUtil.headings);
 		myPanel.add(lblHeading,"wrap");
@@ -148,6 +166,9 @@ public class GSANegotiateProxyGUI extends JFrame{
 
 		myPanel.add(lblPenalty);
 		myPanel.add(txtPenaltyRate,"wrap");
+		
+		myPanel.add(lblBatchSize);
+		myPanel.add(txtBatchSize,"wrap");
 
 		myPanel.add(lblDueDate);
 		myPanel.add(datePicker);
@@ -184,14 +205,16 @@ public class GSANegotiateProxyGUI extends JFrame{
 
 			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
 			txtCPN.setEnabled(false);
-			
+
 			txtPenaltyRate.setText(String.valueOf(populatingJob.getPenaltyRate()));
 			txtPenaltyRate.setEnabled(false);
-			
+
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
 			txtNumOps.setEnabled(false);
-			
+
 			timeSpinner.setValue(populatingJob.getJobDuedatebyCust());
+			
+			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 		}
 	}
 

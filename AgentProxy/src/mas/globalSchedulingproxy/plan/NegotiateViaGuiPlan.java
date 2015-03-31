@@ -4,6 +4,7 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.UnreadableException;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.globalSchedulingproxy.gui.GSANegotiateProxyGUI;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +18,7 @@ import bdi4jade.plan.PlanInstance.EndState;
 public class NegotiateViaGuiPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
-	private job JobUnderNegotiation;
+	private Batch JobUnderNegotiation;
 	private Logger log = LogManager.getLogger();
 	private String replyWith = null;
 	
@@ -30,7 +31,7 @@ public class NegotiateViaGuiPlan extends OneShotBehaviour implements PlanBody {
 	public void init(PlanInstance PI) {
 		
 		try {
-			this.JobUnderNegotiation = (job)((MessageGoal)(PI.getGoal())).
+			this.JobUnderNegotiation = (Batch)((MessageGoal)(PI.getGoal())).
 					getMessage().getContentObject();
 			
 		} catch (UnreadableException e) {

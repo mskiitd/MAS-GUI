@@ -38,6 +38,8 @@ import javax.swing.event.ListSelectionListener;
 
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationInfo;
+import mas.machineproxy.gui.custompanels.AddNewOperationPanel;
+import mas.machineproxy.gui.custompanels.DisplayOperationPanel;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 

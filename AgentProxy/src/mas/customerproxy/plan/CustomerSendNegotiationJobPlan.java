@@ -1,17 +1,20 @@
 package mas.customerproxy.plan;
 
+import jade.core.AID;
+import jade.core.behaviours.Behaviour;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-import jade.core.AID;
-import jade.core.behaviours.Behaviour;
 
 public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBody{
 
@@ -19,7 +22,7 @@ public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBod
 	private Logger log;
 	private BeliefBase bfBase;
 	private AID bba;
-	private job negotiationJob;
+	private Batch negotiationJob;
 	private boolean done = false;
 
 	@Override
@@ -35,7 +38,7 @@ public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBod
 				.getBelief(ID.Customer.BeliefBaseConst.blackboardAgent)
 				.getValue();
 
-		this.negotiationJob = (job) bfBase.
+		this.negotiationJob = (Batch) bfBase.
 				getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB).
 				getValue();
 
@@ -58,7 +61,7 @@ public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBod
 			done = true;
 		} else {
 			log.info("Customer : reading job negotiation : " + negotiationJob);
-			this.negotiationJob = (job) bfBase.
+			this.negotiationJob = (Batch) bfBase.
 					getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB).
 					getValue();
 			block(50);

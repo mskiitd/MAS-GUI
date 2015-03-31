@@ -2,13 +2,10 @@ package mas.customerproxy.agent;
 
 import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
-
 import java.util.HashSet;
 import java.util.Set;
-
 import mas.customerproxy.goal.CancelOrderGoal;
 import mas.customerproxy.goal.ChangeDueDateGoal;
-import mas.customerproxy.goal.ReceiveCompletedJobGoal;
 import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
@@ -18,7 +15,7 @@ import mas.customerproxy.plan.DispatchJobPlan;
 import mas.customerproxy.plan.ReceiveCompletedJobPlan;
 import mas.customerproxy.plan.RegisterCustomerAgentToBlackboardPlan;
 import mas.customerproxy.plan.SendConfirmedOrderPlan;
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 import mas.util.ID;
 import mas.util.MessageIds;
 import bdi4jade.belief.Belief;
@@ -52,10 +49,10 @@ public class parentBasicCapability extends Capability {
 		Belief<AID> bboard = new TransientBelief<AID>(ID.Customer.BeliefBaseConst.blackboardAgent);
 
 		// for current job generated, which is to be sent to GSA for negotiation etc.
-		Belief<job> currentJob = new TransientBelief<job>(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND);
+		Belief<Batch> currentJob = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND);
 
 		// for confirmed job after negotiation is complete
-		Belief<job> confirmedOrder = new TransientBelief<job>(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB);
+		Belief<Batch> confirmedOrder = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB);
 
 		// for order which has to be canceled
 		Belief<String> cancelOrder = new TransientBelief<String>(ID.Customer.BeliefBaseConst.CANCEL_ORDER);
@@ -64,7 +61,7 @@ public class parentBasicCapability extends Capability {
 		Belief<String> changeDueDate = new TransientBelief<String>(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB);
 
 		// for current job which is under negotiation
-		Belief<job> currentNegJob = new TransientBelief<job>(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB);
+		Belief<Batch> currentNegJob = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB);
 
 		beliefs.add(bboard);
 		beliefs.add(currentJob);

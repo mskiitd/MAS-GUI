@@ -109,6 +109,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	// root causes for machine parameters which will make a shift in parameter's generative process
 	private transient ArrayList<ArrayList<RootCause>> mParameterRootcauses; 
 
+	private boolean unloadFlag = false;
+	
 	//	private transient Logger log;
 	private void init() {
 		//		log = LogManager.getLogger();
@@ -174,13 +176,11 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		machineParameterShifter = new ParameterShifterBehavaior();
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 
-		functionality.addSubBehaviour(acceptIncomingJobs);
-
-		functionality.addSubBehaviour(reportHealth);
+//		functionality.addSubBehaviour(acceptIncomingJobs);
+//		functionality.addSubBehaviour(reportHealth);
+		
 		functionality.addSubBehaviour(processDimensionShifter);
-
 		//		functionality.addSubBehaviour(machineParameterShifter);
-
 		addBehaviour(tbf.wrap(functionality));
 
 		/**
@@ -472,4 +472,21 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	public void FailTheMachine() {
 		this.setStatus(MachineStatus.FAILED);
 	}
+
+	public void loadJob() {
+		addBehaviour(new AcceptJobBehavior(Simulator.this));
+	}
+
+	public void unloadJob() {
+		this.setUnloadFlag(true);
+	}
+
+	public boolean isUnloadFlag() {
+		return unloadFlag;
+	}
+
+	public void setUnloadFlag(boolean unloadFlag) {
+		this.unloadFlag = unloadFlag;
+	}
+	
 }

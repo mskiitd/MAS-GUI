@@ -1,4 +1,4 @@
-package mas.machineproxy.gui;
+package mas.machineproxy.gui.custompanels;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;

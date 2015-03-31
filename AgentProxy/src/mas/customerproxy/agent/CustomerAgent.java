@@ -1,14 +1,16 @@
 package mas.customerproxy.agent;
 
+import jade.core.AID;
+
 import javax.swing.SwingUtilities;
 
-import jade.core.AID;
 import mas.customerproxy.goal.CancelOrderGoal;
 import mas.customerproxy.goal.ChangeDueDateGoal;
-import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.CustomerSendNegotiationJobGoal;
+import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.gui.CustomerProxyGUI;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -27,9 +29,9 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	public static CustomerProxyGUI mygui;
 	private AID blackboard;
 	
-	public void sendGeneratedJob(job j) {
+	public void sendGeneratedBatch(Batch batchOfJobs) {
 //		log.info("Adding generated job " + j + " to belief base : " +bfBase);
-		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, j);
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, batchOfJobs);
 		
 		addGoal(new dispatchJobGoal());
 	}

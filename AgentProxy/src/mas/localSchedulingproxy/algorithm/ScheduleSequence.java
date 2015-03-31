@@ -1,18 +1,17 @@
 package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
-
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 
 public class ScheduleSequence {
 	
 	ScheduleSequenceIFace scheduler;
 	
-	public ScheduleSequence(ArrayList<job> s){
+	public ScheduleSequence(ArrayList<Batch> s){
 		scheduler = new BranchNbound_RegretSlabbedPenalty(s);
 	}
 	
-	public ArrayList<job> getSolution(){
+	public ArrayList<Batch> getSolution(){
 		return scheduler.solve();
 	}
 }

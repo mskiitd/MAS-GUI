@@ -2,12 +2,12 @@ package mas.customerproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -17,7 +17,7 @@ public class DispatchJobPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
-	private job jobToDispatch;
+	private Batch batchToDispatch;
 	private AID bba;
 	private Logger log;
 	private String replyWith;
@@ -33,7 +33,7 @@ public class DispatchJobPlan extends Behaviour implements PlanBody{
 		log = LogManager.getLogger();
 		bfBase = pInstance.getBeliefBase();
 
-		jobToDispatch = (job) bfBase
+		batchToDispatch = (Batch) bfBase
 				.getBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND)
 				.getValue();
 
@@ -48,14 +48,14 @@ public class DispatchJobPlan extends Behaviour implements PlanBody{
 	@Override
 	public void action() {
 
-		if(jobToDispatch != null) {
-			log.info("customer - sending job : " + jobToDispatch);
+		if(batchToDispatch != null) {
+			log.info("customer - sending job : " + batchToDispatch);
 
-			replyWith = Integer.toString(jobToDispatch.getJobNo());
+			replyWith = Integer.toString(batchToDispatch.getBatchNumber());
 
 			ZoneDataUpdate jobOrderZoneDataUpdate = new ZoneDataUpdate.
 					Builder(ID.Customer.ZoneData.newWorkOrderFromCustomer).
-					value(jobToDispatch).
+					value(batchToDispatch).
 					setReplyWith(replyWith).
 					Build();
 
@@ -65,7 +65,7 @@ public class DispatchJobPlan extends Behaviour implements PlanBody{
 			done = true;
 		} else {
 			log.info("customer - sending job :  " + bfBase);
-			jobToDispatch = (job) bfBase
+			batchToDispatch = (Batch) bfBase
 					.getBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND)
 					.getValue();
 			block(1000);

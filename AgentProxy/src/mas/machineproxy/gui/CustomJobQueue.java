@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 import mas.util.TableUtil;
 
 @SuppressWarnings("serial")
@@ -25,12 +25,12 @@ public class CustomJobQueue extends JPanel {
 	private int cWidth = 78;
 	private int cHeight = 50;
 	public static final int padding = 8;
-	private List<job> jQueue;
+	private List<Batch> jQueue;
 	public static Color boxColor = new Color(123,104,238);
 	public static Color stringColor = Color.BLACK;
 	public static Color firstJobColor = new Color(46, 139, 87);
 
-	public CustomJobQueue(List<job> q) {
+	public CustomJobQueue(List<Batch> q) {
 		this.jQueue = q;
 	}
 
@@ -75,7 +75,7 @@ public class CustomJobQueue extends JPanel {
 						cWidth , cHeight, arcWidth, arcHeight);
 
 				graphics.setColor(stringColor);
-				graphics.drawString(jQueue.get(i*componentsInOneLine + c).getJobID() + "", c*cWidth + cWidth/2,
+				graphics.drawString(jQueue.get(i*componentsInOneLine + c).getBatchId() + "", c*cWidth + cWidth/2,
 						i*cHeight + cHeight/2);
 
 				graphics.setColor(boxColor);
@@ -99,7 +99,7 @@ public class CustomJobQueue extends JPanel {
 					cWidth, cHeight, arcWidth, arcHeight);
 
 			g.setColor(stringColor);
-			g.drawString(jQueue.get(i*componentsInOneLine + j).getJobID() + "", j*cWidth + cWidth/2,
+			g.drawString(jQueue.get(i*componentsInOneLine + j).getBatchId() + "", j*cWidth + cWidth/2,
 					i*cHeight + cHeight/2);
 			g.setColor(boxColor);
 			g.translate(padding, 0);

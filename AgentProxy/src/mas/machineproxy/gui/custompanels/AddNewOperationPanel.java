@@ -1,4 +1,4 @@
-package mas.machineproxy.gui;
+package mas.machineproxy.gui.custompanels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,9 +17,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 import mas.localSchedulingproxy.database.OperationInfo;
+import mas.machineproxy.gui.UpdateOperationDbGUI;
 import mas.util.TableUtil;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.integerformatter.FormattedIntegerField;

@@ -65,7 +65,7 @@ public class CustomerProxyGUI extends JFrame{
 	private JMenuItem menuItemCancel ;
 	private JMenuItem menuItemChangeDueDate ;
 
-	public static int countJob = 1;
+	public static int countBatch = 1;
 
 	public CustomerProxyGUI(CustomerAgent cAgent) {
 

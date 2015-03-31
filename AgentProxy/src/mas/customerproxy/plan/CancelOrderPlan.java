@@ -2,6 +2,7 @@ package mas.customerproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -16,7 +17,7 @@ public class CancelOrderPlan extends Behaviour implements PlanBody {
 
 	private BeliefBase bfBase;
 	private AID blackboard;
-	private job canceledOrder;
+	private Batch canceledOrder;
 	private boolean done = false;
 	
 	@Override
@@ -31,7 +32,7 @@ public class CancelOrderPlan extends Behaviour implements PlanBody {
 				getBelief(ID.Customer.BeliefBaseConst.blackboardAgent).
 				getValue();
 		
-		canceledOrder = (job) bfBase.
+		canceledOrder = (Batch) bfBase.
 				getBelief(ID.Customer.BeliefBaseConst.CANCEL_ORDER).
 				getValue();
 	}
@@ -47,7 +48,7 @@ public class CancelOrderPlan extends Behaviour implements PlanBody {
 					canceledJobDataUpdate,myAgent);
 			done = true;
 		} else {
-			canceledOrder = (job) bfBase.
+			canceledOrder = (Batch) bfBase.
 					getBelief(ID.Customer.BeliefBaseConst.CANCEL_ORDER).
 					getValue();
 		}

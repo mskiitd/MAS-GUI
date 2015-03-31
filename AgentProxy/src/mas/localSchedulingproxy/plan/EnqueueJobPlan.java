@@ -6,13 +6,15 @@ import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.util.ID;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -28,10 +30,10 @@ import bdi4jade.plan.PlanInstance.EndState;
 public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
-	private ArrayList<job> jobQueue;
+	private ArrayList<Batch> jobQueue;
 	private BeliefBase bfBase;
 	private Logger log;
-	private job comingJob;
+	private Batch comingBatch;
 	private OperationDataBase operationdb;
 
 	@Override
@@ -47,12 +49,12 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 				getMessage();
 
 		try {
-			comingJob = (job) msg.getContentObject();
+			comingBatch = (Batch) msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
 
-		jobQueue = (ArrayList<job>) bfBase.
+		jobQueue = (ArrayList<Batch>) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
 				getValue();
 
@@ -66,21 +68,21 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		//		log.info(comingJob.getBidWinnerLSA());
-		if(comingJob.getBidWinnerLSA().equals(myAgent.getAID())) {
+		if(comingBatch.getBidWinnerLSA().equals(myAgent.getAID())) {
 			log.info("Adding the job to queue of machine of " + myAgent.getLocalName());
 
-			comingJob.setCurrentOperationProcessingTime(operationdb.
-					getOperationInfo(comingJob.getCurrentOperation().getJobOperationType()).
+			comingBatch.setBatchProcessingTime(operationdb.
+					getOperationInfo(comingBatch.getBatchId()).
 					getProcessingTime());
-			
-			jobQueue.add(comingJob);
+
+			jobQueue.add(comingBatch);
 			/**
 			 * update the belief base
 			 */
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue, jobQueue);	
 
 			if(LocalSchedulingAgent.mGUI != null) {
-				LocalSchedulingAgent.mGUI.addJobToQueue(comingJob);
+				LocalSchedulingAgent.mGUI.addJobToQueue(comingBatch);
 			}
 		}
 	}

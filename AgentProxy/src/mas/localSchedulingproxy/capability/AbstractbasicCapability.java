@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.goal.JobSchedulingGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
@@ -80,7 +80,7 @@ public class AbstractbasicCapability extends Capability {
 		StatsTracker stats = new StatsTracker();
 		dtrack.setValue(stats);
 
-		Belief<ArrayList<job> > jobSet = new TransientBelief<ArrayList<job> >(
+		Belief<ArrayList<Batch> > jobSet = new TransientBelief<ArrayList<Batch> >(
 				ID.LocalScheduler.BeliefBaseConst.jobQueue);
 		
 		Belief<Double> regretThreshold = new TransientBelief<Double>(
@@ -92,7 +92,7 @@ public class AbstractbasicCapability extends Capability {
 		double threshVal = 0;
 		regretThreshold.setValue(threshVal);
 
-		ArrayList<job> jobList = new ArrayList<job>();
+		ArrayList<Batch> jobList = new ArrayList<Batch>();
 		jobSet.setValue(jobList);
 
 		beliefs.add(bboard);

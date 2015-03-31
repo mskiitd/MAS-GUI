@@ -1,17 +1,10 @@
 package mas.machineproxy.behaviors;
 
 import jade.core.behaviours.OneShotBehaviour;
-
-import java.util.ArrayList;
 import java.util.Date;
-
 import mas.jobproxy.job;
-import mas.jobproxy.jobDimension;
 import mas.jobproxy.jobOperation;
-import mas.machineproxy.Methods;
 import mas.machineproxy.Simulator;
-
-import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

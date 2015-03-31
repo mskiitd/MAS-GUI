@@ -23,6 +23,17 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 
+import mas.customerproxy.agent.CustomerAgent;
+import mas.jobproxy.Batch;
+import mas.jobproxy.job;
+import mas.util.DateLabelFormatter;
+import mas.util.DefineJobOperationsFrame;
+import mas.util.TableUtil;
+import mas.util.formatter.doubleformatter.FormattedDoubleField;
+import mas.util.formatter.integerformatter.FormattedIntegerField;
+import mas.util.formatter.stringformatter.FormattedStringField;
+import net.miginfocom.swing.MigLayout;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -30,12 +41,6 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import uiconstants.Labels;
-import mas.customerproxy.agent.CustomerAgent;
-import mas.jobproxy.job;
-import mas.util.DateLabelFormatter;
-import mas.util.DefineJobOperationsFrame;
-import mas.util.TableUtil;
-import net.miginfocom.swing.MigLayout;
 
 public class CustomerNegotiateProxyGUI extends JFrame{
 
@@ -64,26 +69,34 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private JLabel lblOpsHeading;
 	private JLabel lblPenalty;
 	private JLabel lblWaitingTimeHeading;
+	private JLabel lblBatchSize;
 	private JButton btnOperationPlus;
 
-	private JTextField txtJobID;
-	private JTextField txtJobNo;
-	private JTextField txtCPN;
-	private JTextField txtNumOps;
+	private FormattedStringField txtJobID;
+	private FormattedIntegerField txtJobNo;
+	private FormattedDoubleField txtCPN;
+	private FormattedIntegerField txtNumOps;
 	private JTextField txtWaitingTime;
-	private JTextField txtPenaltyRate;
+	private FormattedIntegerField txtBatchSize;
+	private FormattedDoubleField txtPenaltyRate;
 
+	private Batch populatingBatch;
 	private job populatingJob;
 	private boolean dataOk = true;
 	private boolean operationDataOk = false;
 
 	private Logger log;
+	private Batch generatedBatch;
 
-	public CustomerNegotiateProxyGUI(CustomerAgent cAgent, job populatingJob) {
+	public CustomerNegotiateProxyGUI(CustomerAgent cAgent, Batch passedBatch) {
 
 		log = LogManager.getLogger();
 
-		this.populatingJob = populatingJob;
+		generatedBatch = new Batch();
+		this.populatingBatch = passedBatch;
+		if(populatingBatch != null) {
+			this.populatingJob = populatingBatch.getSampleJob();
+		}
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
@@ -93,12 +106,12 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.negotiateJob = new JButton("Send For Negotiation");
 
 		dateModel = new UtilDateModel();
-		
+
 		dateProperties = new Properties();
 		dateProperties.put("text.today", "Today");
 		dateProperties.put("text.month", "Month");
 		dateProperties.put("text.year", "Year");
-		
+
 		if(populatingJob != null) {
 			Calendar dudate = Calendar.getInstance();
 			dudate.setTime(populatingJob.getJobDuedatebyCust());
@@ -106,12 +119,12 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			dateModel.setDate(dudate.get(Calendar.YEAR),
 					dudate.get(Calendar.MONDAY),
 					dudate.get(Calendar.DAY_OF_MONTH));
-			
+
 			dateModel.setSelected(true);
 		}
 
 		datePanel = new JDatePanelImpl(dateModel, dateProperties);
-		
+
 		datePicker = new JDatePickerImpl(datePanel,
 				new DateLabelFormatter());
 
@@ -134,15 +147,28 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.lblJobNo = new JLabel(Labels.CustomerLabels.jobNo);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
-		
+		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
+
 		this.lblWaitingTimeHeading = new JLabel("Expected Time by GSA : ");
 		this.txtWaitingTime = new JTextField(Labels.defaultJTextSize*3);
 
-		this.txtCPN = new JTextField(Labels.defaultJTextSize);
-		this.txtJobID = new JTextField(Labels.defaultJTextSize);
-		this.txtJobNo = new JTextField(Labels.defaultJTextSize);
-		this.txtNumOps = new JTextField(Labels.defaultJTextSize/2);
-		this.txtPenaltyRate = new JTextField(Labels.defaultJTextSize);
+		this.txtCPN = new FormattedDoubleField();
+		txtCPN.setColumns(Labels.defaultJTextSize);
+
+		this.txtJobID = new FormattedStringField();
+		txtJobID.setColumns(Labels.defaultJTextSize);
+
+		this.txtJobNo = new FormattedIntegerField();
+		txtJobNo.setColumns(Labels.defaultJTextSize);
+
+		this.txtNumOps = new FormattedIntegerField();
+		txtNumOps.setColumns(Labels.defaultJTextSize/2);
+
+		this.txtPenaltyRate = new FormattedDoubleField();
+		txtPenaltyRate.setColumns(Labels.defaultJTextSize);
+		
+		this.txtBatchSize = new FormattedIntegerField();
+		txtBatchSize.setColumns(Labels.defaultJTextSize/2);
 
 		this.lblHeading.setFont(TableUtil.headings);
 		myPanel.add(lblHeading,"wrap");
@@ -159,9 +185,12 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		myPanel.add(lblPenalty);
 		myPanel.add(txtPenaltyRate,"wrap");
 		
+		myPanel.add(lblBatchSize);
+		myPanel.add(txtBatchSize,"wrap");
+
 		myPanel.add(lblWaitingTimeHeading);
 		myPanel.add(txtWaitingTime,"wrap");
-		
+
 		myPanel.add(lblDueDate);
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
@@ -199,12 +228,14 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 			txtWaitingTime.setText(String.valueOf(new Date(populatingJob.getWaitingTime())) ) ;
 			txtWaitingTime.setEnabled(false);
-			
+
 			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
 			txtPenaltyRate.setText(String.valueOf(populatingJob.getPenaltyRate()));
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
 
 			timeSpinner.setValue(populatingJob.getJobDuedatebyCust());
+			
+			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 		}
 	}
 
@@ -224,21 +255,36 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		}
 
 		dataOk = x2&x3&x4&x5;
+		
+		if(dataOk) {
+			dataOk = dataOk & checkBatchSize();
+		}
 	}
 
-
-	private boolean checkJobOperations() {
+	private boolean checkBatchSize() {
 		boolean status = true;
-		if(populatingJob.getOperations() == null ) {
-			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
+		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
+			JOptionPane.showMessageDialog(this, "Invalid input for batch size !!", 
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			if(populatingJob.getOperations().isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
-				status = false;
+			generatedBatch.setBatchId(populatingJob.getJobID());
+			generatedBatch.clearAllJobs();
+			int bSize = Integer.parseInt(txtBatchSize.getText());
+			for(int i = 0; i < bSize ; i++ ) {
+				generatedBatch.addJobToBatch(populatingJob);
 			}
+		}
+
+		return status;
+	}
+
+	private boolean checkJobOperations() {
+		boolean status = true;
+		if(populatingJob.getOperations() == null || populatingJob.getOperations().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
+			status = false;
 		}
 		return status;
 	}

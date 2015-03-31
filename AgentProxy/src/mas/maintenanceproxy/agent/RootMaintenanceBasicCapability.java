@@ -1,17 +1,14 @@
 package mas.maintenanceproxy.agent;
 
 import jade.core.AID;
-
 import java.util.HashSet;
 import java.util.Set;
-
 import mas.maintenanceproxy.goal.CorrectiveMachineComponentsRepairGoal;
 import mas.maintenanceproxy.goal.MaintenanceStartSendInfoGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentServiceGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentToBlackboardGoal;
 import mas.maintenanceproxy.goal.SendCorrectiveRepairDataGoal;
 import mas.maintenanceproxy.goal.machineHealthCheckGoal;
-import mas.maintenanceproxy.plan.CorrectiveMachineComponentsRepairPlan;
 import mas.maintenanceproxy.plan.MaintenanceStartSendInfoPlan;
 import mas.maintenanceproxy.plan.ManualMachineRepairPlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentServicePlan;
@@ -50,10 +47,16 @@ public class RootMaintenanceBasicCapability extends Capability{
 		Belief<AID> maintJob  = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.maintenanceJob);
 
+		Belief<Double> CorrectiveRepair = new TransientBelief<Double>(
+				ID.Maintenance.BeliefBaseConst.correctiveRepairData);
+
+		CorrectiveRepair.setValue(null);
+		
 		beliefs.add(bboard);
 		beliefs.add(myMachine);
 		beliefs.add(mygsAgent);
 		beliefs.add(maintJob);
+		beliefs.add(CorrectiveRepair);
 
 		return beliefs;
 	}

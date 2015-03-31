@@ -22,18 +22,18 @@ public class job implements Serializable {
 	private double CPN;
 	private double Cost;
 	private double penaltyRate;
-	
+
 	private Date startTime;
 	private Date jobDuedateByCust;
 	private Date generationTime;
 	private Date completionTime;
 	private long waitingTime;
-	
+
 	private ArrayList<jobOperation> operations;
 	public int currentOperationNumber = 0;
 
 	//Optional parameters initialized to default values
-	
+
 	public int acceptance = 0;
 	public double slack;
 	private double regret;
@@ -83,12 +83,11 @@ public class job implements Serializable {
 		public Builder jobDueDateTime(long val)
 		{ custdDate = new Date(val); return this; }
 
-		public Builder jobStartTimeByCust(long val)
-		{
-			custStartDate=new Date(val);
+		public Builder jobStartTimeByCust(long val){
+			custStartDate = new Date(val);
 			return this;
 		}
-		
+
 		public Builder jobGenTime(Date val)
 		{ genTime = val; return this; }
 
@@ -126,12 +125,12 @@ public class job implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		
+
 		if( !(o instanceof job)) {
 			return false;
 		}
 		job j = (job)o;
-		
+
 		return (this.jobNo == j.jobNo) && (this.jobID.equals(j.jobID));
 	}
 
@@ -142,19 +141,19 @@ public class job implements Serializable {
 	public void setPenaltyRate(double penaltyRate) {
 		this.penaltyRate = penaltyRate;
 	}
-	
+
 	public void setCurrentOperationDueDate(long dueDate) {
 		this.operations.get(currentOperationNumber).setDueDate(dueDate);
 	}
-	
+
 	public long getCurrentOperationDueDate() {
 		return this.operations.get(currentOperationNumber).getDueDate();
 	}
-	
+
 	public void setCurrentOperationStartTime(long startTime) {
 		this.operations.get(currentOperationNumber).setStartTime(startTime);
 	}
-	
+
 	public long getCurrentOperationStartTime() {
 		return this.operations.get(currentOperationNumber).getStartTime();
 	}
@@ -162,9 +161,17 @@ public class job implements Serializable {
 	public ArrayList<jobDimension> getCurrentOperationDimensions() {
 		return this.operations.get(this.currentOperationNumber).getjDims();
 	}
-	
+
 	public void setCurrentOperationDimension(ArrayList<jobDimension> jDim) {
 		this.operations.get(currentOperationNumber).setjDims(jDim);
+	}
+	
+	public void setCurrentOperationCompletionTime(long completionTime) {
+		this.operations.get(currentOperationNumber).setCompletionTime(completionTime);
+	}
+	
+	public long getCurrentOperationCompletionTime() {
+		return this.operations.get(currentOperationNumber).getCompletionTime();
 	}
 
 	public ArrayList<jobOperation> getOperations() {
@@ -176,7 +183,7 @@ public class job implements Serializable {
 			return operations.get(this.currentOperationNumber);
 		return null;
 	}
-	
+
 	public int getCurrentOperationNumber() {
 		return currentOperationNumber;
 	}
@@ -188,25 +195,26 @@ public class job implements Serializable {
 	public long getCurrentOperationProcessTime() {
 		return operations.get(this.currentOperationNumber).getProcessingTime();
 	}
-	
+
 	public long getProcessTime(int index) {
 		return this.operations.get(index).getProcessingTime();
 	}
-	
+
 	public void setCurrentOperationProcessingTime(long processingTime) {
 		operations.get(currentOperationNumber).setProcessingTime(processingTime);
 	}
-	
-	public void IncrementOperationNumber(){
-		this.currentOperationNumber++;
-		if(this.currentOperationNumber>this.operations.size()-1){
-			IsComplete=true;
+
+	public void IncrementOperationNumber() {
+		this.currentOperationNumber++ ;
+		if(this.currentOperationNumber > this.operations.size()-1){
+			IsComplete = true;
 		}
 	}
-	
+
 	public boolean isComplete(){
 		return this.IsComplete;
 	}
+
 	public long getTotalProcessingTime() {
 		long total = 0;
 		for(int i = 0 ; i < operations.size(); i++){
@@ -214,7 +222,7 @@ public class job implements Serializable {
 		}
 		return total;
 	}
-	
+
 	public void setOperations(ArrayList<jobOperation> operations) {
 		this.operations = operations;
 	}
@@ -266,7 +274,7 @@ public class job implements Serializable {
 	public Date getStartTimeByCust() {
 		return startTime;
 	}
-	
+
 	public void setJobStartTimeByCust(Date startTime) {
 		this.startTime = startTime;
 	}
@@ -290,11 +298,11 @@ public class job implements Serializable {
 	public Date getCompletionTime() {
 		return completionTime;
 	}
-	
+
 	public long getCompletionTime(int index) {
 		return this.operations.get(index).getCompletionTime();
 	}
-	
+
 	public long getStartTime(int index) {
 		return this.operations.get(index).getStartTime();
 	}

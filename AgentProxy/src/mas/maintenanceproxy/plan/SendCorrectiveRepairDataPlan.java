@@ -2,7 +2,6 @@ package mas.maintenanceproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -28,6 +27,7 @@ public class SendCorrectiveRepairDataPlan extends Behaviour implements PlanBody 
 					Build();
 
 			AgentUtil.sendZoneDataUpdate(blackboard ,correctiveRepairUpdate, myAgent);
+			done = true;
 		} else {
 			this.repairData = (String) bfBase.
 					getBelief(ID.Maintenance.BeliefBaseConst.correctiveRepairData).

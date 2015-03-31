@@ -1,5 +1,6 @@
 package mas.customerproxy.plan;
 
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -17,7 +18,7 @@ public class ChangeDueDatePlan extends Behaviour implements PlanBody{
 
 	private BeliefBase bfBase;
 	private AID blackboard;
-	private job changeDDorder;
+	private Batch changeDDorder;
 	private boolean done = false;
 
 	@Override
@@ -32,7 +33,7 @@ public class ChangeDueDatePlan extends Behaviour implements PlanBody{
 				getBelief(ID.Customer.BeliefBaseConst.blackboardAgent).
 				getValue();
 
-		changeDDorder = (job) bfBase.
+		changeDDorder = (Batch) bfBase.
 				getBelief(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB).
 				getValue();
 	}
@@ -48,7 +49,7 @@ public class ChangeDueDatePlan extends Behaviour implements PlanBody{
 					changedDueDateJobDataUpdate,myAgent);
 			done = true;
 		} else {
-			changeDDorder = (job) bfBase.
+			changeDDorder = (Batch) bfBase.
 					getBelief(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB).
 					getValue();
 		}
