@@ -19,10 +19,10 @@ public class ChangeDueDatePlan extends Behaviour implements PlanBody{
 	private AID blackboard;
 	private job changeDDorder;
 	private boolean done = false;
-	
+
 	@Override
 	public EndState getEndState() {
-		return (done ?EndState.SUCCESSFUL : null);
+		return (done ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class ChangeDueDatePlan extends Behaviour implements PlanBody{
 		blackboard = (AID) bfBase.
 				getBelief(ID.Customer.BeliefBaseConst.blackboardAgent).
 				getValue();
-		
+
 		changeDDorder = (job) bfBase.
 				getBelief(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB).
 				getValue();
@@ -47,6 +47,10 @@ public class ChangeDueDatePlan extends Behaviour implements PlanBody{
 			AgentUtil.sendZoneDataUpdate( this.blackboard,
 					changedDueDateJobDataUpdate,myAgent);
 			done = true;
+		} else {
+			changeDDorder = (job) bfBase.
+					getBelief(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB).
+					getValue();
 		}
 	}
 

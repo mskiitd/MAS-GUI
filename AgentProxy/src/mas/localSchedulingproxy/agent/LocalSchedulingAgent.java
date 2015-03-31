@@ -47,5 +47,4 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 		}
 	}
 
-
 }

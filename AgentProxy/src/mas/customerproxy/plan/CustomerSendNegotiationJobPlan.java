@@ -24,7 +24,7 @@ public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBod
 
 	@Override
 	public EndState getEndState() {
-		return (done ?EndState.SUCCESSFUL : null);
+		return (done ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override

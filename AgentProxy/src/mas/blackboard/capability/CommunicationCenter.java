@@ -1,15 +1,24 @@
 package mas.blackboard.capability;
 
+import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
+
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
 import mas.blackboard.plan.AddAgent;
 import mas.blackboard.plan.SubscribeParameter;
 import mas.blackboard.plan.UpdateParam;
+import mas.util.ID;
 import mas.util.MessageIds;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
+
 import bdi4jade.belief.Belief;
+import bdi4jade.belief.TransientBelief;
 import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
@@ -34,7 +43,7 @@ public class CommunicationCenter extends Capability {
 
 		Set<Plan> plans = new HashSet<Plan>();
 
-		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.RegisterMe	), AddAgent.class));
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.RegisterMe ), AddAgent.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.UpdateParameter), UpdateParam.class));
 
@@ -48,10 +57,17 @@ public class CommunicationCenter extends Capability {
 	private static Set<Belief<?>> getBeliefs(BDIAgent bBagent) {
 
 		//  '?' means Any type extending Object (including Object)
-		Set<Belief<?>> WorkspaceSet = new HashSet<Belief<?>>(); 
+		Set<Belief<?>> beliefs = new HashSet<Belief<?>>(); 
 		// WorkspaceSet stores Workspaces
-		log.info("Added beleifs for blackboard ");
-		return WorkspaceSet;
+
+		Belief<HashMap<AID,String> > services =
+				new TransientBelief<HashMap<AID,String> >(ID.Blackboard.BeliefBaseConst.serviceDiary);
+
+		// initialize the belief
+		services.setValue(new HashMap<AID, String>());
+		beliefs.add(services);
+
+		return beliefs;
 	}
 
 	protected void setup() {

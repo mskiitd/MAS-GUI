@@ -42,12 +42,14 @@ public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
 		if(completedJob != null) {
 			log.info("Adding completed job to GUI ");
 			CustomerAgent.mygui.addCompletedJob(completedJob);
+			
+			done = true;
 		}
 	}
 
 	@Override
 	public boolean done() {
-		return done;
+		return true;
 	}
 
 }

@@ -40,7 +40,7 @@ public class machineHealthCheckPlan extends OneShotBehaviour implements PlanBody
 		switch(step) {
 		case 0:
 			msg = myAgent.receive(machineHealth);
-			if(msg != null){
+			if(msg != null) {
 				try {
 					myMachine = (SimulatorInternals) msg.getContentObject();
 //					log.info("updating belief base of machine's health : " + myMachine );

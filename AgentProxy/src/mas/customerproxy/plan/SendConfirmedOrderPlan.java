@@ -56,6 +56,10 @@ public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 
 			AgentUtil.sendZoneDataUpdate(bba, ConfirmedOrderZoneDataUpdate, myAgent);
 			done = true;
+		} else {
+			this.ConfirmedJob = (job) bfBase.
+					getBelief(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB).
+					getValue();
 		}
 	}
 

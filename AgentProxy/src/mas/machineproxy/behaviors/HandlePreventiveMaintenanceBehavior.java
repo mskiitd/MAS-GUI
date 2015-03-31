@@ -3,13 +3,17 @@ package mas.machineproxy.behaviors;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import mas.jobproxy.job;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
+import mas.machineproxy.behaviors.AddJobBehavior.timeProcessing;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -32,10 +36,11 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 	private int step = 0;
 	private MessageTemplate pmDataMsgTemplate;
 	private ACLMessage maintenanceDataMsg;
-	private StringTokenizer token;
+	private String maintData;
 	private Simulator machineSimulator;
 	private int remainingMaintenanceTime;
-	private ArrayList<Integer> componentsToRepair;
+
+	private ScheduledThreadPoolExecutor executor;
 
 	public HandlePreventiveMaintenanceBehavior(job comingJob) {
 		this.comingJob = comingJob;
@@ -55,12 +60,9 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 						get(Simulator.simulatorStoreName);
 			}
 
-			ZoneDataUpdate maintenanceStartUpdate = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.maintenanceStart)
-				.value(comingJob).Build();
-			
-			/*ZoneDataUpdate maintenanceStartUpdate = new ZoneDataUpdate(
-					ID.Machine.ZoneData.maintenanceStart,
-					comingJob);*/
+			ZoneDataUpdate maintenanceStartUpdate = new ZoneDataUpdate.
+					Builder(ID.Machine.ZoneData.maintenanceStart).
+					value(comingJob).Build();
 
 			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 					maintenanceStartUpdate, myAgent);
@@ -74,17 +76,20 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 			if(maintenanceDataMsg != null) {
 				// parse the received data and perform maintenance of the machine
 				log.info("Maintenenace data arrived");
-				token = new StringTokenizer(maintenanceDataMsg.getContent());
+				try {
+					maintData = (String) maintenanceDataMsg.getContentObject();
+					remainingMaintenanceTime = (int) Double.parseDouble(maintData);
+					step = 2;
 
-				remainingMaintenanceTime = Integer.parseInt(token.nextToken());
-
-				componentsToRepair = new ArrayList<Integer>();
-
-				while(token.hasMoreTokens()) {
-					componentsToRepair.add(Integer.parseInt(token.nextToken()));
+					if( remainingMaintenanceTime > 0 ) {
+						executor = new ScheduledThreadPoolExecutor(1);
+						executor.scheduleAtFixedRate(new timeProcessing(), 0,
+								Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
+						step = 2;
+					}
+				} catch (UnreadableException e) {
+					e.printStackTrace();
 				}
-				step = 2;
-
 			}
 			else {
 				block();
@@ -92,22 +97,16 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 			break;
 
 		case 2:
-
-			if(remainingMaintenanceTime >= 0) {
-				remainingMaintenanceTime = remainingMaintenanceTime - Simulator.TIME_STEP;
-				block(Simulator.TIME_STEP);
-			} else if(remainingMaintenanceTime < 0) {
-				step = 3;
-			}
-
+			// block for some time in order to avoid too much CPU usage
+			// this won't affect working of the behavior however
+			block(15);
 			break;
-
+			
 		case 3:
 			/**
 			 * perform the maintenance for the machine now
 			 */
-
-			machineSimulator.repair(componentsToRepair);
+			machineSimulator.repair();
 			step = 4;
 			break;
 		}
@@ -115,6 +114,24 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 
 	@Override
 	public boolean done() {
-		return step > 3;
+		return step >= 4;
+	}
+
+	class timeProcessing implements Runnable {
+
+		@Override
+		public void run() {
+			/**
+			 * If machine is failed it won't do anything.
+			 * Executor will just keep scheduling this task
+			 */
+			//			log.info("remProcessingTime="+processingTime);
+			if( remainingMaintenanceTime > 0 ) {
+				remainingMaintenanceTime = remainingMaintenanceTime - Simulator.TIME_STEP; 
+			} else if( remainingMaintenanceTime <= 0 ) {
+				step = 3;
+				executor.shutdown();
+			} 
+		}
 	}
 }

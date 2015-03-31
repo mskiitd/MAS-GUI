@@ -7,7 +7,7 @@ import jade.lang.acl.UnreadableException;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import mas.blackboard.behvr.SubscribeAgentBehvr;
+import mas.blackboard.behvr.SubscribeAgentBehavior;
 import mas.util.SubscriptionForm;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
@@ -39,7 +39,7 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 			return EndState.SUCCESSFUL;
 		}
 		else {
-			return EndState.FAILED;//Conceptually this is wrong But EndState enum has only 2 values.
+			return null;
 		}
 	}
 
@@ -68,8 +68,8 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 
 		for(int k = 0; k < Subscriptions.size(); k++) {
 			
-			AID AgentToReg=Subscriptions.get(k).Agent;
-			myAgent.addBehaviour(new SubscribeAgentBehvr(AgentToReg, BBBeliefbase, Subscriptions.get(k),WhoWantsTOSubscribe));						
+			AID AgentToReg = Subscriptions.get(k).Agent;
+			myAgent.addBehaviour(new SubscribeAgentBehavior(AgentToReg, BBBeliefbase, Subscriptions.get(k),WhoWantsTOSubscribe));						
 		}
 		IsActionComplete=true;
 	}

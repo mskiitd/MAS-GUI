@@ -142,7 +142,6 @@ public class AddJobBehavior extends Behaviour {
 				machineSimulator.getStatus() != MachineStatus.FAILED ) {
 				
 				processingTime = processingTime - Simulator.TIME_STEP; 
-				machineSimulator.AgeComponents(Simulator.TIME_STEP);
 			} else if( processingTime <= 0 &&
 					machineSimulator.getStatus() != MachineStatus.FAILED ) {
 				step = 2;

@@ -1,19 +1,23 @@
 package mas.blackboard.plan;
 
-import java.util.HashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
+import java.util.HashMap;
+
 import mas.blackboard.nameZoneData.NamedZoneData;
 import mas.blackboard.namezonespace.NamedZoneSpace;
 import mas.blackboard.zonespace.ZoneSpace;
 import mas.util.AgentUtil;
+import mas.util.ID;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.TransientBelief;
-import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -33,22 +37,28 @@ public class AddAgent extends OneShotBehaviour implements PlanBody {
 	private BeliefBase bfBase;
 	//To be taken from message content
 	private String AgentType; 
-	 //contains names of zone data s to be created for AgentToReg
+	//contains names of zone data s to be created for AgentToReg
 	private NamedZoneData[] ZoneDataNameArray;
 	private Logger log;
+	private HashMap<AID, String> serviceBase;
 
 	@Override
-	public EndState getEndState() {		
+	public EndState getEndState() {
 		return EndState.SUCCESSFUL;
 	}
 
 	@Override
 	public void init(PlanInstance PI) {
+
 		log = LogManager.getLogger();
 		MessageGoal goal = (MessageGoal) PI.getGoal();
 		ACLMessage Message = goal.getMessage();
 		AgentToReg = Message.getSender();
 		bfBase = PI.getBeliefBase();
+		
+		serviceBase = (HashMap<AID, String>) bfBase.
+				getBelief(ID.Blackboard.BeliefBaseConst.serviceDiary).
+				getValue();
 		try {
 			Object temp = Message.getContentObject();
 			ZoneDataNameArray = (NamedZoneData[])temp;
@@ -59,11 +69,22 @@ public class AddAgent extends OneShotBehaviour implements PlanBody {
 			e.printStackTrace();
 		}
 	}
+	
+	private String getService(AID agentToRegister) {
+		if(serviceBase != null && serviceBase.containsKey(agentToRegister)) {
+			return serviceBase.get(agentToRegister);
+		}
+		String agentType = AgentUtil.GetAgentService(agentToRegister,myAgent);
+		serviceBase.put(agentToRegister, agentType);
+		bfBase.updateBelief(ID.Blackboard.BeliefBaseConst.serviceDiary, serviceBase);
+		log.info("Adding service type : " + agentToRegister.getLocalName() + " : " + agentType);
+		return agentType;
+	}
 
 	@Override
 	public void action() {		  
-		AgentType = AgentUtil.GetAgentService(AgentToReg,myAgent);
-		log.info("Adding Agent :" + AgentToReg.getLocalName());
+		AgentType = getService(AgentToReg);
+		log.info("Adding Agent :" + AgentToReg.getLocalName() +" type : " + AgentType);
 		Belief<HashMap<String,ZoneSpace>> wspace;
 
 		if(!bfBase.hasBelief(AgentType)) {
@@ -85,11 +106,10 @@ public class AddAgent extends OneShotBehaviour implements PlanBody {
 		ZoneSpaceHashMap.put(nz.getLocalName(), zs);
 		wspace.setValue(ZoneSpaceHashMap);
 		//		log.info((wspace.getValue()));
+
 		//update belief base
-		
 		bfBase.addOrUpdateBelief(wspace);
-//		((BDIAgent)myAgent).getRootCapability().getBeliefBase().addOrUpdateBelief(wspace); 
+		//		((BDIAgent)myAgent).getRootCapability().getBeliefBase().addOrUpdateBelief(wspace); 
 		log.info(AgentType +" type Agent added");
-		//		log.info(((BDIAgent)myAgent).getRootCapability().getBeliefBase());
 	}
 }

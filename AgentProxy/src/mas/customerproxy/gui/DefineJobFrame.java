@@ -334,7 +334,6 @@ public class DefineJobFrame extends JFrame{
 			createJobFromParams();
 			log.info("data format : " + dataOk);
 			if(dataOk) {
-				log.info("Sending the job : " + generatedJob);
 				cAgent.sendGeneratedJob(generatedJob);
 				CustomerProxyGUI.countJob++ ;
 				dispose();

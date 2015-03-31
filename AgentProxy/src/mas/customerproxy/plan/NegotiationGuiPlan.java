@@ -30,7 +30,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 
 	@Override
 	public EndState getEndState() {
-		return (done ?EndState.SUCCESSFUL : null);
+		return (done ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 				.getBelief(ID.Customer.BeliefBaseConst.blackboardAgent)
 				.getValue();
 
-		replyWith=((MessageGoal)(pInstance.getGoal())).
+		replyWith = ((MessageGoal)(pInstance.getGoal())).
 				getMessage().getReplyWith();
 	}
 

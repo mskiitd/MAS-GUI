@@ -21,7 +21,7 @@ public class CancelOrderPlan extends Behaviour implements PlanBody {
 	
 	@Override
 	public EndState getEndState() {
-		return (done ?EndState.SUCCESSFUL : null);
+		return (done ? EndState.SUCCESSFUL : null);
 	}
 
 	@Override
@@ -46,6 +46,10 @@ public class CancelOrderPlan extends Behaviour implements PlanBody {
 			AgentUtil.sendZoneDataUpdate( this.blackboard,
 					canceledJobDataUpdate,myAgent);
 			done = true;
+		} else {
+			canceledOrder = (job) bfBase.
+					getBelief(ID.Customer.BeliefBaseConst.CANCEL_ORDER).
+					getValue();
 		}
 	}
 

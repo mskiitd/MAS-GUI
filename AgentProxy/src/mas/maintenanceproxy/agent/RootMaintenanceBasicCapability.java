@@ -9,12 +9,14 @@ import mas.maintenanceproxy.goal.CorrectiveMachineComponentsRepairGoal;
 import mas.maintenanceproxy.goal.MaintenanceStartSendInfoGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentServiceGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentToBlackboardGoal;
+import mas.maintenanceproxy.goal.SendCorrectiveRepairDataGoal;
 import mas.maintenanceproxy.goal.machineHealthCheckGoal;
 import mas.maintenanceproxy.plan.CorrectiveMachineComponentsRepairPlan;
 import mas.maintenanceproxy.plan.MaintenanceStartSendInfoPlan;
 import mas.maintenanceproxy.plan.ManualMachineRepairPlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentServicePlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentToBlackboardPlan;
+import mas.maintenanceproxy.plan.SendCorrectiveRepairDataPlan;
 import mas.maintenanceproxy.plan.machineHealthCheckPlan;
 import mas.util.ID;
 import bdi4jade.belief.Belief;
@@ -28,7 +30,7 @@ import bdi4jade.util.plan.SimplePlan;
 public class RootMaintenanceBasicCapability extends Capability{
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public RootMaintenanceBasicCapability() {
 		super(new BeliefBase(getBeliefs()), new PlanLibrary(getPlans()));
 	}
@@ -38,13 +40,13 @@ public class RootMaintenanceBasicCapability extends Capability{
 
 		Belief<AID> bboard = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.blackboardAgentAID);
-		
+
 		Belief<AID> myMachine = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.machine);
-		
+
 		Belief<AID> mygsAgent = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.globalSchAgentAID);
-		
+
 		Belief<AID> maintJob  = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.maintenanceJob);
 
@@ -64,7 +66,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 
 		plans.add(new SimplePlan(RegisterMaintenanceAgentToBlackboardGoal.class,
 				RegisterMaintenanceAgentToBlackboardPlan.class));
-		
+
 		plans.add(new SimplePlan(machineHealthCheckGoal.class,
 				machineHealthCheckPlan.class));
 
@@ -73,6 +75,9 @@ public class RootMaintenanceBasicCapability extends Capability{
 
 		plans.add(new SimplePlan(MaintenanceStartSendInfoGoal.class,
 				MaintenanceStartSendInfoPlan.class));
+
+		plans.add(new SimplePlan(SendCorrectiveRepairDataGoal.class,
+				SendCorrectiveRepairDataPlan.class));
 
 		return plans;
 	}	

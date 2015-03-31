@@ -6,6 +6,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.machineproxy.SimulatorInternals;
+import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -32,7 +33,6 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 	private int step = 0;
 	private ACLMessage msg;
 	private SimulatorInternals machine;
-	private RepairKit solver;
 	private AID bba;
 
 	@Override
@@ -45,7 +45,6 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 		bfBase = pInstance.getBeliefBase();
 		msgTemplate = MessageTemplate.MatchConversationId(
 				MessageIds.msgmaintenanceStart);
-		solver = new RepairKit();
 		
 		this.bba = (AID) bfBase.
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
@@ -54,13 +53,12 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public void action() {
-		switch(step){
+		switch(step) {
 		case 0:
 			msg = myAgent.receive(msgTemplate);
 			if(msg != null) {
 				try {
 					machine = (SimulatorInternals) msg.getContentObject();
-					solver.setMachine(machine);
 					step++;
 				} catch (UnreadableException e) {
 					e.printStackTrace();
@@ -72,15 +70,15 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 			break;
 		case 1:
 			
-			String maintenanceData = solver.getPreventiveMaintenanceData();
-			
-			ZoneDataUpdate maintenanceStartData = new ZoneDataUpdate.Builder(ID.Maintenance.ZoneData.prevMaintData)
-				.value(maintenanceData).Build();
-
-			AgentUtil.sendZoneDataUpdate(this.bba ,maintenanceStartData, myAgent);
+			LocalMaintenanceAgent.mgui.showMaintenanceStartNotification();
+//			String maintenanceData = "prev_maint_data";
+//			
+//			ZoneDataUpdate maintenanceStartData = new ZoneDataUpdate.Builder(ID.Maintenance.ZoneData.prevMaintData)
+//				.value(maintenanceData).Build();
+//
+//			AgentUtil.sendZoneDataUpdate(this.bba ,maintenanceStartData, myAgent);
 			
 			log.info("sending maintenance job data");
-			
 			// update the maintenance performed in the maintenance GUI
 			break;
 		}

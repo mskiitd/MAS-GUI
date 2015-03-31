@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
+import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -31,7 +33,7 @@ public class CorrectiveMaintenancePanel extends JPanel{
 	private JPanel myPanel;
 	private JButton btnConfirm;
 	private JLabel lblRepairTime;
-	private JTextField txtRepairTime;
+	private FormattedDoubleField txtRepairTime;
 	private LocalMaintenanceAgent mAgent;
 
 	private boolean dataOk = true;
@@ -44,7 +46,8 @@ public class CorrectiveMaintenancePanel extends JPanel{
 
 		this.btnConfirm = new JButton("Confirm");
 		this.lblRepairTime = new JLabel(Labels.MaintenanceLabels.repairTimeLabel);
-		this.txtRepairTime = new JTextField(Labels.defaultJTextSize);
+		this.txtRepairTime = new FormattedDoubleField();
+		txtRepairTime.setColumns(Labels.defaultJTextSize);
 		btnConfirm.addActionListener(new buttonListener());
 
 		myPanel.add(lblRepairTime,"wrap");
@@ -71,7 +74,7 @@ public class CorrectiveMaintenancePanel extends JPanel{
 	private void checkRepairTime() {
 		if(txtRepairTime.getText().matches("-?\\d+(\\.\\d+)?")) {
 			double rTime = 60*1000*Double.parseDouble(txtRepairTime.getText());
-			repairTime = (long)rTime;
+			repairTime = (long) rTime;
 			dataOk = true;
 		}else {
 			System.out.println("error");

@@ -5,16 +5,12 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
-import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.SimulatorInternals;
-import mas.machineproxy.behaviors.AddJobBehavior.timeProcessing;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -30,12 +26,11 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 	private int step = 0;
 	private MessageTemplate correctiveDataMsgTemplate;
 	private ACLMessage correctiveDataMsg;
-	private String[] repairData;
+	private String repairData;
 	private long repairTime;
 
 	private ScheduledThreadPoolExecutor executor;
 
-	private ArrayList<Integer> componentsToRepair;
 	private SimulatorInternals machineInternals;
 	private Simulator machineSimulator;
 
@@ -82,16 +77,10 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 				String data;
 				try {
 					data = (String) correctiveDataMsg.getContentObject();
-					repairData = data.split(" ");
-					log.info("Maintenance arrived ~~~~~~ repair time " + repairData[0]);
-					repairTime = (long) Double.parseDouble(repairData[0]);
+					repairData = data;
+					log.info("Maintenance arrived ~~~~~~ repair time " + repairData);
+					repairTime = (long) Double.parseDouble(repairData);
 					remainingTimeMillis = repairTime;
-
-					componentsToRepair = new ArrayList<Integer>();
-
-					for(int i=1; i < repairData.length; i++ ) {
-						componentsToRepair.add(Integer.parseInt(repairData[i]));
-					}
 
 					if( remainingTimeMillis > 0 ) {
 						LocalSchedulingAgent.mGUI.machineMaintenance();
@@ -115,7 +104,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			block(15);
 		case 3:
 			log.info("repairing components age ");
-			machineSimulator.repair(componentsToRepair);
+			machineSimulator.repair();
 			LocalSchedulingAgent.mGUI.machineIdle();
 			step = 4;
 			break;

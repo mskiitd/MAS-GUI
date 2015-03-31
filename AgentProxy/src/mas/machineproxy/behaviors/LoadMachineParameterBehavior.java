@@ -21,9 +21,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class LoadMachineParameterBehavior extends OneShotBehaviour {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private XSSFWorkbook workBook;
 	private XSSFSheet machineParameterSheet = null;

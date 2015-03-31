@@ -10,28 +10,24 @@ import jade.core.behaviours.TickerBehaviour;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import mas.jobproxy.OperationType;
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptJobBehavior;
 import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
-import mas.machineproxy.behaviors.LoadMachineComponentBehavior;
 import mas.machineproxy.behaviors.LoadMachineParameterBehavior;
 import mas.machineproxy.behaviors.LoadSimulatorParamsBehavior;
 import mas.machineproxy.behaviors.ParameterShifterBehavaior;
 import mas.machineproxy.behaviors.Register2DF;
 import mas.machineproxy.behaviors.RegisterMachine2BlackBoardBehvaior;
 import mas.machineproxy.behaviors.ShiftInProcessBahavior;
-import mas.machineproxy.component.Component;
-import mas.machineproxy.component.IComponent;
 import mas.machineproxy.parametrer.Parameter;
 import mas.machineproxy.parametrer.RootCause;
+import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -117,7 +113,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private void init() {
 		//		log = LogManager.getLogger();
 		statusChangeSupport = new PropertyChangeSupport(this);
-		
+
 		tbf = new  ThreadedBehaviourFactory();
 		internals = new SimulatorInternals();
 		internals.setEpochTime(System.currentTimeMillis() );
@@ -129,7 +125,6 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private transient SequentialBehaviour loadData;
 
 	private transient Behaviour loadSimulatorParams;
-	private transient Behaviour loadComponentData;
 	private transient Behaviour loadMachineParams;
 	private transient Behaviour loadRootCause;
 	private transient Behaviour registerthis;
@@ -155,16 +150,14 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		loadData.getDataStore().put(simulatorStoreName, Simulator.this);
 
 		loadSimulatorParams = new LoadSimulatorParamsBehavior();
-		loadComponentData = new LoadMachineComponentBehavior();
 		loadMachineParams = new LoadMachineParameterBehavior();
 		loadRootCause = new GetRootCauseDataBehavior();
 		registerthis = new Register2DF();
 		registerMachineOnBB = new RegisterMachine2BlackBoardBehvaior();
 
 		loadData.addSubBehaviour(loadSimulatorParams);
-		loadData.addSubBehaviour(loadComponentData);
-		loadData.addSubBehaviour(loadMachineParams);
-		loadData.addSubBehaviour(loadRootCause);
+		//		loadData.addSubBehaviour(loadMachineParams);
+		//		loadData.addSubBehaviour(loadRootCause);
 
 		loadData.addSubBehaviour(registerthis);
 		loadData.addSubBehaviour(registerMachineOnBB);
@@ -185,6 +178,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 		functionality.addSubBehaviour(reportHealth);
 		functionality.addSubBehaviour(processDimensionShifter);
+
 		//		functionality.addSubBehaviour(machineParameterShifter);
 
 		addBehaviour(tbf.wrap(functionality));
@@ -194,6 +188,19 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		 */
 		statusChangeSupport.addPropertyChangeListener (
 				new SimulatorStatusListener(Simulator.this) );
+
+		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+		executor.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+				if(LocalMaintenanceAgent.mgui != null) {
+					LocalSchedulingAgent.mGUI.setMachineSimulator(Simulator.this);
+					executor.shutdown();
+				}
+			}
+		}, 0,1000, TimeUnit.MILLISECONDS );
+
 	}
 
 	public void HandleFailure() {
@@ -229,11 +236,6 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	}
 
 	@Override
-	public ArrayList<IComponent> getComponents() {
-		return internals.getComponents();
-	}
-
-	@Override
 	public long getStartTime() {
 		return this.internals.getEpochTime();
 	}
@@ -253,14 +255,6 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		}
 	}
 
-	public void addComponent(Component c) {
-		internals.getComponents().add(c);
-	}
-
-	public long getNextFailureTime() {
-		return 10;
-	}
-
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		statusChangeSupport.removePropertyChangeListener(listener);
 	}
@@ -269,29 +263,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		statusChangeSupport.addPropertyChangeListener(listener);
 	}
 
-	/**
-	 * @param arr is index of all components to get repaired
-	 * 
-	 * this function calls repair method on the passed components 
-	 */
-
-	public void repair(ArrayList<Integer> arr) {
-
-		for (int index = 0; index < arr.size(); index++) { 
-			internals.getComponents().get(arr.get(index)).repair();
-		}
+	public void repair() {
 		this.internals.setStatus(MachineStatus.IDLE) ;
-	}
-
-	/**
-	 * @param millis
-	 * Age all the components of this simulator by an amount millis
-	 * 
-	 */
-	public synchronized void AgeComponents(long millis) {
-		for(int index = 0; index < internals.getComponents().size(); index++) {
-			internals.getComponents().get(index).addAge(millis);
-		}
 	}
 
 	public String getID_Simulator() {
@@ -471,14 +444,6 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		this.mParameterRootcauses.add(rootcause);
 	}
 
-	public EnumSet<OperationType> getSupportedOperations() {
-		return internals.getSupportedOperations();
-	}
-
-	public void setSupportedOperations(EnumSet<OperationType> supportedOperations) {
-		this.internals.setSupportedOperations(supportedOperations);
-	}
-
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().
@@ -498,10 +463,13 @@ public class Simulator extends Agent implements IMachine,Serializable {
 			final Simulator other = (Simulator) obj;
 			return new EqualsBuilder()
 			.append(ID_Simulator, other.ID_Simulator)
-			.append(internals.getComponents(), other.internals.getComponents())
 			.isEquals();
 		} else {
 			return false;
 		}
+	}
+
+	public void FailTheMachine() {
+		this.setStatus(MachineStatus.FAILED);
 	}
 }

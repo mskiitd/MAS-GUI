@@ -17,6 +17,7 @@ public class ID implements Serializable{
 
 		public class BeliefBaseConst{
 			public static final String NoOfMachines = "NoOfMachines";
+			public static final String serviceDiary = "servicesOfferedByOtherAgents";
 		}
 
 		public class ZoneData {
@@ -166,6 +167,7 @@ public class ID implements Serializable{
 			public static final String globalSchAgentAID = "Maintenance_gsAgent";
 			public static final String dataTracker = "Maintenance_data-tracker";
 			public static final String maintenanceJob = "Maintenance_machine-maintenance-tracker";
+			public static final String correctiveRepairData = "Maintenance_Corrective_Repair_Data" ;
 		}
 	}
 

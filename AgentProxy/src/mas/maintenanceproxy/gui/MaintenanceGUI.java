@@ -95,6 +95,10 @@ public class MaintenanceGUI extends JFrame{
 		showGui();
 	}
 	
+	public void showMaintenanceStartNotification() {
+		
+	}
+	
 	private void initCalenderPane() {
 		months = new DateFormatSymbols().getMonths();
 		spinnerListModel = new SpinnerListModel(Arrays.asList(months).subList(0, 12));

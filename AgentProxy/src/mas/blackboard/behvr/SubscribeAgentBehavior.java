@@ -1,11 +1,14 @@
 package mas.blackboard.behvr;
 
 import java.util.HashMap;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import mas.blackboard.nameZoneData.NamedZoneData;
 import mas.blackboard.zonespace.ZoneSpace;
 import mas.util.AgentUtil;
+import mas.util.ID;
 import mas.util.SubscriptionForm;
 import bdi4jade.belief.Belief;
 import bdi4jade.core.BeliefBase;
@@ -14,7 +17,7 @@ import jade.core.behaviours.Behaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
-public class SubscribeAgentBehvr extends Behaviour {
+public class SubscribeAgentBehavior extends Behaviour {
 
 	private static final long serialVersionUID = 1L;
 	//blackboard belief base
@@ -29,8 +32,9 @@ public class SubscribeAgentBehvr extends Behaviour {
 	private static NamedZoneData nzd;
 	//AID of agent whose ZoneData subscriber wants to subscribe
 	private AID AgentToReg; 
+	private HashMap<AID, String> serviceBase;
 
-	public SubscribeAgentBehvr(AID agent_to_reg, BeliefBase tempBeliefbase,
+	public SubscribeAgentBehavior(AID agent_to_reg, BeliefBase tempBeliefbase,
 			SubscriptionForm.parameterSubscription subscription, AID whoWantsTOSubscribe) {
 
 		this.BBbeliefBase = tempBeliefbase;
@@ -39,8 +43,22 @@ public class SubscribeAgentBehvr extends Behaviour {
 		DFAgentDescription dfa = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
 		dfa.addServices(sd);
-		this.AgentToReg=agent_to_reg;
+		this.AgentToReg = agent_to_reg;
 		log = LogManager.getLogger();
+		serviceBase = (HashMap<AID, String>) BBbeliefBase.
+				getBelief(ID.Blackboard.BeliefBaseConst.serviceDiary).
+				getValue();
+	}
+	
+	private String getService(AID agentToRegister) {
+		if(serviceBase != null && serviceBase.containsKey(agentToRegister)) {
+			return serviceBase.get(agentToRegister);
+		}
+		String agentType = AgentUtil.GetAgentService(agentToRegister,myAgent);
+		serviceBase.put(agentToRegister, agentType);
+		BBbeliefBase.updateBelief(ID.Blackboard.BeliefBaseConst.serviceDiary, serviceBase);
+		log.info("Adding service type : " + agentToRegister.getLocalName() + " : " + agentType + "myagent: " + serviceBase);
+		return agentType;
 	}
 
 	@Override
@@ -73,20 +91,19 @@ public class SubscribeAgentBehvr extends Behaviour {
 
 						nzd = new NamedZoneData.Builder(parameter).build();
 						//								log.info("finding zone data: "+nzd.getName());
-						if(zs.findZoneData(nzd) != null) { 
+						if(zs.findZoneData(nzd) != null) {
 							//Throws null pointer exception if ZoneData doesnn't exists
 							zs.findZoneData(nzd).subscribe(subscriber); 
 
 							//without this sendupdate() from zoneData was not working. Don't know why.
-//							try {
-//								Thread.sleep(1); 
-//							} catch (InterruptedException e) {
-//								e.printStackTrace();
-//							}
-							block(10);
+							try {
+								Thread.sleep(1); 
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 							step++;									
 						}
-						else{
+						else {
 							log.error("Couldn't find zone " + nzd.getName());
 						}
 
@@ -94,6 +111,7 @@ public class SubscribeAgentBehvr extends Behaviour {
 					ZoneSpaceHashMap.put(tempSubscription.Agent.getLocalName(), zs);
 
 					((Belief<HashMap<String, ZoneSpace>>)BBbeliefBase.getBelief(AgentType)).setValue(ZoneSpaceHashMap);
+//					step++;	
 				}
 			}
 		}
