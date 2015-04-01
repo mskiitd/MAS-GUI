@@ -40,6 +40,8 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import com.sun.org.apache.bcel.internal.generic.PopInstruction;
+
 import uiconstants.Labels;
 
 public class CustomerNegotiateProxyGUI extends JFrame{
@@ -81,11 +83,11 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private FormattedDoubleField txtPenaltyRate;
 
 	private Batch populatingBatch;
-	private job populatingJob;
 	private boolean dataOk = true;
 	private boolean operationDataOk = false;
 
 	private Logger log;
+	private job generatedJob;
 	private Batch generatedBatch;
 
 	public CustomerNegotiateProxyGUI(CustomerAgent cAgent, Batch passedBatch) {
@@ -94,9 +96,6 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		generatedBatch = new Batch();
 		this.populatingBatch = passedBatch;
-		if(populatingBatch != null) {
-			this.populatingJob = populatingBatch.getSampleJob();
-		}
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
@@ -112,9 +111,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		dateProperties.put("text.month", "Month");
 		dateProperties.put("text.year", "Year");
 
-		if(populatingJob != null) {
+		if(populatingBatch != null) {
 			Calendar dudate = Calendar.getInstance();
-			dudate.setTime(populatingJob.getJobDuedatebyCust());
+			dudate.setTime(populatingBatch.getDueDateByCustomer());
 
 			dateModel.setDate(dudate.get(Calendar.YEAR),
 					dudate.get(Calendar.MONDAY),
@@ -219,21 +218,22 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	}
 
 	private void _populate() {
-		if(populatingJob != null) {
-			txtJobID.setText(populatingJob.getJobID());
+		if(populatingBatch != null) {
+			txtJobID.setText(populatingBatch.getBatchId());
 			txtJobID.setEnabled(false);
 
-			txtJobNo.setText(String.valueOf(populatingJob.getJobNo()));
+			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
 			txtJobNo.setEnabled(false);
 
-			txtWaitingTime.setText(String.valueOf(new Date(populatingJob.getWaitingTime())) ) ;
+			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getWaitingTime())) ) ;
 			txtWaitingTime.setEnabled(false);
 
-			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
-			txtPenaltyRate.setText(String.valueOf(populatingJob.getPenaltyRate()));
-			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
+			txtCPN.setText(String.valueOf(populatingBatch.getCPN()));
+			txtPenaltyRate.setText(String.valueOf(populatingBatch.getPenaltyRate()));
+			
+			txtNumOps.setText(String.valueOf(populatingBatch.getSampleJob().getOperations().size()));
 
-			timeSpinner.setValue(populatingJob.getJobDuedatebyCust());
+			timeSpinner.setValue(populatingBatch.getDueDateByCustomer());
 			
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 		}
@@ -268,11 +268,11 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			generatedBatch.setBatchId(populatingJob.getJobID());
+			generatedBatch.setBatchId(populatingBatch.getBatchId());
 			generatedBatch.clearAllJobs();
 			int bSize = Integer.parseInt(txtBatchSize.getText());
 			for(int i = 0; i < bSize ; i++ ) {
-				generatedBatch.addJobToBatch(populatingJob);
+				generatedBatch.addJobToBatch(generatedJob);
 			}
 		}
 
@@ -281,7 +281,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 	private boolean checkJobOperations() {
 		boolean status = true;
-		if(populatingJob.getOperations() == null || populatingJob.getOperations().isEmpty()) {
+		if(generatedJob.getOperations() == null || generatedJob.getOperations().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
@@ -315,7 +315,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}else {
-				populatingJob.setJobDuedatebyCust(calTime.getTime());
+				populatingBatch.setDueDateByCustomer(calTime.getTime());
 			}
 		}
 		return status;
@@ -341,7 +341,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			populatingJob.setCPN(Double.parseDouble(
+			generatedBatch.setCPN(Double.parseDouble(
 					txtCPN.getText() ) );
 		}
 		return status;
@@ -355,7 +355,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 			if(operationDataOk) {
 				DefineJobOperationsFrame ops = new 
-						DefineJobOperationsFrame(populatingJob, NumOps, populatingJob);
+						DefineJobOperationsFrame(generatedBatch, NumOps, populatingBatch);
 			}
 		}
 	}

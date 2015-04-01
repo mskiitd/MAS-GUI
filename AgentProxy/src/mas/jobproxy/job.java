@@ -1,50 +1,26 @@
 package mas.jobproxy;
 
-import jade.core.AID;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-/** Represents a manufacturing shop floor job-batch
+/** Represents a manufacturing shop floor job
  */
 
 public class job implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final double lowRegretMultiplier = 1,
-			MediumRegretMultiplier = 2,
-			HighRegretMultiplier = 3;
-
 	//Required parameters
 	private int jobNo;
 	private String jobID;
-	private double CPN;
-	private double Cost;
-	private double penaltyRate;
 
 	private Date startTime;
-	private Date jobDuedateByCust;
-	private Date generationTime;
+	private Date jobDuedate;
 	private Date completionTime;
-	private long waitingTime;
 
 	private ArrayList<jobOperation> operations;
 	public int currentOperationNumber = 0;
-
-	//Optional parameters initialized to default values
-
-	public int acceptance = 0;
-	public double slack;
-	private double regret;
-	private int position;
-	private double BidByLSA ;
-	private double profit;
-	private AID WinnerLSA;
-	private AID LSABidder;
-
-	private double deliveryTime;
-	private double deliveryStatus;
 
 	// a flag to indicate that all operations of the job are finished
 	private boolean IsComplete = false;
@@ -104,23 +80,10 @@ public class job implements Serializable {
 	private job(Builder builder) {
 		jobID = builder.jobID;
 		jobNo = builder.jobNo;
-		CPN = builder.CPN;
-		Cost = builder.Cost;
-		penaltyRate = builder.Penalty;
-		jobDuedateByCust = builder.custdDate;
-		generationTime = builder.genTime;
+		jobDuedate = builder.custdDate;
 		this.operations = new ArrayList<jobOperation>();
 		operations.addAll(builder.jOperations);
 		startTime=builder.custStartDate;
-	}
-
-	public double getRegretMultiplier(){
-		if(this.regret < 1.0)
-			return lowRegretMultiplier;
-		else if( this.regret < 1.1)
-			return MediumRegretMultiplier;
-		else
-			return HighRegretMultiplier;
 	}
 
 	@Override
@@ -132,14 +95,6 @@ public class job implements Serializable {
 		job j = (job)o;
 
 		return (this.jobNo == j.jobNo) && (this.jobID.equals(j.jobID));
-	}
-
-	public double getPenaltyRate() {
-		return penaltyRate;
-	}
-
-	public void setPenaltyRate(double penaltyRate) {
-		this.penaltyRate = penaltyRate;
 	}
 
 	public void setCurrentOperationDueDate(long dueDate) {
@@ -227,30 +182,6 @@ public class job implements Serializable {
 		this.operations = operations;
 	}
 
-	public int getPosition() {
-		return position;
-	}
-
-	public double getSlack() {
-		return slack;
-	}
-
-	public void setSlack(double slack) {
-		this.slack = slack;
-	}
-
-	public double getRegret() {
-		return regret;
-	}
-
-	public void setRegret(double regret) {
-		this.regret = regret;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
-	}
-
 	public String getJobID(){
 		return this.jobID;
 	}
@@ -263,14 +194,6 @@ public class job implements Serializable {
 		this.jobNo = jobNo;
 	}
 
-	public double getCPN() {
-		return CPN;
-	}
-
-	public void setCPN(double cPN) {
-		CPN = cPN;
-	}
-
 	public Date getStartTimeByCust() {
 		return startTime;
 	}
@@ -281,18 +204,6 @@ public class job implements Serializable {
 
 	public void setJobStartTimeByCust(long startTime) {
 		this.startTime = new Date(startTime);
-	}
-
-	public Date getGenerationTime() {
-		return generationTime;
-	}
-
-	public void setGenerationTime(Date generationTime) {
-		this.generationTime = generationTime;
-	}
-
-	public void setGenerationTime(long generationTime) {
-		this.generationTime = new Date(generationTime);
 	}
 
 	public Date getCompletionTime() {
@@ -315,85 +226,20 @@ public class job implements Serializable {
 		this.completionTime = new Date(completionTime);
 	}
 
-	public int getAcceptance() {
-		return acceptance;
-	}
-
-	public void setAcceptance(int acceptance) {
-		this.acceptance = acceptance;
-	}
-
-	public long getWaitingTime() {
-		return waitingTime;
-	}
-
-	public void setWaitingTime(long waitingTime) {
-		this.waitingTime = waitingTime;
-	}
-
 	public void setJobID(String jobID) {
 		this.jobID = jobID;
 	}
 
 	public Date getJobDuedatebyCust() {
-		return jobDuedateByCust;
+		return jobDuedate;
 	}
 
 	public void setJobDuedatebyCust(Date duedate) {
-		this.jobDuedateByCust = duedate;
+		this.jobDuedate = duedate;
 	}
 
 	public void setJobDuedatebyCust(long duedate) {
-		this.jobDuedateByCust.setTime(duedate);
-	}
-
-	public double getCost() {
-		return Cost;
-	}
-
-	public void setCost(double cost) {
-		Cost = cost;
-	}
-	public double getBidByLSA() {
-		return BidByLSA;
-	}
-
-	public void setBidByLSA(double bidByLSA) {
-		BidByLSA = bidByLSA;
-	}
-
-	/**
-	 * 
-	 * @return  LSA which won bid
-	 */
-	public AID getBidWinnerLSA() {
-		return WinnerLSA;
-	}
-
-	public void setBidWinnerLSA(AID winner_LSA){
-		this.WinnerLSA=winner_LSA;
-	}
-
-	public double getProfit() {
-		return profit;
-	}
-
-	public void setProfit(double profit) {
-		this.profit = profit;
-	}
-
-	/**
-	 * LSA which is sending bid proposal (bid winners hasn't been announced yet)
-	 * @param LSA
-	 * 
-	 */
-	public void setLSABidder(AID LSA) { 
-		this.LSABidder = LSA; 
-
-	}
-
-	public AID getLSABidder(){
-		return this.LSABidder;
+		this.jobDuedate.setTime(duedate);
 	}
 
 }

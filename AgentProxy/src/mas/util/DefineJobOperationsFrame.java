@@ -1,7 +1,6 @@
 package mas.util;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,21 +10,19 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
+import mas.jobproxy.Batch;
 import mas.jobproxy.OperationType;
 import mas.jobproxy.job;
-import mas.jobproxy.jobDimension;
 import mas.jobproxy.jobOperation;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
 @SuppressWarnings("serial")
 public class DefineJobOperationsFrame extends JFrame{
-	private job passedJob;
+	private Batch passedBatch;
 
 	private JScrollPane scroller;
 	private JPanel myPanel;
@@ -44,21 +41,21 @@ public class DefineJobOperationsFrame extends JFrame{
 //	private ArrayList<JTextField> txtTargetDimensionList;
 //	private ArrayList<JTextField> txtAttributeList;
 
-	private ArrayList<jobOperation> jobOps;
+	private ArrayList<jobOperation> batchOperations;
 
 	private JLabel lblHeading;
 
 	private boolean dataOk = false;
 	private String jobIdJob;
 
-	public DefineJobOperationsFrame(job passedJob, int numOps, job populatingJob) {
+	public DefineJobOperationsFrame(Batch passedJob, int numOps, Batch populatingBatch) {
 
-		this.passedJob = passedJob;
+		this.passedBatch = passedJob;
 		this.NumOps = numOps;
 
-		if(populatingJob != null) {
-			jobOps = populatingJob.getOperations();
-			jobIdJob = passedJob.getJobID().split("o")[0];
+		if(populatingBatch != null) {
+			batchOperations = populatingBatch.getSampleJob().getOperations();
+			jobIdJob = passedJob.getBatchId().split("o")[0];
 		}
 
 		this.scroller = new JScrollPane();
@@ -111,8 +108,8 @@ public class DefineJobOperationsFrame extends JFrame{
 			}
 			JComboBox<?> opSpinner = new JComboBox<Object>(possibleOps.toArray());
 			
-			if(jobOps != null && i < jobOps.size()) {
-				opSpinner.setSelectedItem(jobOps.get(i).getJobOperationType());
+			if(batchOperations != null && i < batchOperations.size()) {
+				opSpinner.setSelectedItem(batchOperations.get(i).getJobOperationType());
 			}
 			operationBoxList.add(opSpinner);
 
@@ -176,7 +173,7 @@ public class DefineJobOperationsFrame extends JFrame{
 //				operations.add(op);
 		}
 		if(x1)
-			passedJob.setOperations(operations);
+			passedBatch.setOperations(operations);
 		
 		dataOk = x1;
 	}
