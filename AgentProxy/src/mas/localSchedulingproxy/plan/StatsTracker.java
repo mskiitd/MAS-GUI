@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 
 /**
@@ -33,28 +34,28 @@ public class StatsTracker {
 	}
 
 	private class Node {
-		private job jobDone;
+		private Batch jobDone;
 		private int operationNumber;
 
-		public Node(job j, int n) {
+		public Node(Batch j, int n) {
 			this.jobDone = j;
 			this.operationNumber = n;
 		}
 		
 		public long getOperationProcessingTime() {
-			return jobDone.getProcessTime(operationNumber);
+			return jobDone.getSampleJob().getProcessTime(operationNumber)*jobDone.getBatchCount();
 		}
 		
 		public long getOperationCompletionTime() {
-			return jobDone.getCompletionTime(operationNumber);
+			return jobDone.getSampleJob().getCompletionTime(operationNumber);
 		}
 		
 		public long getOperationStartTime() {
-			return jobDone.getStartTime(operationNumber);
+			return jobDone.getSampleJob().getStartTime(operationNumber);
 		}
 	}
 
-	public void storeJob(job complete, int n) {
+	public void storeJob(Batch complete, int n) {
 		if( this.doneJobs.size() >= SIZE_LIMIT){
 			this.doneJobs.remove();
 		}

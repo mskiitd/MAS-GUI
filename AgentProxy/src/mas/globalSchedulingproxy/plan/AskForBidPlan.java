@@ -1,12 +1,15 @@
 package mas.globalSchedulingproxy.plan;
 
-import java.io.IOException;
-import mas.jobproxy.job;
-import mas.util.MessageIds;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+
+import java.io.IOException;
+
+import mas.jobproxy.Batch;
+import mas.jobproxy.job;
+import mas.util.MessageIds;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -69,8 +72,8 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 			ACLMessage min = bids[0];			
 			for(int i = 0; i < bids.length;i++){
 				try {
-					if(((job)(bids[i].getContentObject())).getBidByLSA() > 
-					((job)(min.getContentObject())).getBidByLSA()){
+					if(((Batch)(bids[i].getContentObject())).getBidByLSA() > 
+					((Batch)(min.getContentObject())).getBidByLSA()) {
 						min = bids[i];
 					}
 				} catch (UnreadableException e) {
@@ -87,11 +90,9 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 			OrderToLSA.addReceiver(min.getSender());
 			OrderToLSA.setConversationId(MessageIds.msgbidResultJob);
 			myAgent.send(OrderToLSA);
-			
 			//			System.out.println("OrderToLSA" + OrderToLSA);
 			step = 3;
 			break;
-
 		}   
 	}
 

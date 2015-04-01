@@ -1,22 +1,25 @@
 package mas.customerproxy.plan;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import mas.customerproxy.agent.CustomerAgent;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
+public class ReceiveCompletedBatchPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
 	private Logger log;
-	private job completedJob;
+	private Batch completedBatch;
 
 	@Override
 	public EndState getEndState() {
@@ -28,7 +31,7 @@ public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
 		log = LogManager.getLogger();
 		ACLMessage msg = ( (MessageGoal)pInstance.getGoal() ).getMessage();
 		try {
-			completedJob = (job) msg.getContentObject();
+			completedBatch = (Batch) msg.getContentObject();
 
 		} catch (UnreadableException e) {
 			e.printStackTrace();
@@ -37,9 +40,9 @@ public class ReceiveCompletedJobPlan extends Behaviour implements PlanBody{
 
 	@Override
 	public void action() {
-		if(completedJob != null) {
+		if(completedBatch != null) {
 			log.info("Adding completed job to GUI ");
-			CustomerAgent.mygui.addCompletedJob(completedJob);
+			CustomerAgent.mygui.addCompletedBatch(completedBatch);
 		}
 	}
 

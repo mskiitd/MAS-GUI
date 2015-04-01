@@ -17,6 +17,10 @@ public class Batch implements Serializable {
 	private ArrayList<job> jobsInBatch;
 	private String batchId = null;
 	private int batchNumber;
+	
+	private double CPN;
+	private double Cost;
+	private double penaltyRate;
 
 	private long waitingTime;
 	private long startTime;
@@ -27,14 +31,48 @@ public class Batch implements Serializable {
 
 	private AID WinnerLSA;
 	private AID LSABidder;
+	private double BidByLSA ;
 
 	private int currentJobIndex = 0;
 	private boolean isBatchComplete;
 	
 	private int position;
+	private double profit;
 
 	public Batch() {
 		jobsInBatch = new ArrayList<job>();
+	}
+
+	public double getCPN() {
+		return CPN;
+	}
+
+	public void setCPN(double cPN) {
+		CPN = cPN;
+	}
+
+	public double getCost() {
+		return Cost;
+	}
+
+	public void setCost(double cost) {
+		Cost = cost;
+	}
+
+	public double getPenaltyRate() {
+		return penaltyRate;
+	}
+
+	public void setPenaltyRate(double penaltyRate) {
+		this.penaltyRate = penaltyRate;
+	}
+
+	public double getBidByLSA() {
+		return BidByLSA;
+	}
+
+	public void setBidByLSA(double bidByLSA) {
+		BidByLSA = bidByLSA;
 	}
 
 	public int getPosition() {
@@ -44,7 +82,7 @@ public class Batch implements Serializable {
 	public void setPosition(int position) {
 		this.position = position;
 	}
-
+	
 	public long getBatchProcessingTime() {
 		return batchProcessingTime;
 	}
@@ -83,6 +121,14 @@ public class Batch implements Serializable {
 	public void setWinnerLSA(AID winnerLSA) {
 		WinnerLSA = winnerLSA;
 	}
+	
+	public double getProfit() {
+		return profit;
+	}
+
+	public void setProfit(double profit) {
+		this.profit = profit;
+	}
 
 	public AID getLSABidder() {
 		return LSABidder;
@@ -98,6 +144,10 @@ public class Batch implements Serializable {
 
 	public void setDueDateByCustomer(Date dueDateByCustomer) {
 		this.dueDateByCustomer = dueDateByCustomer;
+	}
+	
+	public void setDueDateMillisByCustomer(long dueDateByCustomer) {
+		this.dueDateByCustomer = new Date(dueDateByCustomer);
 	}
 
 	public long getWaitingTime() {
@@ -175,5 +225,11 @@ public class Batch implements Serializable {
 
 	public Object getBidWinnerLSA() {
 		return null;
+	}
+
+	public void IncrementAllOperationNumber() {
+		for(int i = 0; i < jobsInBatch.size(); i ++) {
+			jobsInBatch.get(i).IncrementOperationNumber();
+		}
 	}
 }

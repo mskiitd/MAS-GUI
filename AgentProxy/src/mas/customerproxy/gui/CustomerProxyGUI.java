@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -21,8 +22,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.agent.Jobloader;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
@@ -247,7 +250,7 @@ public class CustomerProxyGUI extends JFrame{
 		super.setVisible(true);
 	}
 
-	public void addCompletedJob(job j) {
+	public void addCompletedBatch(Batch j) {
 		/**if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.remove(j);
 		}
@@ -258,7 +261,7 @@ public class CustomerProxyGUI extends JFrame{
 		completedJobsTable.repaint();
 	}
 
-	public void addAcceptedJob(job j) {
+	public void addAcceptedJob(Batch j) {
 		acceptedJobVector.addElement(j);
 		TableUtil.setColumnWidths(acceptedJobsTable);
 		acceptedJobsTable.revalidate();
@@ -272,11 +275,11 @@ public class CustomerProxyGUI extends JFrame{
 			JMenuItem menu = (JMenuItem) event.getSource();
 			if (menu == menuItemCancel) {
 				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
-				cAgent.cancelOrder((job) acceptedJobVector.get(currentAcceptedSelectedJob));
+				cAgent.cancelOrder((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
 
 			} else if (menu == menuItemChangeDueDate) {
 				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
-				cAgent.changeDueDate((job) acceptedJobVector.get(currentAcceptedSelectedJob));
+				cAgent.changeDueDate((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
 
 			} 
 		}

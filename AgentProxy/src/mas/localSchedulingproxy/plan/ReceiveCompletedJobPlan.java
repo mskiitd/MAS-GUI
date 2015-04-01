@@ -54,9 +54,9 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 	public void action() {
 		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine, null);
 
-		j.IncrementOperationNumber();
+		j.IncrementAllOperationNumber();
 		ZoneDataUpdate CompletedJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedJob)
-		.value(j).setReplyWith(Integer.toString(j.getJobNo())).Build();
+		.value(j).setReplyWith(Integer.toString(j.getBatchNumber())).Build();
 
 		AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedJobUpdate, myAgent);
 		

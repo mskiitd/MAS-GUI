@@ -100,15 +100,15 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
 				getValue();
 
-		if( ! operationdb.contains(j.getCurrentOperation().getJobOperationType()) ) {
-			log.info("Operation" + j.getCurrentOperation().getJobOperationType() +
+		if( ! operationdb.contains(j.getSampleJob().getCurrentOperation().getJobOperationType()) ) {
+			log.info("Operation" + j.getSampleJob().getCurrentOperation().getJobOperationType() +
 					"unsupported on machine : " + myAgent.getLocalName());
 			j.setBidByLSA(-1);
 			return;
 		} 
 
-		j.setCurrentOperationProcessingTime(operationdb.
-				getOperationInfo(j.getCurrentOperation().getJobOperationType()).
+		j.getSampleJob().setCurrentOperationProcessingTime(operationdb.
+				getOperationInfo(j.getSampleJob().getCurrentOperation().getJobOperationType()).
 				getProcessingTime() );
 
 		ArrayList<Batch> tempQueue = new  ArrayList<Batch>();
@@ -145,19 +145,22 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 		for (int i = 0; i < l; i++) {
 
-			finishTime = cumulativeProcessingTime + sequence.get(i).getCurrentOperationProcessTime()*1000 +
-					sequence.get(i).getCurrentOperationStartTime();
+			finishTime = cumulativeProcessingTime + sequence.get(i).getSampleJob().getCurrentOperationProcessTime()*
+					sequence.get(i).getBatchCount()*1000 +
+					sequence.get(i).getSampleJob().getCurrentOperationStartTime();
 			//getProcessingTime gives in time in seconds
 
 			//			log.info("difference="+(finishTime-sequence.get(i).getStartTime().getTime()));
-			cumulativeProcessingTime = cumulativeProcessingTime + (long)sequence.get(i).getCurrentOperationProcessTime()*1000;
+			cumulativeProcessingTime = cumulativeProcessingTime +
+					(long)sequence.get(i).getSampleJob().getCurrentOperationProcessTime()*
+					sequence.get(i).getBatchCount()*1000;
 
 			double tardiness = 0.0;
 
 			//			log.info(myAgent.getLocalName()+ " cpt="+cumulativeProcessingTime +" L="+l+"ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
 
-			if (finishTime > sequence.get(i).getCurrentOperationDueDate()) {
-				tardiness = (finishTime - sequence.get(i).getCurrentOperationDueDate())/1000.0;
+			if (finishTime > sequence.get(i).getSampleJob().getCurrentOperationDueDate()) {
+				tardiness = (finishTime - sequence.get(i).getSampleJob().getCurrentOperationDueDate())/1000.0;
 				//				log.info(myAgent.getLocalName()+ " tardiness="+tardiness+" L="+l+"ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
 			}
 			else{
@@ -180,9 +183,14 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 	private ArrayList<Batch> setStartTimes(ArrayList<Batch> sequence) {
 		long CumulativeWaitingTime = 0;
-		for(int i=0 ; i < sequence.size(); i++) {
-			sequence.get(i).setCurrentOperationStartTime(CumulativeWaitingTime + System.currentTimeMillis());
-			CumulativeWaitingTime=CumulativeWaitingTime + (long)sequence.get(i).getCurrentOperationProcessTime()*1000;
+		for(int i = 0 ; i < sequence.size(); i++) {
+
+			sequence.get(i).getSampleJob().setCurrentOperationStartTime(CumulativeWaitingTime +
+					System.currentTimeMillis());
+
+			CumulativeWaitingTime = CumulativeWaitingTime +
+					(long)sequence.get(i).getSampleJob().getCurrentOperationProcessTime()*
+					sequence.get(i).getBatchCount() * 1000;
 		}
 		return sequence;
 

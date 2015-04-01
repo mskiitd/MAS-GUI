@@ -7,7 +7,6 @@ import jade.lang.acl.UnreadableException;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.gui.CustomerNegotiateProxyGUI;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -62,7 +61,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 		done = true;
 	}
 
-	public void setNegotiation(job j) {
+	public void setNegotiation(Batch j) {
 		/**
 		 *  Write your own negotiation logic here. You have job j to negotiate with scheduler.
 		 *  Take this job as input and change due date or profit or some other parameter
@@ -71,7 +70,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 		 *  if it is acceptable, then job is simply being sent back to blackboard.
 		 */
 
-		long myDate = (long) (j.getJobDuedatebyCust().getTime() ); 
+		long myDate = (long) (j.getDueDateByCustomer().getTime() ); 
 		double newprofit = 0.9 * j.getProfit();
 
 		long newDate = j.getWaitingTime();
@@ -91,7 +90,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 
 			return;
 		}else {
-			j.setJobDuedatebyCust( (myDate + newDate)/2 );
+			j.setDueDateMillisByCustomer((myDate + newDate)/2 );
 			j.setProfit(newprofit);
 			log.info("************" + negotiationJob.getDueDateByCustomer() );
 			ZoneDataUpdate negotiationJobDataUpdate=new ZoneDataUpdate.Builder(

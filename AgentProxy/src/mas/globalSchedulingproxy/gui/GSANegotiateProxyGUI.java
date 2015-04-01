@@ -358,7 +358,7 @@ public class GSANegotiateProxyGUI extends JFrame{
 
 				createJobFromParams();
 				if(dataOk) {
-					gAgent.negotiateJob(populatingJob);
+					gAgent.negotiateJob(populatingBatch);
 					dispose();
 				}
 			}

@@ -41,10 +41,10 @@ public class GetNoOfMachinesPlan extends Behaviour implements PlanBody{
 	@Override
 	public void init(PlanInstance pInstance) {
 		
-		limit=10*1000;//set limit
-		time=System.currentTimeMillis();
+		limit = 10*1000;//set limit
+		time = System.currentTimeMillis();
 		bfBase = pInstance.getBeliefBase();	
-		log=LogManager.getLogger();
+		log = LogManager.getLogger();
 		
 	}
 

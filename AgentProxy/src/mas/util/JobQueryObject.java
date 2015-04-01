@@ -1,17 +1,18 @@
 package mas.util;
 
 import jade.core.AID;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 
 public class JobQueryObject {
 
-	private job currentJob;
+	private Batch currentJob;
 	private AID currentMachine;
 	private boolean isJobOnMachine;
 
 
 	public static class Builder {
-		job currJob;
+		Batch currJob;
 		AID currMachine;
 		private boolean isUnderProcess;
 
@@ -19,13 +20,13 @@ public class JobQueryObject {
 
 		}
 
-		public Builder currentJob(job j) {
-			currJob=j;
+		public Builder currentJob(Batch j) {
+			currJob  =j;
 			return this;
 		}
 
 		public Builder currentMachine(AID machineAID) {
-			currMachine=machineAID;
+			currMachine = machineAID;
 			return this;
 		}
 
@@ -49,7 +50,7 @@ public class JobQueryObject {
 		return currentMachine;
 	}
 
-	public job getCurrentJob() {
+	public Batch getCurrentJob() {
 		return currentJob;
 	}
 

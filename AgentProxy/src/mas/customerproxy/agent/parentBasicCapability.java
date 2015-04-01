@@ -12,7 +12,7 @@ import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.plan.CancelOrderPlan;
 import mas.customerproxy.plan.ChangeDueDatePlan;
 import mas.customerproxy.plan.DispatchJobPlan;
-import mas.customerproxy.plan.ReceiveCompletedJobPlan;
+import mas.customerproxy.plan.ReceiveCompletedBatchPlan;
 import mas.customerproxy.plan.RegisterCustomerAgentToBlackboardPlan;
 import mas.customerproxy.plan.SendConfirmedOrderPlan;
 import mas.jobproxy.Batch;
@@ -85,7 +85,7 @@ public class parentBasicCapability extends Capability {
 		plans.add(new SimplePlan(ChangeDueDateGoal.class,ChangeDueDatePlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgJobCompletion),
-				ReceiveCompletedJobPlan.class ));
+				ReceiveCompletedBatchPlan.class ));
 
 		return plans;
 	}	

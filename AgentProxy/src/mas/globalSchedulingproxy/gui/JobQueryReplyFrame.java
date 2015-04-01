@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import mas.jobproxy.job;
+import mas.jobproxy.Batch;
 import mas.util.JobQueryObject;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
@@ -71,13 +71,13 @@ public class JobQueryReplyFrame extends JFrame{
 		this.lblCurrentMachine = new JLabel();
 
 		if(response != null && response.getCurrentJob() != null ) {
-			job theJob = response.getCurrentJob();
+			Batch theJob = response.getCurrentJob();
 			lblCPN.setText(String.valueOf(theJob.getCPN()) );
-			lblJobID.setText(theJob.getJobID());
-			lblDueDate.setText(String.valueOf(theJob.getJobDuedatebyCust()));
+			lblJobID.setText(theJob.getBatchId());
+			lblDueDate.setText(String.valueOf(theJob.getDueDateByCustomer()));
 			lblPenaltyRate.setText(String.valueOf(theJob.getPenaltyRate()));
 			this.lblOperations.setText(String.valueOf(
-					theJob.getOperations()) );
+					theJob.getSampleJob().getOperations()) );
 			
 			this.lblOperationsDone.setText("");
 			this.lblCurrentOperation.setText("");

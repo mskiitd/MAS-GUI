@@ -5,8 +5,8 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -16,7 +16,6 @@ import mas.util.ZoneDataUpdate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.Message;
 
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
@@ -32,7 +31,7 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 	private MessageTemplate mt;
 	private int MachineCount = 0;
 	private int repliesCnt;
-	private job queryJob;
+	private Batch queryJob;
 	private ACLMessage[] LSAqueryResponse;
 	private BeliefBase bfBase;
 	private Logger log = LogManager.getLogger();
@@ -46,7 +45,7 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 	public void init(PlanInstance PI) {
 
 		bfBase = PI.getBeliefBase();
-		this.queryJob = (job) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob).
+		this.queryJob = (Batch) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob).
 				getValue();
 
 		blackboard_AID = new AID(ID.Blackboard.LocalName, false);
@@ -108,12 +107,12 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 		for(int i = 0; i < LSAqueryResponse2.length; i++) {
 			try {
 				JobQueryObject queryResponse = (JobQueryObject) LSAqueryResponse2[i].getContentObject();
-				job j = (queryResponse).getCurrentJob();
+				Batch j = (queryResponse).getCurrentJob();
 				if(j != null) {
 					response = queryResponse;
-					log.info(j.getJobNo() + " is at " + queryResponse.getCurrentMachine().getLocalName());
+					log.info(j.getBatchNumber() + " is at " + queryResponse.getCurrentMachine().getLocalName());
 					if(queryResponse.isOnMachine()) {
-						log.info(j.getJobNo() + " is currently under process at " +
+						log.info(j.getBatchNumber() + " is currently under process at " +
 								queryResponse.getCurrentMachine().getLocalName());
 					}
 				}

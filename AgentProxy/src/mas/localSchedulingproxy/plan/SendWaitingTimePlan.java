@@ -7,14 +7,16 @@ import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -32,8 +34,8 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
 	private ACLMessage msg;
-	private ArrayList<job> jobQueue;
-	private job j;
+	private ArrayList<Batch> jobQueue;
+	private Batch j;
 	private BeliefBase bfBase;
 	private StatsTracker sTracker;
 	private double averageProcessingTime;
@@ -54,12 +56,12 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		log = LogManager.getLogger();
 		try {
 			msg = ((MessageGoal)pInstance.getGoal()).getMessage();
-			j = (job)(msg.getContentObject());
+			j = (Batch)(msg.getContentObject());
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
 
-		jobQueue = (ArrayList<job>) bfBase.
+		jobQueue = (ArrayList<Batch>) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
 				getValue();
 
@@ -91,25 +93,23 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		long WaitingTime = 0;
 
 		for(int i = 0; i < jobQueue.size(); i++) {
-			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessTime()*1000;
+			WaitingTime = WaitingTime + jobQueue.get(i).getSampleJob().getCurrentOperationProcessTime()*
+					jobQueue.get(i).getBatchCount();
 		}
 
-		if(operationdb.contains(j.getCurrentOperation().getJobOperationType())) {
+		if(operationdb.contains(j.getSampleJob().getCurrentOperation().getJobOperationType()) ) {
 			j.setWaitingTime(avgWaitingTime ); //WaitingTime+ j.getCurrentOperationProcessTime());
 		} else {
-			log.info("Operation" + j.getCurrentOperation().getJobOperationType() +
+			log.info("Operation" + j.getSampleJob().getCurrentOperation().getJobOperationType() +
 					"unsupported on this machine");
 			j.setWaitingTime(Long.MAX_VALUE);
 		}
-
 		//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());
 		ZoneDataUpdate waitingTimeUpdate = new ZoneDataUpdate.
 				Builder(ID.LocalScheduler.ZoneData.WaitingTime).
 				value(this.j).
 				setReplyWith(replyWith).
 				Build();
-
-		//		log.info("replyWith = " + replyWith);
 
 		AgentUtil.sendZoneDataUpdate(blackboard ,waitingTimeUpdate, myAgent);
 	}

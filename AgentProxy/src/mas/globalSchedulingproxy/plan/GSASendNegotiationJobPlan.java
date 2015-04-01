@@ -2,12 +2,15 @@ package mas.globalSchedulingproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -19,7 +22,7 @@ public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 	private Logger log;
 	private BeliefBase bfBase;
 	private AID bba;
-	private job negotiationJob;
+	private Batch negotiationJob;
 	private boolean done = false;
 
 	@Override
@@ -35,7 +38,7 @@ public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 				.getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent)
 				.getValue();
 
-		this.negotiationJob = (job) bfBase.
+		this.negotiationJob = (Batch) bfBase.
 				getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job).
 				getValue();
 
@@ -58,7 +61,7 @@ public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 			done = true;
 		}else {
 			log.info("GSA : reading negotiation : " + negotiationJob );
-			this.negotiationJob = (job) bfBase.
+			this.negotiationJob = (Batch) bfBase.
 					getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job).
 					getValue();
 			block(50);

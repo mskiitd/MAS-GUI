@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -23,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.JobQueryObject;
 import mas.util.TableUtil;
@@ -136,7 +136,7 @@ public class GSAproxyGUI extends JFrame{
 	/**
 	 * @param j
 	 */
-	public void addCompletedJob(job j) {
+	public void addCompletedJob(Batch j) {
 		
 		if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.removeElement(j);
@@ -159,7 +159,7 @@ public class GSAproxyGUI extends JFrame{
 			if (menu == menuItemQuery) {
 				currentSelecetdQueryJob = jobsInSystemTable.getSelectedRow();
 				
-				gAgent.queryJob((job) acceptedJobVector.get(currentSelecetdQueryJob));
+				gAgent.queryJob((Batch) acceptedJobVector.get(currentSelecetdQueryJob));
 
 			} 
 		}
@@ -238,13 +238,13 @@ public class GSAproxyGUI extends JFrame{
 		@Override
 		public Object getValueAt(int row, int col) {
 			Object value;
-			job j = (job) acceptedJobVector.get(row);
+			Batch j = (Batch) acceptedJobVector.get(row);
 			switch(col) {
 			case 0:
-				value =j.getJobNo();
+				value =j.getBatchNumber();
 				break;
 			case 1:
-				value = j.getJobID();
+				value = j.getBatchId();
 				break;
 			case 2:
 				value = j.getCPN();
@@ -253,10 +253,10 @@ public class GSAproxyGUI extends JFrame{
 				value = j.getPenaltyRate();
 				break;
 			case 4:
-				value = j.getJobDuedatebyCust();
+				value = j.getDueDateByCustomer();
 				break;
 			case 5:
-				value = j.getOperations();
+				value = j.getSampleJob().getOperations();
 				break;
 			default:
 				value = "null";

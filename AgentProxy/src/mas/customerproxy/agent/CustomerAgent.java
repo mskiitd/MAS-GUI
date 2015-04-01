@@ -1,9 +1,7 @@
 package mas.customerproxy.agent;
 
 import jade.core.AID;
-
 import javax.swing.SwingUtilities;
-
 import mas.customerproxy.goal.CancelOrderGoal;
 import mas.customerproxy.goal.ChangeDueDateGoal;
 import mas.customerproxy.goal.CustomerSendNegotiationJobGoal;
@@ -11,13 +9,10 @@ import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
 
@@ -36,21 +31,21 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		addGoal(new dispatchJobGoal());
 	}
 	
-	public void cancelOrder(job j) {
+	public void cancelOrder(Batch j) {
 		log.info("Cancelling order : " + j + " adding belief base");
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CANCEL_ORDER, j);
 		
 		addGoal(new CancelOrderGoal());
 	}
 	
-	public void changeDueDate(job j) {
+	public void changeDueDate(Batch j) {
 		log.info("Change due date for order : " + j + " adding belief base");
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB, j);
 		
 		addGoal(new ChangeDueDateGoal());
 	}
 	
-	public void confirmJob(job j) {
+	public void confirmJob(Batch j) {
 		log.info("Adding Confirmed job " + j + " to belief base");
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_CONFIRMED_JOB, j);
 		
@@ -60,7 +55,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		CustomerAgent.mygui.addAcceptedJob(j);
 	}
 	
-	public void negotiateJob(job j) {
+	public void negotiateJob(Batch j) {
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB, j);
 		this.addGoal(new CustomerSendNegotiationJobGoal());
 	}

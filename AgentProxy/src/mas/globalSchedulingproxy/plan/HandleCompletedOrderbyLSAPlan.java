@@ -9,7 +9,7 @@ import jade.lang.acl.UnreadableException;
 import java.util.Date;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
-import mas.globalSchedulingproxy.gui.GSAproxyGUI;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -41,7 +41,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 
 	// The counter of replies from seller agents
 	private int repliesCnt = 0; 
-	private job order;
+	private Batch order;
 	private String dueDateMethod = null;
 
 	@Override
@@ -56,7 +56,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 
 		ACLMessage msg = ((MessageGoal) PI.getGoal()).getMessage();
 		try {
-			order = (job) (msg.getContentObject());
+			order = (Batch) (msg.getContentObject());
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
@@ -68,7 +68,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(MessageIds.msgbidForJob),
 				MessageTemplate.MatchReplyWith(msgReplyID));
 		
-		if(order.isComplete()){
+		if(order.isBatchComplete()) {
 			step = 3;
 		}
 	}
@@ -83,7 +83,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 
 			if (MachineCount != 0) {
 				//				log.info("due date: "+order.getDuedate());
-				order.setJobStartTimeByCust(new Date(System.currentTimeMillis()));
+				order.setStartTime(System.currentTimeMillis());
 
 				ZoneDataUpdate zdu = new ZoneDataUpdate.
 						Builder(ID.GlobalScheduler.ZoneData.askBidForJobFromLSA).
@@ -121,8 +121,8 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			try {
 
 				ACLMessage BestBid = ChooseBid(LSAbids);
-				job JobForBidWinner = (job) (BestBid.getContentObject());
-				JobForBidWinner.setBidWinnerLSA(JobForBidWinner.getLSABidder());
+				Batch JobForBidWinner = (Batch) (BestBid.getContentObject());
+				JobForBidWinner.setWinnerLSA(JobForBidWinner.getLSABidder());
 
 				log.info(JobForBidWinner.getLSABidder().getLocalName() + " won bid with " + 
 						JobForBidWinner.getBidByLSA());
@@ -151,7 +151,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			
 			GlobalSchedulingAgent.mygui.addCompletedJob(order);
 			step = 4;
-			log.info("all operations of " + order.getJobNo() + " completed");
+			log.info("all operations of " + order.getBatchNumber() + " completed");
 			break;
 		}
 	}

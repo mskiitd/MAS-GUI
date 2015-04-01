@@ -396,7 +396,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 				log.info("data format : " + dataOk);
 				if(dataOk) {
 					log.info("Confirming the job : " + populatingJob);
-					cAgent.confirmJob(populatingJob);
+					cAgent.confirmJob(generatedBatch);
 					dispose();
 				}
 
@@ -406,7 +406,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 				log.info("data format : " + dataOk);
 				if(dataOk) {
 					log.info("Negotiating the job : " + populatingJob);
-					cAgent.negotiateJob(populatingJob);
+					cAgent.negotiateJob(generatedBatch);
 					dispose();
 				}
 			}

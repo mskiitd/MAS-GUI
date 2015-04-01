@@ -6,15 +6,12 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -38,12 +35,12 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	// The counter of replies from seller agents
 	private int repliesCnt = 0; 
 	private Batch JobToSend;
-	private long CumulativeWaitingTime=0;
+	private long CumulativeWaitingTime = 0;
 	private BeliefBase bfBase;
 
 	@Override
 	public void init(PlanInstance PI) {
-		log=LogManager.getLogger();
+		log = LogManager.getLogger();
 
 		try {
 			dummyJob = (Batch)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
@@ -69,19 +66,19 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			this.MachineCount = (int) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
 			getValue();
 
-			if(MachineCount!=0){
+			if(MachineCount != 0) {
 				step = 1;
 			}
 			break;
 
 		case 1:
 
-			ZoneDataUpdate update=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GetWaitingTime)
+			ZoneDataUpdate update = new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GetWaitingTime)
 			.value(dummyJob).setReplyWith(msgReplyID).Build();
 			AgentUtil.sendZoneDataUpdate(blackboard, update, myAgent);
-			WaitingTime=new ACLMessage[MachineCount];
+			WaitingTime = new ACLMessage[MachineCount];
 
-			step=2;
+			step = 2;
 			break;
 
 		case 2:
@@ -94,7 +91,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 					if (repliesCnt == MachineCount) {				
 						step = 3; 
-						repliesCnt=0;
+						repliesCnt = 0;
 					}
 				}
 				else {
@@ -107,16 +104,15 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			break;
 		case 3:
 			try {
-				ACLMessage max=getWorstWaitingTime(WaitingTime);
-				CumulativeWaitingTime=CumulativeWaitingTime+
+				ACLMessage max = getWorstWaitingTime(WaitingTime);
+				CumulativeWaitingTime = CumulativeWaitingTime +
 						((Batch)max.getContentObject()).getWaitingTime();
 
-				JobToSend=(Batch)(max.getContentObject());
+				JobToSend = (Batch)(max.getContentObject());
 
-				dummyJob.incrementCurrentJob();
-				//				log.info(dummyJob.getCurrentOperationNumber()+"/"+dummyJob.getOperations().size());
+				if(dummyJob.getSampleJob().getCurrentOperationNumber() < 
+						dummyJob.getSampleJob().getOperations().size()) {
 
-				if(dummyJob.getCurrentJobNo() < dummyJob.getBatchCount()) {
 					step = 1;
 				}
 				else {
@@ -126,15 +122,14 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
-
 			break;
 
 		case 4:
-			JobToSend.setCurrentOperationNumber(0);
+			JobToSend.getSampleJob().setCurrentOperationNumber(0);
 			JobToSend.setWaitingTime(CumulativeWaitingTime);
 
 			if(JobToSend.getWaitingTime() < 0) {
-				log.info("cannot process Batch no "+JobToSend.getBatchNumber() );
+				log.info("cannot process Batch no " + JobToSend.getBatchNumber() );
 			}
 			else{
 				log.info("sending waiting time:" + CumulativeWaitingTime + " ms");
@@ -142,21 +137,21 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				.value(JobToSend).setReplyWith(msgReplyID).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);	
 			}
-			step=5;
+			step = 5;
 			break;
 
 		}   
 	}
 
 	public ACLMessage getWorstWaitingTime(ACLMessage[] WaitingTime ) {
-		ACLMessage MaxwaitingTimeMsg=WaitingTime[0]; 
-		for(int i = 0; i<WaitingTime.length;i++){
+		ACLMessage MaxwaitingTimeMsg = WaitingTime[0]; 
+		for(int i = 0; i < WaitingTime.length; i++){
 
 			try {
-				if(((job)(WaitingTime[i].getContentObject())).
-						getWaitingTime() > ((job)(MaxwaitingTimeMsg.
+				if(((Batch)(WaitingTime[i].getContentObject())).
+						getWaitingTime() > ((Batch)(MaxwaitingTimeMsg.
 								getContentObject())).getWaitingTime()){
-					MaxwaitingTimeMsg=WaitingTime[i];
+					MaxwaitingTimeMsg = WaitingTime[i];
 				}
 			} catch (UnreadableException e) {
 				e.printStackTrace();
