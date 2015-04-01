@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import mas.jobproxy.Batch;
 import mas.jobproxy.OperationType;
 import mas.jobproxy.job;
 import mas.jobproxy.jobOperation;
@@ -22,7 +21,7 @@ import uiconstants.Labels;
 
 @SuppressWarnings("serial")
 public class DefineJobOperationsFrame extends JFrame{
-	private Batch passedBatch;
+	private job passedBatch;
 
 	private JScrollPane scroller;
 	private JPanel myPanel;
@@ -48,14 +47,14 @@ public class DefineJobOperationsFrame extends JFrame{
 	private boolean dataOk = false;
 	private String jobIdJob;
 
-	public DefineJobOperationsFrame(Batch passedJob, int numOps, Batch populatingBatch) {
+	public DefineJobOperationsFrame(job passedJob, int numOps, job populatingJob) {
 
 		this.passedBatch = passedJob;
 		this.NumOps = numOps;
 
-		if(populatingBatch != null) {
-			batchOperations = populatingBatch.getSampleJob().getOperations();
-			jobIdJob = passedJob.getBatchId().split("o")[0];
+		if(populatingJob != null) {
+			batchOperations = populatingJob.getOperations();
+			jobIdJob = passedJob.getJobID().split("o")[0];
 		}
 
 		this.scroller = new JScrollPane();

@@ -4,19 +4,14 @@ import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-
 import java.util.ArrayList;
-
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -24,7 +19,7 @@ import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
 /**
- * @author Anand Prajapati
+ *  @author Anand Prajapati
  *	Sends average waiting time for the new job to global scheduling agent
  *  Based on this waiting time global scheduling accepts/negotiates the job 
  *  from customer
@@ -93,8 +88,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		long WaitingTime = 0;
 
 		for(int i = 0; i < jobQueue.size(); i++) {
-			WaitingTime = WaitingTime + jobQueue.get(i).getSampleJob().getCurrentOperationProcessTime()*
-					jobQueue.get(i).getBatchCount();
+			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessingTime();
 		}
 
 		if(operationdb.contains(j.getSampleJob().getCurrentOperation().getJobOperationType()) ) {

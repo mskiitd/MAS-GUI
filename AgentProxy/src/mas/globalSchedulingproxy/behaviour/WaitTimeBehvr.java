@@ -5,20 +5,22 @@ package mas.globalSchedulingproxy.behaviour;
  * 
  * */
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import bdi4jade.core.BDIAgent;
-import mas.jobproxy.job;
-import mas.util.AgentUtil;
-import mas.util.ID;
-import mas.util.MessageIds;
-import mas.util.ZoneDataUpdate;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import mas.jobproxy.Batch;
+import mas.jobproxy.job;
+import mas.util.AgentUtil;
+import mas.util.ID;
+import mas.util.MessageIds;
+import mas.util.ZoneDataUpdate;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import bdi4jade.core.BDIAgent;
 
 public class WaitTimeBehvr extends Behaviour {
 	private static final long serialVersionUID = 1L;
@@ -83,20 +85,20 @@ public class WaitTimeBehvr extends Behaviour {
 				ACLMessage max=WaitingTime[0];
 				for(int i = 0; i<WaitingTime.length;i++){
 
-					if(((job)(WaitingTime[i].getContentObject())).getWaitingTime() > ((job)(max.getContentObject())).getWaitingTime()){
+					if(((Batch)(WaitingTime[i].getContentObject())).getWaitingTime() > ((Batch)(max.getContentObject())).getWaitingTime()){
 						max=WaitingTime[i];
 					}
 
 				}
 
-				job JobToSend=(job)(max.getContentObject());
+				Batch JobToSend=(Batch)(max.getContentObject());
 
 				ACLMessage replyToCust = new ACLMessage(ACLMessage.PROPOSE);
 				if(JobToSend.getWaitingTime()<=JobToSend.getWaitingTime()){			
 
 				}
 				else{
-					log.info(JobToSend.getJobDuedatebyCust());
+					log.info(JobToSend.getDueDateByCustomer());
 					ZoneDataUpdate NegotiationUpdate=new ZoneDataUpdate.Builder
 							(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation).
 							value(JobToSend).Build();

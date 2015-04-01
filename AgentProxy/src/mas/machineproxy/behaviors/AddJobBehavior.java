@@ -52,6 +52,7 @@ public class AddJobBehavior extends Behaviour {
 
 				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessTime()/1000.0;
 
+				comingJob.setCurrentOperationStartTime(System.currentTimeMillis());
 				/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time before loading/unloading: " + comingJob.getCurrentOperationProcessTime());*/
 
@@ -64,7 +65,8 @@ public class AddJobBehavior extends Behaviour {
 										Methods.getunloadingTime(machineSimulator.getMeanUnloadingTime(),
 												machineSimulator.getSdUnloadingTime());
 
-				comingJob.setCurrentOperationProcessingTime((long)(1000*newProcessingTime)) ; //this will introduce error
+				//this will introduce error
+				comingJob.setCurrentOperationProcessingTime((long) newProcessingTime) ; 
 				//ex. 0.1 with be converted into 0
 
 				processingTime = comingJob.getCurrentOperationProcessTime();

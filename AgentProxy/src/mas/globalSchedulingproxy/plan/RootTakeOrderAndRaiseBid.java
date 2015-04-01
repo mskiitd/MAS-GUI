@@ -14,6 +14,7 @@ import jade.lang.acl.UnreadableException;
 import java.util.Date;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -45,7 +46,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 	// The counter of replies from seller agents
 	private int repliesCnt = 0; 
-	private job order;
+	private Batch order;
 	private String dueDateMethod=null;
 
 	public void init(PlanInstance PI) {
@@ -59,7 +60,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				getValue();
 
 		try {
-			order = (job) ((MessageGoal) PI.getGoal()).getMessage()
+			order = (Batch) ((MessageGoal) PI.getGoal()).getMessage()
 					.getContentObject();
 
 		} catch (UnreadableException e) {
@@ -68,7 +69,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		blackboard = (AID) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 
-		msgReplyID = Integer.toString(order.getJobNo());
+		msgReplyID = Integer.toString(order.getBatchNumber());
 
 		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(MessageIds.msgbidForJob)
 				, MessageTemplate.MatchReplyWith(msgReplyID));
@@ -88,10 +89,9 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			getValue();
 
 			if (MachineCount != 0) {
-
 				//				log.info("due date: "+order.getDuedate());
 
-				order.setJobStartTimeByCust(new Date(System.currentTimeMillis()));
+				order.setStartTimeMillis(System.currentTimeMillis());
 				order = SetDueDates(order);
 
 				ZoneDataUpdate zdu = new ZoneDataUpdate.
@@ -129,8 +129,8 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			try {
 
 				ACLMessage BestBid = ChooseBid(LSAbids);
-				job JobForBidWinner = (job) (BestBid.getContentObject());
-				JobForBidWinner.setBidWinnerLSA(JobForBidWinner.getLSABidder());
+				Batch JobForBidWinner = (Batch) (BestBid.getContentObject());
+				JobForBidWinner.setWinnerLSA(JobForBidWinner.getLSABidder());
 				log.info(JobForBidWinner.getLSABidder().getLocalName()+" won bid with " + 
 						JobForBidWinner.getBidByLSA());
 
@@ -151,14 +151,14 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		}
 	}
 
-	private job SetDueDates(job jobForBidWinner) {
+	private Batch SetDueDates(Batch jobForBidWinner) {
 		long totalProcessingTime = jobForBidWinner.getTotalProcessingTime();
-		long totalAvailableTime = jobForBidWinner.getJobDuedatebyCust().getTime()
-				-jobForBidWinner.getStartTimeByCust().getTime();
+		long totalAvailableTime = jobForBidWinner.getDueDateByCustomer().getTime()
+				-jobForBidWinner.getStartTimeMillis();
 
-		long slack = totalAvailableTime-totalProcessingTime;
-		int NoOfOps = jobForBidWinner.getOperations().size();
-		long currTime = jobForBidWinner.getStartTimeByCust().getTime();
+		long slack = totalAvailableTime - totalProcessingTime;
+		int NoOfOps = jobForBidWinner.getNumOperations();
+		long currTime = jobForBidWinner.getStartTimeMillis();
 
 		//		log.info("due date "+new Date(jobForBidWinner.getJobDuedatebyCust().getTime())+
 		//				" start time "+new Date(jobForBidWinner.getStartTimeByCust().getTime()));
@@ -166,24 +166,30 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		if(dueDateMethod == ID.GlobalScheduler.OtherConst.LocalDueDate){
 			long slack_perOperation=(long)((double)slack)/(NoOfOps);
 
-			for(int i=0 ;i < NoOfOps; i++){
-				jobForBidWinner.getOperations().get(i).setStartTime(currTime);
-				currTime = currTime + jobForBidWinner.getOperations().get(i).
-						getProcessingTime() + slack_perOperation;
+			for(int i = 0 ; i < NoOfOps; i++){
+				jobForBidWinner.setCurrentOperationStartTime(currTime);
+				currTime += jobForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
+				jobForBidWinner.setCurrentOperationDueDate(currTime);
+//				jobForBidWinner.getOperations().get(i).setStartTimeMillis(currTime);
+//				currTime = currTime + jobForBidWinner.getOperations().get(i).
+//						getProcessingTime() + slack_perOperation;
 
-				jobForBidWinner.getOperations().get(i).setDueDate(currTime);
+//				jobForBidWinner.getOperations().get(i).setDueDate(currTime);
 			}
 
 
 		}
 		else if(dueDateMethod == ID.GlobalScheduler.OtherConst.GlobalDueDate) {
 			for(int i=0; i  <NoOfOps; i++) {
-				jobForBidWinner.getOperations().get(i).setStartTime(currTime);
-				currTime = currTime + jobForBidWinner.getOperations().get(i).getProcessingTime();
+				jobForBidWinner.setCurrentOperationStartTime(currTime);
+				currTime += jobForBidWinner.getCurrentOperationProcessingTime();
+//				jobForBidWinner.getOperations().get(i).setStartTimeMillis(currTime);
+//				currTime = currTime + jobForBidWinner.getOperations().get(i).getProcessingTime();
 				if(i == NoOfOps-1){
 					currTime = currTime + slack;
 				}
-				jobForBidWinner.getOperations().get(i).setDueDate(currTime);
+				jobForBidWinner.setCurrentOperationDueDate(currTime);
+//				jobForBidWinner.getOperations().get(i).setDueDate(currTime);
 			}
 		}
 		//		log.info("Job No "+jobForBidWinner.getJobNo()+" processing times:");
@@ -192,13 +198,14 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 	}
 
 	private ACLMessage ChooseBid(ACLMessage[] LSA_bids) {
-		
+
 		ACLMessage MinBid = LSA_bids[0];
 		for (int i = 0; i < LSA_bids.length; i++) {
 			try {
-				log.info(((job) (LSA_bids[i].getContentObject())).getLSABidder().getLocalName() +" sent bid= "+ ((job) (LSA_bids[i].getContentObject())).getBidByLSA());
+				log.info(((Batch) (LSA_bids[i].getContentObject())).getLSABidder().getLocalName() +" sent bid= " +
+						((Batch) (LSA_bids[i].getContentObject())).getBidByLSA());
 
-				if (((job) (LSA_bids[i].getContentObject())).getBidByLSA() < ((job) (MinBid
+				if (((Batch) (LSA_bids[i].getContentObject())).getBidByLSA() < ((Batch) (MinBid
 						.getContentObject())).getBidByLSA()) {
 					MinBid = LSA_bids[i];
 				}

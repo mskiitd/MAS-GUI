@@ -62,9 +62,6 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 			long duedate = (long) (startTime);
 
 			this.maintenanceJob = new job.Builder("0").
-					jobGenTime(System.currentTimeMillis()).
-					jobPenalty(1).
-					jobCPN(1).
 					jobDueDateTime(duedate).
 					build();
 

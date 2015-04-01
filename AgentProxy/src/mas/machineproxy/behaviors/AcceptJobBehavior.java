@@ -42,7 +42,7 @@ public class AcceptJobBehavior extends Behaviour {
 
 					log.info(" Job No : '" + jobToProcess.getJobNo() +
 							"'accepted with starting time : " +
-							jobToProcess.getStartTimeByCust()+" due date: "+jobToProcess.getJobDuedatebyCust());
+							jobToProcess.getStartTimeByCust() + " due date: " + jobToProcess.getJobDuedatebyCust());
 
 					AddJobBehavior addjob = new AddJobBehavior(this.jobToProcess);
 					addjob.setDataStore(getDataStore());

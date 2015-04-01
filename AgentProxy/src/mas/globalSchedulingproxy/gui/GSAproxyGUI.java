@@ -126,7 +126,7 @@ public class GSAproxyGUI extends JFrame{
 		JobQueryReplyFrame reply = new JobQueryReplyFrame(response);
 	}
 	
-	public void addAcceptedJobToList(job j) {
+	public void addAcceptedJobToList(Batch j) {
 		acceptedJobVector.addElement(j);
 		TableUtil.setColumnWidths(jobsInSystemTable);
 		jobsInSystemTable.revalidate();
@@ -286,13 +286,13 @@ public class GSAproxyGUI extends JFrame{
 		@Override
 		public Object getValueAt(int row, int col) {
 			Object value;
-			job j = (job) completedJobVector.get(row);
+			Batch j = (Batch) completedJobVector.get(row);
 			switch(col) {
 			case 0:
-				value = j.getJobNo();
+				value = j.getBatchNumber();
 				break;
 			case 1:
-				value = j.getJobID();
+				value = j.getBatchId();
 				break;
 			case 2:
 				value = j.getCPN();
@@ -301,10 +301,10 @@ public class GSAproxyGUI extends JFrame{
 				value = j.getPenaltyRate();
 				break;
 			case 4:
-				value = j.getJobDuedatebyCust();
+				value = j.getDueDateByCustomer();
 				break;
 			case 5:
-				value = j.getOperations();
+				value = j.getSampleJob().getOperations();
 				break;
 			default:
 				value = "null";

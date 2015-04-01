@@ -68,13 +68,13 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		//		log.info(comingJob.getBidWinnerLSA());
-		if(comingBatch.getBidWinnerLSA().equals(myAgent.getAID())) {
-			log.info("Adding the job to queue of machine of " + myAgent.getLocalName());
+		if(comingBatch.getWinnerLSA().equals(myAgent.getAID())) {
+			log.info("Adding the job to queue of machine, " + comingBatch.getBatchId());
 
-			comingBatch.setBatchProcessingTime(operationdb.
-					getOperationInfo(comingBatch.getBatchId()).
+			comingBatch.setCurrentOperationProcessingTime(operationdb.
+					getOperationInfo(comingBatch.getCurrentOperationType()).
 					getProcessingTime());
-
+			
 			jobQueue.add(comingBatch);
 			/**
 			 * update the belief base

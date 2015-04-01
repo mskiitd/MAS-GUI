@@ -14,10 +14,15 @@ import java.util.Date;
 public class Batch implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final double lowRegretMultiplier = 1,
+			MediumRegretMultiplier = 2,
+			HighRegretMultiplier = 3;
+
 	private ArrayList<job> jobsInBatch;
 	private String batchId = null;
-	private int batchNumber;
-	
+	private int batchNo;
+
 	private double CPN;
 	private double Cost;
 	private double penaltyRate;
@@ -25,6 +30,7 @@ public class Batch implements Serializable {
 	private long waitingTime;
 	private long startTime;
 	private long completionTime;
+	private Date generationTime;
 	private long batchProcessingTime;
 
 	private Date dueDateByCustomer;
@@ -33,14 +39,45 @@ public class Batch implements Serializable {
 	private AID LSABidder;
 	private double BidByLSA ;
 
+	public double slack;
+	private double regret;
+
 	private int currentJobIndex = 0;
-	private boolean isBatchComplete;
-	
+	private boolean isBatchComplete = false;;
+	private boolean isAllJobsComplete = false;
+
 	private int position;
 	private double profit;
+	private int currentOperationIndex = 0;
 
-	public Batch() {
+	public Batch(String batchId) {
+		this.batchId = batchId;
 		jobsInBatch = new ArrayList<job>();
+	}
+
+	public double getRegretMultiplier() {
+		if(this.regret < 1.0)
+			return lowRegretMultiplier;
+		else if( this.regret < 1.1)
+			return MediumRegretMultiplier;
+		else
+			return HighRegretMultiplier;
+	}
+
+	public double getSlack() {
+		return slack;
+	}
+
+	public void setSlack(double slack) {
+		this.slack = slack;
+	}
+
+	public double getRegret() {
+		return regret;
+	}
+
+	public void setRegret(double regret) {
+		this.regret = regret;
 	}
 
 	public double getCPN() {
@@ -82,7 +119,7 @@ public class Batch implements Serializable {
 	public void setPosition(int position) {
 		this.position = position;
 	}
-	
+
 	public long getBatchProcessingTime() {
 		return batchProcessingTime;
 	}
@@ -93,6 +130,14 @@ public class Batch implements Serializable {
 
 	public boolean isBatchComplete() {
 		return isBatchComplete;
+	}
+	
+	public boolean isAllJobsComplete() {
+		return this.isAllJobsComplete;
+	}
+	
+	public void resetJobsComplete() {
+		this.currentJobIndex = 0;
 	}
 
 	public job getCurrentJob() {
@@ -110,7 +155,9 @@ public class Batch implements Serializable {
 		 *  index for last job is 'size()-1'
 		 */
 		if(this.currentJobIndex >= this.jobsInBatch.size() ){
-			isBatchComplete = true;
+			isAllJobsComplete = true;
+		} else {
+			isAllJobsComplete = false;
 		}
 	}
 
@@ -121,7 +168,7 @@ public class Batch implements Serializable {
 	public void setWinnerLSA(AID winnerLSA) {
 		WinnerLSA = winnerLSA;
 	}
-	
+
 	public double getProfit() {
 		return profit;
 	}
@@ -145,7 +192,7 @@ public class Batch implements Serializable {
 	public void setDueDateByCustomer(Date dueDateByCustomer) {
 		this.dueDateByCustomer = dueDateByCustomer;
 	}
-	
+
 	public void setDueDateMillisByCustomer(long dueDateByCustomer) {
 		this.dueDateByCustomer = new Date(dueDateByCustomer);
 	}
@@ -158,11 +205,11 @@ public class Batch implements Serializable {
 		this.waitingTime = waitingTime;
 	}
 
-	public long getStartTime() {
+	public long getStartTimeMillis() {
 		return startTime;
 	}
 
-	public void setStartTime(long startTime) {
+	public void setStartTimeMillis(long startTime) {
 		this.startTime = startTime;
 	}
 
@@ -175,11 +222,11 @@ public class Batch implements Serializable {
 	}
 
 	public int getBatchNumber() {
-		return batchNumber;
+		return batchNo;
 	}
 
 	public void setBatchNumber(int batchNumber) {
-		this.batchNumber = batchNumber;
+		this.batchNo = batchNumber;
 	}
 
 	public void addJobToBatch(job j) {
@@ -187,6 +234,18 @@ public class Batch implements Serializable {
 		if(batchId == null) {
 			batchId = j.getJobID();
 		}
+	}
+
+	public Date getGenerationTime() {
+		return generationTime;
+	}
+
+	public void setGenerationTime(Date generationTime) {
+		this.generationTime = generationTime;
+	}
+
+	public void setGenerationTime(long generationTime) {
+		this.generationTime = new Date(generationTime);
 	}
 
 	public int getBatchCount() {
@@ -223,13 +282,96 @@ public class Batch implements Serializable {
 		return null;
 	}
 
-	public Object getBidWinnerLSA() {
-		return null;
+	public int getCurrentOperationNumber() {
+		return currentOperationIndex;
 	}
 
-	public void IncrementAllOperationNumber() {
-		for(int i = 0; i < jobsInBatch.size(); i ++) {
+	public String getCurrentOperationType() {
+		return getSampleJob().getCurrentOperation().getJobOperationType();
+	}
+
+	/**
+	 * increment current operation index by 1 
+	 */
+
+	public void IncrementOperationNumber() {
+		this.currentOperationIndex ++ ;
+		for(int i = 0; i < jobsInBatch.size(); i++) {
 			jobsInBatch.get(i).IncrementOperationNumber();
 		}
+		/**
+		 *  if index becomes >= the size of the operations it means all operations are done
+		 *  index for last operation is 'size()-1'
+		 */
+		if(this.currentOperationIndex >= this.getSampleJob().getOperations().size() ) {
+			isBatchComplete = true;
+		} else {
+			this.isBatchComplete = false;
+		}
 	}
+
+	/**
+	 * set Start time of current operation for the batch i.e.
+	 * set start time of current operation for first job in the batch 
+	 * @param startTime
+	 */
+	public void setCurrentOperationStartTime(long startTime) {
+		this.getSampleJob().getOperations().get(currentOperationIndex).setStartTime(startTime);
+	}
+
+	/**
+	 * get Start time of current operation for the batch i.e.
+	 * get start time of current operation for first job in the batch 
+	 */
+	public long getCurrentOperationStartTime() {
+		return this.getSampleJob().getOperations().get(currentOperationIndex ).getStartTime();
+	}
+
+	/**
+	 * set completion time of current operation for the batch i.e.
+	 * set completion time of current operation for first job in the batch 
+	 * @param completiontime
+	 */
+
+	public void setCurrentOperationCompletionTime(long completionTime) {
+		this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
+		get(currentOperationIndex).setCompletionTime(completionTime);
+	}
+
+	public long getCurrentOperationCompletionTime() {
+		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
+				get(currentOperationIndex).getCompletionTime();
+	}
+
+	/**
+	 * @return processing time for current operation of whole batch
+	 */
+	public long getCurrentOperationProcessingTime() {
+		return this.getSampleJob().getCurrentOperationProcessTime() * getBatchCount();
+	}
+
+	public void setCurrentOperationProcessingTime(long processingTime) {
+		for(int i = 0; i < jobsInBatch.size() ; i++ ) {
+			this.jobsInBatch.get(i).setCurrentOperationProcessingTime(processingTime);
+		}
+	}
+
+	public void setCurrentOperationDueDate(long dueDate) {
+		this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
+		get(currentOperationIndex).setDueDate(dueDate);
+	}
+
+	public long getCurrentOperationDueDate() {
+		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
+				get(currentOperationIndex).getDueDate();
+	}
+
+	public long getTotalProcessingTime() {
+		return this.getSampleJob().getTotalProcessingTime()*getBatchCount();
+	}
+
+	public int getNumOperations() {
+		return getSampleJob().getOperations().size();
+	}
+
 }

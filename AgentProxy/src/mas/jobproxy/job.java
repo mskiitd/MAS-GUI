@@ -11,7 +11,6 @@ public class job implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	//Required parameters
 	private int jobNo;
 	private String jobID;
 
@@ -26,16 +25,13 @@ public class job implements Serializable {
 	private boolean IsComplete = false;
 
 	public static class Builder {
-		//Required parameters
 		private int jobNo;
 		private String jobID;
-		private double CPN;
-		private double Cost;
-		private double Penalty;
-		private Date custdDate; //due date mentioned by customer for job 
+		//due date mentioned by customer for job
+		private Date custdDate;  
 		//this will be same as due date of last operation for local due date calculation
-		private Date custStartDate;//start date of job given by customer i.e. start time of 1st operation
-		private Date genTime;
+		//start date of job given by customer i.e. start time of 1st operation
+		private Date custStartDate;
 		// Optional parameters - initialized to default values
 		private ArrayList<jobOperation> jOperations;
 
@@ -43,15 +39,6 @@ public class job implements Serializable {
 			this.jobID = jobID;
 			this.jOperations = new ArrayList<jobOperation>();
 		}
-
-		public Builder jobCost(double val)
-		{ Cost = val; return this; }
-
-		public Builder jobCPN(double val)
-		{ CPN = val; return this; }
-
-		public Builder jobPenalty(double val)
-		{ Penalty = val; return this; }
 
 		public Builder jobDueDateTime(Date val)
 		{ custdDate = val; return this; }
@@ -63,12 +50,6 @@ public class job implements Serializable {
 			custStartDate = new Date(val);
 			return this;
 		}
-
-		public Builder jobGenTime(Date val)
-		{ genTime = val; return this; }
-
-		public Builder jobGenTime(Long val)
-		{ genTime = new Date(val); return this; }
 
 		public Builder jobOperation(ArrayList<jobOperation> val)
 		{ jOperations.addAll(val); return this; }
@@ -120,11 +101,11 @@ public class job implements Serializable {
 	public void setCurrentOperationDimension(ArrayList<jobDimension> jDim) {
 		this.operations.get(currentOperationNumber).setjDims(jDim);
 	}
-	
+
 	public void setCurrentOperationCompletionTime(long completionTime) {
 		this.operations.get(currentOperationNumber).setCompletionTime(completionTime);
 	}
-	
+
 	public long getCurrentOperationCompletionTime() {
 		return this.operations.get(currentOperationNumber).getCompletionTime();
 	}

@@ -54,8 +54,9 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 //		comingJob.setCurrentOperationDimension(jDimensions);
 		comingJob.setCompletionTime(System.currentTimeMillis());
 		
-		log.info("start time was " + new Date(comingJob.getStartTimeByCust().getTime()));
-		log.info("processed for "+ (comingJob.getCompletionTime().getTime()-comingJob.getStartTimeByCust().getTime()));
+		log.info("start time was " + comingJob.getStartTimeByCust() );
+		log.info("Completion time : " + comingJob.getCurrentOperationDueDate());
+//		log.info("processed for "+ (comingJob.getCompletionTime().getTime() - comingJob.getStartTimeByCust().getTime()));
 
 		// send completed job to blackboard in handleCompletedJobBehavior
 		myAgent.addBehaviour(new HandleCompletedJobBehavior(comingJob));

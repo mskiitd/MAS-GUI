@@ -88,14 +88,15 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 	private Logger log;
 	private job generatedJob;
-	private Batch generatedBatch;
 
 	public CustomerNegotiateProxyGUI(CustomerAgent cAgent, Batch passedBatch) {
 
 		log = LogManager.getLogger();
 
-		generatedBatch = new Batch();
 		this.populatingBatch = passedBatch;
+		if(populatingBatch != null) {
+			generatedJob = populatingBatch.getSampleJob();
+		}
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
@@ -268,11 +269,11 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			generatedBatch.setBatchId(populatingBatch.getBatchId());
-			generatedBatch.clearAllJobs();
+			populatingBatch.setBatchId(populatingBatch.getBatchId());
+			populatingBatch.clearAllJobs();
 			int bSize = Integer.parseInt(txtBatchSize.getText());
 			for(int i = 0; i < bSize ; i++ ) {
-				generatedBatch.addJobToBatch(generatedJob);
+				populatingBatch.addJobToBatch(generatedJob);
 			}
 		}
 
@@ -328,7 +329,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			populatingJob.setPenaltyRate(Double.parseDouble(
+			populatingBatch.setPenaltyRate(Double.parseDouble(
 					txtPenaltyRate.getText() ) );
 		}
 		return status;
@@ -341,7 +342,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			generatedBatch.setCPN(Double.parseDouble(
+			populatingBatch.setCPN(Double.parseDouble(
 					txtCPN.getText() ) );
 		}
 		return status;
@@ -355,7 +356,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 			if(operationDataOk) {
 				DefineJobOperationsFrame ops = new 
-						DefineJobOperationsFrame(generatedBatch, NumOps, populatingBatch);
+						DefineJobOperationsFrame(populatingBatch.getSampleJob(), NumOps, populatingBatch.getSampleJob());
 			}
 		}
 	}
@@ -395,8 +396,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 				createJobFromParams();
 				log.info("data format : " + dataOk);
 				if(dataOk) {
-					log.info("Confirming the job : " + populatingJob);
-					cAgent.confirmJob(generatedBatch);
+					log.info("Confirming the job : " + generatedJob);
+					cAgent.confirmJob(populatingBatch);
 					dispose();
 				}
 
@@ -405,8 +406,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 				createJobFromParams();
 				log.info("data format : " + dataOk);
 				if(dataOk) {
-					log.info("Negotiating the job : " + populatingJob);
-					cAgent.negotiateJob(generatedBatch);
+					log.info("Negotiating the job : " + populatingBatch);
+					cAgent.negotiateJob(populatingBatch);
 					dispose();
 				}
 			}

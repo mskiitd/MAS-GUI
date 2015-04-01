@@ -197,22 +197,22 @@ public class GSANegotiateProxyGUI extends JFrame{
 
 	private void _populate() {
 		if(populatingJob != null) {
-			txtJobID.setText(populatingJob.getJobID());
+			txtJobID.setText(populatingBatch.getBatchId());
 			txtJobID.setEnabled(false);
 
-			txtJobNo.setText(String.valueOf(populatingJob.getJobNo()));
+			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
 			txtJobNo.setEnabled(false);
 
-			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
+			txtCPN.setText(String.valueOf(populatingBatch.getCPN()));
 			txtCPN.setEnabled(false);
 
-			txtPenaltyRate.setText(String.valueOf(populatingJob.getPenaltyRate()));
+			txtPenaltyRate.setText(String.valueOf(populatingBatch.getPenaltyRate()));
 			txtPenaltyRate.setEnabled(false);
 
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
 			txtNumOps.setEnabled(false);
 
-			timeSpinner.setValue(populatingJob.getJobDuedatebyCust());
+			timeSpinner.setValue(populatingBatch.getDueDateByCustomer());
 			
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 		}
@@ -292,7 +292,7 @@ public class GSANegotiateProxyGUI extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			populatingJob.setPenaltyRate(Double.parseDouble(
+			populatingBatch.setPenaltyRate(Double.parseDouble(
 					txtPenaltyRate.getText() ) );
 		}
 		return status;
@@ -305,7 +305,7 @@ public class GSANegotiateProxyGUI extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			populatingJob.setCPN(Double.parseDouble(
+			populatingBatch.setCPN(Double.parseDouble(
 					txtCPN.getText() ) );
 		}
 		return status;

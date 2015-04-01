@@ -10,8 +10,10 @@ import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -63,7 +65,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		switch (step) {
 		case 0:
 
-			this.MachineCount = (int) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
+			this.MachineCount = (int) bfBase.
+			getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
 			getValue();
 
 			if(MachineCount != 0) {
@@ -82,7 +85,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			break;
 
 		case 2:
-			try{
+			try {
 				ACLMessage reply = myAgent.receive(mt);
 				if (reply != null) {
 					WaitingTime[repliesCnt]=reply;
@@ -104,13 +107,16 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			break;
 		case 3:
 			try {
+				
 				ACLMessage max = getWorstWaitingTime(WaitingTime);
 				CumulativeWaitingTime = CumulativeWaitingTime +
 						((Batch)max.getContentObject()).getWaitingTime();
 
+				log.info("stuck ger -----------------");
 				JobToSend = (Batch)(max.getContentObject());
-
-				if(dummyJob.getSampleJob().getCurrentOperationNumber() < 
+				dummyJob.IncrementOperationNumber();
+				
+				if(dummyJob.getCurrentOperationNumber() < 
 						dummyJob.getSampleJob().getOperations().size()) {
 
 					step = 1;

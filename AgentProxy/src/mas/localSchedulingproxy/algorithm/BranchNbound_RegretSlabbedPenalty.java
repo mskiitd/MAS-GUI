@@ -123,7 +123,7 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 
 			Batch j = this.state.get(depth-1);
 			double latenessPenalty = (makeSpan - j.getSampleJob().getCurrentOperationDueDate()) * j.getCPN() * 
-					j.getSampleJob().getRegretMultiplier();
+					j.getRegretMultiplier();
 
 			if(latenessPenalty < 0) {
 				//				System.out.println("negative " + lateness + "with "+parent.penalty);
@@ -195,14 +195,14 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 		int elements = node.depth;
 		double lateness;					
 		for ( int i = 0; i < elements ; i++){
-			lateness =	node.state.get(i).getSampleJob().getCurrentOperationStartTime() +
-					node.state.get(i).getSampleJob().getCurrentOperationProcessTime()*node.state.get(i).getBatchCount() -
-					node.state.get(i).getSampleJob().getCurrentOperationDueDate();
+			lateness =	node.state.get(i).getCurrentOperationStartTime() +
+					node.state.get(i).getCurrentOperationProcessingTime() -
+					node.state.get(i).getCurrentOperationDueDate();
 
 			if(lateness < 0)
 				lateness = 0;
 
-			node.state.get(i).getSampleJob().setRegret(lateness/node.state.get(i).getSampleJob().getSlack());
+			node.state.get(i).setRegret(lateness/node.state.get(i).getSlack());
 		}
 	}
 

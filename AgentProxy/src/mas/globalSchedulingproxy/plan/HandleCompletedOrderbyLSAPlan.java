@@ -83,7 +83,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 
 			if (MachineCount != 0) {
 				//				log.info("due date: "+order.getDuedate());
-				order.setStartTime(System.currentTimeMillis());
+				order.setStartTimeMillis(System.currentTimeMillis());
 
 				ZoneDataUpdate zdu = new ZoneDataUpdate.
 						Builder(ID.GlobalScheduler.ZoneData.askBidForJobFromLSA).
@@ -166,9 +166,10 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 		ACLMessage MinBid = LSA_bids[0];
 		for (int i = 0; i < LSA_bids.length; i++) {
 			try {
-				log.info(((job) (LSA_bids[i].getContentObject())).getLSABidder().getLocalName() +" sent bid= "+ ((job) (LSA_bids[i].getContentObject())).getBidByLSA());
+				log.info(((Batch) (LSA_bids[i].getContentObject())).getLSABidder().getLocalName() + 
+						" sent bid= "+ ((Batch) (LSA_bids[i].getContentObject())).getBidByLSA());
 
-				if (((job) (LSA_bids[i].getContentObject())).getBidByLSA() < ((job) (MinBid
+				if (((Batch) (LSA_bids[i].getContentObject())).getBidByLSA() < ((Batch) (MinBid
 						.getContentObject())).getBidByLSA()) {
 					MinBid = LSA_bids[i];
 				}

@@ -3,12 +3,14 @@ package mas.customerproxy.agent;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
-import mas.jobproxy.OperationType;
+
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
-import mas.jobproxy.jobDimension;
 import mas.jobproxy.jobOperation;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -46,21 +48,24 @@ public class Jobloader {
 		this.jobFilePath = System.getProperty("user.dir");
 	}
 
-	public Vector<job> getjobVector() {
-		Vector<job> jobs = new Vector<job>();
+	public Vector<Batch> getjobVector() {
+		Vector<Batch> jobs = new Vector<Batch>();
 
 		for(int index = 0 ; index < jobIdList.size() ; index ++){
 
 			job j = new job.Builder(jobIdList.get(index))
-			.jobCPN(jobCPNs.get(index))
 			.jobOperation(this.jobOperations.get(index))
-			.jobPenalty(this.jobPenaltyRate.get(index))
 			.jobDueDateTime(this.jobDueDates.get(index))
 			.build() ;
 
 			j.setJobNo(countJob++);
 
-			jobs.add(j);
+			Batch batch = new Batch(jobIdList.get(index));
+			batch.addJobToBatch(j);
+			batch.setCPN(this.jobCPNs.get(index));
+			batch.setPenaltyRate(this.jobPenaltyRate.get(index));
+			batch.setDueDateByCustomer(new Date(this.jobDueDates.get(index)) );
+			jobs.add(batch);
 		}
 		return jobs;
 	}

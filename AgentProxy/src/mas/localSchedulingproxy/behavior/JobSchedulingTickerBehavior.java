@@ -65,21 +65,17 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 		for ( int i = 0; i < qSize ; i++) {
 			double batchLateness = 0;
-			Batch currentBatch = jobQueue.get(i);
-			for(int jobIndex = 0 ; jobIndex < currentBatch.getBatchCount() ; jobIndex ++ ) {
-				
-				job currentJobInBatch = currentBatch.getJobsInBatch().get(jobIndex);
-				batchLateness =	currentJobInBatch.getCurrentOperationStartTime() +
-						currentJobInBatch.getCurrentOperationProcessTime() -
-						currentJobInBatch.getCurrentOperationDueDate();
 
-				if(batchLateness < 0)
-					batchLateness = 0;
+			batchLateness =	jobQueue.get(i).getCurrentOperationStartTime() +
+					jobQueue.get(i).getCurrentOperationProcessingTime() -
+					jobQueue.get(i).getCurrentOperationDueDate();
 
-				currentJobInBatch.setRegret(batchLateness/currentJobInBatch.getSlack());
-				totalRegret += currentJobInBatch.getRegret();
-			}
-//			lateness += batchLateness;
+			if(batchLateness < 0)
+				batchLateness = 0;
+
+			jobQueue.get(i).setRegret(batchLateness/jobQueue.get(i).getSlack());
+			totalRegret += jobQueue.get(i).getRegret();
+			//			lateness += batchLateness;
 		}
 
 		if(totalRegret > regretThreshold) {

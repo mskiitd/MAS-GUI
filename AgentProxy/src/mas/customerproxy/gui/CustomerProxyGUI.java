@@ -47,7 +47,7 @@ public class CustomerProxyGUI extends JFrame{
 	private JTable jobChooserTable;
 	private Jobloader loader;
 	private tableModel jobChooserTableModel;
-	private Vector<job> jobVector;
+	private Vector<Batch> jobVector;
 	private Vector<String> tableHeadersVector;
 	private JPanel jobGenPanel, buttonPanel;
 
@@ -295,7 +295,7 @@ public class CustomerProxyGUI extends JFrame{
 				if(currentJobToSend == -1)
 					jobFrame = new DefineJobFrame(cAgent,null);
 				else {
-					job j = jobVector.get(currentJobToSend);
+					Batch j = jobVector.get(currentJobToSend);
 					jobFrame = new DefineJobFrame(cAgent,j);
 				}
 			}
@@ -317,13 +317,13 @@ public class CustomerProxyGUI extends JFrame{
 		@Override
 		public Object getValueAt(int row, int col) {
 			Object value;
-			job j = jobVector.get(row);
+			Batch j = jobVector.get(row);
 			switch(col) {
 			case 0:
-				value = j.getJobID();
+				value = j.getBatchId();
 				break;
 			case 1:
-				value = j.getOperations();
+				value = j.getSampleJob().getOperations();
 				break;
 			case 2:
 				value = j.getCPN();
@@ -359,13 +359,13 @@ public class CustomerProxyGUI extends JFrame{
 		@Override
 		public Object getValueAt(int row, int col) {
 			Object value;
-			job j = (job) acceptedJobVector.get(row);
+			Batch j = (Batch) acceptedJobVector.get(row);
 			switch(col) {
 			case 0:
-				value = j.getJobID();
+				value = j.getBatchId();
 				break;
 			case 1:
-				value = j.getOperations();
+				value = j.getSampleJob().getOperations();
 				break;
 			case 2:
 				value = j.getCPN();
@@ -374,7 +374,7 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getPenaltyRate();
 				break;
 			case 4:
-				value = j.getJobDuedatebyCust();
+				value = j.getDueDateByCustomer();
 				break;
 			default:
 				value = "null";
@@ -405,13 +405,13 @@ public class CustomerProxyGUI extends JFrame{
 		@Override
 		public Object getValueAt(int row, int col) {
 			Object value;
-			job j = (job) completedJobVector.get(row);
+			Batch j = (Batch) completedJobVector.get(row);
 			switch(col) {
 			case 0:
-				value = j.getJobID();
+				value = j.getBatchId();
 				break;
 			case 1:
-				value = j.getOperations();
+				value = j.getSampleJob().getOperations();
 				break;
 			case 2:
 				value = j.getCPN();
@@ -420,7 +420,7 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getPenaltyRate();
 				break;
 			case 4:
-				value = j.getJobDuedatebyCust();
+				value = j.getDueDateByCustomer();
 				break;
 			default:
 				value = "null";

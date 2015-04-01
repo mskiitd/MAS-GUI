@@ -46,7 +46,6 @@ public class DefineJobFrame extends JFrame{
 
 	private CustomerAgent cAgent;
 	private job generatedJob;
-	private Batch generatedBatch;
 	private BufferedImage plusButtonIcon;
 
 	private JScrollPane scroller;
@@ -76,18 +75,17 @@ public class DefineJobFrame extends JFrame{
 	private FormattedDoubleField txtPenalty;
 	private FormattedIntegerField txtBatchSize;
 
-	private job populatingJob;
+	private Batch populatingBatch;
 	private boolean dataOk = true;
 	private boolean operationDataOk = false;
 
 	private Logger log;
 
-	public DefineJobFrame(CustomerAgent cAgent, job populatingJob) {
+	public DefineJobFrame(CustomerAgent cAgent, Batch passedBatch) {
 
 		log = LogManager.getLogger();
 
-		this.populatingJob = populatingJob;
-		this.generatedBatch = new Batch();
+		this.populatingBatch = passedBatch;
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
@@ -180,11 +178,11 @@ public class DefineJobFrame extends JFrame{
 	}
 
 	private void _populate() {
-		if(populatingJob != null) {
-			txtJobID.setText(populatingJob.getJobID());
-			txtCPN.setText(String.valueOf(populatingJob.getCPN()));
-			txtPenalty.setText(String.valueOf(populatingJob.getPenaltyRate()));
-			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
+		if(populatingBatch != null) {
+			txtJobID.setText(populatingBatch.getBatchId() );
+			txtCPN.setText(String.valueOf(populatingBatch.getCPN()) );
+			txtPenalty.setText(String.valueOf(populatingBatch.getPenaltyRate()) );
+			txtNumOps.setText(String.valueOf(populatingBatch.getSampleJob().getOperations().size()) );
 		}
 	}
 
@@ -196,13 +194,14 @@ public class DefineJobFrame extends JFrame{
 				x1 = false;
 			}else {
 				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+				populatingBatch.setBatchId(txtJobID.getText().toString());
 				boolean x2 = false,x3 = false,x4 = false,x5 = false;
 				x2 = checkPenaltyRate();
 				if(x2) {
 					x3 = checkCPN();
 				}
-				generatedJob.setGenerationTime(new Date());
-				generatedJob.setJobNo(CustomerProxyGUI.countBatch);
+				populatingBatch.setGenerationTime(new Date());
+				populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
 				if(x2 & x3) {
 					x4 = checkDueDate();
 
@@ -224,8 +223,8 @@ public class DefineJobFrame extends JFrame{
 			if(x2) {
 				x3 = checkCPN();
 			}
-			generatedJob.setGenerationTime(new Date());
-			generatedJob.setJobNo(CustomerProxyGUI.countBatch);
+			populatingBatch.setGenerationTime(new Date());
+			populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
 			if(x2 & x3) {
 				x4 = checkDueDate();
 
@@ -277,7 +276,7 @@ public class DefineJobFrame extends JFrame{
 						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}else {
-				generatedJob.setJobDuedatebyCust(calTime.getTime());
+				populatingBatch.setDueDateByCustomer(calTime.getTime());
 			}
 		}
 		return status;
@@ -290,7 +289,7 @@ public class DefineJobFrame extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			generatedJob.setPenaltyRate(Double.parseDouble(
+			populatingBatch.setPenaltyRate(Double.parseDouble(
 					txtPenalty.getText() ) );
 		}
 		return status;
@@ -303,7 +302,7 @@ public class DefineJobFrame extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			generatedJob.setCPN(Double.parseDouble(
+			populatingBatch.setCPN(Double.parseDouble(
 					txtCPN.getText() ) );
 		}
 		return status;
@@ -316,11 +315,11 @@ public class DefineJobFrame extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			generatedBatch.setBatchId(generatedJob.getJobID());
-			generatedBatch.clearAllJobs();
+			populatingBatch.setBatchId(generatedJob.getJobID());
+			populatingBatch.clearAllJobs();
 			int bSize = Integer.parseInt(txtBatchSize.getText());
 			for(int i = 0; i < bSize ; i++ ) {
-				generatedBatch.addJobToBatch(generatedJob);
+				populatingBatch.addJobToBatch(generatedJob);
 			}
 		}
 
@@ -335,7 +334,7 @@ public class DefineJobFrame extends JFrame{
 
 			if(operationDataOk) {
 				DefineJobOperationsFrame ops = new 
-						DefineJobOperationsFrame(generatedJob, NumOps, populatingJob);
+						DefineJobOperationsFrame(generatedJob, NumOps, populatingBatch.getSampleJob());
 			}
 		}
 	}
@@ -369,7 +368,7 @@ public class DefineJobFrame extends JFrame{
 			createJobFromParams();
 			log.info("data format : " + dataOk);
 			if(dataOk) {
-				cAgent.sendGeneratedBatch(generatedBatch);
+				cAgent.sendGeneratedBatch(populatingBatch);
 				CustomerProxyGUI.countBatch++ ;
 				dispose();
 			}
