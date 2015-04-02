@@ -58,7 +58,7 @@ public class MessageIds {
 	public static final String msgmachineJobQueue = "LSA_JobQueueForMachine";
 
 	// update the job for machine here
-	public static final String msgjobForMachine = "LSA_jobForMachine";
+	public static final String msgbatchForMachine = "LSA_batchForMachine";
 	
 	// 
 	public static final String msgbidResultJob = "LSA_ContractNet_job";
@@ -93,7 +93,7 @@ public class MessageIds {
 	public static final String msgmyHealth ="machine_health";
 
 	// update the finished job here 
-	public static final String msgfinishedJob ="machine_finishedJob";
+	public static final String msgfinishedBatch ="machine_finishedJob";
 
 	// update start of maintenance here
 	public static final String msgmaintenanceStart ="machine_maintenanceStart";
@@ -125,6 +125,8 @@ public class MessageIds {
 
 	//operation n is finished. now send job to GSA for n+1th operation
 	public static String msgLSAfinishedJobs="finished_job_fromLSA";
+
+	public static String msgJobFromBatchForMachine = "job_from_Batch";
 
 
 	//	// Local scheduling Agent id's here

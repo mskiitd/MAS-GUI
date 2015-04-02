@@ -10,7 +10,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class JobSchedulingPlan extends Behaviour implements PlanBody  {
+public class BatchSchedulingPlan extends Behaviour implements PlanBody  {
 
 	private Logger log;
 	

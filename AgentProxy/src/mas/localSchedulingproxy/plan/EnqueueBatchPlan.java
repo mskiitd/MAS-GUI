@@ -27,7 +27,7 @@ import bdi4jade.plan.PlanInstance.EndState;
  * this picks a job from the queue and sends it to the machine for processing
  */
 
-public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
+public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Batch> jobQueue;
@@ -55,7 +55,7 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 		}
 
 		jobQueue = (ArrayList<Batch>) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
 
 		this.operationdb = (OperationDataBase) bfBase.
@@ -69,7 +69,7 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 	public void action() {
 		//		log.info(comingJob.getBidWinnerLSA());
 		if(comingBatch.getWinnerLSA().equals(myAgent.getAID())) {
-			log.info("Adding the job to queue of machine, " + comingBatch.getBatchId());
+			log.info("Adding the batch to queue of machine, " + comingBatch.getBatchId());
 
 			comingBatch.setCurrentOperationProcessingTime(operationdb.
 					getOperationInfo(comingBatch.getCurrentOperationType()).
@@ -79,10 +79,10 @@ public class EnqueueJobPlan extends OneShotBehaviour implements PlanBody {
 			/**
 			 * update the belief base
 			 */
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue, jobQueue);	
+			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQueue);	
 
 			if(LocalSchedulingAgent.mGUI != null) {
-				LocalSchedulingAgent.mGUI.addJobToQueue(comingBatch);
+				LocalSchedulingAgent.mGUI.addBatchToQueue(comingBatch);
 			}
 		}
 	}

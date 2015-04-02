@@ -22,7 +22,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBody {
+public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanBody {
 
 	/**
 	 * Takes the complete job from the simulator
@@ -30,7 +30,7 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 
 	private static final long serialVersionUID = 1L;
 	private Batch batch;
-	private job comingJob;
+	private Batch comingBatch;
 	private ArrayList<Batch> jobQueue;
 	private BeliefBase bfBase;
 	private StatsTracker sTracker;
@@ -47,7 +47,7 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 		bfBase = pInstance.getBeliefBase();
 
 		try {
-			comingJob = (job)((MessageGoal)pInstance.getGoal()).getMessage().getContentObject();
+			comingBatch = (Batch)((MessageGoal)pInstance.getGoal()).getMessage().getContentObject();
 
 		} catch (UnreadableException e) {			
 			e.printStackTrace();
@@ -58,32 +58,20 @@ public class ReceiveCompletedJobPlan extends OneShotBehaviour implements PlanBod
 	@Override
 	public void action() {
 		// since job is done update current job with null value
-		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine, null);
+		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine, null);
 
-		comingJob.IncrementOperationNumber();
-		
-		currentBatch = (Batch) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatch).
-				getValue();
+		comingBatch.IncrementOperationNumber();
 
-		if(currentBatch.getBatchId().equals(comingJob.getJobID()) ) {
-			currentBatch.addJobToBatch(comingJob);
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine,
-					currentBatch);
-		} else {
-			Batch incoming = new Batch(comingJob.getJobID());
-			incoming.addJobToBatch(comingJob);
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine, incoming);
-			
-			ZoneDataUpdate CompletedJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedJob)
-			.value(currentBatch).setReplyWith(Integer.toString(comingJob.get)).Build();
+		ZoneDataUpdate CompletedBatchUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedBatch)
+		.value(comingBatch).setReplyWith(Integer.toString(comingBatch.getBatchNumber())).Build();
 
-			AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedJobUpdate, myAgent);
-
-			if(LocalSchedulingAgent.mGUI != null) {
-				LocalSchedulingAgent.mGUI.removeFromQueue(batch);
-			}
+		AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedBatchUpdate, myAgent);
+		if(LocalSchedulingAgent.mGUI != null) {
+			log.info("removing from the gui ");
+			LocalSchedulingAgent.mGUI.removeFromQueue(comingBatch);
 		}
+
+		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine, comingBatch);
 	}
 
 	@Override

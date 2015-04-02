@@ -59,6 +59,6 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 //		log.info("processed for "+ (comingJob.getCompletionTime().getTime() - comingJob.getStartTimeByCust().getTime()));
 
 		// send completed job to blackboard in handleCompletedJobBehavior
-		myAgent.addBehaviour(new HandleCompletedJobBehavior(comingJob));
+		myAgent.addBehaviour(new HandleCompletedJobBehavior(comingJob,machineSimulator));
 	}
 }

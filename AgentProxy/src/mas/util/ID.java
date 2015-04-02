@@ -66,14 +66,14 @@ public class ID implements Serializable{
 		public class BeliefBaseConst {
 			public static final String blackboardAgent = "LSABeliefBase_blackboard-agent";
 			public static final String machine = "LSABeliefBase_machine";
-			public static final String jobQueue = "LSABeliefBase_job-list";
+			public static final String batchQueue = "LSABeliefBase_job-list";
 			public static final String maintAgent = "LSABeliefBase_maintenanceAgent";
 			public static final String globalSchAgent = "LSABeliefBase_gsAgent";
 			public static final String dataTracker = "LSABeliefBase_data-tracker";
 			public static final String ProcessingCost = "ProcessingCost";
 			public static final String supportedOperations = "supportedOperations";
 			public static final String regretThreshold = "regret_threshold";
-			public static final String currentJobOnMachine="jobCurrentlyProcessingOnMachine";
+			public static final String currentBatchOnMachine="jobCurrentlyProcessingOnMachine";
 			public static final String operationDatabase = "operation_database";
 			public static final String doneBatchFromMachine = "done_batchFromMachine";
 			public static final String currentBatch = "current_batchOnMachine";
@@ -90,9 +90,9 @@ public class ID implements Serializable{
 			public static final String machineJobQueue = "LSA_JobQueueForMachine";
 
 			// update the job for machine here
-			public static final String jobForMachine = "LSA_jobForMachine";
+			public static final String batchForMachine = "LSA_jobForMachine";
 
-			public static final String finishedJob="LSA_finishedJob";
+			public static final String finishedBatch="LSA_finishedJob";
 
 			public static final String QueryResponse = "ResponseToGSAQuery";
 		}
@@ -186,7 +186,7 @@ public class ID implements Serializable{
 			public static final String myHealth ="machine_health";
 
 			// update the finished job here 
-			public static final String finishedJob ="machine_finishedJob";
+			public static final String finishedBatch ="machine_finishedJob";
 
 			// update start of maintenance here
 			public static final String maintenanceStart ="machine_maintenanceStart";

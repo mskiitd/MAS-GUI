@@ -42,7 +42,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 		if(jobQueue == null) {
 			jobQueue = (ArrayList<Batch>) bfBase.
-					getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
+					getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 					getValue();
 		}
 
@@ -86,7 +86,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			ArrayList<Batch> newQ = scheduler.getSolution();
 
 			log.info("updating belief base with the new schedule");
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue,
+			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue,
 					newQ);
 
 			log.info("update new queue in the machine gui ");

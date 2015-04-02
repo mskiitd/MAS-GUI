@@ -1,6 +1,7 @@
 package mas.machineproxy.behaviors;
 
 import jade.core.behaviours.Behaviour;
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.machineproxy.Simulator;
 import mas.util.AgentUtil;
@@ -16,33 +17,51 @@ public class HandleCompletedJobBehavior extends Behaviour{
 	private job completedJob;
 	private Logger log;
 	private int step = 0;
+	private transient Simulator machineSimulator;
 
-	public HandleCompletedJobBehavior(job comingJob) {
+	public HandleCompletedJobBehavior(job comingJob,Simulator sim) {
 
 		this.completedJob = comingJob;
 		this.log = LogManager.getLogger();
+
+		machineSimulator = sim;
+		getDataStore().put(Simulator.simulatorStoreName, sim);
 	}
 
 	@Override
 	public void action() {
+
 		switch(step) {
 		case 0:
-			myAgent.addBehaviour(new GiveMeJobBehavior());
-			/**
-			 * update zone-data for completed jobs from machine
-			 */
-			ZoneDataUpdate completedJobUpdate = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.finishedJob)
-				.value(completedJob).Build();
-			
-			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
-					completedJobUpdate, myAgent);
 
-			log.info("Job no: '"+ completedJob.getJobNo() + 
-					"Job ID : " + completedJob.getJobID() + 
-					"'\n--> completion : " + completedJob.getCompletionTime() + 
-					"\nStarting time : " + completedJob.getStartTimeByCust() + 
-					"\nDue date : " + completedJob.getJobDuedatebyCust());
-			log.info("sending completed job to blackboard");
+			if(machineSimulator.getCurrentBatch().isAllJobsComplete()) {
+				
+				Batch cBatch = machineSimulator.getCurrentBatch();
+				cBatch.updateJob(completedJob);
+				machineSimulator.setCurrentBatch(cBatch);
+				/**
+				 * update zone-data for completed jobs from machine
+				 */
+				ZoneDataUpdate completedJobUpdate = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.finishedBatch)
+				.value(cBatch).Build();
+
+				AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
+						completedJobUpdate, myAgent);
+				
+				myAgent.addBehaviour(new GiveMeJobBehavior());
+				machineSimulator.setCurrentBatch(null);
+
+				log.info("job no: '"+ completedJob.getJobNo() + 
+						"job ID : " + completedJob.getJobID() + 
+						"'\n--> completion : " + completedJob.getCompletionTime() + 
+						"\nStarting time : " + completedJob.getStartTimeByCust() + 
+						"\nDue date : " + completedJob.getJobDuedatebyCust());
+				log.info("sending completed batch to blackboard");
+			} else {
+				Batch cBatch = machineSimulator.getCurrentBatch();
+				cBatch.updateJob(completedJob);
+				machineSimulator.setCurrentBatch(cBatch);
+			}
 
 			step = 1;
 

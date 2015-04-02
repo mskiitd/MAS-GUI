@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -272,9 +273,11 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			populatingBatch.setBatchId(populatingBatch.getBatchId());
 			populatingBatch.clearAllJobs();
 			int bSize = Integer.parseInt(txtBatchSize.getText());
+			ArrayList<job> jobs = new ArrayList<job>();
 			for(int i = 0; i < bSize ; i++ ) {
-				populatingBatch.addJobToBatch(generatedJob);
+				jobs.add(generatedJob);
 			}
+			populatingBatch.setJobsInBatch(jobs);
 		}
 
 		return status;

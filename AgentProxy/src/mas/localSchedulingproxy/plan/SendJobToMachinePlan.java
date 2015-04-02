@@ -51,7 +51,7 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 		log = LogManager.getLogger();
 
 		jobQueue = (ArrayList<Batch>) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
 
 		blackboard = (AID) bfBase.
@@ -67,26 +67,20 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 
 			if(jobQueue.size() > 0) {
 				Batch batchToSend = jobQueue.get(0);
+				batchToSend.resetJobsComplete();
+				
 				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentBatch, batchToSend);
-				job jobToSend = batchToSend.getCurrentJob();
-				batchToSend.incrementCurrentJob();
-
-				if(batchToSend.isAllJobsComplete() ) {
-					jobQueue.remove(0);
-					if(!batchToSend.isBatchComplete()) {
-						batchToSend.resetJobsComplete();
-					}
-				}
+								
 				log.info("Sending job to machine " + myAgent.getLocalName() + " " + batchToSend.getBatchNumber() );
 
-				ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.jobForMachine)
-				.value(jobToSend).setReplyWith(replyWith).Build();
+				ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.batchForMachine)
+				.value(batchToSend).setReplyWith(replyWith).Build();
 
 				AgentUtil.sendZoneDataUpdate(blackboard , bidForJobUpdate, myAgent);
+				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQueue);
 
-				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine, jobToSend);
-				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue, jobQueue);
-
+				jobQueue.remove(0);
+				
 				step = 1;
 			} else {
 				block(SleepTime);

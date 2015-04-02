@@ -68,14 +68,15 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(MessageIds.msgbidForJob),
 				MessageTemplate.MatchReplyWith(msgReplyID));
 		
-		if(order.isBatchComplete()) {
-			step = 3;
-		}
 	}
 
 	@Override
 	public void action() {
 
+		if(order.isBatchComplete()) {
+			step = 3;
+		}
+		
 		switch (step) {
 		case 0:
 			this.MachineCount = (int) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).

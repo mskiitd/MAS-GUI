@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Represents a batch of jobs
  * @author Anand Prajapati
@@ -49,7 +52,7 @@ public class Batch implements Serializable {
 	private int position;
 	private double profit;
 	private int currentOperationIndex = 0;
-
+	
 	public Batch(String batchId) {
 		this.batchId = batchId;
 		jobsInBatch = new ArrayList<job>();
@@ -129,13 +132,14 @@ public class Batch implements Serializable {
 	}
 
 	public boolean isBatchComplete() {
-		return isBatchComplete;
+		return getSampleJob().isComplete();
+//		return isBatchComplete;
 	}
-	
+
 	public boolean isAllJobsComplete() {
 		return this.isAllJobsComplete;
 	}
-	
+
 	public void resetJobsComplete() {
 		this.currentJobIndex = 0;
 	}
@@ -229,13 +233,6 @@ public class Batch implements Serializable {
 		this.batchNo = batchNumber;
 	}
 
-	public void addJobToBatch(job j) {
-		this.jobsInBatch.add(j);
-		if(batchId == null) {
-			batchId = j.getJobID();
-		}
-	}
-
 	public Date getGenerationTime() {
 		return generationTime;
 	}
@@ -251,21 +248,22 @@ public class Batch implements Serializable {
 	public int getBatchCount() {
 		return jobsInBatch.size();
 	}
-
+	
 	public ArrayList<job> getJobsInBatch() {
 		return jobsInBatch;
 	}
+	
 	public void setJobsInBatch(ArrayList<job> jobsInBatch) {
-		if(jobsInBatch != null) {
-			this.jobsInBatch = jobsInBatch;
-			if(batchId == null && ! jobsInBatch.isEmpty() ) {
-				batchId = jobsInBatch.get(0).getJobID();
-			}
+		this.jobsInBatch = jobsInBatch;
+		for(int i = 0; i < jobsInBatch.size() ; i++) {
+			jobsInBatch.get(i).setJobNo(i + 1);
 		}
 	}
+	
 	public String getBatchId() {
 		return batchId;
 	}
+	
 	public void setBatchId(String batchId) {
 		this.batchId = batchId;
 	}
@@ -295,6 +293,7 @@ public class Batch implements Serializable {
 	 */
 
 	public void IncrementOperationNumber() {
+		System.out.println("op index " + currentOperationIndex);
 		this.currentOperationIndex ++ ;
 		for(int i = 0; i < jobsInBatch.size(); i++) {
 			jobsInBatch.get(i).IncrementOperationNumber();
@@ -373,5 +372,52 @@ public class Batch implements Serializable {
 	public int getNumOperations() {
 		return getSampleJob().getOperations().size();
 	}
+
+	public void updateJob(job comingJob) {
+		int jNum = comingJob.getJobNo();
+		for(int i = 0 ; i < jobsInBatch.size(); i++) {
+			if(jobsInBatch.get(i).getJobNo() == jNum) {
+				jobsInBatch.set(i, comingJob);
+			}
+		}
+	}
+
+	public void resetCurrentOperationNumber() {
+		this.currentOperationIndex = 0;
+		
+		for(int i = 0; i < jobsInBatch.size(); i++) {
+			jobsInBatch.get(i).setCurrentOperationNumber(0);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((batchId == null) ? 0 : batchId.hashCode());
+		result = prime * result + batchNo;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Batch other = (Batch) obj;
+		if (batchId == null) {
+			if (other.batchId != null)
+				return false;
+		} else if (!batchId.equals(other.batchId))
+			return false;
+		if (batchNo != other.batchNo)
+			return false;
+		return true;
+	}
+	
+	
 
 }

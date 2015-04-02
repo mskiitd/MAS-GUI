@@ -61,7 +61,10 @@ public class Jobloader {
 			j.setJobNo(countJob++);
 
 			Batch batch = new Batch(jobIdList.get(index));
-			batch.addJobToBatch(j);
+			ArrayList<job> jobsList = new ArrayList<job>();
+			jobsList.add(j);
+			
+			batch.setJobsInBatch(jobsList);
 			batch.setCPN(this.jobCPNs.get(index));
 			batch.setPenaltyRate(this.jobPenaltyRate.get(index));
 			batch.setDueDateByCustomer(new Date(this.jobDueDates.get(index)) );

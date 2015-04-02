@@ -21,7 +21,7 @@ import uiconstants.Labels;
 
 @SuppressWarnings("serial")
 public class DefineJobOperationsFrame extends JFrame{
-	private job passedBatch;
+	private job passedJob;
 
 	private JScrollPane scroller;
 	private JPanel myPanel;
@@ -49,7 +49,7 @@ public class DefineJobOperationsFrame extends JFrame{
 
 	public DefineJobOperationsFrame(job passedJob, int numOps, job populatingJob) {
 
-		this.passedBatch = passedJob;
+		this.passedJob = passedJob;
 		this.NumOps = numOps;
 
 		if(populatingJob != null) {
@@ -172,7 +172,7 @@ public class DefineJobOperationsFrame extends JFrame{
 //				operations.add(op);
 		}
 		if(x1)
-			passedBatch.setOperations(operations);
+			passedJob.setOperations(operations);
 		
 		dataOk = x1;
 	}

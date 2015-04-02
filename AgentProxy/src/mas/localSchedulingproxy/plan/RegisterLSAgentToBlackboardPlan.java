@@ -65,13 +65,13 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 				build();
 
 		NamedZoneData ZoneDataName4 = 
-				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.jobForMachine).
-				MsgID(MessageIds.msgjobForMachine).
+				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.batchForMachine).
+				MsgID(MessageIds.msgbatchForMachine).
 				appendValue(false).
 				build();
 
 		NamedZoneData ZoneDataName5 = 
-				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.finishedJob)
+				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.finishedBatch)
 		.MsgID(MessageIds.msgLSAfinishedJobs).appendValue(false)
 		.build();
 		
@@ -108,7 +108,7 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 
 		// subscription form for simulator
 		SubscriptionForm simulatorSubform = new SubscriptionForm();
-		String[] simulatorParams = { ID.Machine.ZoneData.finishedJob,
+		String[] simulatorParams = { ID.Machine.ZoneData.finishedBatch,
 				ID.Machine.ZoneData.askJobFromLSA, ID.Machine.ZoneData.askJobFromLSA };
 		simulatorSubform.AddSubscriptionReq(simulatorTarget, simulatorParams);
 

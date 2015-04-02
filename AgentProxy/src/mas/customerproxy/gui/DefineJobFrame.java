@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -190,11 +191,16 @@ public class DefineJobFrame extends JFrame{
 		boolean x1 = true;
 		if(generatedJob == null) {
 			if(txtJobID.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Please enter job ID !!");
+				JOptionPane.showMessageDialog(this, "Please enter batch ID !!");
 				x1 = false;
 			}else {
 				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
-				populatingBatch.setBatchId(txtJobID.getText().toString());
+				
+				if(populatingBatch != null) {
+					populatingBatch.setBatchId(txtJobID.getText().toString());
+				}else {
+					populatingBatch = new Batch(txtJobID.getText());
+				}
 				boolean x2 = false,x3 = false,x4 = false,x5 = false;
 				x2 = checkPenaltyRate();
 				if(x2) {
@@ -315,12 +321,13 @@ public class DefineJobFrame extends JFrame{
 					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
-			populatingBatch.setBatchId(generatedJob.getJobID());
 			populatingBatch.clearAllJobs();
 			int bSize = Integer.parseInt(txtBatchSize.getText());
+			ArrayList<job> jobs = new ArrayList<job>();
 			for(int i = 0; i < bSize ; i++ ) {
-				populatingBatch.addJobToBatch(generatedJob);
+				jobs.add(generatedJob);
 			}
+			populatingBatch.setJobsInBatch(jobs);
 		}
 
 		return status;

@@ -112,7 +112,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				CumulativeWaitingTime = CumulativeWaitingTime +
 						((Batch)max.getContentObject()).getWaitingTime();
 
-				log.info("stuck ger -----------------");
 				JobToSend = (Batch)(max.getContentObject());
 				dummyJob.IncrementOperationNumber();
 				
@@ -131,14 +130,14 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			break;
 
 		case 4:
-			JobToSend.getSampleJob().setCurrentOperationNumber(0);
+			JobToSend.resetCurrentOperationNumber();
 			JobToSend.setWaitingTime(CumulativeWaitingTime);
 
 			if(JobToSend.getWaitingTime() < 0) {
 				log.info("cannot process Batch no " + JobToSend.getBatchNumber() );
 			}
 			else{
-				log.info("sending waiting time:" + CumulativeWaitingTime + " ms");
+				log.info("sending waiting time:" + CumulativeWaitingTime + " ms" + " : " +JobToSend.getCurrentOperationNumber() );
 				ZoneDataUpdate NegotiationUpdate = new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation)
 				.value(JobToSend).setReplyWith(msgReplyID).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);	

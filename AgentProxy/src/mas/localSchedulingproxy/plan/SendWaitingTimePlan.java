@@ -57,7 +57,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		}
 
 		jobQueue = (ArrayList<Batch>) bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
 
 		sTracker = (StatsTracker) bfBase.

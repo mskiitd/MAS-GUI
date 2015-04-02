@@ -291,13 +291,14 @@ public class MachineGUI extends JFrame {
 		queuePanel.repaint();
 	}
 
-	public void addJobToQueue(Batch comingJob) {
+	public void addBatchToQueue(Batch comingJob) {
 		jobQ.add(comingJob);
 		queuePanel.revalidate();
 		queuePanel.repaint();
 	}
 
 	public void removeFromQueue(Batch j) {
+		System.out.println("removal : " + jobQ.contains(j));
 		if(jobQ.contains(j)) {
 			jobQ.remove(j);
 			queuePanel.revalidate();

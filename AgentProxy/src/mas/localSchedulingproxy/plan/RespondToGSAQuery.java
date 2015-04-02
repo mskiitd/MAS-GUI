@@ -53,10 +53,10 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 				.currentMachine(null).build();
 
 		ArrayList<Batch> jobQ = (ArrayList<Batch>)beleifBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.jobQueue).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
 		Batch currentJob = (Batch)beleifBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine).
+				getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine).
 				getValue();
 
 		for(int i=0;i<jobQ.size();i++){

@@ -34,11 +34,11 @@ public class AgentStarter {
 
 	static {
 		agents = new HashMap<String, Agent>();
-		agents.put("blackboard", new blackboard());
-		agents.put("customer", new CustomerAgent());
+		agents.put(ID.Blackboard.LocalName, new blackboard());
+		agents.put(ID.Customer.LocalName, new CustomerAgent());
 
 		agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
-		agents.put(ID.Machine.LocalName+"#1", new Simulator());
+		agents.put(ID.Machine.LocalName + "#1", new Simulator());
 		agents.put(ID.LocalScheduler.LocalName+"#1", new LocalSchedulingAgent());
 		agents.put(ID.Maintenance.LocalName+"#1", new LocalMaintenanceAgent());
 	};

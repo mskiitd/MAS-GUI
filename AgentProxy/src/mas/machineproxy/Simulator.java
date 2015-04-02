@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
-import mas.machineproxy.behaviors.AcceptJobBehavior;
+import mas.machineproxy.behaviors.AcceptBatchBehavior;
+import mas.machineproxy.behaviors.AcceptJobFromBatchBehavior;
 import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
 import mas.machineproxy.behaviors.LoadMachineParameterBehavior;
@@ -111,6 +113,16 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 	private boolean unloadFlag = false;
 	
+	private Batch currentBatch = null;
+	
+	public Batch getCurrentBatch() {
+		return currentBatch;
+	}
+
+	public void setCurrentBatch(Batch currentBatch) {
+		this.currentBatch = currentBatch;
+	}
+
 	//	private transient Logger log;
 	private void init() {
 		//		log = LogManager.getLogger();
@@ -131,7 +143,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private transient Behaviour loadRootCause;
 	private transient Behaviour registerthis;
 	private transient Behaviour registerMachineOnBB;
-	private transient Behaviour acceptIncomingJobs;
+	private transient Behaviour acceptIncomingBatch;
 	private transient Behaviour reportHealth;
 	private transient Behaviour processDimensionShifter;
 	private transient Behaviour machineParameterShifter;
@@ -169,14 +181,14 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		functionality = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ALL);
 		functionality.getDataStore().put(simulatorStoreName, Simulator.this);
 
-		acceptIncomingJobs = new AcceptJobBehavior(Simulator.this);
+		acceptIncomingBatch = new AcceptBatchBehavior(Simulator.this);
 		reportHealth = new ReportHealthBehavior(this, healthReportTimeMillis);
 		processDimensionShifter = new ShiftInProcessBahavior(true, true);
 		processDimensionShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 		machineParameterShifter = new ParameterShifterBehavaior();
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 
-//		functionality.addSubBehaviour(acceptIncomingJobs);
+		functionality.addSubBehaviour(acceptIncomingBatch);
 //		functionality.addSubBehaviour(reportHealth);
 		
 		functionality.addSubBehaviour(processDimensionShifter);
@@ -474,7 +486,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	}
 
 	public void loadJob() {
-		addBehaviour(new AcceptJobBehavior(Simulator.this));
+		addBehaviour(new AcceptJobFromBatchBehavior(Simulator.this));
 	}
 
 	public void unloadJob() {

@@ -39,8 +39,8 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 				build();
 
 		NamedZoneData ZoneDataName2 = 
-				new NamedZoneData.Builder(ID.Machine.ZoneData.finishedJob).
-				MsgID(MessageIds.msgfinishedJob).
+				new NamedZoneData.Builder(ID.Machine.ZoneData.finishedBatch).
+				MsgID(MessageIds.msgfinishedBatch).
 				appendValue(true).
 				build();
 
@@ -83,7 +83,7 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 		AID lSchedulingTarget = new AID(ID.LocalScheduler.LocalName+"#"+suffix, AID.ISLOCALNAME);
 			
 
-		String[] lSchedulingParams = {ID.LocalScheduler.ZoneData.jobForMachine };
+		String[] lSchedulingParams = {ID.LocalScheduler.ZoneData.batchForMachine };
 
 		lSchedulingSubForm.AddSubscriptionReq(lSchedulingTarget, lSchedulingParams);
 

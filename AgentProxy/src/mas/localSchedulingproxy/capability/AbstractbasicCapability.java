@@ -13,9 +13,9 @@ import mas.localSchedulingproxy.goal.JobSchedulingGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
 import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
-import mas.localSchedulingproxy.plan.EnqueueJobPlan;
-import mas.localSchedulingproxy.plan.JobSchedulingPlan;
-import mas.localSchedulingproxy.plan.ReceiveCompletedJobPlan;
+import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
+import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
+import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentServicePlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentToBlackboardPlan;
 import mas.localSchedulingproxy.plan.SendBidPlan;
@@ -81,7 +81,7 @@ public class AbstractbasicCapability extends Capability {
 				dtrack.setValue(stats);
 
 				Belief<ArrayList<Batch> > jobSet = new TransientBelief<ArrayList<Batch> >(
-						ID.LocalScheduler.BeliefBaseConst.jobQueue);
+						ID.LocalScheduler.BeliefBaseConst.batchQueue);
 
 				Belief<Double> regretThreshold = new TransientBelief<Double>(
 						ID.LocalScheduler.BeliefBaseConst.regretThreshold);
@@ -123,8 +123,8 @@ public class AbstractbasicCapability extends Capability {
 	public static Set<Plan> getPlans() {
 		Set<Plan> plans = new HashSet<Plan>();
 
-		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgfinishedJob),
-				ReceiveCompletedJobPlan.class));
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgfinishedBatch),
+				ReceiveCompletedBatchPlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgaskBidForJobFromLSA),
 				SendBidPlan.class));
@@ -139,12 +139,12 @@ public class AbstractbasicCapability extends Capability {
 				RegisterLSAgentServicePlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgjobForLSA),
-				EnqueueJobPlan.class));
+				EnqueueBatchPlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgaskJobFromLSA),
 				SendJobToMachinePlan.class));
 
-		plans.add(new SimplePlan(JobSchedulingGoal.class,JobSchedulingPlan.class));
+		plans.add(new SimplePlan(JobSchedulingGoal.class,BatchSchedulingPlan.class));
 
 		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, UpdateOperationDatabasePlan.class));
 
