@@ -29,6 +29,7 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 		log = LogManager.getLogger();
 
 		machineSimulator = sim;
+		log.info("sim= "+sim);
 		getDataStore().put(Simulator.simulatorStoreName, sim);
 
 		batchMsgTemplate = MessageTemplate.

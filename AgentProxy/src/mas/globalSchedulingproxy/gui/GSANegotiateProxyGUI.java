@@ -108,7 +108,7 @@ public class GSANegotiateProxyGUI extends JFrame{
 
 		if(populatingJob != null) {
 			Calendar dudate = Calendar.getInstance();
-			dudate.setTime(populatingJob.getJobDuedatebyCust());
+			dudate.setTime(populatingBatch.getDueDateByCustomer());
 
 			dateModel.setDate(dudate.get(Calendar.YEAR),
 					dudate.get(Calendar.MONDAY),

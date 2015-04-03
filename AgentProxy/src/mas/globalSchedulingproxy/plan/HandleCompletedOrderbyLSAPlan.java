@@ -150,9 +150,9 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			AgentUtil.sendZoneDataUpdate( blackboard ,
 					jobCompletionNotification, myAgent);
 			
-			GlobalSchedulingAgent.mygui.addCompletedJob(order);
+			GlobalSchedulingAgent.GSAgui.addCompletedJob(order);
 			step = 4;
-			log.info("all operations of " + order.getBatchNumber() + " completed");
+			log.info("all operations of Batch No. " + order.getBatchNumber() + " completed");
 			break;
 		}
 	}

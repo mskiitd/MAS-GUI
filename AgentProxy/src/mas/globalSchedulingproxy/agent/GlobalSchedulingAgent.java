@@ -22,13 +22,13 @@ import bdi4jade.core.Capability;
 public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 
 	private static final long serialVersionUID = 1L;
-	public static GSAproxyGUI mygui;
+	public static GSAproxyGUI GSAgui;
 	private Logger log;
 	private BeliefBase bfBase;
 
 	public static void addCompletedJob(Batch j) {
-		if(mygui != null) {
-			mygui.addCompletedJob(j);
+		if(GSAgui != null) {
+			GSAgui.addCompletedJob(j);
 		}
 	}
 
@@ -49,7 +49,7 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				mygui = new GSAproxyGUI(GlobalSchedulingAgent.this);
+				GSAgui = new GSAproxyGUI(GlobalSchedulingAgent.this);
 			}
 		});
 

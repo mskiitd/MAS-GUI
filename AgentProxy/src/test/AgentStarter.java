@@ -41,6 +41,10 @@ public class AgentStarter {
 		agents.put(ID.Machine.LocalName + "#1", new Simulator());
 		agents.put(ID.LocalScheduler.LocalName+"#1", new LocalSchedulingAgent());
 		agents.put(ID.Maintenance.LocalName+"#1", new LocalMaintenanceAgent());
+		
+		/*agents.put(ID.Machine.LocalName + "#2", new Simulator());
+		agents.put(ID.LocalScheduler.LocalName+"#2", new LocalSchedulingAgent());
+		agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent())*/;
 	};
 
 	public static void main(String[] args) {

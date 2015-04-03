@@ -66,14 +66,11 @@ public class HandleCompletedJobBehavior extends Behaviour{
 			step = 1;
 
 			break;
-
-		case 1:
-			break;
 		}
 	}
 
 	@Override
 	public boolean done() {
-		return step >= 1;
+		return step == 1;
 	}
 }

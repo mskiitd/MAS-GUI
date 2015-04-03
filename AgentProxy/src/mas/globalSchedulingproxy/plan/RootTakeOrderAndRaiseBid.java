@@ -74,8 +74,8 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(MessageIds.msgbidForJob)
 				, MessageTemplate.MatchReplyWith(msgReplyID));
 
-		if(GlobalSchedulingAgent.mygui != null) {
-			GlobalSchedulingAgent.mygui.addAcceptedJobToList(order);
+		if(GlobalSchedulingAgent.GSAgui != null) {
+			GlobalSchedulingAgent.GSAgui.addAcceptedJobToList(order);
 		}
 	}
 

@@ -4,8 +4,11 @@ import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.algorithm.ScheduleSequence;
 import mas.localSchedulingproxy.database.OperationDataBase;
@@ -166,9 +169,12 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			else{
 				tardiness = 0.0;
 			}
-						log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
-								"finishTime="+finishTime+"sequence.get(i).getCurrentOperationDueDate()="+
-								sequence.get(i).getCurrentOperationDueDate());
+						/*log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
+								"finishTime="+new Date(finishTime)+"CurrentOperationDueDate="+
+								new Date(sequence.get(i).getCurrentOperationDueDate())+
+								"CurrentOperationStartTime="+new Date(sequence.get(i).getCurrentOperationStartTime())
+						+"cumulativeProcessingTime="+cumulativeProcessingTime);
+						*/
 			cost += tardiness * sequence.get(i).getPenaltyRate() ;/*+ sequence.get(i).getCost();*/
 		}
 

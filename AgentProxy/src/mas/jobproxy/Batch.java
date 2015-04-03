@@ -9,6 +9,8 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.alee.log.Log;
+
 /**
  * Represents a batch of jobs
  * @author Anand Prajapati
@@ -232,6 +234,7 @@ public class Batch implements Serializable {
 
 	public void setBatchNumber(int batchNumber) {
 		this.batchNo = batchNumber;
+		Log.info("current batch No "+ batchNumber);
 	}
 
 	public Date getGenerationTime() {

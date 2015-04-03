@@ -131,7 +131,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 		case 4:
 			JobToSend.resetCurrentOperationNumber();
-			JobToSend.setWaitingTime(CumulativeWaitingTime);
+			JobToSend.setWaitingTime(CumulativeWaitingTime+System.currentTimeMillis());
 
 			if(JobToSend.getWaitingTime() < 0) {
 				log.info("cannot process Batch no " + JobToSend.getBatchNumber() );
