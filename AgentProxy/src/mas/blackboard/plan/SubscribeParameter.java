@@ -39,7 +39,7 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 			return EndState.SUCCESSFUL;
 		}
 		else {
-			return null;
+			return EndState.FAILED;
 		}
 	}
 

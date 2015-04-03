@@ -49,7 +49,7 @@ public class CommunicationCenter extends Capability {
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.SubscribeParameter), SubscribeParameter.class));
 
-		log.info("Added plans for bloackboard");
+		//log.info("Added plans for bloackboard");
 
 		return plans;
 	}

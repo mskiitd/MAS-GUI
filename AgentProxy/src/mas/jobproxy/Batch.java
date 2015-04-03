@@ -141,6 +141,7 @@ public class Batch implements Serializable {
 	}
 
 	public void resetJobsComplete() {
+		isAllJobsComplete=false;
 		this.currentJobIndex = 0;
 	}
 
@@ -364,7 +365,7 @@ public class Batch implements Serializable {
 		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
 				get(currentOperationIndex).getDueDate();
 	}
-
+	
 	public long getTotalProcessingTime() {
 		return this.getSampleJob().getTotalProcessingTime()*getBatchCount();
 	}
@@ -384,9 +385,10 @@ public class Batch implements Serializable {
 
 	public void resetCurrentOperationNumber() {
 		this.currentOperationIndex = 0;
+		isBatchComplete=false;
 		
 		for(int i = 0; i < jobsInBatch.size(); i++) {
-			jobsInBatch.get(i).setCurrentOperationNumber(0);
+			jobsInBatch.get(i).resetOpnNoToZero();
 		}
 	}
 

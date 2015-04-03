@@ -21,7 +21,7 @@ public class BatchSchedulingPlan extends Behaviour implements PlanBody  {
 
 	@Override
 	public EndState getEndState() {
-		return (done ? EndState.SUCCESSFUL : null);
+		return (done ? EndState.SUCCESSFUL : EndState.FAILED);
 	}
 
 	@Override

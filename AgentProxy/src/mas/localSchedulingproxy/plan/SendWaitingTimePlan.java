@@ -28,6 +28,10 @@ import bdi4jade.plan.PlanInstance.EndState;
 public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
+	private static final long LargeLongNegativeValue =-3*((long)Math.pow(10,10));
+			//3*((long)Math.pow(10,10)) milliseconds ~ 0.95 years
+	//if we set Long.MIN_VALUE, and addition happends in calculation of waiting in time in GSA,
+	//due to bit limit, Long.MIN_VALUE+Long.MIN_VALUE becomes 0 which is wrong
 	private ACLMessage msg;
 	private ArrayList<Batch> jobQueue;
 	private Batch j;
@@ -96,7 +100,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		} else {
 			log.info("Operation" + j.getSampleJob().getCurrentOperation().getJobOperationType() +
 					"unsupported on this machine");
-			j.setWaitingTime(Long.MAX_VALUE);
+			j.setWaitingTime(LargeLongNegativeValue);
 		}
 		//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());
 		ZoneDataUpdate waitingTimeUpdate = new ZoneDataUpdate.

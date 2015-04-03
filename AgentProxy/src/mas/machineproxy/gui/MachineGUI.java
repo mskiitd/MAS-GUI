@@ -31,6 +31,9 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
@@ -240,6 +243,8 @@ public class MachineGUI extends JFrame {
 
 	class buttonPanelListener implements ActionListener {
 
+		private Logger log=LogManager.getLogger();
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource().equals(btnLoadJob)) {
@@ -247,6 +252,9 @@ public class MachineGUI extends JFrame {
 					machineSimulator.loadJob();
 					btnUnloadJob.setEnabled(true);
 					btnLoadJob.setEnabled(false);
+				}
+				else{
+					log.info("machineSimulator="+machineSimulator);
 				}
 
 			} else if(e.getSource().equals(btnUnloadJob)) {

@@ -177,7 +177,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			return EndState.SUCCESSFUL;
 		}
 		else{
-			return null;
+			return EndState.FAILED;
 		}
 	}
 }

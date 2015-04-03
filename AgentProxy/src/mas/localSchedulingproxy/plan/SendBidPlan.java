@@ -76,7 +76,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		try{
-			setBid(jobToBidFor);
+			jobToBidFor=setBid(jobToBidFor);
 
 			ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.bidForJob)
 			.value(jobToBidFor).setReplyWith(replyWith).Build();
@@ -89,7 +89,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		}
 	}
 
-	private void setBid(Batch batchToBidFor){
+	private Batch setBid(Batch batchToBidFor){
 
 		//		Random r = new Random();	
 		//		j.setBidByLSA(r.nextDouble());
@@ -104,9 +104,9 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 			log.info("Operation " + batchToBidFor.getCurrentOperationType() +
 					" unsupported on machine : " + myAgent.getLocalName());
-			batchToBidFor.setBidByLSA(-1);
+			batchToBidFor.setBidByLSA(Double.MAX_VALUE);
 			batchToBidFor.setLSABidder(myAgent.getAID());
-			return;
+			return batchToBidFor;
 		} 
 
 		batchToBidFor.setCurrentOperationProcessingTime(operationdb.
@@ -133,6 +133,8 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		bidNo = /*r.nextInt(10)+*/PenaltyAfter-PenaltyBefore;
 		batchToBidFor.setBidByLSA(bidNo);
 		batchToBidFor.setLSABidder(myAgent.getAID());
+		
+		return batchToBidFor;
 	}
 
 	public double getPenaltyLocalDD(ArrayList<Batch> sequence) {
@@ -153,20 +155,20 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			cumulativeProcessingTime = cumulativeProcessingTime + sequence.get(i).getCurrentOperationProcessingTime();
 			double tardiness = 0.0;
 
-			//			log.info(myAgent.getLocalName()+ " cpt="+cumulativeProcessingTime +" L="+l+"ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
+//						log.info(myAgent.getLocalName()+ " cpt="+cumulativeProcessingTime +" L="+l+
+//			"ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
 
 			if (finishTime > sequence.get(i).getCurrentOperationDueDate()) {
 				tardiness = (finishTime - sequence.get(i).getCurrentOperationDueDate())/1000.0;
-				//				log.info(myAgent.getLocalName()+ " tardiness="+tardiness+" L="+l+"ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
+				//				log.info(myAgent.getLocalName()+ " tardiness="+tardiness+" L="+l+"
+//				ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
 			}
 			else{
-				/*	log.info("slack: "+new Date(finishTime-sequence.get(i).getDuedate().getTime())+
-						" DueDate: "+sequence.get(i).getDuedate()+
-						" cumulativeProcessingTime="+cumulativeProcessingTime+
-						" start date: "+sequence.get(i).getStartTime().getTime());*/
 				tardiness = 0.0;
 			}
-			//			log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate());
+						log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
+								"finishTime="+finishTime+"sequence.get(i).getCurrentOperationDueDate()="+
+								sequence.get(i).getCurrentOperationDueDate());
 			cost += tardiness * sequence.get(i).getPenaltyRate() ;/*+ sequence.get(i).getCost();*/
 		}
 

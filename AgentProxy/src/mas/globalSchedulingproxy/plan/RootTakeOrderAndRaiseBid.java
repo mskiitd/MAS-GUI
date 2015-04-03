@@ -92,7 +92,15 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				//				log.info("due date: "+order.getDuedate());
 
 				order.setStartTimeMillis(System.currentTimeMillis());
+//				log.info("current op no = "+order.getCurrentOperationNumber());
 				order = SetDueDates(order);
+				
+/*				for(int ops=0;ops<order.getNumOperations();ops++){
+					log.info(new Date(order.getCurrentOperationDueDate()));
+					order.IncrementOperationNumber();
+				}*/
+//				order.resetCurrentOperationNumber();
+//				log.info("current op no after = "+order.getCurrentOperationNumber());
 
 				ZoneDataUpdate zdu = new ZoneDataUpdate.
 						Builder(ID.GlobalScheduler.ZoneData.askBidForJobFromLSA).
@@ -170,6 +178,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				jobForBidWinner.setCurrentOperationStartTime(currTime);
 				currTime += jobForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
 				jobForBidWinner.setCurrentOperationDueDate(currTime);
+				jobForBidWinner.IncrementOperationNumber();
 //				jobForBidWinner.getOperations().get(i).setStartTimeMillis(currTime);
 //				currTime = currTime + jobForBidWinner.getOperations().get(i).
 //						getProcessingTime() + slack_perOperation;
@@ -183,6 +192,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			for(int i=0; i  <NoOfOps; i++) {
 				jobForBidWinner.setCurrentOperationStartTime(currTime);
 				currTime += jobForBidWinner.getCurrentOperationProcessingTime();
+				jobForBidWinner.IncrementOperationNumber();
 //				jobForBidWinner.getOperations().get(i).setStartTimeMillis(currTime);
 //				currTime = currTime + jobForBidWinner.getOperations().get(i).getProcessingTime();
 				if(i == NoOfOps-1){
@@ -193,6 +203,8 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			}
 		}
 		//		log.info("Job No "+jobForBidWinner.getJobNo()+" processing times:");
+		
+		jobForBidWinner.resetCurrentOperationNumber();
 		return jobForBidWinner;
 
 	}

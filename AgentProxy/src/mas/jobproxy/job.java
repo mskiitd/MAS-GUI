@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.alee.log.Log;
+
 /** Represents a manufacturing shop floor job
  */
 
@@ -144,10 +146,19 @@ public class job implements Serializable {
 		this.currentOperationNumber++ ;
 		if(this.currentOperationNumber > this.operations.size()-1){
 			IsComplete = true;
+			Log.info("set true", IsComplete);
 		}
 	}
 
+	public void resetOpnNoToZero(){
+		IsComplete=false;
+		this.setCurrentOperationNumber(0);
+	}
+	
 	public boolean isComplete(){
+		if(this.IsComplete==true){
+			System.out.println("####"+this.getCurrentOperationNumber());
+		}
 		return this.IsComplete;
 	}
 

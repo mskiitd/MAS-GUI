@@ -37,6 +37,8 @@ import mas.util.ZoneDataUpdate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import com.alee.log.Log;
+
 public class Simulator extends Agent implements IMachine,Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -208,6 +210,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 			public void run() {
 				if(LocalMaintenanceAgent.mgui != null) {
 					LocalSchedulingAgent.mGUI.setMachineSimulator(Simulator.this);
+					Log.info("simulator started for LSA GUI");
 					executor.shutdown();
 				}
 			}

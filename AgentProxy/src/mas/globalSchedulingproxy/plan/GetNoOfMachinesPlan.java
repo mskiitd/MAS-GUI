@@ -35,7 +35,7 @@ public class GetNoOfMachinesPlan extends Behaviour implements PlanBody{
 	
 	@Override
 	public EndState getEndState() {
-		return (done ? EndState.SUCCESSFUL : null);
+		return (done ? EndState.SUCCESSFUL : EndState.FAILED);
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class GetNoOfMachinesPlan extends Behaviour implements PlanBody{
 		}
 		else {
 			done = true;
-			return true;
+			return done;
 		}
 	}
 
