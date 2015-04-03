@@ -25,6 +25,8 @@ import mas.util.TableUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.alee.laf.WebLookAndFeel;
+
 public class AgentStarter {
 
 	private static final Map<String, Agent> agents;
@@ -50,7 +52,10 @@ public class AgentStarter {
 	public static void main(String[] args) {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
+		WebLookAndFeel.install();
+		
 		TableUtil.loadFont();
+		
 //		try {
 //			Thread.sleep(2000);
 //			new MachineGUI(new LocalSchedulingAgent());

@@ -76,6 +76,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 		if(GlobalSchedulingAgent.GSAgui != null) {
 			GlobalSchedulingAgent.GSAgui.addAcceptedJobToList(order);
+			GlobalSchedulingAgent.weblafgui.addAcceptedJobToList(order);
 		}
 	}
 

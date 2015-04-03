@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import mas.globalSchedulingproxy.goal.GSASendNegotitationGoal;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
+import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
@@ -23,12 +24,14 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 
 	private static final long serialVersionUID = 1L;
 	public static GSAproxyGUI GSAgui;
+	public static WebLafGSA weblafgui;
 	private Logger log;
 	private BeliefBase bfBase;
 
 	public static void addCompletedJob(Batch j) {
 		if(GSAgui != null) {
 			GSAgui.addCompletedJob(j);
+			weblafgui.addCompletedJob(j);
 		}
 	}
 
@@ -50,6 +53,7 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 			@Override
 			public void run() {
 				GSAgui = new GSAproxyGUI(GlobalSchedulingAgent.this);
+				weblafgui = new WebLafGSA(GlobalSchedulingAgent.this);
 			}
 		});
 
