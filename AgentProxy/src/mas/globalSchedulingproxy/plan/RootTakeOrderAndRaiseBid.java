@@ -75,6 +75,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				, MessageTemplate.MatchReplyWith(msgReplyID));
 
 		if(GlobalSchedulingAgent.GSAgui != null) {
+			order.setStartTimeMillis(System.currentTimeMillis());
 			GlobalSchedulingAgent.GSAgui.addAcceptedJobToList(order);
 			GlobalSchedulingAgent.weblafgui.addAcceptedJobToList(order);
 		}

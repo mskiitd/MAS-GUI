@@ -1,0 +1,498 @@
+package mas.globalSchedulingproxy.gui;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.UIManager;
+
+import net.miginfocom.swing.MigLayout;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.alee.extended.label.WebHotkeyLabel;
+import com.alee.laf.label.WebLabel;
+import com.alee.laf.panel.WebPanel;
+import com.alee.laf.rootpane.WebFrame;
+import com.alee.laf.scroll.WebScrollPane;
+
+import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
+import mas.jobproxy.Batch;
+import mas.jobproxy.job;
+import mas.util.TableUtil;
+
+public class WebLafGSA {
+
+	private GlobalSchedulingAgent GSA=null;
+	private static WebFrame welcomeScreenFrame=null;
+	private static BorderLayout layout=null;
+	private static WebScrollPane currentJobList=null;
+	private static WebScrollPane completedJobsList=null;
+	private static WebScrollPane negotiationJobList=null;
+	private static WebPanel MainPanel=null;
+	private static WebPanel currentJobListinfoPanel=null;
+	private static WebPanel completedJobListinfoPanel=null;
+	private static WebPanel NegotiationJobListinfoPanel=null;
+	private static Logger log=LogManager.getLogger();
+	private static JTable currentJobListTable=null;
+	private static JTable completedJobListTable=null;
+	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private static double width = screenSize.getWidth();
+    private static double height = screenSize.getHeight();
+	
+	public WebLafGSA(GlobalSchedulingAgent globalSchedulingAgent){
+		this.GSA=globalSchedulingAgent;
+		init();
+	}
+	
+	private void init(){
+		this.welcomeScreenFrame=new WebFrame();
+		this.layout=new BorderLayout();
+		this.MainPanel=new WebPanel(layout);
+		currentJobListinfoPanel=new WebPanel(new MigLayout());
+		completedJobListinfoPanel=new WebPanel(new MigLayout());
+		completedJobListinfoPanel=new WebPanel(new MigLayout());
+		initCompletedJobListPanel();
+		initCurrentJobListPanel();
+		initNegotiationListPanel();
+		
+	    WebPanel menu=new WebPanel(new FlowLayout());
+	    menu.setPreferredSize(new Dimension((int)width, 100));
+	    JButton[] bottomButtons=getButtons();
+	
+	    Color panelColor = Color.decode("#A2A3A2");
+	    menu.setBackground(panelColor);
+	    
+	    for(int i=0;i<bottomButtons.length;i++){
+	    	menu.add(bottomButtons[i]);	
+	    }
+	    
+	    MainPanel.add(menu, BorderLayout.SOUTH);
+		MainPanel.add(currentJobList,BorderLayout.WEST);
+	    welcomeScreenFrame.add(MainPanel);
+		welcomeScreenFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		welcomeScreenFrame.setVisible(true);
+	}
+	
+	private void initNegotiationListPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static JButton[] getButtons(){
+		JButton[] buttons=new JButton[4];
+		JButton About = new JButton();
+	    Image img = null;
+		try {
+			img = ImageIO.read (new File("resources/about.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(img);
+	    About.setIcon(new ImageIcon(img));
+	    About.setPreferredSize(new Dimension(90,90));
+	    About.setActionCommand("about");
+	    About.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+					cleanMainPanel();	
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+            	
+            }
+        });  
+	    buttons[0]=About;
+	    
+	    JButton Negotiation = new JButton();
+	    Image negotiationImg = null;
+	 		try {
+	 			negotiationImg = ImageIO.read (new File("resources/negotiation.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+ 		Negotiation.setIcon(new ImageIcon( negotiationImg));
+ 		Negotiation.setPreferredSize(new Dimension(90,90));
+ 		Negotiation.setActionCommand("negotition");
+ 		Negotiation.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					cleanMainPanel();
+					MainPanel.add(negotiationJobList);
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+			}
+		});
+ 		
+ 		buttons[1]=Negotiation;
+ 		
+ 		JButton JobManager = new JButton();
+	    Image JobManagerImg = null;
+	 		try {
+	 			JobManagerImg = ImageIO.read (new File("resources/JobManager.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+	 		JobManager.setIcon(new ImageIcon( JobManagerImg));
+	 		JobManager.setPreferredSize(new Dimension(90,90));
+	 		JobManager.setActionCommand("jobManager");
+	 		
+	 		JobManager.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					cleanMainPanel();
+					
+					MainPanel.add(currentJobList,BorderLayout.WEST);
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+	            }
+
+				
+	        });  
+	 		
+ 		buttons[2]=JobManager;
+
+/* 		JButton signOut = new JButton();
+	    Image signOutImg = null;
+	 		try {
+	 			signOutImg = ImageIO.read (new File("resources/signOut.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+	 		signOut.setIcon(new ImageIcon( signOutImg));
+	 		signOut.setPreferredSize(new Dimension(90,90));
+	 		signOut.setActionCommand("signOut");
+	 		
+	 		signOut.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+				 	if(currentJobList!=null){
+	            		MainPanel.remove(currentJobList);
+	            		currentJobList=null;
+	            		log.info("currentJobList "+"is not null");
+				 		
+		            	
+	            	}
+	            	else{
+	            	}
+	            }
+	        });
+	 		
+ 		buttons[3]=signOut;*/
+ 		
+ 		JButton completedJobs = new JButton();
+	    Image CompletedJobsImg = null;
+	 		try {
+	 			CompletedJobsImg = ImageIO.read (new File("resources/completedJob.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+	 		completedJobs.setIcon(new ImageIcon( CompletedJobsImg));
+	 		completedJobs.setPreferredSize(new Dimension(90,90));
+	 		completedJobs.setActionCommand("completedJob");
+	 		
+	 		completedJobs.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					cleanMainPanel();
+					
+					MainPanel.add(completedJobsList,BorderLayout.WEST);
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+	            }
+	        });
+	 		
+ 		buttons[3]=completedJobs;
+ 		
+		return buttons;
+	}
+
+	protected static void cleanMainPanel() {
+		if(completedJobsList!=null && completedJobsList.getRootPane()!=null){
+			MainPanel.remove(completedJobsList);
+			MainPanel.remove(completedJobListinfoPanel);
+		}
+		else if(negotiationJobList!=null && negotiationJobList.getRootPane()!=null){
+			MainPanel.remove(negotiationJobList);
+			MainPanel.remove(NegotiationJobListinfoPanel);
+		}
+		else if(currentJobList!=null && currentJobList.getRootPane()!=null){
+			MainPanel.remove(currentJobList);
+			MainPanel.remove(currentJobListinfoPanel);
+		}
+	}
+
+	protected static void initCurrentJobListPanel() {
+    	CurrentJobTileRenderer currJobTileRenderer= new CurrentJobTileRenderer();
+	   	currentJobListTable=new JTable(currJobTileRenderer);
+	   	currentJobListTable.setDefaultRenderer(JobTile.class, new CurrentJobTileCell());
+	   	currentJobListTable.setDefaultEditor(JobTile.class, new CurrentJobTileCell());
+	   	currentJobListTable.setRowHeight(110);
+	   	
+	   	currentJobList=new WebScrollPane(currentJobListTable);
+	   	currentJobList.setPreferredWidth(350);
+	}
+
+	public static void unloadCurrentJobInfoPanel() {
+			currentJobListinfoPanel.removeAll();
+			MainPanel.remove(currentJobListinfoPanel);
+			welcomeScreenFrame.validate();
+			welcomeScreenFrame.repaint();
+			welcomeScreenFrame.setVisible(true);
+	}
+
+	public static void createCurrentJobInfoPanel(JobTile jobToShow){
+		MigLayout migLayout=new MigLayout("","200","[30]");
+		WebPanel detailsPanel=new WebPanel(migLayout);
+		
+		final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		WebLabel JobNametextlbl,JobIDTxtlbl,jobCustStartDateTxtlbl,jobCustDueDateTextlbl,
+		jobGSAStartDateTxtlbl,jobGSADueDateTxtlbl, durationTextlbl, priorityTextlbl;
+		
+		WebHotkeyLabel JobNamelbl,JobIDlbl,jobCustStartDatelbl,jobCustDueDatelbl,
+		jobGSAStartDatelbl,jobGSADueDatelbl, durationlbl, prioritylbl;
+		
+		Font TextlblFont=UIManager.getDefaults().getFont("TabbedPane.font");
+//		TextlblFont=TextlblFont.deriveFont(Font.PLAIN, 12);
+		Font lblFont = TextlblFont.deriveFont(Font.PLAIN, 20);
+		
+		JobNametextlbl=new WebLabel("Job Name");
+		JobNamelbl=new WebHotkeyLabel(jobToShow.getJobName());
+//		JobNamelbl.setMinimumWidth(200);
+
+		JobIDTxtlbl=new WebLabel("Job ID");
+		JobIDlbl=new WebHotkeyLabel(jobToShow.getBatchID().toString());
+//		JobIDlbl.setMinimumWidth(150);
+		
+		jobCustStartDateTxtlbl=new WebLabel("Start Date by customer");
+		jobCustStartDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getCustStartDate()));
+//		jobCustStartDatelbl.setMinimumWidth(150);
+		
+		jobCustDueDateTextlbl=new WebLabel("Due Date by customer");
+		jobCustDueDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getCustDueDate()));
+//		jobCustDueDatelbl.setMinimumWidth(150);
+		
+		jobGSAStartDateTxtlbl=new WebLabel("Start date by MAS");
+		jobGSAStartDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getStartDatebyGSA()));
+//		jobGSAStartDatelbl.setMinimumWidth(150);
+		
+		jobGSADueDateTxtlbl=new WebLabel("Due date by MAS");
+		jobGSADueDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getDueDatebyGSA()));
+//		jobGSADueDatelbl.setMinimumWidth(150);
+		
+		durationTextlbl=new WebLabel("Duration (seconds)");
+		durationlbl=new WebHotkeyLabel(Double.toString(jobToShow.getProcessingTime()));
+//		durationlbl.setMinimumWidth(150);
+		
+		priorityTextlbl=new WebLabel("Priority");
+		prioritylbl=new WebHotkeyLabel(Integer.toString(jobToShow.getPriority()));
+//		prioritylbl.setMinimumWidth(150);
+		
+/*		
+		
+		JobNametextlbl.setFont(TextlblFont);
+		JobIDTxtlbl.setFont(TextlblFont);
+		jobCustStartDateTxtlbl.setFont(TextlblFont);
+		jobCustDueDateTextlbl.setFont(TextlblFont);
+		durationTextlbl.setFont(TextlblFont);
+		priorityTextlbl.setFont(TextlblFont);*/
+		
+		JobNamelbl.setFont(lblFont);
+		JobIDlbl.setFont(lblFont);
+		jobCustStartDatelbl.setFont(lblFont);
+		jobCustDueDatelbl.setFont(lblFont);
+		durationlbl.setFont(lblFont);
+		prioritylbl.setFont(lblFont);
+		jobGSAStartDatelbl.setFont(lblFont);
+		jobGSADueDatelbl.setFont(lblFont);
+		
+		detailsPanel.add(JobNametextlbl,"growx");
+		detailsPanel.add(JobIDTxtlbl,"growx");
+		detailsPanel.add(jobCustStartDateTxtlbl,"growx");
+		detailsPanel.add(jobCustDueDateTextlbl,"wrap, growx");
+		
+		detailsPanel.add(JobNamelbl,"growx");
+		detailsPanel.add(JobIDlbl,"growx");
+		detailsPanel.add(jobCustDueDatelbl,"growx");
+		detailsPanel.add(jobCustStartDatelbl,"growx");
+		detailsPanel.add(jobCustDueDatelbl,"wrap, growx");
+		
+		detailsPanel.add(durationTextlbl,"growx");
+		detailsPanel.add(priorityTextlbl,"growx");
+		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
+		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
+		
+		detailsPanel.add(durationlbl,"growx");
+		detailsPanel.add(prioritylbl,"growx");
+		detailsPanel.add(jobGSAStartDatelbl,"growx");
+		detailsPanel.add(jobGSADueDatelbl,"wrap, growx");
+		
+		currentJobListinfoPanel.add(detailsPanel,"wrap");
+		
+//		JScrollPane jobTable=createsJobsTable(); //jobs in batch
+		
+//		infoPanel.add(jobTable);
+		
+		MainPanel.add(currentJobListinfoPanel,BorderLayout.CENTER);
+		welcomeScreenFrame.validate();
+		welcomeScreenFrame.repaint();
+		welcomeScreenFrame.setVisible(true);
+		
+		
+	}
+
+	public void addCompletedJob(Batch b) {
+		CurrentJobTileRenderer CurrjobListRenderer=
+				(CurrentJobTileRenderer)currentJobListTable.getModel();
+    	CurrjobListRenderer.removeJob(b);
+    	
+    	CompletedJobTileRenderer completedJobRenderer=
+    			(CompletedJobTileRenderer)completedJobListTable.getModel();
+    	
+    	completedJobRenderer.addBatch(b);
+    	
+		log.info("nothing happends when completed job is added");
+	}
+
+	private void initCompletedJobListPanel() {
+    	CompletedJobTileRenderer completedJobRenderer= new CompletedJobTileRenderer();
+    	completedJobListTable=new JTable(completedJobRenderer);
+	   	
+    	completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTileCell());
+    	completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTileCell());
+    	completedJobListTable.setRowHeight(110);
+	   	
+	   	completedJobsList=new WebScrollPane(completedJobListTable);
+	   	completedJobsList.setPreferredWidth(350);
+	}
+
+	public void addAcceptedJobToList(Batch order) {
+		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
+    	CurrJobListRenderer.addBatch(order);
+	}
+
+	public static void creatCompletedJobInfoPanel(JobTile jobTileInCell) {
+		MigLayout migLayout=new MigLayout("","200","[30]");
+		WebPanel detailsPanel=new WebPanel(migLayout);
+		
+		final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		WebLabel JobNametextlbl,JobIDTxtlbl,jobCustStartDateTxtlbl,jobCustDueDateTextlbl,
+		jobGSAStartDateTxtlbl,jobGSADueDateTxtlbl, durationTextlbl, priorityTextlbl;
+		
+		WebHotkeyLabel JobNamelbl,JobIDlbl,jobCustStartDatelbl,jobCustDueDatelbl,
+		jobGSAStartDatelbl,jobGSADueDatelbl, durationlbl, prioritylbl;
+		
+		Font TextlblFont=UIManager.getDefaults().getFont("TabbedPane.font");
+//		TextlblFont=TextlblFont.deriveFont(Font.PLAIN, 12);
+		Font lblFont = TextlblFont.deriveFont(Font.PLAIN, 20);
+		
+		JobNametextlbl=new WebLabel("Batch Name");
+		JobNamelbl=new WebHotkeyLabel(jobTileInCell.getJobName());
+//		JobNamelbl.setMinimumWidth(200);
+
+		JobIDTxtlbl=new WebLabel("Batch ID");
+		JobIDlbl=new WebHotkeyLabel(jobTileInCell.getBatchID().toString());
+//		JobIDlbl.setMinimumWidth(150);
+		
+		jobCustStartDateTxtlbl=new WebLabel("Start Date by customer");
+		jobCustStartDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getCustStartDate()));
+//		jobCustStartDatelbl.setMinimumWidth(150);
+		
+		jobCustDueDateTextlbl=new WebLabel("Due Date by customer");
+		jobCustDueDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getCustDueDate()));
+//		jobCustDueDatelbl.setMinimumWidth(150);
+		
+		jobGSAStartDateTxtlbl=new WebLabel("Start date by MAS");
+		jobGSAStartDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getStartDatebyGSA()));
+//		jobGSAStartDatelbl.setMinimumWidth(150);
+		
+		jobGSADueDateTxtlbl=new WebLabel("Due date by MAS");
+		jobGSADueDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getDueDatebyGSA()));
+//		jobGSADueDatelbl.setMinimumWidth(150);
+		
+		durationTextlbl=new WebLabel("Duration (seconds)");
+		durationlbl=new WebHotkeyLabel(Double.toString(jobTileInCell.getProcessingTime()));
+//		durationlbl.setMinimumWidth(150);
+		
+		priorityTextlbl=new WebLabel("Priority");
+		prioritylbl=new WebHotkeyLabel(Integer.toString(jobTileInCell.getPriority()));
+//		prioritylbl.setMinimumWidth(150);
+		
+/*		
+		
+		JobNametextlbl.setFont(TextlblFont);
+		JobIDTxtlbl.setFont(TextlblFont);
+		jobCustStartDateTxtlbl.setFont(TextlblFont);
+		jobCustDueDateTextlbl.setFont(TextlblFont);
+		durationTextlbl.setFont(TextlblFont);
+		priorityTextlbl.setFont(TextlblFont);*/
+		
+		JobNamelbl.setFont(lblFont);
+		JobIDlbl.setFont(lblFont);
+		jobCustStartDatelbl.setFont(lblFont);
+		jobCustDueDatelbl.setFont(lblFont);
+		durationlbl.setFont(lblFont);
+		prioritylbl.setFont(lblFont);
+		jobGSAStartDatelbl.setFont(lblFont);
+		jobGSADueDatelbl.setFont(lblFont);
+		
+		detailsPanel.add(JobNametextlbl,"growx");
+		detailsPanel.add(JobIDTxtlbl,"growx");
+		detailsPanel.add(jobCustStartDateTxtlbl,"growx");
+		detailsPanel.add(jobCustDueDateTextlbl,"wrap, growx");
+		
+		detailsPanel.add(JobNamelbl,"growx");
+		detailsPanel.add(JobIDlbl,"growx");
+		detailsPanel.add(jobCustDueDatelbl,"growx");
+		detailsPanel.add(jobCustStartDatelbl,"growx");
+		detailsPanel.add(jobCustDueDatelbl,"wrap, growx");
+		
+		detailsPanel.add(durationTextlbl,"growx");
+		detailsPanel.add(priorityTextlbl,"growx");
+		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
+		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
+		
+		detailsPanel.add(durationlbl,"growx");
+		detailsPanel.add(prioritylbl,"growx");
+		detailsPanel.add(jobGSAStartDatelbl,"growx");
+		detailsPanel.add(jobGSADueDatelbl,"wrap, growx");
+		
+		completedJobListinfoPanel.add(detailsPanel,"wrap");
+		
+		MainPanel.add(completedJobListinfoPanel,BorderLayout.CENTER);
+		welcomeScreenFrame.validate();
+		welcomeScreenFrame.repaint();
+		welcomeScreenFrame.setVisible(true);
+		
+	}
+
+	public static void unloadCompletedJobInfoPanel() {
+		completedJobListinfoPanel.removeAll();
+		MainPanel.remove(completedJobListinfoPanel);
+		welcomeScreenFrame.validate();
+		welcomeScreenFrame.repaint();
+		welcomeScreenFrame.setVisible(true);
+	}
+}

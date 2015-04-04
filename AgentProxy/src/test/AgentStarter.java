@@ -54,16 +54,6 @@ public class AgentStarter {
 				.getResource("log4j.properties"));		*/
 		WebLookAndFeel.install();
 		
-		TableUtil.loadFont();
-		
-//		try {
-//			Thread.sleep(2000);
-//			new MachineGUI(new LocalSchedulingAgent());
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
 		new AgentStarter();
 	}
 

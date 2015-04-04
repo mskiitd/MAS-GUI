@@ -156,7 +156,7 @@ public class Batch implements Serializable {
 	}
 
 	public void incrementCurrentJob() {
-		this.currentJobIndex ++ ;
+		this.currentJobIndex++ ;
 		/**
 		 *  if index becomes >= the size of the batch it means all jobs are done
 		 *  index for last job is 'size()-1'
