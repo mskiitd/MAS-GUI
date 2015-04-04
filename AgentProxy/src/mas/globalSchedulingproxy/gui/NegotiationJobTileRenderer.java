@@ -7,14 +7,19 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 
 public class NegotiationJobTileRenderer extends AbstractTableModel implements TableModel {
 
-	List<JobTile> jobTiles=null; 
+	List<JobTile> batchTiles=null;
+	private Logger log=LogManager.getLogger(); 
 	
 	public NegotiationJobTileRenderer(){
-		this.jobTiles=new ArrayList<JobTile>();
+		this.batchTiles=new ArrayList<JobTile>();
 	}
 	
 	@Override
@@ -29,26 +34,26 @@ public class NegotiationJobTileRenderer extends AbstractTableModel implements Ta
 
 	@Override
 	public String getColumnName(int arg0) {
-		return "<html><b>BIDS</b></html>";
+		return "<html><b>NEGOTIATION BIDS</b></html>";
 	}
 
 	@Override
 	public int getRowCount() {
-		if(jobTiles==null){
+		if(batchTiles==null){
 			return 0;
 		}
 		else{
-			return jobTiles.size();	
+			return batchTiles.size();	
 		}
 	}
 
 	@Override
 	public Object getValueAt(int jobTileIndex, int columnIndex) {
-		if(jobTiles==null){
+		if(batchTiles==null){
 			return null;
 		}
 		else{
-			return jobTiles.get(jobTileIndex);
+			return batchTiles.get(jobTileIndex);
 		}
 	}
 
@@ -58,24 +63,21 @@ public class NegotiationJobTileRenderer extends AbstractTableModel implements Ta
 	}
 
 
-	public void addRow(JobTile[] tiles){
-		for(int i=0;i<tiles.length;i++){
-			jobTiles.add(tiles[i]);
+	public void addBatch(Batch b){
+			batchTiles.add(new JobTile(b));
 			super.fireTableRowsInserted(getRowCount()+1, getRowCount()+1);
-		}
-		
-		
 	}
 
-	public void removeJob(job j) {
+	public void removeJob(Batch j) {
+		log.info("fired remove job");
 		int count=0;
-		while(count<jobTiles.size() && (j.getJobID()!=jobTiles.get(count).getBatchID())){
+		while(count<batchTiles.size() && (!j.getBatchId().equals(batchTiles.get(count).getBatchID()))){
 			count++;
-			
 		}
-		if(count!=jobTiles.size()){
-			jobTiles.remove(count);
-			super.fireTableRowsDeleted(count+1, count+2);
+		log.info("count="+count);
+		if(count!=batchTiles.size()){
+			batchTiles.remove(count);
+			super.fireTableRowsDeleted(count, count);
 		}
 		}
 	}

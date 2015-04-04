@@ -19,18 +19,20 @@ public class JobTile{
 	private int JobNo;
 	private double processingTime; //in seconds
 	private Date startDatebyGSA,dueDatebyGSA;//by GSA
+	private Batch givenBatch;
 	
-	public JobTile(Batch givenBatch){
-		jobID=givenBatch.getBatchId();
-		custStartDate=new Date(givenBatch.getStartTimeMillis()); 
+	public JobTile(Batch batch){
+		jobID=batch.getBatchId();
+		custStartDate=new Date(batch.getStartTimeMillis()); 
 		//custStartDate currently set by GSA when it recieves confirmation of order after negotiation
-		custDueDate=givenBatch.getDueDateByCustomer();
-		JobNo=givenBatch.getBatchNumber();
-		priority=(int) givenBatch.getCPN();
-		processingTime=(double)givenBatch.getTotalProcessingTime()/1000.0;
+		custDueDate=batch.getDueDateByCustomer();
+		JobNo=batch.getBatchNumber();
+		priority=(int) batch.getCPN();
+		processingTime=(double)batch.getTotalProcessingTime()/1000.0;
 		startDatebyGSA=new Date(0);
 		dueDatebyGSA=new Date(0);
 		jobName="unknown";
+		givenBatch=batch;
 	}
 
 	public int getPriority() {
@@ -99,5 +101,9 @@ public class JobTile{
 
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
+	}
+
+	public Batch getBatch() {
+		return givenBatch;
 	}
 }

@@ -66,15 +66,5 @@ public class CompletedJobTileRenderer extends AbstractTableModel implements Tabl
 	}
 
 
-	public void removeJob(job j) {
-		int count=0;
-		while(count<jobTiles.size() && (j.getJobID()!=jobTiles.get(count).getBatchID())){
-			count++;
-			
-		}
-		if(count!=jobTiles.size()){
-			jobTiles.remove(count);
-			super.fireTableRowsDeleted(count+1, count+2);
-		}
-		}
+
 	}

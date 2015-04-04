@@ -11,24 +11,38 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
 import javax.swing.UIManager;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+import uiconstants.Labels;
 
 import com.alee.extended.label.WebHotkeyLabel;
 import com.alee.laf.label.WebLabel;
@@ -39,23 +53,35 @@ import com.alee.laf.scroll.WebScrollPane;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
+import mas.util.DateLabelFormatter;
+import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
+import mas.util.formatter.integerformatter.FormattedIntegerField;
 
 public class WebLafGSA {
 
-	private GlobalSchedulingAgent GSA=null;
+	private static GlobalSchedulingAgent GSA=null;
 	private static WebFrame welcomeScreenFrame=null;
 	private static BorderLayout layout=null;
+	
 	private static WebScrollPane currentJobList=null;
 	private static WebScrollPane completedJobsList=null;
 	private static WebScrollPane negotiationJobList=null;
+	
 	private static WebPanel MainPanel=null;
+	
+//info about selected job tile on right side
 	private static WebPanel currentJobListinfoPanel=null;
 	private static WebPanel completedJobListinfoPanel=null;
 	private static WebPanel NegotiationJobListinfoPanel=null;
+	
 	private static Logger log=LogManager.getLogger();
+	
+//table of jobTiles. Left side of frame
 	private static JTable currentJobListTable=null;
+	private static JTable negotiationJobListTable=null;
 	private static JTable completedJobListTable=null;
+	
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private static double width = screenSize.getWidth();
     private static double height = screenSize.getHeight();
@@ -71,7 +97,12 @@ public class WebLafGSA {
 		this.MainPanel=new WebPanel(layout);
 		currentJobListinfoPanel=new WebPanel(new MigLayout());
 		completedJobListinfoPanel=new WebPanel(new MigLayout());
-		completedJobListinfoPanel=new WebPanel(new MigLayout());
+		NegotiationJobListinfoPanel=new WebPanel(new MigLayout());
+		
+		currentJobListinfoPanel.setBackground(Color.RED);
+		completedJobListinfoPanel.setBackground(Color.BLUE);
+		NegotiationJobListinfoPanel.setBackground(Color.GREEN);
+		
 		initCompletedJobListPanel();
 		initCurrentJobListPanel();
 		initNegotiationListPanel();
@@ -94,154 +125,8 @@ public class WebLafGSA {
 		welcomeScreenFrame.setVisible(true);
 	}
 	
-	private void initNegotiationListPanel() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private static JButton[] getButtons(){
-		JButton[] buttons=new JButton[4];
-		JButton About = new JButton();
-	    Image img = null;
-		try {
-			img = ImageIO.read (new File("resources/about.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println(img);
-	    About.setIcon(new ImageIcon(img));
-	    About.setPreferredSize(new Dimension(90,90));
-	    About.setActionCommand("about");
-	    About.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-					cleanMainPanel();	
-            		welcomeScreenFrame.revalidate();
-            		welcomeScreenFrame.repaint();
-            		welcomeScreenFrame.setVisible(true);
-            	
-            }
-        });  
-	    buttons[0]=About;
-	    
-	    JButton Negotiation = new JButton();
-	    Image negotiationImg = null;
-	 		try {
-	 			negotiationImg = ImageIO.read (new File("resources/negotiation.png"));
-	 		} catch (IOException e) {
-	 			e.printStackTrace();
-	 		}
- 		Negotiation.setIcon(new ImageIcon( negotiationImg));
- 		Negotiation.setPreferredSize(new Dimension(90,90));
- 		Negotiation.setActionCommand("negotition");
- 		Negotiation.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-					cleanMainPanel();
-					MainPanel.add(negotiationJobList);
-            		welcomeScreenFrame.revalidate();
-            		welcomeScreenFrame.repaint();
-            		welcomeScreenFrame.setVisible(true);
-			}
-		});
- 		
- 		buttons[1]=Negotiation;
- 		
- 		JButton JobManager = new JButton();
-	    Image JobManagerImg = null;
-	 		try {
-	 			JobManagerImg = ImageIO.read (new File("resources/JobManager.png"));
-	 		} catch (IOException e) {
-	 			e.printStackTrace();
-	 		}
-	 		JobManager.setIcon(new ImageIcon( JobManagerImg));
-	 		JobManager.setPreferredSize(new Dimension(90,90));
-	 		JobManager.setActionCommand("jobManager");
-	 		
-	 		JobManager.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e){
-					cleanMainPanel();
-					
-					MainPanel.add(currentJobList,BorderLayout.WEST);
-            		welcomeScreenFrame.revalidate();
-            		welcomeScreenFrame.repaint();
-            		welcomeScreenFrame.setVisible(true);
-	            }
-
-				
-	        });  
-	 		
- 		buttons[2]=JobManager;
-
-/* 		JButton signOut = new JButton();
-	    Image signOutImg = null;
-	 		try {
-	 			signOutImg = ImageIO.read (new File("resources/signOut.png"));
-	 		} catch (IOException e) {
-	 			e.printStackTrace();
-	 		}
-	 		signOut.setIcon(new ImageIcon( signOutImg));
-	 		signOut.setPreferredSize(new Dimension(90,90));
-	 		signOut.setActionCommand("signOut");
-	 		
-	 		signOut.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e){
-				 	if(currentJobList!=null){
-	            		MainPanel.remove(currentJobList);
-	            		currentJobList=null;
-	            		log.info("currentJobList "+"is not null");
-				 		
-		            	
-	            	}
-	            	else{
-	            	}
-	            }
-	        });
-	 		
- 		buttons[3]=signOut;*/
- 		
- 		JButton completedJobs = new JButton();
-	    Image CompletedJobsImg = null;
-	 		try {
-	 			CompletedJobsImg = ImageIO.read (new File("resources/completedJob.png"));
-	 		} catch (IOException e) {
-	 			e.printStackTrace();
-	 		}
-	 		completedJobs.setIcon(new ImageIcon( CompletedJobsImg));
-	 		completedJobs.setPreferredSize(new Dimension(90,90));
-	 		completedJobs.setActionCommand("completedJob");
-	 		
-	 		completedJobs.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e){
-					cleanMainPanel();
-					
-					MainPanel.add(completedJobsList,BorderLayout.WEST);
-            		welcomeScreenFrame.revalidate();
-            		welcomeScreenFrame.repaint();
-            		welcomeScreenFrame.setVisible(true);
-	            }
-	        });
-	 		
- 		buttons[3]=completedJobs;
- 		
-		return buttons;
-	}
-
-	protected static void cleanMainPanel() {
-		if(completedJobsList!=null && completedJobsList.getRootPane()!=null){
-			MainPanel.remove(completedJobsList);
-			MainPanel.remove(completedJobListinfoPanel);
-		}
-		else if(negotiationJobList!=null && negotiationJobList.getRootPane()!=null){
-			MainPanel.remove(negotiationJobList);
-			MainPanel.remove(NegotiationJobListinfoPanel);
-		}
-		else if(currentJobList!=null && currentJobList.getRootPane()!=null){
-			MainPanel.remove(currentJobList);
-			MainPanel.remove(currentJobListinfoPanel);
-		}
-	}
-
+	
+	
 	protected static void initCurrentJobListPanel() {
     	CurrentJobTileRenderer currJobTileRenderer= new CurrentJobTileRenderer();
 	   	currentJobListTable=new JTable(currJobTileRenderer);
@@ -252,14 +137,56 @@ public class WebLafGSA {
 	   	currentJobList=new WebScrollPane(currentJobListTable);
 	   	currentJobList.setPreferredWidth(350);
 	}
-
-	public static void unloadCurrentJobInfoPanel() {
-			currentJobListinfoPanel.removeAll();
-			MainPanel.remove(currentJobListinfoPanel);
-			welcomeScreenFrame.validate();
-			welcomeScreenFrame.repaint();
-			welcomeScreenFrame.setVisible(true);
+	
+	private void initCompletedJobListPanel() {
+    	CompletedJobTileRenderer completedJobRenderer= new CompletedJobTileRenderer();
+    	completedJobListTable=new JTable(completedJobRenderer);
+	   	
+    	completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTileCell());
+    	completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTileCell());
+    	completedJobListTable.setRowHeight(110);
+	   	
+	   	completedJobsList=new WebScrollPane(completedJobListTable);
+	   	completedJobsList.setPreferredWidth(350);
 	}
+
+	private void initNegotiationListPanel() {
+		
+		NegotiationJobTileRenderer negotiationRenderer= new NegotiationJobTileRenderer();
+		negotiationJobListTable=new JTable(negotiationRenderer);
+		negotiationJobListTable.setDefaultRenderer(JobTile.class, new NegotitationJobTileCell());
+		negotiationJobListTable.setDefaultEditor(JobTile.class, new NegotitationJobTileCell());
+		negotiationJobListTable.setRowHeight(110);
+	   	
+	   	negotiationJobList=new WebScrollPane(negotiationJobListTable);
+	   	negotiationJobList.setPreferredWidth(350);
+		
+	}
+	
+	public static void unloadCurrentJobInfoPanel() {
+		currentJobListinfoPanel.removeAll();
+		MainPanel.remove(currentJobListinfoPanel);
+		welcomeScreenFrame.validate();
+		welcomeScreenFrame.repaint();
+		welcomeScreenFrame.setVisible(true);
+	}
+	
+	public static void unloadCompletedJobInfoPanel() {
+		completedJobListinfoPanel.removeAll();
+		MainPanel.remove(completedJobListinfoPanel);
+		welcomeScreenFrame.validate();
+		welcomeScreenFrame.repaint();
+		welcomeScreenFrame.setVisible(true);
+	}
+
+	public static void unloadNegotiationInfoPanel() {
+		NegotiationJobListinfoPanel.removeAll();
+		MainPanel.remove(NegotiationJobListinfoPanel);
+		welcomeScreenFrame.validate();
+		welcomeScreenFrame.repaint();
+		welcomeScreenFrame.setVisible(true);
+	}
+	
 
 	public static void createCurrentJobInfoPanel(JobTile jobToShow){
 		MigLayout migLayout=new MigLayout("","200","[30]");
@@ -361,37 +288,7 @@ public class WebLafGSA {
 		
 		
 	}
-
-	public void addCompletedJob(Batch b) {
-		CurrentJobTileRenderer CurrjobListRenderer=
-				(CurrentJobTileRenderer)currentJobListTable.getModel();
-    	CurrjobListRenderer.removeJob(b);
-    	
-    	CompletedJobTileRenderer completedJobRenderer=
-    			(CompletedJobTileRenderer)completedJobListTable.getModel();
-    	
-    	completedJobRenderer.addBatch(b);
-    	
-		log.info("nothing happends when completed job is added");
-	}
-
-	private void initCompletedJobListPanel() {
-    	CompletedJobTileRenderer completedJobRenderer= new CompletedJobTileRenderer();
-    	completedJobListTable=new JTable(completedJobRenderer);
-	   	
-    	completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTileCell());
-    	completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTileCell());
-    	completedJobListTable.setRowHeight(110);
-	   	
-	   	completedJobsList=new WebScrollPane(completedJobListTable);
-	   	completedJobsList.setPreferredWidth(350);
-	}
-
-	public void addAcceptedJobToList(Batch order) {
-		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
-    	CurrJobListRenderer.addBatch(order);
-	}
-
+	
 	public static void creatCompletedJobInfoPanel(JobTile jobTileInCell) {
 		MigLayout migLayout=new MigLayout("","200","[30]");
 		WebPanel detailsPanel=new WebPanel(migLayout);
@@ -488,11 +385,190 @@ public class WebLafGSA {
 		
 	}
 
-	public static void unloadCompletedJobInfoPanel() {
-		completedJobListinfoPanel.removeAll();
-		MainPanel.remove(completedJobListinfoPanel);
-		welcomeScreenFrame.validate();
-		welcomeScreenFrame.repaint();
-		welcomeScreenFrame.setVisible(true);
+	public static void creatNegotiationInfoPanel(JobTile jobTileInCell) {
+		
+			NegotiationInfo nip=new NegotiationInfo(GSA, jobTileInCell.getBatch());
+			NegotiationJobListinfoPanel=nip.getPanel();
+			MainPanel.add(NegotiationJobListinfoPanel,BorderLayout.CENTER);
+			welcomeScreenFrame.validate();
+			welcomeScreenFrame.repaint();
+			welcomeScreenFrame.setVisible(true);
 	}
+
+
+	private static JButton[] getButtons(){
+		JButton[] buttons=new JButton[4];
+		JButton About = new JButton();
+	    Image img = null;
+		try {
+			img = ImageIO.read (new File("resources/about.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(img);
+	    About.setIcon(new ImageIcon(img));
+	    About.setPreferredSize(new Dimension(90,90));
+	    About.setActionCommand("about");
+	    About.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+					cleanMainPanel();	
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+            	
+            }
+        });  
+	    buttons[0]=About;
+	    
+	    JButton Negotiation = new JButton();
+	    Image negotiationImg = null;
+	 		try {
+	 			negotiationImg = ImageIO.read (new File("resources/negotiation.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+ 		Negotiation.setIcon(new ImageIcon( negotiationImg));
+ 		Negotiation.setPreferredSize(new Dimension(90,90));
+ 		Negotiation.setActionCommand("negotition");
+ 		Negotiation.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					cleanMainPanel();
+					MainPanel.add(negotiationJobList,BorderLayout.WEST);
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+			}
+		});
+ 		
+ 		buttons[1]=Negotiation;
+ 		
+ 		JButton JobManager = new JButton();
+	    Image JobManagerImg = null;
+	 		try {
+	 			JobManagerImg = ImageIO.read (new File("resources/JobManager.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+	 		JobManager.setIcon(new ImageIcon( JobManagerImg));
+	 		JobManager.setPreferredSize(new Dimension(90,90));
+	 		JobManager.setActionCommand("jobManager");
+	 		
+	 		JobManager.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					cleanMainPanel();
+					
+					MainPanel.add(currentJobList,BorderLayout.WEST);
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+	            }
+
+				
+	        });  
+	 		
+ 		buttons[2]=JobManager;
+
+/* 		JButton signOut = new JButton();
+	    Image signOutImg = null;
+	 		try {
+	 			signOutImg = ImageIO.read (new File("resources/signOut.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+	 		signOut.setIcon(new ImageIcon( signOutImg));
+	 		signOut.setPreferredSize(new Dimension(90,90));
+	 		signOut.setActionCommand("signOut");
+	 		
+	 		signOut.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+				 	if(currentJobList!=null){
+	            		MainPanel.remove(currentJobList);
+	            		currentJobList=null;
+	            		log.info("currentJobList "+"is not null");
+				 		
+		            	
+	            	}
+	            	else{
+	            	}
+	            }
+	        });
+	 		
+ 		buttons[3]=signOut;*/
+ 		
+ 		JButton completedJobs = new JButton();
+	    Image CompletedJobsImg = null;
+	 		try {
+	 			CompletedJobsImg = ImageIO.read (new File("resources/completedJob.png"));
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+	 		completedJobs.setIcon(new ImageIcon( CompletedJobsImg));
+	 		completedJobs.setPreferredSize(new Dimension(90,90));
+	 		completedJobs.setActionCommand("completedJob");
+	 		
+	 		completedJobs.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					cleanMainPanel();
+					
+					MainPanel.add(completedJobsList,BorderLayout.WEST);
+            		welcomeScreenFrame.revalidate();
+            		welcomeScreenFrame.repaint();
+            		welcomeScreenFrame.setVisible(true);
+	            }
+	        });
+	 		
+ 		buttons[3]=completedJobs;
+ 		
+		return buttons;
+	}
+
+	public static JTable getNegotiationJobListTable() {
+		return negotiationJobListTable;
+	}
+
+	protected static void cleanMainPanel() {
+		if(completedJobsList!=null && completedJobsList.getRootPane()!=null){
+			MainPanel.remove(completedJobsList);
+			MainPanel.remove(completedJobListinfoPanel);
+		}
+		else if(negotiationJobList!=null && negotiationJobList.getRootPane()!=null){
+			MainPanel.remove(negotiationJobList);
+			MainPanel.remove(NegotiationJobListinfoPanel);
+		}
+		else if(currentJobList!=null && currentJobList.getRootPane()!=null){
+			MainPanel.remove(currentJobList);
+			MainPanel.remove(currentJobListinfoPanel);
+		}
+	}
+
+	
+	public void addCompletedJob(Batch b) {
+		CurrentJobTileRenderer CurrjobListRenderer=
+				(CurrentJobTileRenderer)currentJobListTable.getModel();
+    	CurrjobListRenderer.removeJob(b);
+    	
+    	CompletedJobTileRenderer completedJobRenderer=
+    			(CompletedJobTileRenderer)completedJobListTable.getModel();
+    	
+    	completedJobRenderer.addBatch(b);
+    	
+		log.info("nothing happends when completed job is added");
+	}
+
+	public void addAcceptedJobToList(Batch order) {
+		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
+    	CurrJobListRenderer.addBatch(order);
+	}
+
+	public void addNegotiationBid(Batch jobUnderNegotiation) {
+		NegotiationJobTileRenderer negotiationRenderer=
+				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
+		negotiationRenderer.addBatch(jobUnderNegotiation);
+		
+	}
+
+
+
 }
