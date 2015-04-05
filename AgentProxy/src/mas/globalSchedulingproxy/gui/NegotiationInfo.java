@@ -244,13 +244,15 @@ public class NegotiationInfo{
 	private boolean checkJobOperations() {
 		boolean status = true;
 		if(populatingJob.getOperations() == null ) {
-			/*JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );*/
+			JOptionPane.showMessageDialog(WebLafGSA.getWelcomeScreenFrame()
+					, "Please Give job Operation Details !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
 			if(populatingJob.getOperations().isEmpty()) {
-				/*JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );*/
+				JOptionPane.showMessageDialog(WebLafGSA.getWelcomeScreenFrame()
+						, "Please Give job Operation Details !!",
+						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}
 		}
@@ -263,8 +265,9 @@ public class NegotiationInfo{
 		Date jobDueDate = (Date) datePicker.getModel().getValue();
 
 		if(time == null || jobDueDate == null) {
-			/*JOptionPane.showMessageDialog(this, "Invalid input for due date !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );*/
+			JOptionPane.showMessageDialog(WebLafGSA.getWelcomeScreenFrame()
+					, "Invalid input for due date !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		} else {
 
@@ -279,8 +282,9 @@ public class NegotiationInfo{
 					c1.get(Calendar.HOUR_OF_DAY), c1.get(Calendar.MINUTE), c1.get(Calendar.SECOND));
 
 			if(calTime.getTimeInMillis() < System.currentTimeMillis()) {
-				/*JOptionPane.showMessageDialog(this, "Please enter a due date after current Date !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );*/
+				JOptionPane.showMessageDialog(WebLafGSA.getWelcomeScreenFrame()
+						, "Please enter a due date after current Date !!",
+						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}else {
 				populatingJob.setJobDuedatebyCust(calTime.getTime());
@@ -292,8 +296,9 @@ public class NegotiationInfo{
 	private boolean checkPenaltyRate() {
 		boolean status = true;
 		if(! txtPenaltyRate.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			/*JOptionPane.showMessageDialog(this, "Invalid input for penalty rate !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );*/
+			JOptionPane.showMessageDialog(WebLafGSA.getWelcomeScreenFrame()
+					, "Invalid input for penalty rate !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
 			populatingBatch.setPenaltyRate(Double.parseDouble(
@@ -305,8 +310,9 @@ public class NegotiationInfo{
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			/*JOptionPane.showMessageDialog(this, "Invalid input for CPN !!", 
-					"Error" , JOptionPane.ERROR_MESSAGE );*/
+			JOptionPane.showMessageDialog(WebLafGSA.getWelcomeScreenFrame()
+					, "Invalid input for CPN !!", 
+					"Error" , JOptionPane.ERROR_MESSAGE );
 			status = false;
 		}else {
 			populatingBatch.setCPN(Double.parseDouble(
@@ -332,8 +338,9 @@ public class NegotiationInfo{
 		boolean  x2 = true;
 
 		if(! txtNumOps.getText().matches("-?\\d+?")) {
-			/*JOptionPane.showMessageDialog(this, "Invalid input for number of operations !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );*/
+			JOptionPane.showMessageDialog(WebLafGSA.getWelcomeScreenFrame()
+					, "Invalid input for number of operations !!",
+					"Error" , JOptionPane.ERROR_MESSAGE );
 			x2 = false;
 		} else {
 			NumOps = Integer.parseInt(txtNumOps.getText());
@@ -341,17 +348,7 @@ public class NegotiationInfo{
 		operationDataOk = x2;
 	}
 
-/*	private void showGui() {
-		setTitle("Global Scheduling Agent - Negotiation Job");
-		setPreferredSize(new Dimension(600,500));
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		pack();
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int centerX = (int)screenSize.getWidth() / 2;
-		int centerY = (int)screenSize.getHeight() / 2;
-		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
-		super.setVisible(true);
-	}*/
+
 
 	class buttonListener implements ActionListener {
 
@@ -367,6 +364,7 @@ public class NegotiationInfo{
 							(NegotiationJobTileRenderer)(WebLafGSA.
 									getNegotiationJobListTable().getModel());
 					negotiationRenderer.removeJob(populatingBatch);
+					WebLafGSA.unloadNegotiationInfoPanel();
 				}
 			}
 		}

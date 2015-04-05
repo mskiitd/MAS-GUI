@@ -1,5 +1,6 @@
 package mas.globalSchedulingproxy.gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -8,12 +9,17 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,8 +29,10 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -42,13 +50,20 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 import uiconstants.Labels;
 
 import com.alee.extended.label.WebHotkeyLabel;
+import com.alee.extended.time.ClockType;
+import com.alee.extended.time.WebClock;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
+import com.alee.managers.notification.NotificationIcon;
+import com.alee.managers.notification.NotificationManager;
+import com.alee.managers.notification.WebNotificationPopup;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
@@ -61,7 +76,7 @@ import mas.util.formatter.integerformatter.FormattedIntegerField;
 public class WebLafGSA {
 
 	private static GlobalSchedulingAgent GSA=null;
-	private static WebFrame welcomeScreenFrame=null;
+	private static JFrame welcomeScreenFrame=null;
 	private static BorderLayout layout=null;
 	
 	private static WebScrollPane currentJobList=null;
@@ -75,7 +90,11 @@ public class WebLafGSA {
 	private static WebPanel completedJobListinfoPanel=null;
 	private static WebPanel NegotiationJobListinfoPanel=null;
 	
+	public enum notificationType{
+		error, newJob, completedJob, negotiationBid
+	}
 	private static Logger log=LogManager.getLogger();
+	
 	
 //table of jobTiles. Left side of frame
 	private static JTable currentJobListTable=null;
@@ -85,23 +104,47 @@ public class WebLafGSA {
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private static double width = screenSize.getWidth();
     private static double height = screenSize.getHeight();
-	
+    
+    public static TrayIcon GSAguiIcon ;
+    
 	public WebLafGSA(GlobalSchedulingAgent globalSchedulingAgent){
 		this.GSA=globalSchedulingAgent;
 		init();
 	}
 	
 	private void init(){
+		
+		
+		Image image = Toolkit.getDefaultToolkit().getImage("resources/smartMachine.png");
+		GSAguiIcon= new TrayIcon(image, "Tester2");
+		 if (SystemTray.isSupported()) {
+		      SystemTray tray = SystemTray.getSystemTray();
+	
+		      GSAguiIcon.setImageAutoSize(true);
+		      try {
+		        tray.add(GSAguiIcon);
+		      } catch (AWTException e) {
+		       log.info("TrayIcon could not be added.");
+		      }
+		    }
+		
 		this.welcomeScreenFrame=new WebFrame();
 		this.layout=new BorderLayout();
 		this.MainPanel=new WebPanel(layout);
-		currentJobListinfoPanel=new WebPanel(new MigLayout());
-		completedJobListinfoPanel=new WebPanel(new MigLayout());
-		NegotiationJobListinfoPanel=new WebPanel(new MigLayout());
+//		this.MainPanel.setOpaque(false);
 		
-		currentJobListinfoPanel.setBackground(Color.RED);
+		currentJobListinfoPanel=new WebPanel(new MigLayout());
+//		currentJobListinfoPanel.setOpaque(false);
+		completedJobListinfoPanel=new WebPanel(new MigLayout());
+//		completedJobListinfoPanel.setOpaque(false);
+		NegotiationJobListinfoPanel=new WebPanel(new MigLayout());
+//		NegotiationJobListinfoPanel.setOpaque(false);
+		
+		
+		
+		/*currentJobListinfoPanel.setBackground(Color.RED);
 		completedJobListinfoPanel.setBackground(Color.BLUE);
-		NegotiationJobListinfoPanel.setBackground(Color.GREEN);
+		NegotiationJobListinfoPanel.setBackground(Color.GREEN);*/
 		
 		initCompletedJobListPanel();
 		initCurrentJobListPanel();
@@ -120,9 +163,12 @@ public class WebLafGSA {
 	    
 	    MainPanel.add(menu, BorderLayout.SOUTH);
 		MainPanel.add(currentJobList,BorderLayout.WEST);
+
 	    welcomeScreenFrame.add(MainPanel);
 		welcomeScreenFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		welcomeScreenFrame.setVisible(true);
+		
+		
 	}
 	
 	
@@ -528,6 +574,10 @@ public class WebLafGSA {
 		return negotiationJobListTable;
 	}
 
+	public static JFrame getWelcomeScreenFrame() {
+		return welcomeScreenFrame;
+	}
+
 	protected static void cleanMainPanel() {
 		if(completedJobsList!=null && completedJobsList.getRootPane()!=null){
 			MainPanel.remove(completedJobsList);
@@ -553,22 +603,67 @@ public class WebLafGSA {
     			(CompletedJobTileRenderer)completedJobListTable.getModel();
     	
     	completedJobRenderer.addBatch(b);
-    	
-		log.info("nothing happends when completed job is added");
+    	String msg="Batch No. "+b.getBatchNumber()+" completed";
+		showNotification(msg, notificationType.completedJob);
 	}
 
 	public void addAcceptedJobToList(Batch order) {
 		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
     	CurrJobListRenderer.addBatch(order);
+    	String msg="Batch No. "+order.getBatchNumber()+" accepted";
+		showNotification(msg, notificationType.newJob);
 	}
 
 	public void addNegotiationBid(Batch jobUnderNegotiation) {
 		NegotiationJobTileRenderer negotiationRenderer=
 				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
 		negotiationRenderer.addBatch(jobUnderNegotiation);
+		String msg="Bid recieved for batch no. "+jobUnderNegotiation.getBatchNumber();
+		showNotification(msg, notificationType.negotiationBid);
 		
 	}
 
-
+	public static void showNotification(String message,notificationType type){
+		
+		switch(type){
+		case error :
+			GSAguiIcon.displayMessage("ERROR",message, TrayIcon.MessageType.ERROR);
+			break;
+			
+		case negotiationBid:
+			GSAguiIcon.displayMessage( "Negotiation Bid",message, TrayIcon.MessageType.INFO);
+			break;
+			
+		case newJob:
+			Icon newJobIcon=new ImageIcon("resources/newJob.png");
+			GSAguiIcon.displayMessage( "New order",message, TrayIcon.MessageType.INFO);
+			break;
+			
+		case completedJob:
+			Icon completedJobIcon=new ImageIcon("resources/completedJob.png");
+			GSAguiIcon.displayMessage( "Batch completed",message, TrayIcon.MessageType.INFO);
+			break;
+		}
+		
+		String notificationSound = "resources/notification.wav";
+	    InputStream in=null;
+		try {
+			in = new FileInputStream(notificationSound);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	 
+	    // create an audiostream from the inputstream
+	    AudioStream audioStream=null;
+		try {
+			audioStream = new AudioStream(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	 
+	    // play the audio clip with the audioplayer class
+	    AudioPlayer.player.start(audioStream);
+	    
+			}
 
 }
