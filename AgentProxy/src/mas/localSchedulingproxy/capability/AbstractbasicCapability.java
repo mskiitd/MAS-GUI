@@ -18,6 +18,7 @@ import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentServicePlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentToBlackboardPlan;
+import mas.localSchedulingproxy.plan.RespondToGSAQuery;
 import mas.localSchedulingproxy.plan.SendBidPlan;
 import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
 import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
@@ -77,47 +78,47 @@ public class AbstractbasicCapability extends Capability {
 		Belief<String[]> supportedOperations = 
 				new TransientBelief<String[]>(ID.LocalScheduler.BeliefBaseConst.supportedOperations);
 
-				StatsTracker stats = new StatsTracker();
-				dtrack.setValue(stats);
+		StatsTracker stats = new StatsTracker();
+		dtrack.setValue(stats);
 
-				Belief<ArrayList<Batch> > jobSet = new TransientBelief<ArrayList<Batch> >(
-						ID.LocalScheduler.BeliefBaseConst.batchQueue);
+		Belief<ArrayList<Batch> > jobSet = new TransientBelief<ArrayList<Batch> >(
+				ID.LocalScheduler.BeliefBaseConst.batchQueue);
 
-				Belief<Double> regretThreshold = new TransientBelief<Double>(
-						ID.LocalScheduler.BeliefBaseConst.regretThreshold);
+		Belief<Double> regretThreshold = new TransientBelief<Double>(
+				ID.LocalScheduler.BeliefBaseConst.regretThreshold);
 
-				Belief<OperationDataBase> operationDB = new 
-						TransientBelief<OperationDataBase>(ID.LocalScheduler.BeliefBaseConst.operationDatabase);
+		Belief<OperationDataBase> operationDB = new 
+				TransientBelief<OperationDataBase>(ID.LocalScheduler.BeliefBaseConst.operationDatabase);
 
-				Belief<Batch> doneBatchFromMachine = new TransientBelief<Batch>(
-						ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine);
-				
-				Belief<Batch> currentBatch = new TransientBelief<Batch>(
-						ID.LocalScheduler.BeliefBaseConst.currentBatch);
-				
-				doneBatchFromMachine.setValue(null);
-				currentBatch.setValue(null);
+		Belief<Batch> doneBatchFromMachine = new TransientBelief<Batch>(
+				ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine);
+		
+		Belief<Batch> currentBatch = new TransientBelief<Batch>(
+				ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
+		
+		doneBatchFromMachine.setValue(null);
+		currentBatch.setValue(null);
 
-				double threshVal = 0;
-				regretThreshold.setValue(threshVal);
+		double threshVal = 0;
+		regretThreshold.setValue(threshVal);
 
-				ArrayList<Batch> jobList = new ArrayList<Batch>();
-				jobSet.setValue(jobList);
+		ArrayList<Batch> jobList = new ArrayList<Batch>();
+		jobSet.setValue(jobList);
 
-				beliefs.add(bboard);
-				beliefs.add(jobSet);
-				beliefs.add(myMachine);
-				beliefs.add(myMcMaintAgent);
-				beliefs.add(mygsAgent);
-				beliefs.add(dtrack);
-				beliefs.add(regretThreshold);
-				beliefs.add(processingCost);
-				beliefs.add(supportedOperations);
-				beliefs.add(operationDB);
-				beliefs.add(doneBatchFromMachine);
-				beliefs.add(currentBatch);
+		beliefs.add(bboard);
+		beliefs.add(jobSet);
+		beliefs.add(myMachine);
+		beliefs.add(myMcMaintAgent);
+		beliefs.add(mygsAgent);
+		beliefs.add(dtrack);
+		beliefs.add(regretThreshold);
+		beliefs.add(processingCost);
+		beliefs.add(supportedOperations);
+		beliefs.add(operationDB);
+		beliefs.add(doneBatchFromMachine);
+		beliefs.add(currentBatch);
 
-				return beliefs;
+		return beliefs;
 	}
 
 	public static Set<Plan> getPlans() {
@@ -147,6 +148,9 @@ public class AbstractbasicCapability extends Capability {
 		plans.add(new SimplePlan(JobSchedulingGoal.class,BatchSchedulingPlan.class));
 
 		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, UpdateOperationDatabasePlan.class));
+		
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgGSAQuery)
+		,RespondToGSAQuery.class));
 
 		return plans;
 	}	

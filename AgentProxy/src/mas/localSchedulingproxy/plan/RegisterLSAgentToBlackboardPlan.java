@@ -77,7 +77,7 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 		
 		NamedZoneData ZoneDataName6 =
 				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.QueryResponse).
-				MsgID(MessageIds.msgLSQueryResponse)
+				MsgID(MessageIds.msgLSAQueryResponse)
 				.appendValue(false).
 				build();
 		

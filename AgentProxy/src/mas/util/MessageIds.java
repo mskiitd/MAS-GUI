@@ -114,7 +114,7 @@ public class MessageIds {
 
 	public static final String msgGSAQuery = "GSAqueriesToLSA";
 
-	public static final String msgLSQueryResponse = "ResponseToGSAQuery";
+	public static final String msgLSAQueryResponse = "ResponseToGSAQuery";
 
 	public static final String msgreqToChangeDueDate = "CallBackJobReq";
 

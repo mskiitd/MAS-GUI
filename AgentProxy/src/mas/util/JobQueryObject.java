@@ -1,10 +1,11 @@
 package mas.util;
 
 import jade.core.AID;
+import jade.util.leap.Serializable;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 
-public class JobQueryObject {
+public class JobQueryObject implements Serializable {
 
 	private Batch currentJob;
 	private AID currentMachine;

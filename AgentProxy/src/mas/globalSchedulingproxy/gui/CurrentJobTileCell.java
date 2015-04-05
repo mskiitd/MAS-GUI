@@ -22,6 +22,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 
@@ -181,7 +182,8 @@ public class CurrentJobTileCell extends AbstractCellEditor implements TableCellE
 	                public void actionPerformed ( final ActionEvent e )
 	                {
 	                	WebLafGSA.unloadCurrentJobInfoPanel();
-	                    System.out.println ( QueryIcon );
+	                	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch()));
+	                	Log.info("added query goal");
 	                }
 	            };
 	            final WebDynamicMenuItem QueryItem = new WebDynamicMenuItem ( QueryIcon, QueryAction );

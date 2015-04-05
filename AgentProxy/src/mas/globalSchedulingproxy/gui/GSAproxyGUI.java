@@ -159,7 +159,7 @@ public class GSAproxyGUI extends JFrame{
 			if (menu == menuItemQuery) {
 				currentSelecetdQueryJob = jobsInSystemTable.getSelectedRow();
 				
-				gAgent.queryJob((Batch) acceptedJobVector.get(currentSelecetdQueryJob));
+//				gAgent.queryJob((Batch) acceptedJobVector.get(currentSelecetdQueryJob));
 
 			} 
 		}

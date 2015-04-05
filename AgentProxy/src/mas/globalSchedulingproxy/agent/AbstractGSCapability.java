@@ -8,6 +8,7 @@ import java.util.Set;
 
 import mas.globalSchedulingproxy.goal.GSASendNegotitationGoal;
 import mas.globalSchedulingproxy.goal.GetNoOfMachinesGoal;
+import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.goal.RegisterAgentToBlackBoardGoal;
 import mas.globalSchedulingproxy.goal.RegisterServiceGoal;
 import mas.globalSchedulingproxy.plan.AskForWaitingTime;
@@ -16,6 +17,7 @@ import mas.globalSchedulingproxy.plan.GSASendNegotiationJobPlan;
 import mas.globalSchedulingproxy.plan.GetNoOfMachinesPlan;
 import mas.globalSchedulingproxy.plan.HandleCompletedOrderbyLSAPlan;
 import mas.globalSchedulingproxy.plan.NegotiateViaGuiPlan;
+import mas.globalSchedulingproxy.plan.QueryFromLSA;
 import mas.globalSchedulingproxy.plan.RegisterAgentToBlackboardPlan;
 import mas.globalSchedulingproxy.plan.RegisterServicePlan;
 import mas.globalSchedulingproxy.plan.TakeOrderAndRaiseBidPlan;
@@ -101,6 +103,8 @@ public abstract class AbstractGSCapability  extends Capability {
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgreqToChangeDueDate),
 				CallBackChangeDueDatePlan.class));
+		
+		plans.add(new SimplePlan(QueryJobGoal.class, QueryFromLSA.class));
 
 		return plans;
 	}	

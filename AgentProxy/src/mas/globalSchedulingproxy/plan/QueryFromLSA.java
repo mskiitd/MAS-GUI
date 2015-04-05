@@ -5,6 +5,7 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
@@ -22,6 +23,8 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+import mas.globalSchedulingproxy.goal.*;
+
 public class QueryFromLSA extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
@@ -30,7 +33,7 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 	private int step = 0;
 	private MessageTemplate mt;
 	private int MachineCount = 0;
-	private int repliesCnt;
+	private int repliesCnt=0;
 	private Batch queryJob;
 	private ACLMessage[] LSAqueryResponse;
 	private BeliefBase bfBase;
@@ -43,13 +46,11 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 
 	@Override
 	public void init(PlanInstance PI) {
-
+		
 		bfBase = PI.getBeliefBase();
-		this.queryJob = (Batch) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob).
-				getValue();
-
+		this.queryJob=	((QueryJobGoal)(PI.getGoal())).getBatchToQuery();
 		blackboard_AID = new AID(ID.Blackboard.LocalName, false);
-		mt = MessageTemplate.MatchConversationId(MessageIds.msgLSQueryResponse);
+		mt = MessageTemplate.MatchConversationId(MessageIds.msgLSAQueryResponse);
 	}
 
 	@Override
@@ -63,12 +64,12 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 			if (MachineCount != 0) {
 				JobQueryObject queryForm = new JobQueryObject.Builder().
 						currentJob(this.queryJob).build();
-
+				LSAqueryResponse=new ACLMessage[MachineCount];
 				ZoneDataUpdate QueryRequest = new ZoneDataUpdate.
 						Builder(ID.GlobalScheduler.ZoneData.QueryRequest).
 						value(queryForm).
 						Build();
-
+				log.info("sent query");
 				AgentUtil.sendZoneDataUpdate(blackboard_AID, QueryRequest, myAgent);
 				step = 1;
 			}
@@ -76,11 +77,14 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 		case 1:
 			try {
 				ACLMessage reply = myAgent.receive(mt);
+//				log.info("recieved"+reply);
 				if (reply != null) {
 					LSAqueryResponse[repliesCnt] = reply;
 					repliesCnt++;
 					if (repliesCnt == MachineCount) {
 						step = 2;
+						repliesCnt=0;
+//						log.info("got replies");
 					}
 				}
 				else {

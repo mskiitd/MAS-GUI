@@ -62,7 +62,7 @@ public class AgentStarter {
 		//		log.info(log.isInfoEnabled());
 
 		List<String> params = new ArrayList<String>();
-		//		params.add("-gui");
+//				params.add("-gui");
 		//		params.add("-detect-main:false");
 
 		this.bootProfile = new BootProfileImpl(params.toArray(new String[0]));

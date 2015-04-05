@@ -67,9 +67,8 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 
 			if(jobQueue.size() > 0) {
 				Batch batchToSend = jobQueue.get(0);
-				batchToSend.resetJobsComplete();
-				
-				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentBatch, batchToSend);
+				batchToSend.resetJobsComplete(); //
+				jobQueue.remove(0);
 								
 				log.info("Sending job to machine " + myAgent.getLocalName() + " " + batchToSend.getBatchNumber() );
 
@@ -78,8 +77,10 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 
 				AgentUtil.sendZoneDataUpdate(blackboard , bidForJobUpdate, myAgent);
 				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQueue);
+				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine, batchToSend);
+				log.info(bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine));
+				
 
-				jobQueue.remove(0);
 				
 				step = 1;
 			} else {

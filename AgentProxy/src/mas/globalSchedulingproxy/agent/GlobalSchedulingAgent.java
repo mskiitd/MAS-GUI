@@ -23,14 +23,14 @@ import bdi4jade.core.Capability;
 public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 
 	private static final long serialVersionUID = 1L;
-	public static GSAproxyGUI GSAgui;
+//	public static GSAproxyGUI GSAgui;
 	public static WebLafGSA weblafgui;
 	private Logger log;
 	private BeliefBase bfBase;
 
 	public static void addCompletedJob(Batch j) {
-		if(GSAgui != null) {
-			GSAgui.addCompletedJob(j);
+		if(weblafgui != null) {
+//			GSAgui.addCompletedJob(j);
 			weblafgui.addCompletedJob(j);
 		}
 	}
@@ -52,7 +52,7 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				GSAgui = new GSAproxyGUI(GlobalSchedulingAgent.this);
+//				GSAgui = new GSAproxyGUI(GlobalSchedulingAgent.this);
 				weblafgui = new WebLafGSA(GlobalSchedulingAgent.this);
 			}
 		});
@@ -70,9 +70,9 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		
 	}
 
-	public void queryJob(Batch job) {
+	/*public void queryJob(Batch job) {
 		bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob, job);
 		
 		addGoal(new QueryJobGoal());
-	}
+	}*/
 }

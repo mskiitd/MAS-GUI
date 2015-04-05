@@ -240,13 +240,13 @@ public class CustomerProxyGUI extends JFrame{
 
 	private void showGui() {
 		setTitle(" Customer ");
-		setPreferredSize(new Dimension(1000,800));
+//		setPreferredSize(new Dimension(800,800));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		/*Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;
 		int centerY = (int)screenSize.getHeight() / 2;
-		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
+		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);*/
 		super.setVisible(true);
 	}
 

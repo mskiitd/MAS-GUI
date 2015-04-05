@@ -48,7 +48,7 @@ public class JobQueryReplyFrame extends JFrame{
 	public JobQueryReplyFrame( JobQueryObject response) {
 
 		this.scroller = new JScrollPane();
-		this.mainInfoPanel = new JPanel(new MigLayout());
+		this.mainInfoPanel = new JPanel(new MigLayout("","","10"));
 
 		this.lblHeading = new JLabel("Job Query Results");
 
@@ -77,14 +77,23 @@ public class JobQueryReplyFrame extends JFrame{
 			lblDueDate.setText(String.valueOf(theJob.getDueDateByCustomer()));
 			lblPenaltyRate.setText(String.valueOf(theJob.getPenaltyRate()));
 			this.lblOperations.setText(String.valueOf(
-					theJob.getSampleJob().getOperations()) );
+					theJob.getSampleJob().getOperations()));
 			
-			this.lblOperationsDone.setText("");
-			this.lblCurrentOperation.setText("");
-			this.lblCurrentMachine.setText("");
+			String currOps="[";
+			for(int i=0;i<theJob.getCurrentJobNo();i++){
+				currOps=currOps+theJob.getCurrentOperationType();
+				if(i!=(theJob.getNumOperations()-1)){
+					currOps=currOps+",";
+				}
+			}
+			currOps=currOps+"]";
+			this.lblOperationsDone.setText(currOps);
+			
+			this.lblCurrentOperation.setText(theJob.getCurrentOperationType());
+			this.lblCurrentMachine.setText(response.getCurrentMachine().getLocalName());
 		}
 
-		mainInfoPanel.add(lblHeading);
+//		mainInfoPanel.add(lblHeading);
 
 		mainInfoPanel.add(lblJobIDHeading);
 		mainInfoPanel.add(lblJobID,"wrap");
@@ -95,8 +104,8 @@ public class JobQueryReplyFrame extends JFrame{
 		mainInfoPanel.add(lblPenaltyHeading);
 		mainInfoPanel.add(lblPenaltyRate,"wrap");
 
-		mainInfoPanel.add(lblDueDateHeading);
-		mainInfoPanel.add(lblDueDateHeading,"wrap");
+		/*mainInfoPanel.add(lblDueDateHeading);
+		mainInfoPanel.add(lblDueDateHeading,"wrap");*/
 		
 		mainInfoPanel.add(lblOperationsHeading);
 		mainInfoPanel.add(lblOperations,"wrap");
@@ -117,8 +126,9 @@ public class JobQueryReplyFrame extends JFrame{
 	}
 
 	private void showGui() {
-		setTitle(" Reply for Job Query ");
-		setPreferredSize(new Dimension(700,500));
+		setTitle(" Batch Status ");
+//		setPreferredSize(new Dimension(700,500));
+		pack();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

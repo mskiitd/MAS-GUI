@@ -146,7 +146,7 @@ public class ZoneData implements ZoneDataIFace, Serializable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//		log.info(update);
+//			log.info(update);
 		bb.send(update);
 	}
 }

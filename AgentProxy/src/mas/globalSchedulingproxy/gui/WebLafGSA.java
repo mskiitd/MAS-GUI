@@ -116,7 +116,7 @@ public class WebLafGSA {
 		
 		
 		Image image = Toolkit.getDefaultToolkit().getImage("resources/smartMachine.png");
-		GSAguiIcon= new TrayIcon(image, "Tester2");
+		GSAguiIcon= new TrayIcon(image, "GSA");
 		 if (SystemTray.isSupported()) {
 		      SystemTray tray = SystemTray.getSystemTray();
 	
@@ -576,6 +576,10 @@ public class WebLafGSA {
 
 	public static JFrame getWelcomeScreenFrame() {
 		return welcomeScreenFrame;
+	}
+
+	public static GlobalSchedulingAgent getGSA() {
+		return GSA;
 	}
 
 	protected static void cleanMainPanel() {

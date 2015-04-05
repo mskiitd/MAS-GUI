@@ -10,6 +10,7 @@ import jade.lang.acl.UnreadableException;
 import mas.jobproxy.Batch;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
+import mas.util.ID;
 import mas.util.MessageIds;
 
 import org.apache.logging.log4j.LogManager;
@@ -60,7 +61,6 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 							batchToProcess.getDueDateByCustomer() );
 
 					machineSimulator.setCurrentBatch(batchToProcess);
-//					step = 1;
 					block(100);
 				} 
 				else {
