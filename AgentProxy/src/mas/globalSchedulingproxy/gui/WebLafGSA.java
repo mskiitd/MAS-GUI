@@ -604,27 +604,37 @@ public class WebLafGSA {
 				(CurrentJobTileRenderer)currentJobListTable.getModel();
     	CurrjobListRenderer.removeJob(b);
     	
+    	currentJobListTable.repaint();
+    	
+    	
     	CompletedJobTileRenderer completedJobRenderer=
     			(CompletedJobTileRenderer)completedJobListTable.getModel();
     	
     	completedJobRenderer.addBatch(b);
+    	completedJobListTable.repaint();
     	String msg="Batch No. "+b.getBatchNumber()+" completed";
 		showNotification("Batch Completed",msg, MessageType.INFO);
+		
+		currentJobList.repaint();
 	}
 
 	public void addAcceptedJobToList(Batch order) {
 		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
     	CurrJobListRenderer.addBatch(order);
+    	currentJobListTable.repaint();
     	String msg="Batch No. "+order.getBatchNumber()+" accepted";
 		showNotification("New Batch",msg, MessageType.INFO);
+		currentJobList.repaint();
 	}
 
 	public void addNegotiationBid(Batch jobUnderNegotiation) {
 		NegotiationJobTileRenderer negotiationRenderer=
 				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
 		negotiationRenderer.addBatch(jobUnderNegotiation);
+		negotiationJobListTable.repaint();
 		String msg="Bid recieved for batch no. "+jobUnderNegotiation.getBatchNumber();
 		showNotification("New Bid", msg, MessageType.INFO);
+		currentJobList.repaint();
 		
 	}
 	
@@ -632,6 +642,8 @@ public class WebLafGSA {
 		CurrentJobTileRenderer CurrjobListRenderer=
 				(CurrentJobTileRenderer)currentJobListTable.getModel();
     	CurrjobListRenderer.removeJob(batch);
+    	currentJobListTable.repaint();
+    	currentJobList.repaint();
 	}
 
 	public static void showNotification(String title, String message,TrayIcon.MessageType type){

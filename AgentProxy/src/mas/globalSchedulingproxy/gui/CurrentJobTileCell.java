@@ -42,12 +42,13 @@ import com.alee.utils.SwingUtils;
 
 public class CurrentJobTileCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
 
-	private JLabel jobID,dueDate,startDate,priorityText,priorityNo;
+	private JLabel jobID,dueDate,startDate,priorityText,batchNo;
 	private JPanel tile;
 //	private JButton more;
 	private JobTile jobTileInCell;
 	private String PriorityNoText;
 	private final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	protected Logger log=LogManager.getLogger();
     
 	public CurrentJobTileCell(){
 		tile=new JPanel(new MigLayout("",
@@ -63,38 +64,41 @@ public class CurrentJobTileCell extends AbstractCellEditor implements TableCellE
 		
 		priorityText=new JLabel();
 		priorityText.setName("prioityText");
-		priorityNo=new JLabel();
-		priorityNo.setName("PriorityNoOfJob");
+		batchNo=new JLabel();
+		batchNo.setName("BatchNoOfJob");
 
 	}
 	
 	private void updateData(JobTile feed, boolean isSelected, JTable table) {
 		this.jobTileInCell = feed;
 		
-		jobID.setText("Job ID : "+jobTileInCell.getBatchID());
+		jobID.setText("Batch ID : "+jobTileInCell.getBatchID());
 		dueDate.setText("Due date : "+formatter.format(jobTileInCell.getCustDueDate()));
 		startDate.setText("Start Date : "+formatter.format(jobTileInCell.getCustStartDate()));
 //		more.setText("more");
 		priorityText.setText("Priority : "+ Integer.toString((int)jobTileInCell.getPriority()));
 
 		PriorityNoText="<html><b>"+Integer.toString((int)jobTileInCell.getPriority())+"</b></html>";
-		priorityNo.setText(PriorityNoText);
+		batchNo.setText("Batch No.: "+jobTileInCell.getBatch().getBatchNumber());
 		
 		tile.add(jobID,"wrap");
 //		tile.add(more, "align right, wrap");
 		tile.add(dueDate,"wrap");
 		tile.add(startDate,"wrap");
 		tile.add(priorityText);
-//		tile.add(priorityNo);
+		tile.add(batchNo);
 		
 		
 	   tile.addMouseListener ( new MouseAdapter ()
         {
-            @Override
+            
+
+			@Override
             public void mousePressed ( final MouseEvent e )
             {
              if(SwingUtils.isRightMouseButton(e)){
-            	createMenu (jobTileInCell).showMenu ( e.getComponent (), e.getPoint () );
+            	createMenu (jobTileInCell).showMenu ( e.getComponent (), e.getPoint ());
+            	log.info(jobTileInCell.getBatch().getBatchNumber());
              }
              else{
      			WebLafGSA.unloadCurrentJobInfoPanel();
@@ -132,6 +136,7 @@ public class CurrentJobTileCell extends AbstractCellEditor implements TableCellE
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		//returns component in editatble format. So button will get clicked
+		log.info(isSelected);
 		WebLafGSA.unloadCurrentJobInfoPanel();
 		JobTile feed = (JobTile)value;
 		
@@ -201,7 +206,7 @@ public class CurrentJobTileCell extends AbstractCellEditor implements TableCellE
                 	WebLafGSA.unloadCurrentJobInfoPanel();
                 	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch(),
                 			ID.GlobalScheduler.requestType.cancelBatch));
-                	Log.info("added cancel job goal");
+                	Log.info("added cancel batch goal");
                 }
             };
             final WebDynamicMenuItem cancelJobItem = new WebDynamicMenuItem ( CancelJobIcon, CancelJobAction );

@@ -66,20 +66,34 @@ public class CurrentJobTileRenderer extends AbstractTableModel implements TableM
 
 
 	public void addBatch(Batch b){
-			batchTiles.add(new JobTile(b));
-			super.fireTableRowsInserted(getRowCount()+1, getRowCount()+1);
+			JobTile jt=new JobTile(b);
+			batchTiles.add(jt);
+
+			super.fireTableRowsInserted(0, getRowCount()-1);
+			super.fireTableCellUpdated(0, getRowCount()-1);
+			super.fireTableDataChanged();
+			log.info(b.getBatchNumber()+" "+jt.getBatch().getBatchNumber());
 	}
 
 	public void removeJob(Batch j) {
-		log.info("fired remove job");
+		log.info("fired remove batch for "+j.getBatchNumber());
 		int count=0;
-		while(count<batchTiles.size() && (!j.getBatchId().equals(batchTiles.get(count).getBatchID()))){
+		int tablesize=batchTiles.size()-1;
+		
+		for(int index=0;index<batchTiles.size();index++){
+			log.info(batchTiles.get(index).getBatch().getBatchNumber());
+		}
+		
+		while(count<batchTiles.size() && (j.getBatchNumber()!=(batchTiles.get(count)
+				.getBatch().getBatchNumber()))){
 			count++;
 		}
 		log.info("count="+count);
 		if(count!=batchTiles.size()){
 			batchTiles.remove(count);
-			super.fireTableRowsDeleted(count, count);
+			super.fireTableRowsDeleted(0, tablesize);
+			super.fireTableCellUpdated(0, getRowCount()-1);
+			super.fireTableDataChanged();
 		}
 		}
 	}
