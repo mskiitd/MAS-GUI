@@ -24,6 +24,7 @@ import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
 import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
 import mas.localSchedulingproxy.plan.UpdateOperationDatabasePlan;
+import mas.machineproxy.gui.MachineGUI;
 import mas.util.ID;
 import mas.util.MessageIds;
 
@@ -100,6 +101,9 @@ public class AbstractbasicCapability extends Capability {
 				new TransientBelief<ArrayList<Batch>>(ID.LocalScheduler.
 				BeliefBaseConst.actionOnCompletedBatch);
 		
+		Belief<MachineGUI> gui = new TransientBelief<MachineGUI>(ID.LocalScheduler.BeliefBaseConst.gui_machine);
+		gui.setValue(null);
+		
 		doneBatchFromMachine.setValue(null);
 		currentBatch.setValue(null);
 		actionOnCompletedBatch.setValue(new ArrayList<Batch>());
@@ -123,6 +127,7 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(doneBatchFromMachine);
 		beliefs.add(currentBatch);
 		beliefs.add(actionOnCompletedBatch);
+		beliefs.add(gui);
 
 		return beliefs;
 	}

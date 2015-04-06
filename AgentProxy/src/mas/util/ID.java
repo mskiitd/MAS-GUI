@@ -78,6 +78,7 @@ public class ID implements Serializable{
 			public static final String doneBatchFromMachine = "done_batchFromMachine";
 			public static final String currentBatch = "current_batchOnMachine";
 			public static final String actionOnCompletedBatch = "action_on_completed_Batch";
+			public static final String gui_machine = "machine_gui";
 		}
 
 		public class ZoneData {
@@ -96,6 +97,8 @@ public class ID implements Serializable{
 			public static final String finishedBatch="LSA_finishedJob";
 
 			public static final String QueryResponse = "ResponseToGSAQuery";
+
+			public static final String gui_machine = "guiMachine";
 		}
 	}
 
@@ -180,6 +183,7 @@ public class ID implements Serializable{
 			public static final String dataTracker = "Maintenance_data-tracker";
 			public static final String maintenanceJob = "Maintenance_machine-maintenance-tracker";
 			public static final String correctiveRepairData = "Maintenance_Corrective_Repair_Data" ;
+			public static final String gui_maintenance = "gui_maintenance";
 		}
 	}
 

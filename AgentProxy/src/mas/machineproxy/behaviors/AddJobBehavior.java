@@ -10,6 +10,7 @@ import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Methods;
 import mas.machineproxy.Simulator;
+import mas.machineproxy.gui.MachineGUI;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,7 @@ public class AddJobBehavior extends Behaviour {
 	private long processingTime;
 	private long passedTime;
 	private Simulator machineSimulator = null;
+	private MachineGUI gui;
 	private ScheduledThreadPoolExecutor executor;
 
 	public AddJobBehavior(job comingJob) {
@@ -43,11 +45,13 @@ public class AddJobBehavior extends Behaviour {
 				if(this.machineSimulator == null) {
 					this.machineSimulator = (Simulator) getDataStore().
 							get(Simulator.simulatorStoreName);
+					gui = machineSimulator.getGui();
+					
 				}
 
 				machineSimulator.setStatus(MachineStatus.PROCESSING);
 
-				LocalSchedulingAgent.mGUI.machineProcessing(comingJob.getJobID(),
+				gui.machineProcessing(comingJob.getJobID(),
 						comingJob.getCurrentOperation().getJobOperationType());
 
 				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessTime()/1000.0;
@@ -120,7 +124,7 @@ public class AddJobBehavior extends Behaviour {
 			process.setDataStore(getDataStore());
 			myAgent.addBehaviour(process);
 			machineSimulator.setStatus(MachineStatus.IDLE);
-			LocalSchedulingAgent.mGUI.machineIdle();
+			gui.machineIdle();
 			break;
 		}
 	}

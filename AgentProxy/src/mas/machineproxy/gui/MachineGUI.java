@@ -249,17 +249,19 @@ public class MachineGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource().equals(btnLoadJob)) {
 				if(machineSimulator != null) {
+					log.info("load button pressed##################");
 					machineSimulator.loadJob();
 					btnUnloadJob.setEnabled(true);
 					btnLoadJob.setEnabled(false);
 				}
 				else{
-					log.info("machineSimulator="+machineSimulator);
+					log.info("machineSimulator = " + machineSimulator);
 				}
 
 			} else if(e.getSource().equals(btnUnloadJob)) {
 
 				if(machineSimulator != null) {
+					log.info("unload button pressed##################");
 					machineSimulator.unloadJob();
 					btnUnloadJob.setEnabled(false);
 					btnLoadJob.setEnabled(true);
@@ -268,6 +270,7 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnFailMachineButton)) {
 
 				if(machineSimulator != null) {
+					log.info("fail button pressed##################");
 					machineSimulator.FailTheMachine();
 					machineFailed();
 					btnFailMachineButton.setEnabled(false);
@@ -279,6 +282,7 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnRepairMachine)) {
 
 				if(machineSimulator != null) {
+					log.info("repair button pressed##################");
 					machineSimulator.repair();
 					btnUnloadJob.setEnabled(true);
 					btnFailMachineButton.setEnabled(true);
@@ -306,7 +310,6 @@ public class MachineGUI extends JFrame {
 	}
 
 	public void removeFromQueue(Batch j) {
-		System.out.println("removal : " + jobQ.contains(j));
 		if(jobQ.contains(j)) {
 			jobQ.remove(j);
 			queuePanel.revalidate();
@@ -315,7 +318,7 @@ public class MachineGUI extends JFrame {
 	}
 
 	private void showGui() {
-		setTitle(" Machine GUI ");
+		setTitle(" Machine GUI : " + lAgent.getLocalName().split("#")[1]);
 		setJMenuBar(createMenuBar());
 		setPreferredSize(new Dimension(width,height));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

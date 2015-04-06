@@ -10,6 +10,7 @@ import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.database.OperationDataBase;
+import mas.machineproxy.gui.MachineGUI;
 import mas.util.ID;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 	private Logger log;
 	private Batch comingBatch;
 	private OperationDataBase operationdb;
+	private MachineGUI gui;
 
 	@Override
 	public EndState getEndState() {
@@ -61,6 +63,10 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 		this.operationdb = (OperationDataBase) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.operationDatabase).
 				getValue();
+		
+		gui = (MachineGUI) bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.gui_machine).
+				getValue();
 
 		log = LogManager.getLogger();
 	}
@@ -69,7 +75,8 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 	public void action() {
 		//		log.info(comingJob.getBidWinnerLSA());
 		if(comingBatch.getWinnerLSA().equals(myAgent.getAID())) {
-			log.info("Adding the batch to queue of machine, " + comingBatch.getBatchId());
+			log.info("Adding the batch" + comingBatch.getBatchId()+  " to queue of lAgnt, " +
+					myAgent.getLocalName());
 
 			comingBatch.setCurrentOperationProcessingTime(operationdb.
 					getOperationInfo(comingBatch.getCurrentOperationType()).
@@ -81,8 +88,8 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 			 */
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQueue);	
 
-			if(LocalSchedulingAgent.mGUI != null) {
-				LocalSchedulingAgent.mGUI.addBatchToQueue(comingBatch);
+			if(gui != null) {
+				gui.addBatchToQueue(comingBatch);
 			}
 		}
 	}

@@ -7,10 +7,13 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.machineproxy.SimulatorInternals;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
+import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.ID;
 import mas.util.MessageIds;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -28,6 +31,7 @@ public class ManualMachineRepairPlan extends Behaviour implements PlanBody {
 	private SimulatorInternals failedMachine;
 	private BeliefBase bfBase;
 	private Logger log;
+	private MaintenanceGUI gui;
 
 	public class correctiveBehavior extends Behaviour {
 
@@ -57,8 +61,8 @@ public class ManualMachineRepairPlan extends Behaviour implements PlanBody {
 				break;
 
 			case 1:
-				if(LocalMaintenanceAgent.mgui != null) {
-					LocalMaintenanceAgent.mgui.showRepairTimeInput();
+				if(gui != null) {
+					gui.showRepairTimeInput();
 					//					ZoneDataUpdate correctiveRepairUpdate = new ZoneDataUpdate.
 					//							Builder(ID.Maintenance.ZoneData.correctiveMaintdata).
 					//							value(correctiveMaintData).
@@ -97,6 +101,10 @@ public class ManualMachineRepairPlan extends Behaviour implements PlanBody {
 
 		this.blackboard = (AID) bfBase.
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getValue();
+
+		gui = (MaintenanceGUI) bfBase.
+				getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).
 				getValue();
 	}
 }

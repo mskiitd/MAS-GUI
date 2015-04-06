@@ -3,6 +3,7 @@ package mas.maintenance.behavior;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import bdi4jade.core.BeliefBase;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
@@ -26,21 +27,27 @@ public class ShowCorrectiveGuiBehavior extends Behaviour {
 	private AID blackboard;
 	private Logger log;
 	private int step = 0;
+	private BeliefBase bfBase;
+	private MaintenanceGUI gui;
 
 	MessageTemplate machineFailureMSG = MessageTemplate.
 			MatchConversationId(MessageIds.msgmachineFailures);
 
-	public ShowCorrectiveGuiBehavior(AID blackboard) {
+	public ShowCorrectiveGuiBehavior(AID blackboard, BeliefBase bfBase) {
 		this.blackboard = blackboard;
+		this.bfBase = bfBase;
+		gui = (MaintenanceGUI) bfBase.
+				getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).
+				getValue();
 	}
 
 	@Override
 	public void action() {
-		
+
 		if(log == null) {
 			log = LogManager.getLogger();
 		}
-		
+
 		switch(step) {
 		case 0:
 			msg = myAgent.receive(machineFailureMSG);
@@ -59,7 +66,7 @@ public class ShowCorrectiveGuiBehavior extends Behaviour {
 			break;
 
 		case 1:
-			LocalMaintenanceAgent.mgui.showRepairTimeInput();
+			gui.showRepairTimeInput();
 			step = 2;
 		}
 	}

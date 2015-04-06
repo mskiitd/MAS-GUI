@@ -83,7 +83,8 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 		AID lSchedulingTarget = new AID(ID.LocalScheduler.LocalName+"#"+suffix, AID.ISLOCALNAME);
 			
 
-		String[] lSchedulingParams = {ID.LocalScheduler.ZoneData.batchForMachine };
+		String[] lSchedulingParams = {ID.LocalScheduler.ZoneData.batchForMachine,
+				ID.LocalScheduler.ZoneData.gui_machine };
 
 		lSchedulingSubForm.AddSubscriptionReq(lSchedulingTarget, lSchedulingParams);
 

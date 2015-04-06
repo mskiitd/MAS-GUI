@@ -30,7 +30,7 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 		log = LogManager.getLogger();
 
 		machineSimulator = sim;
-		log.info("sim= "+sim);
+		log.info("simulator = " + sim  + "name :" + sim.getLocalName());
 		getDataStore().put(Simulator.simulatorStoreName, sim);
 
 		batchMsgTemplate = MessageTemplate.
@@ -51,6 +51,7 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 
 					try {
 						this.batchToProcess = (Batch) msg.getContentObject();
+						machineSimulator.setCurrentBatch(batchToProcess);
 					} catch (UnreadableException e) {
 						e.printStackTrace();
 					}
@@ -60,7 +61,6 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 							batchToProcess.getStartTimeMillis() + " due date: " +
 							batchToProcess.getDueDateByCustomer() );
 
-					machineSimulator.setCurrentBatch(batchToProcess);
 					block(100);
 				} 
 				else {

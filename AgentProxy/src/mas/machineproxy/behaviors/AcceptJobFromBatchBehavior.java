@@ -33,8 +33,8 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 
 			switch(step) {
 			case 0:
-				currBatch = machineSimulator.getCurrentBatch();
 				if (currBatch != null) {
+					log.info("current batch : " + currBatch);
 					machineSimulator.setUnloadFlag(false);
 
 					this.jobFromBatch = currBatch.getCurrentJob();
@@ -47,7 +47,9 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 					step = 1;
 				} 
 				else {
-					block();
+					currBatch = machineSimulator.getCurrentBatch();
+					log.info("current batch : " + currBatch);
+					block(100);
 				}
 
 				break;

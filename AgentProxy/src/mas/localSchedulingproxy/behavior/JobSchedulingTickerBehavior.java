@@ -6,9 +6,9 @@ import jade.core.behaviours.TickerBehaviour;
 import java.util.ArrayList;
 
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.algorithm.ScheduleSequence;
+import mas.machineproxy.gui.MachineGUI;
 import mas.util.ID;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +23,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	private ArrayList<Batch> jobQueue;
 	private double regretThreshold = 0;
 	private Logger log;
+	private MachineGUI gui;
 
 	public JobSchedulingTickerBehavior(Agent a, long period) {
 		super(a, period);
@@ -33,6 +34,9 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			BeliefBase bfBase) {
 		super(myAgent, schedulingPeriod);
 		this.bfBase = bfBase;
+		gui = (MachineGUI) bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.gui_machine).
+				getValue();
 
 		log = LogManager.getLogger();
 	}
@@ -90,8 +94,8 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 					newQ);
 
 			log.info("update new queue in the machine gui ");
-			if(LocalSchedulingAgent.mGUI != null) {
-				LocalSchedulingAgent.mGUI.updateQueue(newQ);
+			if(gui != null) {
+				gui.updateQueue(newQ);
 			}
 
 			reset(LocalSchedulingAgent.schedulingPeriod);

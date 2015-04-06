@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.machineproxy.gui.MachineGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -37,6 +38,7 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 	private Logger log;
 	private AID blackboard_AID;
 	private Batch currentBatch;
+	private MachineGUI gui;
 	private boolean isJobCancelled=false;
 
 	@Override
@@ -53,6 +55,10 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 		} catch (UnreadableException e) {			
 			e.printStackTrace();
 		}
+		
+		gui = (MachineGUI) bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.gui_machine).
+				getValue();
 	}
 
 
@@ -81,9 +87,9 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 			.value(comingBatch).setReplyWith(Integer.toString(comingBatch.getBatchNumber())).Build();
 	
 			AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedBatchUpdate, myAgent);
-			if(LocalSchedulingAgent.mGUI != null) {
+			if(gui != null) {
 				log.info("removing from the gui ");
-				LocalSchedulingAgent.mGUI.removeFromQueue(comingBatch);
+				gui.removeFromQueue(comingBatch);
 			}
 	
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine, comingBatch);

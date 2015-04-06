@@ -7,14 +7,11 @@ import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
-
+import jade.lang.acl.MessageTemplate;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptBatchBehavior;
@@ -27,17 +24,15 @@ import mas.machineproxy.behaviors.ParameterShifterBehavaior;
 import mas.machineproxy.behaviors.Register2DF;
 import mas.machineproxy.behaviors.RegisterMachine2BlackBoardBehvaior;
 import mas.machineproxy.behaviors.ShiftInProcessBahavior;
+import mas.machineproxy.gui.MachineGUI;
 import mas.machineproxy.parametrer.Parameter;
 import mas.machineproxy.parametrer.RootCause;
-import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.AgentUtil;
 import mas.util.ID;
+import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import com.alee.log.Log;
 
 public class Simulator extends Agent implements IMachine,Serializable {
 
@@ -49,8 +44,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	// time step in milliseconds
 	public static int TIME_STEP = 100;
 
-	// ID of this simulator
-	public transient String ID_Simulator;
+	public static long healthReportTimeMillis = 35000;
 
 	// AID of blackboard agent to which it will connect and publish-receive information from
 	public transient static AID blackboardAgent;
@@ -58,7 +52,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	// name of data store used in behavior's to update this object
 	public transient static String simulatorStoreName = "simulatorStoreName";
 
-	public static long healthReportTimeMillis = 35000;
+	// ID of this simulator
+	public transient String ID_Simulator;
 
 	// details about simulator
 	private SimulatorInternals internals;
@@ -114,9 +109,17 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private transient ArrayList<ArrayList<RootCause>> mParameterRootcauses; 
 
 	private boolean unloadFlag = false;
-	
+
 	private Batch currentBatch = null;
-	
+
+	private transient MachineGUI gui = null;
+	private transient LocalSchedulingAgent lAgent;
+
+	public Simulator(LocalSchedulingAgent localSchedulingAgent) {
+		this.lAgent = localSchedulingAgent;
+//		System.out.println("gui is : "  + localSchedulingAgent + "-----");
+	}
+
 	public Batch getCurrentBatch() {
 		return currentBatch;
 	}
@@ -191,8 +194,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 
 		functionality.addSubBehaviour(acceptIncomingBatch);
-//		functionality.addSubBehaviour(reportHealth);
-		
+		//		functionality.addSubBehaviour(reportHealth);
+
 		functionality.addSubBehaviour(processDimensionShifter);
 		//		functionality.addSubBehaviour(machineParameterShifter);
 		addBehaviour(tbf.wrap(functionality));
@@ -202,20 +205,34 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		 */
 		statusChangeSupport.addPropertyChangeListener (
 				new SimulatorStatusListener(Simulator.this) );
+		
+		gui = lAgent.mGUI;
+		gui.setMachineSimulator(Simulator.this);
 
-		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-		executor.scheduleAtFixedRate(new Runnable() {
+//		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+//		executor.scheduleAtFixedRate(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				if(gui != null) {
+//					gui.setMachineSimulator(Simulator.this);
+//					Log.info("simulator started for LSA GUI");
+//					executor.shutdown();
+//				} else {
+//					ACLMessage msg = receive(guiMsgTemplate);
+//					try {
+//						gui = (MachineGUI) msg.getContentObject();
+//					} catch (UnreadableException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}, 0,1000, TimeUnit.MILLISECONDS );
 
-			@Override
-			public void run() {
-				if(LocalMaintenanceAgent.mgui != null) {
-					LocalSchedulingAgent.mGUI.setMachineSimulator(Simulator.this);
-					Log.info("simulator started for LSA GUI");
-					executor.shutdown();
-				}
-			}
-		}, 0,1000, TimeUnit.MILLISECONDS );
+	}
 
+	public MachineGUI getGui() {
+		return gui;
 	}
 
 	public void HandleFailure() {
@@ -472,36 +489,36 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	 *  correct the logic inside
 	 */
 
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof Simulator){
-			final Simulator other = (Simulator) obj;
-			return new EqualsBuilder()
-			.append(ID_Simulator, other.ID_Simulator)
-			.isEquals();
-		} else {
-			return false;
-		}
-	}
+	 @Override
+	 public boolean equals(Object obj) {
+		 if(obj instanceof Simulator){
+			 final Simulator other = (Simulator) obj;
+			 return new EqualsBuilder()
+			 .append(ID_Simulator, other.ID_Simulator)
+			 .isEquals();
+		 } else {
+			 return false;
+		 }
+	 }
 
-	public void FailTheMachine() {
-		this.setStatus(MachineStatus.FAILED);
-	}
+	 public void FailTheMachine() {
+		 this.setStatus(MachineStatus.FAILED);
+	 }
 
-	public void loadJob() {
-		addBehaviour(new AcceptJobFromBatchBehavior(Simulator.this));
-	}
+	 public void loadJob() {
+		 addBehaviour(new AcceptJobFromBatchBehavior(Simulator.this));
+	 }
 
-	public void unloadJob() {
-		this.setUnloadFlag(true);
-	}
+	 public void unloadJob() {
+		 this.setUnloadFlag(true);
+	 }
 
-	public boolean isUnloadFlag() {
-		return unloadFlag;
-	}
+	 public boolean isUnloadFlag() {
+		 return unloadFlag;
+	 }
 
-	public void setUnloadFlag(boolean unloadFlag) {
-		this.unloadFlag = unloadFlag;
-	}
-	
+	 public void setUnloadFlag(boolean unloadFlag) {
+		 this.unloadFlag = unloadFlag;
+	 }
+
 }

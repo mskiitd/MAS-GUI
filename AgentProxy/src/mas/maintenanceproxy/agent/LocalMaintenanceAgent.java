@@ -21,7 +21,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	private BeliefBase bfBase;
 	public static long prevMaintPeriod = 1 * 60 * 1000;
 	
-	public static MaintenanceGUI mgui = null;
+	public MaintenanceGUI mgui = null;
 
 	public void sendCorrectiveMaintenanceRepairTime(long mtime) {
 		
@@ -35,16 +35,17 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	protected void init() {
 		super.init();
 		
-		if(mgui == null) {
-			mgui = new MaintenanceGUI(LocalMaintenanceAgent.this);
-		}
-		
 		log = LogManager.getLogger();
 
 		// Add capability to agent 
 		bCap = new MaitenanceBasicCapability();
 		addCapability(bCap);
 		bfBase = bCap.getBeliefBase();
+		
+		if(mgui == null) {
+			mgui = new MaintenanceGUI(LocalMaintenanceAgent.this);
+			bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance, mgui);
+		}
 
 		blackboard = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(

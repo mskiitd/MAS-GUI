@@ -62,6 +62,8 @@ public class MessageIds {
 	
 	// 
 	public static final String msgbidResultJob = "LSA_ContractNet_job";
+	
+	public static String msgGuiMachine = "msg_machine_gui";
 
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -127,7 +129,6 @@ public class MessageIds {
 	public static String msgLSAfinishedJobs="finished_job_fromLSA";
 
 	public static String msgJobFromBatchForMachine = "job_from_Batch";
-
 
 	//	// Local scheduling Agent id's here
 	//	public static final String LSJobForMachine = "LSJobForMachine";

@@ -7,6 +7,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.machineproxy.SimulatorInternals;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
+import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -34,6 +35,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 	private ACLMessage msg;
 	private SimulatorInternals machine;
 	private AID bba;
+	private MaintenanceGUI gui;
 
 	@Override
 	public EndState getEndState() {
@@ -45,9 +47,13 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 		bfBase = pInstance.getBeliefBase();
 		msgTemplate = MessageTemplate.MatchConversationId(
 				MessageIds.msgmaintenanceStart);
-		
+
 		this.bba = (AID) bfBase.
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getValue();
+
+		gui = (MaintenanceGUI) bfBase.
+				getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).
 				getValue();
 	}
 
@@ -69,15 +75,15 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 			}
 			break;
 		case 1:
-			
-			LocalMaintenanceAgent.mgui.showMaintenanceStartNotification();
-//			String maintenanceData = "prev_maint_data";
-//			
-//			ZoneDataUpdate maintenanceStartData = new ZoneDataUpdate.Builder(ID.Maintenance.ZoneData.prevMaintData)
-//				.value(maintenanceData).Build();
-//
-//			AgentUtil.sendZoneDataUpdate(this.bba ,maintenanceStartData, myAgent);
-			
+
+			gui.showMaintenanceStartNotification();
+			//			String maintenanceData = "prev_maint_data";
+			//			
+			//			ZoneDataUpdate maintenanceStartData = new ZoneDataUpdate.Builder(ID.Maintenance.ZoneData.prevMaintData)
+			//				.value(maintenanceData).Build();
+			//
+			//			AgentUtil.sendZoneDataUpdate(this.bba ,maintenanceStartData, myAgent);
+
 			log.info("sending maintenance job data");
 			// update the maintenance performed in the maintenance GUI
 			break;

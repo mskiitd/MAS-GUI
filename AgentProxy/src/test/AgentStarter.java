@@ -6,6 +6,7 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.PlatformController;
+import jade.wrapper.StaleProxyException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import mas.util.TableUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import sun.launcher.resources.launcher;
+
 import com.alee.laf.WebLookAndFeel;
 
 public class AgentStarter {
@@ -33,28 +36,59 @@ public class AgentStarter {
 	private ProfileImpl bootProfile;
 	private Logger log;
 	private jade.core.Runtime runtime;
+	private static ArrayList<LocalSchedulingAgent> lAgents;
+	public static PlatformController controller;
 
 	static {
 		agents = new HashMap<String, Agent>();
+		lAgents = new ArrayList<LocalSchedulingAgent>();
 		agents.put(ID.Blackboard.LocalName, new blackboard());
 		agents.put(ID.Customer.LocalName, new CustomerAgent());
 
 		agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
-		agents.put(ID.Machine.LocalName + "#1", new Simulator());
-		agents.put(ID.LocalScheduler.LocalName+"#1", new LocalSchedulingAgent());
-		agents.put(ID.Maintenance.LocalName+"#1", new LocalMaintenanceAgent());
+//		agents.put(ID.Machine.LocalName + "#1", new Simulator());
 		
-		/*agents.put(ID.Machine.LocalName + "#2", new Simulator());
-		agents.put(ID.LocalScheduler.LocalName+"#2", new LocalSchedulingAgent());
-		agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent())*/;
+		LocalSchedulingAgent lagent1 = new LocalSchedulingAgent();
+		agents.put(ID.LocalScheduler.LocalName + "#1", lagent1);
+		agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
+
+		LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
+//		agents.put(ID.Machine.LocalName + "#2", new Simulator());
+		agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
+		agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
+		
+		lAgents.add(lagent1);
+		lAgents.add(lagent2);
 	};
+
+	public static void createSimulator() {
+		for(int i=0; i < lAgents.size(); i++) {
+			AgentController ac;
+			try {
+//				System.out.println(lAgents.get(i) + "@@@@@@@@@@@@@@@@" + controller);
+				ac = ((AgentContainer) controller)
+						.acceptNewAgent(ID.Machine.LocalName + "#" + (i + 1) ,
+								new Simulator(lAgents.get(i) ) );
+				ac.start();
+			} catch (StaleProxyException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public static void main(String[] args) {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
 		WebLookAndFeel.install();
-		
+
 		new AgentStarter();
+		
+		try {
+			Thread.sleep(2000);
+			createSimulator();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public AgentStarter() {
@@ -62,15 +96,14 @@ public class AgentStarter {
 		//		log.info(log.isInfoEnabled());
 
 		List<String> params = new ArrayList<String>();
-//				params.add("-gui");
+						params.add("-gui");
 		//		params.add("-detect-main:false");
 
 		this.bootProfile = new BootProfileImpl(params.toArray(new String[0]));
 
 		this.runtime = jade.core.Runtime.instance();
 
-		PlatformController controller = runtime
-				.createMainContainer(bootProfile);		
+		controller = runtime.createMainContainer(bootProfile);		
 
 
 		for (String agentName : agents.keySet()) {

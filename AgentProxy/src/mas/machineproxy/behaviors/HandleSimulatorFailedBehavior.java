@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.SimulatorInternals;
+import mas.machineproxy.gui.MachineGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -33,6 +34,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 
 	private SimulatorInternals machineInternals;
 	private Simulator machineSimulator;
+	private MachineGUI gui;
 
 	private long remainingTimeMillis;
 
@@ -42,7 +44,8 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 		log = LogManager.getLogger();
 		this.machineInternals = internals;
 		this.machineSimulator = sim;
-
+		this.gui = sim.getGui();
+		
 		correctiveDataMsgTemplate = MessageTemplate.MatchConversationId(
 				MessageIds.msgcorrectiveMaintdata);
 	}
@@ -55,7 +58,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			/**
 			 * update zone data for machine's failure
 			 */
-			LocalSchedulingAgent.mGUI.machineFailed();
+			gui.machineFailed();
 			log.info("******************** failure machine  : "  + machineInternals);
 			ZoneDataUpdate machineFailureUpdate  = new ZoneDataUpdate.
 					Builder(ID.Machine.ZoneData.machineFailures).
@@ -83,7 +86,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 					remainingTimeMillis = repairTime;
 
 					if( remainingTimeMillis > 0 ) {
-						LocalSchedulingAgent.mGUI.machineMaintenance();
+						gui.machineMaintenance();
 						executor = new ScheduledThreadPoolExecutor(1);
 						executor.scheduleAtFixedRate(new timeProcessing(), 0,
 								Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
@@ -105,7 +108,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 		case 3:
 			log.info("repairing components age ");
 			machineSimulator.repair();
-			LocalSchedulingAgent.mGUI.machineIdle();
+			gui.machineIdle();
 			step = 4;
 			break;
 		}

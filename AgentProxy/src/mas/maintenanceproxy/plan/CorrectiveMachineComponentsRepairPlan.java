@@ -21,7 +21,7 @@ public class CorrectiveMachineComponentsRepairPlan extends Behaviour implements 
 
 	@Override
 	public void action() {
-		myAgent.addBehaviour(new ShowCorrectiveGuiBehavior(blackboard));
+		myAgent.addBehaviour(new ShowCorrectiveGuiBehavior(blackboard, bfBase));
 	}
 
 	@Override
