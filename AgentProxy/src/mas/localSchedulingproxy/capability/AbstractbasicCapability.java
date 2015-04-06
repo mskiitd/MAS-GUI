@@ -96,8 +96,13 @@ public class AbstractbasicCapability extends Capability {
 		Belief<Batch> currentBatch = new TransientBelief<Batch>(
 				ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
 		
+		Belief<ArrayList<Batch>> actionOnCompletedBatch= 
+				new TransientBelief<ArrayList<Batch>>(ID.LocalScheduler.
+				BeliefBaseConst.actionOnCompletedBatch);
+		
 		doneBatchFromMachine.setValue(null);
 		currentBatch.setValue(null);
+		actionOnCompletedBatch.setValue(new ArrayList<Batch>());
 
 		double threshVal = 0;
 		regretThreshold.setValue(threshVal);
@@ -117,6 +122,7 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(operationDB);
 		beliefs.add(doneBatchFromMachine);
 		beliefs.add(currentBatch);
+		beliefs.add(actionOnCompletedBatch);
 
 		return beliefs;
 	}

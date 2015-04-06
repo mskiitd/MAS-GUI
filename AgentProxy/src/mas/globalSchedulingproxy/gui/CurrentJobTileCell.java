@@ -24,6 +24,7 @@ import javax.swing.table.TableCellRenderer;
 
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.jobproxy.job;
+import mas.util.ID;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
@@ -159,30 +160,31 @@ public class CurrentJobTileCell extends AbstractCellEditor implements TableCellE
 	        menu.setRadius (50);
 	        menu.setStepProgress ( 0.07f );
 
-//	        final int items = 2;
-/*	            final ImageIcon MoreIcon =  new ImageIcon("resources/more.png","more information");
+	            final ImageIcon MoreIcon =  new ImageIcon("resources/changeDueDate.png","Change Batch Due Date");
 	            final ActionListener moreAction = new ActionListener ()
 	            {
 	                @Override
 	                public void actionPerformed ( final ActionEvent e )
 	                {
-	                	WelcomeScreen.unloadInfoPanel();
-	                	WelcomeScreen.createInfoPanel(jobTileInsideCell);
-//	                    System.out.println ( MoreIcon );
+	                	WebLafGSA.unloadCurrentJobInfoPanel();
+	                	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch(),
+	                			ID.GlobalScheduler.requestType.changeDueDate));
+	                	Log.info("added change due date goal");
 	                }
 	            };
 	            final WebDynamicMenuItem moreIconItem = new WebDynamicMenuItem ( MoreIcon, moreAction );
 	            moreIconItem.setMargin ( new Insets ( 8, 8, 8, 8 ) );
-	            menu.addItem ( moreIconItem );*/
+	            menu.addItem ( moreIconItem );
 	            
-	            final ImageIcon QueryIcon=new ImageIcon("resources/query.png","Query job");
+	            final ImageIcon QueryIcon=new ImageIcon("resources/query.png","Query Batch");
 	            final ActionListener QueryAction = new ActionListener ()
 	            {
 	                @Override
 	                public void actionPerformed ( final ActionEvent e )
 	                {
 	                	WebLafGSA.unloadCurrentJobInfoPanel();
-	                	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch()));
+	                	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch(),
+	                			ID.GlobalScheduler.requestType.currentStatus));
 	                	Log.info("added query goal");
 	                }
 	            };
@@ -190,14 +192,16 @@ public class CurrentJobTileCell extends AbstractCellEditor implements TableCellE
 	            QueryItem.setMargin ( new Insets ( 8, 8, 8, 8 ) );
 	            menu.addItem ( QueryItem );
 	        
-	        final ImageIcon CancelJobIcon=new ImageIcon("resources/cancel.png","Cancel job");
+	        final ImageIcon CancelJobIcon=new ImageIcon("resources/cancel.png","Cancel Batch");
             final ActionListener CancelJobAction = new ActionListener ()
             {
                 @Override
                 public void actionPerformed ( final ActionEvent e )
                 {
                 	WebLafGSA.unloadCurrentJobInfoPanel();
-                    System.out.println ( CancelJobIcon );
+                	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch(),
+                			ID.GlobalScheduler.requestType.cancelBatch));
+                	Log.info("added cancel job goal");
                 }
             };
             final WebDynamicMenuItem cancelJobItem = new WebDynamicMenuItem ( CancelJobIcon, CancelJobAction );

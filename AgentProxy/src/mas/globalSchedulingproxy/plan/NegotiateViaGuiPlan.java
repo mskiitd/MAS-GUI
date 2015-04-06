@@ -45,8 +45,8 @@ public class NegotiateViaGuiPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		if(this.JobUnderNegotiation != null) {
-			GSANegotiateProxyGUI negotiation = new GSANegotiateProxyGUI(
-					(GlobalSchedulingAgent)myAgent, this.JobUnderNegotiation);
+			/*GSANegotiateProxyGUI negotiation = new GSANegotiateProxyGUI(
+					(GlobalSchedulingAgent)myAgent, this.JobUnderNegotiation);*/
 			GlobalSchedulingAgent.weblafgui.addNegotiationBid(this.JobUnderNegotiation);
 			
 		}

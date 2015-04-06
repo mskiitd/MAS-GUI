@@ -37,6 +37,7 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 	private Logger log;
 	private AID blackboard_AID;
 	private Batch currentBatch;
+	private boolean isJobCancelled=false;
 
 	@Override
 	public void init(PlanInstance pInstance) {
@@ -59,19 +60,35 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 	public void action() {
 		// since job is done update current job with null value
 		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine, null);
+		
+		ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
+				bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
 
-		comingBatch.IncrementOperationNumber();
-
-		ZoneDataUpdate CompletedBatchUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedBatch)
-		.value(comingBatch).setReplyWith(Integer.toString(comingBatch.getBatchNumber())).Build();
-
-		AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedBatchUpdate, myAgent);
-		if(LocalSchedulingAgent.mGUI != null) {
-			log.info("removing from the gui ");
-			LocalSchedulingAgent.mGUI.removeFromQueue(comingBatch);
+		for(int i=0;i<BatchToTakeAction.size();i++){
+			if(BatchToTakeAction.get(i).getBatchNumber()==comingBatch.getBatchNumber()){
+				BatchToTakeAction.remove(i);
+				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
+						, BatchToTakeAction);
+				isJobCancelled=true;
+				log.info("cancelled batch");
+			}
+		}
+		
+		if(!isJobCancelled){
+			comingBatch.IncrementOperationNumber();
+			
+			ZoneDataUpdate CompletedBatchUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedBatch)
+			.value(comingBatch).setReplyWith(Integer.toString(comingBatch.getBatchNumber())).Build();
+	
+			AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedBatchUpdate, myAgent);
+			if(LocalSchedulingAgent.mGUI != null) {
+				log.info("removing from the gui ");
+				LocalSchedulingAgent.mGUI.removeFromQueue(comingBatch);
+			}
+	
+			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine, comingBatch);
 		}
 
-		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine, comingBatch);
 	}
 
 	@Override

@@ -77,6 +77,7 @@ public class ID implements Serializable{
 			public static final String operationDatabase = "operation_database";
 			public static final String doneBatchFromMachine = "done_batchFromMachine";
 			public static final String currentBatch = "current_batchOnMachine";
+			public static final String actionOnCompletedBatch = "action_on_completed_Batch";
 		}
 
 		public class ZoneData {
@@ -134,11 +135,20 @@ public class ID implements Serializable{
 			public static final String DueDateCalcMethod = "DueDateCalc";
 			public static final String Current_Negotiation_Job = "GSA_negotiatin_job";
 			public static final String GSAqueryJob = "GSA_query_job";
+			public static final String GSA_GUI_instance = "GUIinstanceOfGSA";
 		}
 		
 		public class OtherConst{
 			public static final String LocalDueDate="Local";
 			public static final String GlobalDueDate = "Global";
+		}
+
+		public class requestType{
+			//enum is most suitable (http://docs.oracle.com/javase/1.5.0/docs/guide/language/enums.html)
+			//but it can't be defined in inner class :(
+			public static final String currentStatus="currentStatus";
+			public static final String cancelBatch="cancelBatch";
+			public static final String changeDueDate="changeBatch";
 		}
 	}
 

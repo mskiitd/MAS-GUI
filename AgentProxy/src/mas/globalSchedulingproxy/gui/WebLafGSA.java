@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -608,14 +609,14 @@ public class WebLafGSA {
     	
     	completedJobRenderer.addBatch(b);
     	String msg="Batch No. "+b.getBatchNumber()+" completed";
-		showNotification(msg, notificationType.completedJob);
+		showNotification("Batch Completed",msg, MessageType.INFO);
 	}
 
 	public void addAcceptedJobToList(Batch order) {
 		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
     	CurrJobListRenderer.addBatch(order);
     	String msg="Batch No. "+order.getBatchNumber()+" accepted";
-		showNotification(msg, notificationType.newJob);
+		showNotification("New Batch",msg, MessageType.INFO);
 	}
 
 	public void addNegotiationBid(Batch jobUnderNegotiation) {
@@ -623,30 +624,35 @@ public class WebLafGSA {
 				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
 		negotiationRenderer.addBatch(jobUnderNegotiation);
 		String msg="Bid recieved for batch no. "+jobUnderNegotiation.getBatchNumber();
-		showNotification(msg, notificationType.negotiationBid);
+		showNotification("New Bid", msg, MessageType.INFO);
 		
 	}
+	
+	public void cancelBatchUnderProcess(Batch batch){
+		CurrentJobTileRenderer CurrjobListRenderer=
+				(CurrentJobTileRenderer)currentJobListTable.getModel();
+    	CurrjobListRenderer.removeJob(batch);
+	}
 
-	public static void showNotification(String message,notificationType type){
+	public static void showNotification(String title, String message,TrayIcon.MessageType type){
 		
 		switch(type){
-		case error :
-			GSAguiIcon.displayMessage("ERROR",message, TrayIcon.MessageType.ERROR);
+		case ERROR :
+			GSAguiIcon.displayMessage(title,message, TrayIcon.MessageType.ERROR);
 			break;
 			
-		case negotiationBid:
-			GSAguiIcon.displayMessage( "Negotiation Bid",message, TrayIcon.MessageType.INFO);
+		case INFO:
+			GSAguiIcon.displayMessage( title,message, TrayIcon.MessageType.INFO);
 			break;
 			
-		case newJob:
-			Icon newJobIcon=new ImageIcon("resources/newJob.png");
-			GSAguiIcon.displayMessage( "New order",message, TrayIcon.MessageType.INFO);
+		case WARNING:
+			GSAguiIcon.displayMessage( title,message, TrayIcon.MessageType.WARNING);
 			break;
 			
-		case completedJob:
-			Icon completedJobIcon=new ImageIcon("resources/completedJob.png");
-			GSAguiIcon.displayMessage( "Batch completed",message, TrayIcon.MessageType.INFO);
+		case NONE:
+			GSAguiIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
 			break;
+
 		}
 		
 		String notificationSound = "resources/notification.wav";

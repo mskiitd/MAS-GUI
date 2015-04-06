@@ -11,6 +11,7 @@ import mas.globalSchedulingproxy.goal.GetNoOfMachinesGoal;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.goal.RegisterAgentToBlackBoardGoal;
 import mas.globalSchedulingproxy.goal.RegisterServiceGoal;
+import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.globalSchedulingproxy.plan.AskForWaitingTime;
 import mas.globalSchedulingproxy.plan.CallBackChangeDueDatePlan;
 import mas.globalSchedulingproxy.plan.GSASendNegotiationJobPlan;
@@ -64,12 +65,16 @@ public abstract class AbstractGSCapability  extends Capability {
 		
 		Belief<Batch> underNegotiation = new 
 				TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
+		
+		Belief<WebLafGSA> GSA_gui=new TransientBelief<WebLafGSA>
+		(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance); 
 
 				beliefs.add(BB_AID);
 				beliefs.add(NoOfMachines);
 				beliefs.add(DueDateCalcMethod);
 				beliefs.add(query);
 				beliefs.add(underNegotiation);
+				beliefs.add(GSA_gui);
 
 				return beliefs;
 	}

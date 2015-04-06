@@ -90,7 +90,13 @@ public class JobQueryReplyFrame extends JFrame{
 			this.lblOperationsDone.setText(currOps);
 			
 			this.lblCurrentOperation.setText(theJob.getCurrentOperationType());
-			this.lblCurrentMachine.setText(response.getCurrentMachine().getLocalName());
+			
+			if(response.isOnMachine()){
+				this.lblCurrentMachine.setText(response.getCurrentMachine().getLocalName()+" (loaded)");
+			}
+			else{
+				this.lblCurrentMachine.setText(response.getCurrentMachine().getLocalName());
+			}
 		}
 
 //		mainInfoPanel.add(lblHeading);

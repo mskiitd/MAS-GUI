@@ -77,6 +77,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			step = 3;
 		}
 		
+		
 		switch (step) {
 		case 0:
 			this.MachineCount = (int) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
@@ -160,7 +161,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 
 	@Override
 	public boolean done() {
-		return step >= 3;
+		return step == 4;
 	}
 
 

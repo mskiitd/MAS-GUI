@@ -30,6 +30,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 	private AID machineAID=null;
 	private AID blackboard_AID;
 	private Logger log=LogManager.getLogger();
+	private JobQueryObject requestJobQuery;
 
 	@Override
 	public EndState getEndState() {
@@ -38,15 +39,16 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 	@Override
 	public void init(PlanInstance PI) {
-//		System.out.println("$$$$$$$$$$$$$$invoked");
 		try {
+			requestJobQuery= ( (JobQueryObject)((MessageGoal)PI.getGoal()).
+					getMessage().getContentObject());
 			JobNo = ( (JobQueryObject)((MessageGoal)PI.getGoal()).getMessage().getContentObject()).
 					getCurrentJob().getBatchNumber();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
 
-//		log.info("Job No "+JobNo +" is queried");
+		log.info("Job No "+JobNo +" is queried");
 		beleifBase = PI.getBeliefBase();
 		blackboard_AID = (AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
@@ -72,21 +74,50 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 		for(int i=0;i<jobQ.size();i++){
 			if(JobNo==jobQ.get(i).getBatchNumber() ){
 				response=new JobQueryObject.Builder().currentJob(jobQ.get(i))
+						.requestType(requestJobQuery.getType())//notes down for what req type this reply was
 						.underProcess(false)
 						.currentMachine(machineAID).build();
+				
+				
+				if(requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.changeDueDate)
+						|| requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.cancelBatch)){
+					jobQ.remove(i);
+					beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQ);
+					
+					ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
+					beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
+					BatchToTakeAction.add(response.getCurrentJob());
+					beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
+							, BatchToTakeAction);
+				}
+				
 			}
 		}
 
 		if(currentJob!=null && currentJob.getBatchNumber() ==JobNo){
 			response=new JobQueryObject.Builder().currentJob(currentJob).currentMachine(machineAID)
+					.requestType(requestJobQuery.getType())
 					.underProcess(true)
 					.build();
+			
+			if(requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.changeDueDate)
+					|| requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.cancelBatch)){
+
+				ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
+				beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
+				BatchToTakeAction.add(response.getCurrentJob());
+				beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
+						, BatchToTakeAction);
+			}
+
 		}
 
-		ZoneDataUpdate queryUpdate=new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.QueryResponse).
+		ZoneDataUpdate queryUpdate=new ZoneDataUpdate.
+				Builder(ID.LocalScheduler.ZoneData.QueryResponse).
 				value(response).Build();
 		
 		AgentUtil.sendZoneDataUpdate(blackboard_AID, queryUpdate, myAgent);
+		
 	}
 
 }

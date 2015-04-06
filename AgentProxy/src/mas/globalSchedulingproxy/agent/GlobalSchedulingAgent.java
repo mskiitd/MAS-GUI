@@ -54,6 +54,9 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 			public void run() {
 //				GSAgui = new GSAproxyGUI(GlobalSchedulingAgent.this);
 				weblafgui = new WebLafGSA(GlobalSchedulingAgent.this);
+				
+				bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance,
+						weblafgui);
 			}
 		});
 
