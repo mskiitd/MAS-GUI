@@ -1,3 +1,4 @@
+
 package mas.customerproxy.gui;
 
 import java.awt.BorderLayout;

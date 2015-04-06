@@ -3,7 +3,7 @@ package mas.globalSchedulingproxy.plan;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.UnreadableException;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
-import mas.globalSchedulingproxy.gui.GSANegotiateProxyGUI;
+//import mas.globalSchedulingproxy.gui.GSANegotiateProxyGUI;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 

@@ -129,7 +129,9 @@ public class ID implements Serializable{
 
 			public static final String completedJobByGSA = "completedJobs";
 
-			public static final String Current_Negotiation_Job = "GSA_currentNegJob"; 
+			public static final String Current_Negotiation_Job = "GSA_currentNegJob";
+
+			public static final String dueDateChangeBatches = "GSAbatchForDueDateChangeReq"; 
 		}
 
 		public class BeliefBaseConst {

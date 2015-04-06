@@ -8,10 +8,12 @@ import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.MessageTemplate;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptBatchBehavior;
@@ -31,8 +33,11 @@ import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.alee.log.Log;
 
 public class Simulator extends Agent implements IMachine,Serializable {
 
@@ -207,8 +212,9 @@ public class Simulator extends Agent implements IMachine,Serializable {
 				new SimulatorStatusListener(Simulator.this) );
 		
 		gui = lAgent.mGUI;
+		Log.info("gui=", gui);
 		gui.setMachineSimulator(Simulator.this);
-
+		
 //		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 //		executor.scheduleAtFixedRate(new Runnable() {
 //

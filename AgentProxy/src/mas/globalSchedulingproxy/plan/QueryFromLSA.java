@@ -7,6 +7,7 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import mas.blackboard.zonedata.ZoneData;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
 import mas.globalSchedulingproxy.gui.WebLafGSA;
@@ -127,8 +128,13 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 				break;
 				
 			case ID.GlobalScheduler.requestType.changeDueDate:
-				/*WebLafGSA.showNotification("Batch cancelled","Batch No. "+response.getCurrentJob().getBatchNumber()+
-						" cancelled",MessageType.WARNING );*/
+				weblafGSAgui.cancelBatchUnderProcess(response.getCurrentJob());
+				WebLafGSA.showNotification("Request","Batch No. "+response.getCurrentJob().getBatchNumber()+
+						" requested for due date change",MessageType.INFO );
+				
+				ZoneDataUpdate dueDateRequest=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.
+						dueDateChangeBatches).value(response.getCurrentJob()).Build();
+				AgentUtil.sendZoneDataUpdate(blackboard_AID, dueDateRequest, myAgent);
 				break;	
 			}
 			

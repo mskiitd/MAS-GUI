@@ -124,6 +124,8 @@ public class MessageIds {
 
 	public static final String msgJobCompletion = "sendNotificationOfCompletedJob";
 
+	public static final String msgChangeDueDate = "change_due_date";
+
 
 	//operation n is finished. now send job to GSA for n+1th operation
 	public static String msgLSAfinishedJobs="finished_job_fromLSA";

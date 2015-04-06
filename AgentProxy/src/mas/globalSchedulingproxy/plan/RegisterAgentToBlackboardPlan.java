@@ -71,10 +71,15 @@ public class RegisterAgentToBlackboardPlan extends OneShotBehaviour implements P
 		NamedZoneData ZoneDataName8 = new NamedZoneData.Builder(
 				ID.GlobalScheduler.ZoneData.completedJobByGSA).
 				MsgID(MessageIds.msgJobCompletion).build();
+		
+		NamedZoneData ZoneDataName9 = new NamedZoneData.Builder(
+				ID.GlobalScheduler.ZoneData.dueDateChangeBatches).
+				MsgID(MessageIds.msgChangeDueDate).build();
 
 		NamedZoneData[] ZoneDataNames={ZoneDataName1, ZoneDataName2,
 				ZoneDataName3,ZoneDataName4,
-				ZoneDataName5,ZoneDataName6, ZoneDataName7, ZoneDataName8 };
+				ZoneDataName5,ZoneDataName6, ZoneDataName7, ZoneDataName8 
+				,ZoneDataName9};
 		try {
 			msg2.setContentObject(ZoneDataNames);
 		} catch (IOException e1) {

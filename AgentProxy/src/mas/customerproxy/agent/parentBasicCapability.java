@@ -2,14 +2,17 @@ package mas.customerproxy.agent;
 
 import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import mas.customerproxy.goal.CancelOrderGoal;
 import mas.customerproxy.goal.ChangeDueDateGoal;
 import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.plan.CancelOrderPlan;
+import mas.customerproxy.plan.ChangeDueDate;
 import mas.customerproxy.plan.ChangeDueDatePlan;
 import mas.customerproxy.plan.DispatchJobPlan;
 import mas.customerproxy.plan.ReceiveCompletedBatchPlan;
@@ -86,7 +89,9 @@ public class parentBasicCapability extends Capability {
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgJobCompletion),
 				ReceiveCompletedBatchPlan.class ));
-
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgChangeDueDate),
+				ChangeDueDate.class));
+		
 		return plans;
 	}	
 
