@@ -14,7 +14,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class UpdateOperationDatabasePlan extends Behaviour implements PlanBody {
+public class LoadOperationDatabasePlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
@@ -38,16 +38,22 @@ public class UpdateOperationDatabasePlan extends Behaviour implements PlanBody {
 		OperationDataBase db;
 		path = "resources/database/" + myAgent.getLocalName() + "_db.data";
 		File toRead = new File(path);
-		FileInputStream fis;
+
 		try {
-			fis = new FileInputStream(toRead);
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			db = (OperationDataBase)ois.readObject();
-			ois.close();
-			
-			log.info("updating database for the machine ");
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.operationDatabase, db);
-			
+			if(toRead.exists() && !toRead.isDirectory()) {
+				FileInputStream fis;
+
+				fis = new FileInputStream(toRead);
+				ObjectInputStream ois = new ObjectInputStream(fis);
+				db = (OperationDataBase)ois.readObject();
+				ois.close();
+
+				log.info("updating database for the machine ");
+				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.operationDatabase, db);
+			} else {
+				toRead.createNewFile();
+			}
+
 			done = true;
 
 		} catch (IOException e) {

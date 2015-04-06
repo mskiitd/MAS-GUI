@@ -31,6 +31,14 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 			log.info("Updating queue in machine's GUI ");
 		}
 	}
+	
+	@Override
+	protected void takeDown() {
+		super.takeDown();
+		if(mGUI != null) {
+			mGUI.dispose();
+		}
+	}
 
 	@Override
 	protected void init() {

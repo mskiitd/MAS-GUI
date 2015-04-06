@@ -23,7 +23,7 @@ import mas.localSchedulingproxy.plan.SendBidPlan;
 import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
 import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
-import mas.localSchedulingproxy.plan.UpdateOperationDatabasePlan;
+import mas.localSchedulingproxy.plan.LoadOperationDatabasePlan;
 import mas.machineproxy.gui.MachineGUI;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -158,7 +158,7 @@ public class AbstractbasicCapability extends Capability {
 
 		plans.add(new SimplePlan(JobSchedulingGoal.class,BatchSchedulingPlan.class));
 
-		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, UpdateOperationDatabasePlan.class));
+		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, LoadOperationDatabasePlan.class));
 		
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgGSAQuery)
 		,RespondToGSAQuery.class));

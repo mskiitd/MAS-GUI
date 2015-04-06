@@ -69,6 +69,14 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		addGoal(new GSASendNegotitationGoal());
 	}
 
+	@Override
+	protected void takeDown() {
+		super.takeDown();
+		if(weblafgui != null) {
+			weblafgui.dispose();
+		}
+	}
+
 	public static void showQueryResponse(JobQueryObject response) {
 		
 	}
