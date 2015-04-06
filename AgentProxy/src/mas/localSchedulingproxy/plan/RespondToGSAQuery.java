@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
+import mas.machineproxy.gui.MachineGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.JobQueryObject;
@@ -31,6 +32,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 	private AID blackboard_AID;
 	private Logger log=LogManager.getLogger();
 	private JobQueryObject requestJobQuery;
+	private MachineGUI gui;
 
 	@Override
 	public EndState getEndState() {
@@ -54,6 +56,10 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 				getValue();
 		machineAID=(AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.machine).
 				getValue();
+
+		gui = (MachineGUI) beleifBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.gui_machine).
+				getValue();
 	}
 
 	@Override
@@ -65,7 +71,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
 		Object currBatchObj=beleifBase.
-		getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
+				getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
 		Batch currentJob=null;
 		if(currBatchObj!=null){
 			currentJob = (Batch)(((Belief<Batch>)currBatchObj).getValue());
@@ -77,20 +83,25 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 						.requestType(requestJobQuery.getType())//notes down for what req type this reply was
 						.underProcess(false)
 						.currentMachine(machineAID).build();
-				
-				
+
+
 				if(requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.changeDueDate)
-						|| requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.cancelBatch)){
-					jobQ.remove(i);
+						|| requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.cancelBatch)) {
+
+					Batch removedBatch = jobQ.remove(i);
 					beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQ);
-					
+
 					ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
-					beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
+							beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
 					BatchToTakeAction.add(response.getCurrentJob());
 					beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
 							, BatchToTakeAction);
+
+					if(gui != null) {
+						gui.removeFromQueue(removedBatch);
+					}
 				}
-				
+
 			}
 		}
 
@@ -99,12 +110,12 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 					.requestType(requestJobQuery.getType())
 					.underProcess(true)
 					.build();
-			
+
 			if(requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.changeDueDate)
 					|| requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.cancelBatch)){
 
 				ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
-				beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
+						beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
 				BatchToTakeAction.add(response.getCurrentJob());
 				beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
 						, BatchToTakeAction);
@@ -115,9 +126,9 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 		ZoneDataUpdate queryUpdate=new ZoneDataUpdate.
 				Builder(ID.LocalScheduler.ZoneData.QueryResponse).
 				value(response).Build();
-		
+
 		AgentUtil.sendZoneDataUpdate(blackboard_AID, queryUpdate, myAgent);
-		
+
 	}
 
 }

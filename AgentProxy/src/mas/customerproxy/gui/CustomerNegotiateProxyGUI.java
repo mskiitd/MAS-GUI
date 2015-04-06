@@ -167,7 +167,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		this.txtPenaltyRate = new FormattedDoubleField();
 		txtPenaltyRate.setColumns(Labels.defaultJTextSize);
-		
+
 		this.txtBatchSize = new FormattedIntegerField();
 		txtBatchSize.setColumns(Labels.defaultJTextSize/2);
 
@@ -185,7 +185,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		myPanel.add(lblPenalty);
 		myPanel.add(txtPenaltyRate,"wrap");
-		
+
 		myPanel.add(lblBatchSize);
 		myPanel.add(txtBatchSize,"wrap");
 
@@ -232,11 +232,17 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 			txtCPN.setText(String.valueOf(populatingBatch.getCPN()));
 			txtPenaltyRate.setText(String.valueOf(populatingBatch.getPenaltyRate()));
-			
+
 			txtNumOps.setText(String.valueOf(populatingBatch.getSampleJob().getOperations().size()));
 
+			Calendar c1 = Calendar.getInstance();
+			c1.setTime(populatingBatch.getDueDateByCustomer());
+
 			timeSpinner.setValue(populatingBatch.getDueDateByCustomer());
-			
+
+			datePicker.getModel().
+			setDate(c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
+
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 		}
 	}
@@ -257,7 +263,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		}
 
 		dataOk = x2&x3&x4&x5;
-		
+
 		if(dataOk) {
 			dataOk = dataOk & checkBatchSize();
 		}
@@ -319,6 +325,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}else {
+				log.info("due date : "  + calTime.getTime());
 				populatingBatch.setDueDateByCustomer(calTime.getTime());
 			}
 		}

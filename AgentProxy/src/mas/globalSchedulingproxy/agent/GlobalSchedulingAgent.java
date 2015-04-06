@@ -63,7 +63,7 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 	}
 
 	public void negotiateJob(Batch myJob) {
-		log.info("GSA - Sending negotitaion job : " + myJob);
+		log.info("GSA - Sending negotitaion job : " + myJob.getDueDateByCustomer());
 		bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job, myJob);
 		
 		addGoal(new GSASendNegotitationGoal());

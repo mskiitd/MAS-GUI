@@ -21,7 +21,7 @@ public class JobTile{
 	private Date startDatebyGSA,dueDatebyGSA;//by GSA
 	private Batch givenBatch;
 	
-	public JobTile(Batch batch){
+	public JobTile(Batch batch) {
 		jobID=batch.getBatchId();
 		custStartDate=new Date(batch.getStartTimeMillis()); 
 		//custStartDate currently set by GSA when it recieves confirmation of order after negotiation

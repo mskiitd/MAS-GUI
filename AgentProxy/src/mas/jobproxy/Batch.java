@@ -234,7 +234,6 @@ public class Batch implements Serializable {
 
 	public void setBatchNumber(int batchNumber) {
 		this.batchNo = batchNumber;
-		Log.info("current batch No "+ batchNumber);
 	}
 
 	public Date getGenerationTime() {
