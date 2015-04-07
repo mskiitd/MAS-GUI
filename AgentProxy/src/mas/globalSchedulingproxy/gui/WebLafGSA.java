@@ -600,7 +600,7 @@ public class WebLafGSA {
 	}
 
 	public void addNegotiationBid(Batch jobUnderNegotiation) {
-		NegotiationJobTileRenderer negotiationRenderer=
+		NegotiationJobTileRenderer negotiationRenderer =
 				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
 		negotiationRenderer.addBatch(jobUnderNegotiation);
 		negotiationJobListTable.repaint();

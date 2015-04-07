@@ -62,21 +62,22 @@ public abstract class AbstractGSCapability  extends Capability {
 				BeliefBaseConst.NoOfMachines);
 
 		Belief<Batch> query = new TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob);
-		
+
 		Belief<Batch> underNegotiation = new 
 				TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
-		
-		Belief<WebLafGSA> GSA_gui=new TransientBelief<WebLafGSA>
+		underNegotiation.setValue(null);
+
+		Belief<WebLafGSA> GSA_gui = new TransientBelief<WebLafGSA>
 		(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance); 
 
-				beliefs.add(BB_AID);
-				beliefs.add(NoOfMachines);
-				beliefs.add(DueDateCalcMethod);
-				beliefs.add(query);
-				beliefs.add(underNegotiation);
-				beliefs.add(GSA_gui);
+		beliefs.add(BB_AID);
+		beliefs.add(NoOfMachines);
+		beliefs.add(DueDateCalcMethod);
+		beliefs.add(query);
+		beliefs.add(underNegotiation);
+		beliefs.add(GSA_gui);
 
-				return beliefs;
+		return beliefs;
 	}
 
 	public static Set<Plan> getPlans() {
@@ -108,7 +109,7 @@ public abstract class AbstractGSCapability  extends Capability {
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgreqToChangeDueDate),
 				CallBackChangeDueDatePlan.class));
-		
+
 		plans.add(new SimplePlan(QueryJobGoal.class, QueryFromLSA.class));
 
 		return plans;

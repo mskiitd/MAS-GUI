@@ -325,8 +325,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}else {
-				log.info("due date : "  + calTime.getTime());
+				
 				populatingBatch.setDueDateByCustomer(calTime.getTime());
+				log.info("due date : "  + populatingBatch.getDueDateByCustomer());
 			}
 		}
 		return status;
@@ -414,7 +415,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			} else if(e.getSource().equals(negotiateJob)) {
 
 				createJobFromParams();
-				log.info("data format : " + dataOk);
+				log.info("Negotiation data format : " + dataOk);
 				if(dataOk) {
 					log.info("Negotiating the job : " + populatingBatch);
 					cAgent.negotiateJob(populatingBatch);

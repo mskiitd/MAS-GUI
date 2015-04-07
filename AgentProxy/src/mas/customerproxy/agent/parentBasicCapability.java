@@ -64,7 +64,7 @@ public class parentBasicCapability extends Capability {
 		Belief<String> changeDueDate = new TransientBelief<String>(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB);
 
 		// for current job which is under negotiation
-		Belief<Batch> currentNegJob = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB);
+		Belief<Batch> currentNegJob = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH);
 
 		beliefs.add(bboard);
 		beliefs.add(currentJob);

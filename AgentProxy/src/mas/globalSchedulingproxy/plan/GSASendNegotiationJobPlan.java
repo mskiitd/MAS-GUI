@@ -48,7 +48,7 @@ public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 	public void action() {
 
 		if(negotiationJob != null) {
-			log.info("GSA : sending negotiation reply to customer : " + negotiationJob );
+			log.info("GSA : sending negotiation reply to customer : " + negotiationJob.getDueDateByCustomer() );
 			ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.
 					Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation).
 					value(negotiationJob).
@@ -64,7 +64,7 @@ public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 			this.negotiationJob = (Batch) bfBase.
 					getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job).
 					getValue();
-			block(50);
+			block(200);
 		}
 	}
 

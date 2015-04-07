@@ -225,6 +225,8 @@ public class NegotiationInfo{
 			setDate(c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
 			
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
+			
+			log.info("passed due date : " + populatingBatch.getDueDateByCustomer());
 		}
 	}
 
@@ -293,9 +295,8 @@ public class NegotiationInfo{
 						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}else {
-				log.info("new date : " + calTime.getTime());
-				populatingJob.setJobDuedatebyCust(calTime.getTime());
-				log.info("new date 1 : " + populatingBatch.getDueDateByCustomer());
+				populatingBatch.setDueDateByCustomer(calTime.getTime());
+				log.info("new due date : " + populatingBatch.getDueDateByCustomer());
 			}
 		}
 		return status;
@@ -356,8 +357,6 @@ public class NegotiationInfo{
 		operationDataOk = x2;
 	}
 
-
-
 	class buttonListener implements ActionListener {
 
 		@Override
@@ -367,7 +366,6 @@ public class NegotiationInfo{
 
 				createJobFromParams();
 				if(dataOk) {
-					log.info("new date : " + populatingBatch.getDueDateByCustomer());
 					gAgent.negotiateJob(populatingBatch);
 					NegotiationJobTileRenderer negotiationRenderer=
 							(NegotiationJobTileRenderer)(WebLafGSA.

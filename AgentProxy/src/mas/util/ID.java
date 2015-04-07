@@ -34,7 +34,7 @@ public class ID implements Serializable{
 			public static final String JOB_GENERATOR = "customerBeliefBase_JOB-GENERATOR";
 			public static final String blackboardAgent = "customerBeliefBase_blackboard-agent";
 			public static final String CURRENT_JOB2SEND = "customerBeliefBase_Current-job";
-			public static final String CURRENT_NEGOTIATION_JOB = "customerBeliefBase_Current_negotitaion_job";
+			public static final String CURRENT_NEGOTIATION_BATCH = "customerBeliefBase_Current_negotitaion_job";
 			public static final String CURRENT_CONFIRMED_JOB = "customerBeliefBase_Current_confirmed_job";
 			public static final String CANCEL_ORDER = "customerBeliefBase_Cancel_job";
 			public static final String CHANGE_DUEDATE_JOB = "customerBeliefBase_Change_DueDate_job";

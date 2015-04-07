@@ -39,16 +39,15 @@ public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBod
 				.getValue();
 
 		this.negotiationJob = (Batch) bfBase.
-				getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB).
+				getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH).
 				getValue();
-
 	}
 
 	@Override
 	public void action() {
 
 		if(negotiationJob != null) {
-			log.info("Customer:Sending job for negotiation : " + negotiationJob);
+			log.info("Customer:Sending job for negotiation : " + negotiationJob.getDueDateByCustomer());
 			ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.Builder(
 					ID.Customer.ZoneData.customerJobsUnderNegotiation).
 					value(negotiationJob).Build();
@@ -56,15 +55,15 @@ public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBod
 			AgentUtil.sendZoneDataUpdate( this.bba,
 					negotiationJobDataUpdate,myAgent);
 			
-			bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB, null);
+			bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH, null);
 			
 			done = true;
 		} else {
-			log.info("Customer : reading job negotiation : " + negotiationJob);
+			log.info("Customer : reading job for negotiation : " + negotiationJob);
 			this.negotiationJob = (Batch) bfBase.
-					getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB).
+					getBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH).
 					getValue();
-			block(50);
+			block(200);
 		}
 	}
 

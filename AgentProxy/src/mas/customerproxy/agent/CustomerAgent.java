@@ -59,8 +59,8 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		CustomerAgent.mygui.addAcceptedJob(j);
 	}
 
-	public void negotiateJob(Batch j) {
-		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_JOB, j);
+	public void negotiateJob(Batch batch) {
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH, batch);
 		this.addGoal(new CustomerSendNegotiationJobGoal());
 	}
 

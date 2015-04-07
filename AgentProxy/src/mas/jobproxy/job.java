@@ -154,7 +154,7 @@ public class job implements Serializable {
 		IsComplete=false;
 		this.setCurrentOperationNumber(0);
 	}
-	
+
 	public boolean isComplete(){
 		if(this.IsComplete==true){
 			System.out.println("####"+this.getCurrentOperationNumber());
@@ -231,7 +231,11 @@ public class job implements Serializable {
 	}
 
 	public void setJobDuedatebyCust(long duedate) {
-		this.jobDuedate.setTime(duedate);
+		if(this.jobDuedate != null) {
+			this.jobDuedate.setTime(duedate);
+		}else {
+			this.jobDuedate = new Date(duedate);
+		}
 	}
 
 }
