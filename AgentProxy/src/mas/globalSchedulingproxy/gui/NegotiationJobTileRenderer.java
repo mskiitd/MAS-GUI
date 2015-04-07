@@ -3,7 +3,6 @@ package mas.globalSchedulingproxy.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -11,17 +10,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 
 public class NegotiationJobTileRenderer extends AbstractTableModel implements TableModel {
 
-	List<JobTile> batchTiles=null;
-	private Logger log=LogManager.getLogger(); 
-	
-	public NegotiationJobTileRenderer(){
-		this.batchTiles=new ArrayList<JobTile>();
+	private static final long serialVersionUID = 1L;
+
+	List<JobTile> batchTiles;
+	private Logger log;
+
+	public NegotiationJobTileRenderer() {
+		this.batchTiles = new ArrayList<JobTile>();
+		log = LogManager.getLogger(); 
 	}
-	
+
 	@Override
 	public Class<?> getColumnClass(int index) {
 		return JobTile.class ;
@@ -39,22 +40,12 @@ public class NegotiationJobTileRenderer extends AbstractTableModel implements Ta
 
 	@Override
 	public int getRowCount() {
-		if(batchTiles==null){
-			return 0;
-		}
-		else{
-			return batchTiles.size();	
-		}
+		return batchTiles.size();	
 	}
 
 	@Override
 	public Object getValueAt(int jobTileIndex, int columnIndex) {
-		if(batchTiles==null){
-			return null;
-		}
-		else{
-			return batchTiles.get(jobTileIndex);
-		}
+		return batchTiles.get(jobTileIndex);
 	}
 
 	@Override
@@ -62,10 +53,9 @@ public class NegotiationJobTileRenderer extends AbstractTableModel implements Ta
 		return true;
 	}
 
-
-	public void addBatch(Batch b){
-			batchTiles.add(new JobTile(b));
-			super.fireTableRowsInserted(getRowCount()+1, getRowCount()+1);
+	public void addBatch(Batch b) {
+		batchTiles.add(new JobTile(b));
+		super.fireTableRowsInserted(0, getRowCount()-1);
 	}
 
 	public void removeJob(Batch j) {
@@ -77,7 +67,7 @@ public class NegotiationJobTileRenderer extends AbstractTableModel implements Ta
 		log.info("count="+count);
 		if(count!=batchTiles.size()){
 			batchTiles.remove(count);
-			super.fireTableRowsDeleted(count, count);
-		}
+			super.fireTableRowsDeleted(0, count);
 		}
 	}
+}

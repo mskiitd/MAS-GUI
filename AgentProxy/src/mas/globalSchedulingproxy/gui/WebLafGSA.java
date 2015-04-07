@@ -80,12 +80,12 @@ public class WebLafGSA {
 		this.GSA=globalSchedulingAgent;
 		init();
 	}
-	
+
 	public void dispose() {
 		if(welcomeScreenFrame != null) {
 			welcomeScreenFrame.dispose();
 		}
-		
+
 	}
 
 	private void init(){
@@ -574,6 +574,10 @@ public class WebLafGSA {
 	public void addCompletedJob(Batch b) {
 		CurrentJobTileRenderer CurrjobListRenderer=
 				(CurrentJobTileRenderer)currentJobListTable.getModel();
+		
+		if(currentJobListTable.getCellEditor() != null ) {
+			currentJobListTable.getCellEditor().stopCellEditing();
+		}
 		CurrjobListRenderer.removeJob(b);
 
 		currentJobListTable.repaint();
@@ -582,6 +586,10 @@ public class WebLafGSA {
 		CompletedJobTileRenderer completedJobRenderer=
 				(CompletedJobTileRenderer)completedJobListTable.getModel();
 
+		if(completedJobListTable.getCellEditor() != null ) {
+			completedJobListTable.getCellEditor().stopCellEditing();
+		}
+		
 		completedJobRenderer.addBatch(b);
 		completedJobListTable.repaint();
 		String msg="Batch No. "+b.getBatchNumber()+" completed";
@@ -592,6 +600,11 @@ public class WebLafGSA {
 
 	public void addAcceptedJobToList(Batch order) {
 		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
+		
+		if(currentJobListTable.getCellEditor() != null ) {
+			currentJobListTable.getCellEditor().stopCellEditing();
+		}
+		
 		CurrJobListRenderer.addBatch(order);
 		currentJobListTable.repaint();
 		String msg="Batch No. "+order.getBatchNumber()+" accepted";
@@ -602,12 +615,16 @@ public class WebLafGSA {
 	public void addNegotiationBid(Batch jobUnderNegotiation) {
 		NegotiationJobTileRenderer negotiationRenderer =
 				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
+		if(negotiationJobListTable.getCellEditor() != null ) {
+			negotiationJobListTable.getCellEditor().stopCellEditing();
+		}
 		negotiationRenderer.addBatch(jobUnderNegotiation);
+
+		negotiationJobListTable.revalidate();
 		negotiationJobListTable.repaint();
+
 		String msg="Bid recieved for batch no. "+jobUnderNegotiation.getBatchNumber();
 		showNotification("New Bid", msg, MessageType.INFO);
-		currentJobList.repaint();
-
 	}
 
 	public void cancelBatchUnderProcess(Batch batch){

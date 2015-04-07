@@ -281,7 +281,6 @@ public class CustomerProxyGUI extends JFrame{
 			} else if (menu == menuItemChangeDueDate) {
 				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
 				cAgent.changeDueDate((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
-
 			} 
 		}
 	}
@@ -389,7 +388,6 @@ public class CustomerProxyGUI extends JFrame{
 			return acceptedJobTableHeaderVector.get(column);
 		}
 	}
-
 
 	class CompletedJobsTableModel extends AbstractTableModel {
 
