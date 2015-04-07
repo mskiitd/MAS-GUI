@@ -576,7 +576,8 @@ public class WebLafGSA {
 				(CurrentJobTileRenderer)currentJobListTable.getModel();
 		
 		if(currentJobListTable.getCellEditor() != null ) {
-			currentJobListTable.getCellEditor().stopCellEditing();
+			currentJobListTable.getCellEditor().stopCellEditing(); 
+			//solves cell updating bug
 		}
 		CurrjobListRenderer.removeJob(b);
 
@@ -588,6 +589,7 @@ public class WebLafGSA {
 
 		if(completedJobListTable.getCellEditor() != null ) {
 			completedJobListTable.getCellEditor().stopCellEditing();
+			//solves cell updating bug
 		}
 		
 		completedJobRenderer.addBatch(b);
@@ -603,6 +605,7 @@ public class WebLafGSA {
 		
 		if(currentJobListTable.getCellEditor() != null ) {
 			currentJobListTable.getCellEditor().stopCellEditing();
+			//solves cell updating bug
 		}
 		
 		CurrJobListRenderer.addBatch(order);
@@ -617,6 +620,7 @@ public class WebLafGSA {
 				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
 		if(negotiationJobListTable.getCellEditor() != null ) {
 			negotiationJobListTable.getCellEditor().stopCellEditing();
+			//solves cell updating bug
 		}
 		negotiationRenderer.addBatch(jobUnderNegotiation);
 
@@ -631,6 +635,10 @@ public class WebLafGSA {
 		CurrentJobTileRenderer CurrjobListRenderer=
 				(CurrentJobTileRenderer)currentJobListTable.getModel();
 		CurrjobListRenderer.removeJob(batch);
+		if(currentJobListTable.getCellEditor()!=null){
+			currentJobListTable.getCellEditor().stopCellEditing();
+			//solves cell updating bug
+		}
 		currentJobListTable.repaint();
 		currentJobList.repaint();
 	}
