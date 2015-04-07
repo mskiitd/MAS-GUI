@@ -8,8 +8,10 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -29,7 +31,7 @@ public class MaintenanceGUI extends JFrame{
 	private LocalMaintenanceAgent mAgent;
 	
 	private JTabbedPane tPanes;
-	private String[] tabTitles = {"Main","Maintenance Schedules"};
+	private String[] tabTitles = {"Maintenance Schedules"};
 	private JPanel[] panelsForTab;
 	private JScrollPane scroller;
 	
@@ -48,7 +50,7 @@ public class MaintenanceGUI extends JFrame{
 	private JSpinner jSpinnerMonth;
 	private JSpinner jSpinnerYear;
 	
-	private CorrectiveMaintenancePanel correctivePanel;
+	private CorrectiveMaintenanceFrame correctiveFrame;
 
 	private CalendarPanel calendarPanel;
 	private JPanel schedulePanel;
@@ -64,8 +66,6 @@ public class MaintenanceGUI extends JFrame{
 		
 		this.mAgent = lmAgent;
 				
-		correctivePanel = new CorrectiveMaintenancePanel(lmAgent);
-		
 		mainPanel = new JPanel(new BorderLayout());
 		schedulePanel = new JPanel(new BorderLayout());
 		btnSendPrevMaint = new JButton("Send Preventive Maintenance Job");
@@ -80,12 +80,11 @@ public class MaintenanceGUI extends JFrame{
 		}
 
 		mainPanel.add(btnSendPrevMaint, BorderLayout.CENTER);
-		correctivePanel.setVisible(false);
-		panelsForTab[0].add(correctivePanel);
+//		panelsForTab[0].add(correctivePanel);
 		
 		schedulePanel.add(jpNorth,BorderLayout.NORTH);
 		schedulePanel.add(calendarPanel);
-		panelsForTab[1].add(schedulePanel);
+		panelsForTab[0].add(schedulePanel);
 		
 		for (int i = 0, n = tabTitles.length; i < n; i++) {
 			this.tPanes.addTab(tabTitles[i],panelsForTab[i] );
@@ -136,7 +135,8 @@ public class MaintenanceGUI extends JFrame{
 	}
 	
 	public void showRepairTimeInput() {
-		correctivePanel.setVisible(true);
+		this.setEnabled(false);
+		correctiveFrame = new CorrectiveMaintenanceFrame(mAgent,this);
 	}
 
 	private void showGui() {

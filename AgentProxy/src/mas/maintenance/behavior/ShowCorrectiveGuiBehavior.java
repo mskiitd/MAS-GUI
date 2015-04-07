@@ -10,13 +10,9 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.machineproxy.SimulatorInternals;
-import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
-import mas.maintenanceproxy.gui.CorrectiveMaintenancePanel;
 import mas.maintenanceproxy.gui.MaintenanceGUI;
-import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
-import mas.util.ZoneDataUpdate;
 
 public class ShowCorrectiveGuiBehavior extends Behaviour {
 

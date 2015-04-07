@@ -1,12 +1,10 @@
 package mas.machineproxy.behaviors;
 
 import jade.core.behaviours.Behaviour;
-import jade.lang.acl.MessageTemplate;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
-import mas.util.MessageIds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +16,8 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 	private transient job jobFromBatch;
 	private transient Simulator machineSimulator;
 	private int step = 0;
+	private long time;
+	private long LIMIT = 10000;
 
 	public AcceptJobFromBatchBehavior(Simulator simulator) {
 		log = LogManager.getLogger();
@@ -25,6 +25,7 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 		machineSimulator = simulator;
 		getDataStore().put(Simulator.simulatorStoreName, simulator);
 
+		time = System.currentTimeMillis();
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 				else {
 					currBatch = machineSimulator.getCurrentBatch();
 					log.info("current batch : " + currBatch);
-					block(100);
+					block(500);
 				}
 
 				break;
@@ -59,7 +60,7 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 
 	@Override
 	public boolean done() {
-		return step >= 1;
+		return step >= 1 || (System.currentTimeMillis() - time > LIMIT);
 	}
 
 }

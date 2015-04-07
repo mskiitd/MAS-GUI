@@ -1,22 +1,28 @@
 package mas.maintenanceproxy.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import uiconstants.Labels;
 
-public class CorrectiveMaintenancePanel extends JPanel{
+public class CorrectiveMaintenanceFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 
@@ -30,14 +36,16 @@ public class CorrectiveMaintenancePanel extends JPanel{
 	private JLabel lblRepairTime;
 	private FormattedDoubleField txtRepairTime;
 	private LocalMaintenanceAgent mAgent;
-
+	private JFrame parent;
 	private boolean dataOk = true;
 
-	public CorrectiveMaintenancePanel(LocalMaintenanceAgent mAgent) {
+	public CorrectiveMaintenanceFrame(LocalMaintenanceAgent mAgent, JFrame parent) {
 
 		log = LogManager.getLogger();
+		setLayout(new BorderLayout());
 		this.myPanel = new JPanel(new MigLayout());
 		this.mAgent = mAgent;
+		this.parent = parent;
 
 		this.btnConfirm = new JButton("Confirm");
 		this.lblRepairTime = new JLabel(Labels.MaintenanceLabels.repairTimeLabel);
@@ -52,13 +60,16 @@ public class CorrectiveMaintenancePanel extends JPanel{
 
 		this.scroller = new JScrollPane(this.myPanel);
 
-		add(scroller);
+		add(scroller,BorderLayout.CENTER);
 		showGui();
 	}
 
 	private void showGui() {
 		
-		setPreferredSize(new Dimension(600,500));
+		setTitle(" Machine Failed ");
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setPreferredSize(new Dimension(300,200));
+		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;
 		int centerY = (int)screenSize.getHeight() / 2;
@@ -88,8 +99,9 @@ public class CorrectiveMaintenancePanel extends JPanel{
 				checkRepairTime();
 				if(dataOk) {
 					log.info("sending corrective maintenance data !!");
+					parent.setEnabled(true);
 					mAgent.sendCorrectiveMaintenanceRepairTime(repairTime);
-					CorrectiveMaintenancePanel.this.setVisible(false);
+					CorrectiveMaintenanceFrame.this.setVisible(false);
 				}
 			}
 		}

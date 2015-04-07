@@ -220,7 +220,13 @@ public class ChangeDueDateGUI extends JFrame{
 			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
 			txtNumOps.setEnabled(false);
 
+			Calendar c1 = Calendar.getInstance();
+			c1.setTime(populatingBatch.getDueDateByCustomer());
+
 			timeSpinner.setValue(populatingBatch.getDueDateByCustomer());
+
+			datePicker.getModel().
+			setDate(c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
 			
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 			txtBatchSize.setEnabled(false);

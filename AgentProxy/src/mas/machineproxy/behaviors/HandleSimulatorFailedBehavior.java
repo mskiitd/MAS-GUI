@@ -45,7 +45,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 		this.machineInternals = internals;
 		this.machineSimulator = sim;
 		this.gui = sim.getGui();
-		
+
 		correctiveDataMsgTemplate = MessageTemplate.MatchConversationId(
 				MessageIds.msgcorrectiveMaintdata);
 	}
@@ -81,17 +81,18 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 				try {
 					data = (String) correctiveDataMsg.getContentObject();
 					repairData = data;
-					log.info("Maintenance arrived ~~~~~~ repair time " + repairData);
+					log.info("Maintenance arrived ~~~~ repair time " + repairData);
 					repairTime = (long) Double.parseDouble(repairData);
 					remainingTimeMillis = repairTime;
 
-					if( remainingTimeMillis > 0 ) {
-						gui.machineMaintenance();
-						executor = new ScheduledThreadPoolExecutor(1);
-						executor.scheduleAtFixedRate(new timeProcessing(), 0,
-								Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
-						step = 2;
-					}
+					step = 3;
+					//					if( remainingTimeMillis > 0 ) {
+					//						gui.machineMaintenance();
+					//						executor = new ScheduledThreadPoolExecutor(1);
+					//						executor.scheduleAtFixedRate(new timeProcessing(), 0,
+					//								Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
+					//						step = 2;
+					//					}
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
@@ -105,10 +106,11 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			// block for some time in order to avoid too much CPU usage
 			// this won't affect working of the behavior however
 			block(15);
+			
 		case 3:
-			log.info("repairing components age ");
-			machineSimulator.repair();
-			gui.machineIdle();
+			gui.enableRepair();
+			//			machineSimulator.repair();
+			//			gui.machineIdle();
 			step = 4;
 			break;
 		}

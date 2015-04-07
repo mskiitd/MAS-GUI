@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,12 +29,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.gui.custompanels.FadingPanel;
@@ -76,6 +72,9 @@ public class MachineGUI extends JFrame {
 	public static Color idleColor = Color.BLACK;
 
 	private int width = 600, height = 500;
+	
+	private String currentBatchId = null;
+	private String currOperationId = null;
 
 	public MachineGUI(LocalSchedulingAgent agent) {
 
@@ -225,6 +224,8 @@ public class MachineGUI extends JFrame {
 	}
 
 	public void machineProcessing(String id, String operation) {
+		this.currentBatchId = id;
+		this.currOperationId = operation;
 		this.currentOpPanel.setCurrentOperation(id, operation);
 		this.lblMachineStatus.setText("Processing");
 		this.lblMachineStatus.setForeground(CustomJobQueue.firstJobColor);
@@ -239,6 +240,8 @@ public class MachineGUI extends JFrame {
 		this.currentOpPanel.reset();
 		this.lblMachineStatus.setText("Idle");
 		this.lblMachineStatus.setForeground(idleColor);
+		this.btnLoadJob.setEnabled(true);
+		this.btnUnloadJob.setEnabled(false);
 	}
 
 	class buttonPanelListener implements ActionListener {
@@ -249,7 +252,6 @@ public class MachineGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource().equals(btnLoadJob)) {
 				if(machineSimulator != null) {
-					log.info("load button pressed##################");
 					machineSimulator.loadJob();
 					btnUnloadJob.setEnabled(true);
 					btnLoadJob.setEnabled(false);
@@ -261,7 +263,6 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnUnloadJob)) {
 
 				if(machineSimulator != null) {
-					log.info("unload button pressed##################");
 					machineSimulator.unloadJob();
 					btnUnloadJob.setEnabled(false);
 					btnLoadJob.setEnabled(true);
@@ -270,11 +271,9 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnFailMachineButton)) {
 
 				if(machineSimulator != null) {
-					log.info("fail button pressed##################");
 					machineSimulator.FailTheMachine();
 					machineFailed();
 					btnFailMachineButton.setEnabled(false);
-					btnRepairMachine.setEnabled(true);
 					btnLoadJob.setEnabled(false);
 					btnUnloadJob.setEnabled(false);
 				}
@@ -282,13 +281,25 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnRepairMachine)) {
 
 				if(machineSimulator != null) {
-					log.info("repair button pressed##################");
 					machineSimulator.repair();
-					btnUnloadJob.setEnabled(true);
+					machineResume();
 					btnFailMachineButton.setEnabled(true);
 					btnRepairMachine.setEnabled(false);
 				}
 			}
+		}
+	}
+	
+	public void enableRepair() {
+		this.btnRepairMachine.setEnabled(true);
+	}
+	
+	private void machineResume() {
+		if(this.currentBatchId != null) {
+			machineProcessing(this.currentBatchId,this.currOperationId);
+			btnUnloadJob.setEnabled(true);
+		} else {
+			machineIdle();
 		}
 	}
 
@@ -369,6 +380,5 @@ public class MachineGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI(lAgent.getLocalName());
 		}
-
 	}
 }

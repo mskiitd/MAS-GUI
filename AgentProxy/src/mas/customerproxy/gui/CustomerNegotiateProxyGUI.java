@@ -1,6 +1,7 @@
 package mas.customerproxy.gui;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,9 +41,6 @@ import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-
-import com.sun.org.apache.bcel.internal.generic.PopInstruction;
-
 import uiconstants.Labels;
 
 public class CustomerNegotiateProxyGUI extends JFrame{
@@ -54,8 +52,10 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private JScrollPane scroller;
 	private JPanel myPanel;
 	private JPanel operationPanel;
+	private JPanel btnPanel;
 	private JButton confirmJob;
 	private JButton negotiateJob;
+	private JButton btnCancelNegotiation;
 	public UtilDateModel dateModel;
 	public Properties dateProperties;
 	private JDatePanelImpl datePanel ;
@@ -101,10 +101,12 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
+		btnPanel = new JPanel(new FlowLayout());
 		operationPanel = new JPanel(new MigLayout());
 		this.cAgent = cAgent;
 		this.confirmJob = new JButton("Confirm");
 		this.negotiateJob = new JButton("Send For Negotiation");
+		this.btnCancelNegotiation = new JButton("Reject Negotiation");
 
 		dateModel = new UtilDateModel();
 
@@ -151,7 +153,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
 
 		this.lblWaitingTimeHeading = new JLabel("Expected Time by GSA : ");
-		this.txtWaitingTime = new JTextField(Labels.defaultJTextSize*3);
+		this.txtWaitingTime = new JTextField(Labels.defaultJTextSize*2);
 
 		this.txtCPN = new FormattedDoubleField();
 		txtCPN.setColumns(Labels.defaultJTextSize);
@@ -204,15 +206,19 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		myPanel.add(operationPanel,"wrap");
 
-		myPanel.add(confirmJob);
-		myPanel.add(negotiateJob);
-
+		btnPanel.add(confirmJob);
+		btnPanel.add(negotiateJob);
+		btnPanel.add(btnCancelNegotiation);
+		
+		myPanel.add(btnPanel);
+		
 		this.scroller = new JScrollPane(myPanel);
 		add(scroller);
 
 		buttonListener clickListener = new buttonListener();
 		confirmJob.addActionListener(clickListener);
 		negotiateJob.addActionListener(clickListener);
+		btnCancelNegotiation.addActionListener(clickListener);
 
 		_populate();
 
@@ -387,7 +393,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 	private void showGui() {
 		setTitle("Customer - Negotiation Job");
-		setPreferredSize(new Dimension(600,500));
+//		setPreferredSize(new Dimension(600,500));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -421,6 +427,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					cAgent.negotiateJob(populatingBatch);
 					dispose();
 				}
+			} else if(e.getSource().equals(btnCancelNegotiation)) {
+				cAgent.rejectNegotiation();
+				dispose();
 			}
 		}
 	};

@@ -58,6 +58,10 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		// update the accepted in the GUI
 		CustomerAgent.mygui.addAcceptedJob(j);
 	}
+	
+	public void rejectNegotiation() {
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH, null);
+	}
 
 	public void negotiateJob(Batch batch) {
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH, batch);
@@ -96,4 +100,5 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		});
 
 	}
+
 }
