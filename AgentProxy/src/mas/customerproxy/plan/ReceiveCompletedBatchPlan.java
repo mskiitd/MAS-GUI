@@ -43,7 +43,7 @@ public class ReceiveCompletedBatchPlan extends Behaviour implements PlanBody{
 //		log.info(arg0);
 		if(completedBatch != null && completedBatch.getCustomerId().equals(myAgent.getAID())) {
 			log.info("Adding completed job to GUI ");
-			CustomerAgent.mygui.addCompletedBatch(completedBatch);
+			CustomerAgent.customerGUI.addCompletedBatch(completedBatch);
 		}
 	}
 

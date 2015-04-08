@@ -15,6 +15,7 @@ import mas.customerproxy.plan.CancelOrderPlan;
 import mas.customerproxy.plan.ChangeDueDate;
 import mas.customerproxy.plan.ChangeDueDatePlan;
 import mas.customerproxy.plan.DispatchJobPlan;
+import mas.customerproxy.plan.HandleRejectedOrder;
 import mas.customerproxy.plan.ReceiveCompletedBatchPlan;
 import mas.customerproxy.plan.RegisterCustomerAgentToBlackboardPlan;
 import mas.customerproxy.plan.SendConfirmedOrderPlan;
@@ -65,6 +66,8 @@ public class parentBasicCapability extends Capability {
 
 		// for current job which is under negotiation
 		Belief<Batch> currentNegJob = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH);
+		
+		Belief<Batch> customerGUI = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CUSTOMER_GUI);
 
 		beliefs.add(bboard);
 		beliefs.add(currentJob);
@@ -72,6 +75,7 @@ public class parentBasicCapability extends Capability {
 		beliefs.add(changeDueDate);
 		beliefs.add(confirmedOrder);
 		beliefs.add(currentNegJob);
+		beliefs.add(customerGUI);
 
 		return beliefs;
 	}
@@ -91,7 +95,9 @@ public class parentBasicCapability extends Capability {
 				ReceiveCompletedBatchPlan.class ));
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgChangeDueDate),
 				ChangeDueDate.class));
-		
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.RejectedOrder)
+				, HandleRejectedOrder.class));
+
 		return plans;
 	}	
 

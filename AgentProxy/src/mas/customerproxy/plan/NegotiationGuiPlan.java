@@ -86,7 +86,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 
 			// Update this job in the list of completed jobs of customer GUI
 			log.info("Updating accepted jobs in the queue of customer");
-			CustomerAgent.mygui.addAcceptedJob(j);
+			CustomerAgent.customerGUI.addAcceptedJob(j);
 
 			return;
 		}else {
