@@ -14,13 +14,12 @@ public class JobTile{
 
 	private String jobID, jobName;
 	private Date custStartDate;
-	private Date custDueDate;
+	private Date custDueDate, actualOrderCompletionTime;;
 	private int priority;
 	private int JobNo;
 	private double processingTime; //in seconds
-	private Date startDatebyGSA,dueDatebyGSA;//by GSA
 	private Batch givenBatch;
-	
+	private String customerName;
 	public JobTile(Batch batch) {
 		jobID=batch.getBatchId();
 		custStartDate=new Date(batch.getStartTimeMillis()); 
@@ -29,10 +28,12 @@ public class JobTile{
 		JobNo=batch.getBatchNumber();
 		priority=(int) batch.getCPN();
 		processingTime=(double)batch.getTotalProcessingTime()/1000.0;
-		startDatebyGSA=new Date(0);
-		dueDatebyGSA=new Date(0);
+//		startDatebyGSA=new Date(0);
+//		dueDatebyGSA=new Date(0);
 		jobName="unknown";
 		givenBatch=batch;
+		customerName=batch.getCustomerId().getLocalName();
+		actualOrderCompletionTime=new Date(batch.getCompletionTime());
 	}
 
 	public int getPriority() {
@@ -79,21 +80,21 @@ public class JobTile{
 		this.processingTime = ((double)processingTime)/1000.0;
 	}
 
-	public Date getDueDatebyGSA() {
-		return dueDatebyGSA;
-	}
-
-	public void setDueDatebyGSA(Date dueDate) {
-		this.dueDatebyGSA = dueDate;
-	}
-
-	public Date getStartDatebyGSA() {
-		return startDatebyGSA;
-	}
-
-	public void setStartDatebyGSA(Date startDate) {
-		this.startDatebyGSA = startDate;
-	}
+//	public Date getDueDatebyGSA() {
+//		return dueDatebyGSA;
+//	}
+//
+//	public void setDueDatebyGSA(Date dueDate) {
+//		this.dueDatebyGSA = dueDate;
+//	}
+//
+//	public Date getStartDatebyGSA() {
+//		return startDatebyGSA;
+//	}
+//
+//	public void setStartDatebyGSA(Date startDate) {
+//		this.startDatebyGSA = startDate;
+//	}
 
 	public String getJobName() {
 		return jobName;
@@ -105,5 +106,13 @@ public class JobTile{
 
 	public Batch getBatch() {
 		return givenBatch;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public Date getActualOrderCompletionTime() {
+		return actualOrderCompletionTime;
 	}
 }
