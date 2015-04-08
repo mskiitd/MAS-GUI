@@ -222,7 +222,7 @@ public class DefineJobFrame extends JFrame{
 					dataOk = dataOk & checkBatchSize();
 				}
 				
-				populatingBatch.setCustomerId(cAgent.getAID().toString());
+				populatingBatch.setCustomerId(cAgent.getAID());
 			}
 		}
 		else {
@@ -246,7 +246,7 @@ public class DefineJobFrame extends JFrame{
 				dataOk = dataOk & checkBatchSize();
 			}
 			
-			populatingBatch.setCustomerId(cAgent.getAID().toString());
+			populatingBatch.setCustomerId(cAgent.getAID());
 		}
 	}
 
