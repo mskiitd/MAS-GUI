@@ -1,13 +1,22 @@
 
 package mas.customerproxy.gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -24,12 +33,17 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.agent.Jobloader;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 import uiconstants.Labels;
 
 @SuppressWarnings("serial")
@@ -68,12 +82,28 @@ public class CustomerProxyGUI extends JFrame{
 	// menu items here
 	private JMenuItem menuItemCancel ;
 	private JMenuItem menuItemChangeDueDate ;
+	private static TrayIcon customerTrayIcon;
+	private Logger log=LogManager.getLogger();
 
 	public static int countBatch = 1;
 
 	public CustomerProxyGUI(CustomerAgent cAgent) {
-
+			
 		this.cAgent = cAgent;
+		
+		Image image = Toolkit.getDefaultToolkit().getImage("resources/customer.png");
+		customerTrayIcon= new TrayIcon(image, cAgent.getLocalName());
+		if (SystemTray.isSupported()) {
+			SystemTray tray = SystemTray.getSystemTray();
+	
+			customerTrayIcon.setImageAutoSize(true);
+			try {
+				tray.add(customerTrayIcon);
+			} catch (AWTException e) {
+				log.info("TrayIcon could not be added.");
+			}
+			
+			
 		this.tPanes = new JTabbedPane(JTabbedPane.TOP);
 		this.panelsForTab = new JPanel[tabTitles.length];
 
@@ -109,6 +139,7 @@ public class CustomerProxyGUI extends JFrame{
 
 		add(this.tPanes);
 		showGui();
+		}
 	}
 
 	private void _initGeneratorJobsPanel() {
@@ -240,7 +271,7 @@ public class CustomerProxyGUI extends JFrame{
 	}
 
 	private void showGui() {
-		setTitle(" Customer ");
+		setTitle(cAgent.getLocalName());
 //		setPreferredSize(new Dimension(800,800));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
@@ -250,16 +281,62 @@ public class CustomerProxyGUI extends JFrame{
 		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);*/
 		super.setVisible(true);
 	}
+	
+	public static void showNotification(String title, String message,TrayIcon.MessageType type){
+
+		switch(type){
+		case ERROR :
+			customerTrayIcon.displayMessage(title,message, TrayIcon.MessageType.ERROR);
+			break;
+
+		case INFO:
+			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.INFO);
+			break;
+
+		case WARNING:
+			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.WARNING);
+			break;
+
+		case NONE:
+			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
+			break;
+		}
+		
+		String notificationSound = "resources/notification.wav";
+		InputStream in=null;
+		try {
+			in = new FileInputStream(notificationSound);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		// create an audiostream from the inputstream
+		AudioStream audioStream=null;
+		try {
+			audioStream = new AudioStream(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// play the audio clip with the audioplayer class
+		AudioPlayer.player.start(audioStream);
+
+		}
 
 	public void addCompletedBatch(Batch j) {
 		/**if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.remove(j);
 		}
 		 **/
+		
+		
 		completedJobVector.addElement(j);
 		TableUtil.setColumnWidths(completedJobsTable);
 		completedJobsTable.revalidate();
 		completedJobsTable.repaint();
+		
+		showNotification("Order Completed", "Order with ID "+j.getBatchId()+
+				" completed ",MessageType.INFO); 
 	}
 
 	public void addAcceptedJob(Batch j) {
@@ -268,6 +345,10 @@ public class CustomerProxyGUI extends JFrame{
 		acceptedJobsTable.revalidate();
 		acceptedJobsTable.repaint();
 	}
+	
+	
+	
+	
 
 	class rightClickListener implements ActionListener {
 
