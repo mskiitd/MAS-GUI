@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,18 +25,22 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.gui.custompanels.FadingPanel;
 import mas.util.TableUtil;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("serial")
 public class MachineGUI extends JFrame {
@@ -43,6 +48,8 @@ public class MachineGUI extends JFrame {
 	private LocalSchedulingAgent lAgent;
 	private Simulator machineSimulator;
 	private buttonPanelListener buttonPanelHandler;
+
+	private JMenuItem menuItemUpload, menuItemPmStart, menuItemPmDone;
 
 	private FadingPanel currentOpPanel;
 	private JSplitPane parentPanel;
@@ -72,9 +79,11 @@ public class MachineGUI extends JFrame {
 	public static Color idleColor = Color.BLACK;
 
 	private int width = 600, height = 500;
-	
+
 	private String currentBatchId = null;
 	private String currOperationId = null;
+
+	private int maintJobCounter = 0;
 
 	public MachineGUI(LocalSchedulingAgent agent) {
 
@@ -124,8 +133,7 @@ public class MachineGUI extends JFrame {
 		this.queueScroller = new JScrollPane(queuePanel);
 
 		this.parentPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(mcPanel), queueScroller);
-		this.parentPanel.setDividerLocation(0.25);
-		this.parentPanel.setEnabled(false);
+		this.parentPanel.setDividerLocation(0.30);
 		machineIdle();
 		add(parentPanel);
 		showGui();
@@ -289,11 +297,11 @@ public class MachineGUI extends JFrame {
 			}
 		}
 	}
-	
+
 	public void enableRepair() {
 		this.btnRepairMachine.setEnabled(true);
 	}
-	
+
 	private void machineResume() {
 		if(this.currentBatchId != null) {
 			machineProcessing(this.currentBatchId,this.currOperationId);
@@ -329,7 +337,7 @@ public class MachineGUI extends JFrame {
 	}
 
 	private void showGui() {
-		setTitle(" Machine GUI : " + lAgent.getLocalName().split("#")[1]);
+		setTitle(" Machine GUI : ");// + lAgent.getLocalName().split("#")[1]);
 		setJMenuBar(createMenuBar());
 		setPreferredSize(new Dimension(width,height));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -344,7 +352,6 @@ public class MachineGUI extends JFrame {
 	private JMenuBar createMenuBar() {
 		JMenuBar menuBar;
 		JMenu menu;
-		JMenuItem menuItem;
 		//Create the menu bar.
 		menuBar = new JMenuBar();
 
@@ -361,11 +368,19 @@ public class MachineGUI extends JFrame {
 		try {
 			upIcon = ImageIO.read(new File("resources/upload_48.jpg"));
 			ImageIcon icon = new ImageIcon(upIcon);
-			menuItem = new JMenuItem("Add job to Database", icon);
-			menuItem.setMnemonic(KeyEvent.VK_B);
-			menu.add(menuItem);
+			menuItemUpload = new JMenuItem("Add job to Database", icon);
+			menuItemUpload.setMnemonic(KeyEvent.VK_B);
+			menuItemUpload.addActionListener(mListener);
 
-			menuItem.addActionListener(mListener);
+			menuItemPmStart = new JMenuItem("<html><p>Maintenance Start <b>" + maintJobCounter + "</b></p></html>");
+			menuItemPmDone = new JMenuItem("Maintenance Done");
+			menuItemPmDone.setEnabled(false);
+			menuItemPmStart.addActionListener(mListener);
+			menuItemPmDone.addActionListener(mListener);
+
+			menu.add(menuItemUpload);
+			menu.add(menuItemPmStart);
+			menu.add(menuItemPmDone);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -374,11 +389,36 @@ public class MachineGUI extends JFrame {
 		return menuBar;
 	}
 
+	public void maintJobArrived() {
+		this.menuItemPmStart.setText("<html><p>Maintenance Start <b>" + ++maintJobCounter + "</b></p></html>");
+	}
+
+	private void maintJobDone() {
+		this.menuItemPmStart.setText("<html><p>Maintenance Start <b>" + --maintJobCounter + "</b></p></html>");
+	}
+
 	class menuItemListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI(lAgent.getLocalName());
+
+			if(e.getSource().equals(menuItemUpload)) {
+
+				UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI(lAgent.getLocalName());
+
+			} else if(e.getSource().equals(menuItemPmStart)) {
+				lAgent.addGoal(new StartMaintenanceGoal());
+
+				menuItemPmDone.setEnabled(true);
+			} else if(e.getSource().equals(menuItemPmDone)) {
+				maintJobDone();
+				menuItemPmDone.setEnabled(false);
+			}
 		}
 	}
+
+	public void showNoMaintJobPopup() {
+		JOptionPane.showMessageDialog(this, "NO Maintenance Job to be done.");
+	}
+
 }

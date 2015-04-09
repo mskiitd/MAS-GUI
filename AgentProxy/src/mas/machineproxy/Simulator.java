@@ -3,6 +3,7 @@ package mas.machineproxy;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
@@ -49,7 +50,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	// time step in milliseconds
 	public static int TIME_STEP = 100;
 
-	public static long healthReportTimeMillis = 35000;
+	public static long healthReportTimeMillis = 5000;
 
 	// AID of blackboard agent to which it will connect and publish-receive information from
 	public transient static AID blackboardAgent;
@@ -122,7 +123,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 	public Simulator(LocalSchedulingAgent localSchedulingAgent) {
 		this.lAgent = localSchedulingAgent;
-//		System.out.println("gui is : "  + localSchedulingAgent + "-----");
+		//		System.out.println("gui is : "  + localSchedulingAgent + "-----");
 	}
 
 	public Batch getCurrentBatch() {
@@ -199,7 +200,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 
 		functionality.addSubBehaviour(acceptIncomingBatch);
-		//		functionality.addSubBehaviour(reportHealth);
+//		functionality.addSubBehaviour(reportHealth);
 
 		functionality.addSubBehaviour(processDimensionShifter);
 		//		functionality.addSubBehaviour(machineParameterShifter);
@@ -210,34 +211,34 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		 */
 		statusChangeSupport.addPropertyChangeListener (
 				new SimulatorStatusListener(Simulator.this) );
-		
+
 		while(lAgent.mGUI==null){
 			Log.info("lAgent.mGUI=", lAgent.mGUI);
 		}
-		
+
 		gui = lAgent.mGUI;
 		Log.info("gui="+gui);
 		gui.setMachineSimulator(Simulator.this);
-		
-//		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-//		executor.scheduleAtFixedRate(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				if(gui != null) {
-//					gui.setMachineSimulator(Simulator.this);
-//					Log.info("simulator started for LSA GUI");
-//					executor.shutdown();
-//				} else {
-//					ACLMessage msg = receive(guiMsgTemplate);
-//					try {
-//						gui = (MachineGUI) msg.getContentObject();
-//					} catch (UnreadableException e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//		}, 0,1000, TimeUnit.MILLISECONDS );
+
+		//		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+		//		executor.scheduleAtFixedRate(new Runnable() {
+		//
+		//			@Override
+		//			public void run() {
+		//				if(gui != null) {
+		//					gui.setMachineSimulator(Simulator.this);
+		//					Log.info("simulator started for LSA GUI");
+		//					executor.shutdown();
+		//				} else {
+		//					ACLMessage msg = receive(guiMsgTemplate);
+		//					try {
+		//						gui = (MachineGUI) msg.getContentObject();
+		//					} catch (UnreadableException e) {
+		//						e.printStackTrace();
+		//					}
+		//				}
+		//			}
+		//		}, 0,1000, TimeUnit.MILLISECONDS );
 
 	}
 
@@ -290,10 +291,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	public void setStatus(MachineStatus newStatus) {
 		MachineStatus oldStatus = this.getStatus();
 		this.internals.setStatus(newStatus);
-		if(newStatus == MachineStatus.FAILED){
-			statusChangeSupport.
-			firePropertyChange(
-					machineStatusProperty,oldStatus, newStatus);
+		if(newStatus == MachineStatus.FAILED) {
+			statusChangeSupport.firePropertyChange(machineStatusProperty,oldStatus, newStatus);
 		}
 	}
 
@@ -307,6 +306,23 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 	public void repair() {
 		this.internals.setStatus(MachineStatus.IDLE) ;
+		
+		addBehaviour(new OneShotBehaviour() {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void action() {
+				System.out.println("health updated");
+				ZoneDataUpdate machineHealthUpdate = new ZoneDataUpdate.Builder(
+						ID.Machine.ZoneData.myHealth).
+						value(internals).
+						Build();
+
+				AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
+						machineHealthUpdate, myAgent);
+			}
+		});
 	}
 
 	public String getID_Simulator() {
@@ -499,36 +515,36 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	 *  correct the logic inside
 	 */
 
-	 @Override
-	 public boolean equals(Object obj) {
-		 if(obj instanceof Simulator){
-			 final Simulator other = (Simulator) obj;
-			 return new EqualsBuilder()
-			 .append(ID_Simulator, other.ID_Simulator)
-			 .isEquals();
-		 } else {
-			 return false;
-		 }
-	 }
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Simulator){
+			final Simulator other = (Simulator) obj;
+			return new EqualsBuilder()
+			.append(ID_Simulator, other.ID_Simulator)
+			.isEquals();
+		} else {
+			return false;
+		}
+	}
 
-	 public void FailTheMachine() {
-		 this.setStatus(MachineStatus.FAILED);
-	 }
+	public void FailTheMachine() {
+		this.setStatus(MachineStatus.FAILED);
+	}
 
-	 public void loadJob() {
-		 addBehaviour(new AcceptJobFromBatchBehavior(Simulator.this));
-	 }
+	public void loadJob() {
+		addBehaviour(new AcceptJobFromBatchBehavior(Simulator.this));
+	}
 
-	 public void unloadJob() {
-		 this.setUnloadFlag(true);
-	 }
+	public void unloadJob() {
+		this.setUnloadFlag(true);
+	}
 
-	 public boolean isUnloadFlag() {
-		 return unloadFlag;
-	 }
+	public boolean isUnloadFlag() {
+		return unloadFlag;
+	}
 
-	 public void setUnloadFlag(boolean unloadFlag) {
-		 this.unloadFlag = unloadFlag;
-	 }
+	public void setUnloadFlag(boolean unloadFlag) {
+		this.unloadFlag = unloadFlag;
+	}
 
 }

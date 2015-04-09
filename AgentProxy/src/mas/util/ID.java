@@ -80,6 +80,8 @@ public class ID implements Serializable{
 			public static final String currentBatch = "current_batchOnMachine";
 			public static final String actionOnCompletedBatch = "action_on_completed_Batch";
 			public static final String gui_machine = "machine_gui";
+			public static final String preventiveJobsQueue = "LSA_prevMaintJobs_Queue";
+			public static final String currentMaintJob = "LSA_Current_MaintJobOnMachine";
 		}
 
 		public class ZoneData {
@@ -100,6 +102,8 @@ public class ID implements Serializable{
 			public static final String QueryResponse = "ResponseToGSAQuery";
 
 			public static final String gui_machine = "guiMachine";
+
+			public static final String maintenanceJobForMachine = "LSA_MaintJobForMachine";
 		}
 	}
 
@@ -188,7 +192,7 @@ public class ID implements Serializable{
 
 		public class BeliefBaseConst {
 			public static final String blackboardAgentAID = "Maintenance_blackboard-agent";
-			public static final String machine = "Maintenance_machine";
+			public static final String machineHealth = "Maintenance_machine";
 			public static final String globalSchAgentAID = "Maintenance_gsAgent";
 			public static final String dataTracker = "Maintenance_data-tracker";
 			public static final String preventiveMaintJob = "Maintenance_machine-maintenance-tracker";

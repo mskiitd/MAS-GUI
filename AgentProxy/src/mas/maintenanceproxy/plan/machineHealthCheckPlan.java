@@ -1,5 +1,6 @@
 package mas.maintenanceproxy.plan;
 
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -16,7 +17,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class machineHealthCheckPlan extends OneShotBehaviour implements PlanBody {
+public class machineHealthCheckPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
@@ -25,7 +26,7 @@ public class machineHealthCheckPlan extends OneShotBehaviour implements PlanBody
 	private int step = 0;
 	private Logger log;
 	private MessageTemplate machineHealth;
-	
+
 	@Override
 	public void init(PlanInstance pInstance) {
 		log = LogManager.getLogger();
@@ -33,17 +34,18 @@ public class machineHealthCheckPlan extends OneShotBehaviour implements PlanBody
 		myMachine = null;
 		machineHealth = MessageTemplate.MatchConversationId(MessageIds.msgmyHealth);
 	}
-	
+
 	@Override
 	public void action() {
-		
+
 		switch(step) {
 		case 0:
 			msg = myAgent.receive(machineHealth);
 			if(msg != null) {
 				try {
 					myMachine = (SimulatorInternals) msg.getContentObject();
-//					log.info("updating belief base of machine's health : " + myMachine );
+					bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machineHealth, myMachine);
+					log.info("updating belief base of machine's health : " + myMachine );
 					step = 1;
 				} catch (UnreadableException e) {
 					e.printStackTrace();
@@ -52,10 +54,6 @@ public class machineHealthCheckPlan extends OneShotBehaviour implements PlanBody
 			else {
 				block();
 			}
-			
-		case 1:
-			bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machine, myMachine);
-			step = 0;
 			break;
 		}
 	}
@@ -63,5 +61,10 @@ public class machineHealthCheckPlan extends OneShotBehaviour implements PlanBody
 	@Override
 	public EndState getEndState() {
 		return EndState.SUCCESSFUL;
+	}
+
+	@Override
+	public boolean done() {
+		return false;
 	}
 }

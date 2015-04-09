@@ -19,7 +19,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	private AID blackboard;
 	private Capability bCap;
 	private BeliefBase bfBase;
-	public static long prevMaintPeriod = 1 * 60 * 1000;
+	public static long prevMaintPeriod = 5000;
 
 	public MaintenanceGUI mgui = null;
 

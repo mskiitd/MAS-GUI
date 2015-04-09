@@ -63,6 +63,11 @@ public class WebLafGSA {
 	private static WebScrollPane negotiationJobList=null;
 
 	private static WebPanel MainPanel=null;
+	
+	private static WebToggleButton JobManager;
+	private static WebToggleButton About ;
+	private static WebToggleButton Negotiation;
+	private static WebToggleButton completedJobs;
 
 	//info about selected job tile on right side
 	private static WebPanel currentJobListinfoPanel=null;
@@ -467,7 +472,7 @@ public class WebLafGSA {
 	private static WebToggleButton[] getButtons(){
 		
 		WebToggleButton[] buttons=new WebToggleButton[4];
-		WebToggleButton About = new WebToggleButton();
+		About = new WebToggleButton();
 		Image img = null;
 		try {
 			img = ImageIO.read (new File("resources/about.png"));
@@ -493,7 +498,7 @@ public class WebLafGSA {
 		About.setDrawFocus (false);
 		buttons[0]=About;
 
-		WebToggleButton Negotiation = new WebToggleButton();
+		Negotiation = new WebToggleButton();
 		Image negotiationImg = null;
 		try {
 			negotiationImg = ImageIO.read (new File("resources/negotiation.png"));
@@ -522,7 +527,7 @@ public class WebLafGSA {
 		Negotiation.setDrawFocus (false);
 		buttons[1]=Negotiation;
 
-		WebToggleButton JobManager = new WebToggleButton();
+		JobManager = new WebToggleButton();
 		Image JobManagerImg = null;
 		try {
 			JobManagerImg = ImageIO.read (new File("resources/JobManager.png"));
@@ -581,7 +586,7 @@ public class WebLafGSA {
 
  		buttons[3]=signOut;*/
 
-		WebToggleButton completedJobs = new WebToggleButton();
+		completedJobs = new WebToggleButton();
 		Image CompletedJobsImg = null;
 		try {
 			CompletedJobsImg = ImageIO.read (new File("resources/completedJob.png"));

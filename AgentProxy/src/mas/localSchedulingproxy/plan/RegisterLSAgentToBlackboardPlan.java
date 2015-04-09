@@ -87,9 +87,16 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 				.appendValue(false).
 				build();
 		
+		NamedZoneData ZoneDataName8 =
+				new NamedZoneData.Builder(ID.LocalScheduler.ZoneData.maintenanceJobForMachine).
+				MsgID(MessageIds.msgMaintenanceJobForMachine)
+				.appendValue(false).
+				build();
+		
 		
 		NamedZoneData[] ZoneDataNames =  { ZoneDataName1,
-				ZoneDataName2, ZoneDataName3, ZoneDataName4, ZoneDataName5, ZoneDataName6, ZoneDataName7 };
+				ZoneDataName2, ZoneDataName3, ZoneDataName4, ZoneDataName5, ZoneDataName6, ZoneDataName7,
+				ZoneDataName8 };
 
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 

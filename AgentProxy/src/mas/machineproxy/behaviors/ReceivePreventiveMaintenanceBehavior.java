@@ -44,7 +44,7 @@ public class ReceivePreventiveMaintenanceBehavior extends Behaviour{
 		this.comingJob = comingJob;
 		log = LogManager.getLogger();
 		pmMsgTemplate = MessageTemplate.MatchConversationId(
-				MessageIds.msgpreventiveMaintJob);
+				MessageIds.msgMaintenanceJobForMachine);
 		machineSimulator = null;
 	}
 

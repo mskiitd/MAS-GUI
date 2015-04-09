@@ -5,8 +5,9 @@ import jade.core.AID;
 import java.util.HashSet;
 import java.util.Set;
 
+import mas.machineproxy.SimulatorInternals;
 import mas.maintenanceproxy.classes.PMaintenance;
-import mas.maintenanceproxy.goal.CorrectiveMachineRepairGoal;
+import mas.maintenanceproxy.goal.ManualMachineRepairGoal;
 import mas.maintenanceproxy.goal.MaintenanceStartSendInfoGoal;
 import mas.maintenanceproxy.goal.PeriodicPreventiveMaintenanceGoal;
 import mas.maintenanceproxy.goal.RecievePreventiceMaintenanceConfirmationGoal;
@@ -46,8 +47,8 @@ public class RootMaintenanceBasicCapability extends Capability{
 		Belief<AID> bboard = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.blackboardAgentAID);
 
-		Belief<AID> myMachine = new TransientBelief<AID>(
-				ID.Maintenance.BeliefBaseConst.machine);
+		Belief<SimulatorInternals> myMachine = new TransientBelief<SimulatorInternals>(
+				ID.Maintenance.BeliefBaseConst.machineHealth);
 
 		Belief<AID> mygsAgent = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.globalSchAgentAID);
@@ -66,6 +67,8 @@ public class RootMaintenanceBasicCapability extends Capability{
 
 		gui.setValue(null);
 		CorrectiveRepair.setValue(null);
+		
+		myMachine.setValue(new SimulatorInternals());
 
 		beliefs.add(bboard);
 		beliefs.add(myMachine);
@@ -73,6 +76,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 		beliefs.add(maintJob);
 		beliefs.add(CorrectiveRepair);
 		beliefs.add(gui);
+		beliefs.add(pmStatus);
 
 		return beliefs;
 	}
@@ -89,7 +93,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 		plans.add(new SimplePlan(machineHealthCheckGoal.class,
 				machineHealthCheckPlan.class));
 
-		plans.add(new SimplePlan(CorrectiveMachineRepairGoal.class,
+		plans.add(new SimplePlan(ManualMachineRepairGoal.class,
 				ManualMachineRepairPlan.class));
 
 		plans.add(new SimplePlan(MaintenanceStartSendInfoGoal.class,
@@ -111,10 +115,8 @@ public class RootMaintenanceBasicCapability extends Capability{
 	protected void setup() {
 		myAgent.addGoal(new RegisterMaintenanceAgentServiceGoal());
 		myAgent.addGoal(new RegisterMaintenanceAgentToBlackboardGoal());
-		
-//		myAgent.addGoal(new machineHealthCheckGoal());
-		
-		myAgent.addGoal(new CorrectiveMachineRepairGoal());
+		myAgent.addGoal(new machineHealthCheckGoal());
+		myAgent.addGoal(new ManualMachineRepairGoal());
 		myAgent.addGoal(new PeriodicPreventiveMaintenanceGoal());
 		myAgent.addGoal(new RecievePreventiceMaintenanceConfirmationGoal());
 	}

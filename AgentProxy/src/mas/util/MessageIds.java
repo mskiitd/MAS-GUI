@@ -63,7 +63,9 @@ public class MessageIds {
 	// 
 	public static final String msgbidResultJob = "LSA_ContractNet_job";
 	
-	public static String msgGuiMachine = "msg_machine_gui";
+	public static final String msgGuiMachine = "msg_machine_gui";
+
+	public static final String msgMaintenanceJobForMachine = "msg_maintJobForMachine";
 
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -76,7 +78,7 @@ public class MessageIds {
 	public static final String msgcorrectiveMaintdata = "Maintenance_correctiveMaintenancedata";
 
 	// update preventive maintenance job for machine here
-	public static final String msgpreventiveMaintJob = "Maintenance_preventiveMaintJob";
+	public static final String msgpreventiveMaintJob = "MaintMsg_preventiveMaintJob";
 
 	// update inspection job data for machine here
 	public static final String msginspectionJobData = "Maintenance_inspectionData";

@@ -1,5 +1,8 @@
 package mas.maintenanceproxy.plan;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.alee.log.Log;
 
 import jade.core.AID;
@@ -25,8 +28,10 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 	private int step = 0;
 	private MessageTemplate pmConfirmaton;
 	private PMaintenance prevMaint;
+	private Logger log;
 
 	public void init(PlanInstance planInstance) {
+		this.log = LogManager.getLogger();
 		bfBase = planInstance.getBeliefBase();
 
 		this.blackboard = (AID) bfBase.
@@ -44,7 +49,7 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 			if(msg != null) {
 				try {
 					prevMaint = (PMaintenance) msg.getContentObject();
-					//					log.info("updating belief base of machine's health : " + myMachine );
+					log.info("maint job : " + prevMaint );
 					step = 1;
 				} catch (UnreadableException e) {
 					e.printStackTrace();
@@ -53,7 +58,7 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 			else {
 				block();
 			}
-
+			break;
 		case 1:
 			if(prevMaint.getMaintStatus() == MaintStatus.COMPLETE) { 
 				Log.info("done");

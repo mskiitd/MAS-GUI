@@ -1,8 +1,11 @@
 package mas.maintenanceproxy.classes;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PMaintenance {
+public class PMaintenance implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String maintId;
 	private Date expectedStartTime;

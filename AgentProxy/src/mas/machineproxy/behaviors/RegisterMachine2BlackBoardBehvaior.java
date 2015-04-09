@@ -90,7 +90,7 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 			
 
 		String[] lSchedulingParams = {ID.LocalScheduler.ZoneData.batchForMachine,
-				ID.LocalScheduler.ZoneData.gui_machine };
+				ID.LocalScheduler.ZoneData.gui_machine, ID.LocalScheduler.ZoneData.maintenanceJobForMachine };
 
 		lSchedulingSubForm.AddSubscriptionReq(lSchedulingTarget, lSchedulingParams);
 
@@ -105,8 +105,7 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 			 	AID.ISLOCALNAME);
 
 		String[] lMaintenanceParams = {ID.Maintenance.ZoneData.correctiveMaintdata,
-				ID.Maintenance.ZoneData.prevMaintData, ID.Maintenance.ZoneData.inspectionJobData,
-				ID.Maintenance.ZoneData.preventiveMaintJob };
+				ID.Maintenance.ZoneData.prevMaintData };
 
 		lMaintenanceSubForm.AddSubscriptionReq(lMaintenanceTarget, lMaintenanceParams);
 

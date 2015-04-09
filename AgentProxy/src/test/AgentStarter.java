@@ -80,11 +80,10 @@ public class AgentStarter {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
 		TableUtil.loadFont();
-//		new AgentStarter();
-		
+		new AgentStarter();
+//		MachineGUI gui = new MachineGUI(new LocalSchedulingAgent());
 		try {
 			Thread.sleep(2000);
-			MaintenanceGUI gui = new MaintenanceGUI(new LocalMaintenanceAgent());
 			createSimulator();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

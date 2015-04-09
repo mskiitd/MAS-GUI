@@ -10,21 +10,26 @@ import java.util.Set;
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.goal.JobSchedulingGoal;
+import mas.localSchedulingproxy.goal.ReceiveMaintenanceJobGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
+import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
 import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
 import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
+import mas.localSchedulingproxy.plan.ReceiveMaintenanceJobPlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentServicePlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentToBlackboardPlan;
 import mas.localSchedulingproxy.plan.RespondToGSAQuery;
 import mas.localSchedulingproxy.plan.SendBidPlan;
 import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
 import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
+import mas.localSchedulingproxy.plan.StartMaintenancePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
 import mas.localSchedulingproxy.plan.LoadOperationDatabasePlan;
 import mas.machineproxy.gui.MachineGUI;
+import mas.maintenanceproxy.classes.PMaintenance;
 import mas.util.ID;
 import mas.util.MessageIds;
 
@@ -73,14 +78,11 @@ public class AbstractbasicCapability extends Capability {
 		Belief<StatsTracker> dtrack = new TransientBelief<StatsTracker>(
 				ID.LocalScheduler.BeliefBaseConst.dataTracker);
 
-		Belief<Double> processingCost= 
-				new TransientBelief<Double>(ID.LocalScheduler.BeliefBaseConst.ProcessingCost);
+		Belief<Double> processingCost= new TransientBelief<Double>(
+				ID.LocalScheduler.BeliefBaseConst.ProcessingCost);
 
-		Belief<String[]> supportedOperations = 
-				new TransientBelief<String[]>(ID.LocalScheduler.BeliefBaseConst.supportedOperations);
-
-		StatsTracker stats = new StatsTracker();
-		dtrack.setValue(stats);
+		Belief<String[]> supportedOperations = new TransientBelief<String[]>(
+				ID.LocalScheduler.BeliefBaseConst.supportedOperations);
 
 		Belief<ArrayList<Batch> > jobSet = new TransientBelief<ArrayList<Batch> >(
 				ID.LocalScheduler.BeliefBaseConst.batchQueue);
@@ -88,31 +90,37 @@ public class AbstractbasicCapability extends Capability {
 		Belief<Double> regretThreshold = new TransientBelief<Double>(
 				ID.LocalScheduler.BeliefBaseConst.regretThreshold);
 
-		Belief<OperationDataBase> operationDB = new 
-				TransientBelief<OperationDataBase>(ID.LocalScheduler.BeliefBaseConst.operationDatabase);
+		Belief<OperationDataBase> operationDB = new TransientBelief<OperationDataBase>(
+				ID.LocalScheduler.BeliefBaseConst.operationDatabase);
 
 		Belief<Batch> doneBatchFromMachine = new TransientBelief<Batch>(
 				ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine);
-		
+
 		Belief<Batch> currentBatch = new TransientBelief<Batch>(
 				ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
-		
-		Belief<ArrayList<Batch>> actionOnCompletedBatch= 
-				new TransientBelief<ArrayList<Batch>>(ID.LocalScheduler.
-				BeliefBaseConst.actionOnCompletedBatch);
-		
+
+		Belief<ArrayList<Batch>> actionOnCompletedBatch = new TransientBelief<ArrayList<Batch>>(
+				ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch);
+
 		Belief<MachineGUI> gui = new TransientBelief<MachineGUI>(ID.LocalScheduler.BeliefBaseConst.gui_machine);
+
+		Belief<ArrayList<PMaintenance>> maintJobs = new TransientBelief<ArrayList<PMaintenance>>(
+				ID.LocalScheduler.BeliefBaseConst.preventiveJobsQueue);
+
+		Belief<PMaintenance> currentMaintJob = new TransientBelief<PMaintenance>(
+				ID.LocalScheduler.BeliefBaseConst.currentMaintJob);
+
 		gui.setValue(null);
-		
+		dtrack.setValue(new StatsTracker());
 		doneBatchFromMachine.setValue(null);
 		currentBatch.setValue(null);
 		actionOnCompletedBatch.setValue(new ArrayList<Batch>());
+		maintJobs.setValue(new ArrayList<PMaintenance>());
+		currentMaintJob.setValue(null);
+		jobSet.setValue(new ArrayList<Batch>());
 
 		double threshVal = 0;
 		regretThreshold.setValue(threshVal);
-
-		ArrayList<Batch> jobList = new ArrayList<Batch>();
-		jobSet.setValue(jobList);
 
 		beliefs.add(bboard);
 		beliefs.add(jobSet);
@@ -128,6 +136,8 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(currentBatch);
 		beliefs.add(actionOnCompletedBatch);
 		beliefs.add(gui);
+		beliefs.add(maintJobs);
+		beliefs.add(currentMaintJob);
 
 		return beliefs;
 	}
@@ -159,9 +169,13 @@ public class AbstractbasicCapability extends Capability {
 		plans.add(new SimplePlan(JobSchedulingGoal.class,BatchSchedulingPlan.class));
 
 		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, LoadOperationDatabasePlan.class));
-		
+
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgGSAQuery)
-		,RespondToGSAQuery.class));
+				,RespondToGSAQuery.class));
+
+		plans.add(new SimplePlan(StartMaintenanceGoal.class, StartMaintenancePlan.class));
+		
+		plans.add(new SimplePlan(ReceiveMaintenanceJobGoal.class,ReceiveMaintenanceJobPlan.class));
 
 		return plans;
 	}	
@@ -172,6 +186,7 @@ public class AbstractbasicCapability extends Capability {
 		myAgent.addGoal(new RegisterLSAgentToBlackboardGoal());
 		myAgent.addGoal(new JobSchedulingGoal());
 		myAgent.addGoal(new UpdateOperationDatabaseGoal());
+		myAgent.addGoal(new ReceiveMaintenanceJobGoal());
 
 		/*	myAgent.addGoal(new SendBidGoal());
 		myAgent.addGoal(new SendWaitingTimeGoal());
