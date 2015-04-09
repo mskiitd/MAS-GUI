@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+
 import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,13 +35,20 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
+
 import com.alee.extended.label.WebHotkeyLabel;
+import com.alee.extended.layout.HorizontalFlowLayout;
+import com.alee.laf.button.WebButton;
+import com.alee.laf.button.WebToggleButton;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
+import com.alee.utils.SwingUtils;
+
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 
@@ -75,6 +85,7 @@ public class WebLafGSA {
 	private static double height = screenSize.getHeight();
 
 	public static TrayIcon GSAguiIcon ;
+	private static WebToggleButton[] bottomButtons;
 
 	public WebLafGSA(GlobalSchedulingAgent globalSchedulingAgent){
 		this.GSA=globalSchedulingAgent;
@@ -130,23 +141,27 @@ public class WebLafGSA {
 		initCurrentJobListPanel();
 		initNegotiationListPanel();
 
+//		WebPanel menu = new WebPanel ( new HorizontalFlowLayout ( 5, false ) );
 		WebPanel menu=new WebPanel(new FlowLayout());
+//		 WebPanel menu = new WebPanel ( new HorizontalFlowLayout ( 5, false ) );
 		menu.setPreferredSize(new Dimension((int)width, 100));
-		JButton[] bottomButtons=getButtons();
+		bottomButtons=getButtons();
+		
 
-		Color panelColor = Color.decode("#A2A3A2");
-		menu.setBackground(panelColor);
+//		Color panelColor = Color.decode("#A2A3A2");
+//		menu.setBackground(panelColor);
 
 		for(int i=0;i<bottomButtons.length;i++){
 			menu.add(bottomButtons[i]);	
 		}
-
+//		ButtonGroup bg=SwingUtils.groupButtons ( menu );
 		MainPanel.add(menu, BorderLayout.SOUTH);
-		MainPanel.add(currentJobList,BorderLayout.WEST);
+//		MainPanel.add(currentJobList,BorderLayout.WEST);
 
 		welcomeScreenFrame.add(MainPanel);
 		welcomeScreenFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		welcomeScreenFrame.setVisible(true);
+		bottomButtons[2].doClick();
 
 	}
 
@@ -449,31 +464,36 @@ public class WebLafGSA {
 	}
 
 
-	private static JButton[] getButtons(){
-		JButton[] buttons=new JButton[4];
-		JButton About = new JButton();
+	private static WebToggleButton[] getButtons(){
+		
+		WebToggleButton[] buttons=new WebToggleButton[4];
+		WebToggleButton About = new WebToggleButton();
 		Image img = null;
 		try {
 			img = ImageIO.read (new File("resources/about.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(img);
+//		System.out.println(img);
 		About.setIcon(new ImageIcon(img));
 		About.setPreferredSize(new Dimension(90,90));
 		About.setActionCommand("about");
 		About.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				cleanMainPanel();	
-				welcomeScreenFrame.revalidate();
-				welcomeScreenFrame.repaint();
-				welcomeScreenFrame.setVisible(true);
+	                untoggleAllBottonButtons();
+					About.setSelected(true);
+					cleanMainPanel();	
+					welcomeScreenFrame.revalidate();
+					welcomeScreenFrame.repaint();
+					welcomeScreenFrame.setVisible(true);
 
 			}
 		});  
+		About.setRolloverDecoratedOnly ( true );
+		About.setDrawFocus (false);
 		buttons[0]=About;
 
-		JButton Negotiation = new JButton();
+		WebToggleButton Negotiation = new WebToggleButton();
 		Image negotiationImg = null;
 		try {
 			negotiationImg = ImageIO.read (new File("resources/negotiation.png"));
@@ -487,6 +507,9 @@ public class WebLafGSA {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+                untoggleAllBottonButtons();
+				Negotiation.setSelected(true);
+				
 				cleanMainPanel();
 				MainPanel.add(negotiationJobList,BorderLayout.WEST);
 				welcomeScreenFrame.revalidate();
@@ -494,10 +517,12 @@ public class WebLafGSA {
 				welcomeScreenFrame.setVisible(true);
 			}
 		});
-
+		
+		Negotiation.setRolloverDecoratedOnly ( true );
+		Negotiation.setDrawFocus (false);
 		buttons[1]=Negotiation;
 
-		JButton JobManager = new JButton();
+		WebToggleButton JobManager = new WebToggleButton();
 		Image JobManagerImg = null;
 		try {
 			JobManagerImg = ImageIO.read (new File("resources/JobManager.png"));
@@ -510,6 +535,9 @@ public class WebLafGSA {
 
 		JobManager.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
+                untoggleAllBottonButtons();
+                JobManager.setSelected(true);
+				
 				cleanMainPanel();
 
 				MainPanel.add(currentJobList,BorderLayout.WEST);
@@ -520,7 +548,10 @@ public class WebLafGSA {
 
 
 		});  
-
+		
+		JobManager.setRolloverDecoratedOnly ( true );
+		JobManager.setDrawFocus (false);
+		
 		buttons[2]=JobManager;
 
 		/* 		JButton signOut = new JButton();
@@ -550,7 +581,7 @@ public class WebLafGSA {
 
  		buttons[3]=signOut;*/
 
-		JButton completedJobs = new JButton();
+		WebToggleButton completedJobs = new WebToggleButton();
 		Image CompletedJobsImg = null;
 		try {
 			CompletedJobsImg = ImageIO.read (new File("resources/completedJob.png"));
@@ -563,6 +594,8 @@ public class WebLafGSA {
 
 		completedJobs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
+                untoggleAllBottonButtons();
+                completedJobs.setSelected(true);
 				cleanMainPanel();
 
 				MainPanel.add(completedJobsList,BorderLayout.WEST);
@@ -572,11 +605,19 @@ public class WebLafGSA {
 			}
 		});
 
+		completedJobs.setRolloverDecoratedOnly ( true );
+		completedJobs.setDrawFocus (false);
 		buttons[3]=completedJobs;
 
 		return buttons;
 	}
 
+	private static void untoggleAllBottonButtons(){
+		for(int i=0;i<bottomButtons.length;i++){
+			bottomButtons[i].setSelected(false);
+		}
+	}
+	
 	public static JTable getNegotiationJobListTable() {
 		return negotiationJobListTable;
 	}
