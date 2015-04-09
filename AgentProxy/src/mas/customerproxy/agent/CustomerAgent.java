@@ -25,12 +25,13 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	private BeliefBase bfBase;
-	public static CustomerProxyGUI mygui;
+	public static CustomerProxyGUI customerGUI;
 	private AID blackboard;
 
 	public void sendGeneratedBatch(Batch batchOfJobs) {
 		//		log.info("Adding generated job " + j + " to belief base : " +bfBase);
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, batchOfJobs);
+		
 
 		addGoal(new dispatchJobGoal());
 	}
@@ -56,7 +57,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		addGoal(new SendConfirmedOrderGoal());
 
 		// update the accepted in the GUI
-		CustomerAgent.mygui.addAcceptedJob(j);
+		CustomerAgent.customerGUI.addAcceptedJob(j);
 	}
 	
 	public void rejectNegotiation() {
@@ -71,8 +72,8 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
-		if(mygui != null) {
-			mygui.dispose();
+		if(customerGUI != null) {
+			customerGUI.dispose();
 		}
 	}
 
@@ -95,7 +96,8 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				mygui = new CustomerProxyGUI(CustomerAgent.this);
+				customerGUI = new CustomerProxyGUI(CustomerAgent.this);
+				bfBase.updateBelief(ID.Customer.BeliefBaseConst.CUSTOMER_GUI, customerGUI);
 			}
 		});
 

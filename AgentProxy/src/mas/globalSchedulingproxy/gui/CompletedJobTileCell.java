@@ -40,50 +40,53 @@ import com.alee.utils.SwingUtils;
 
 public class CompletedJobTileCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
 //same as cyrrentJobTileCell without dynamic menu
-	private JLabel jobID,dueDate,startDate,priorityText,priorityNo;
+	private JLabel batchID,dueDate,/*startDate,*/priorityText,batchNo;
 	private JPanel tile;
 //	private JButton more;
 	private JobTile jobTileInCell;
 	private String PriorityNoText;
-	private final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private final Format formatter = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
+	protected Logger log=LogManager.getLogger();
     
 	public CompletedJobTileCell(){
 		tile=new JPanel(new MigLayout("",
 				"[]10",
 				""
 				));
-		jobID=new JLabel();
-		jobID.setName("JobID");
+		batchID=new JLabel();
+		batchID.setName("JobID");
 		dueDate=new JLabel();
 		dueDate.setName("Due date by customer");
-		startDate=new JLabel();
-		startDate.setName("Start date by customer");
+		/*startDate=new JLabel();
+		startDate.setName("Start date by customer");*/
 		
 		priorityText=new JLabel();
 		priorityText.setName("prioityText");
-		priorityNo=new JLabel();
-		priorityNo.setName("PriorityNoOfJob");
+		batchNo=new JLabel();
+		batchNo.setName("BatchNoOfJob");
+		
+
 
 	}
 	
 	private void updateData(JobTile feed, boolean isSelected, JTable table) {
 		this.jobTileInCell = feed;
 		
-		jobID.setText("Job ID : "+jobTileInCell.getBatchID());
+		batchID.setText("Batch ID : "+jobTileInCell.getBatchID());
 		dueDate.setText("Due date : "+formatter.format(jobTileInCell.getCustDueDate()));
-		startDate.setText("Start Date : "+formatter.format(jobTileInCell.getCustStartDate()));
+//		startDate.setText("Start Date : "+formatter.format(jobTileInCell.getCustStartDate()));
 //		more.setText("more");
 		priorityText.setText("Priority : "+ Integer.toString((int)jobTileInCell.getPriority()));
 
 		PriorityNoText="<html><b>"+Integer.toString((int)jobTileInCell.getPriority())+"</b></html>";
-		priorityNo.setText(PriorityNoText);
+		batchNo.setText("Batch No.: "+jobTileInCell.getBatch().getBatchNumber());
 		
-		tile.add(jobID,"wrap");
+		tile.add(batchID);
 //		tile.add(more, "align right, wrap");
+		tile.add(batchNo,"wrap");
 		tile.add(dueDate,"wrap");
-		tile.add(startDate,"wrap");
+//		tile.add(startDate);
 		tile.add(priorityText);
-//		tile.add(priorityNo);
 		
 		
 	   tile.addMouseListener ( new MouseAdapter ()

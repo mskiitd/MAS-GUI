@@ -211,8 +211,12 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		statusChangeSupport.addPropertyChangeListener (
 				new SimulatorStatusListener(Simulator.this) );
 		
+		while(lAgent.mGUI==null){
+			Log.info("lAgent.mGUI=", lAgent.mGUI);
+		}
+		
 		gui = lAgent.mGUI;
-		Log.info("gui=", gui);
+		Log.info("gui="+gui);
 		gui.setMachineSimulator(Simulator.this);
 		
 //		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);

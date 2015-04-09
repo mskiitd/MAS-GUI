@@ -76,7 +76,8 @@ public class RegisterCustomerAgentToBlackboardPlan extends OneShotBehaviour impl
 		String[] params = { ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation,
 				ID.GlobalScheduler.ZoneData.GSAConfirmedOrder,
 				ID.GlobalScheduler.ZoneData.completedJobByGSA ,
-				ID.GlobalScheduler.ZoneData.dueDateChangeBatches};
+				ID.GlobalScheduler.ZoneData.dueDateChangeBatches,
+				ID.GlobalScheduler.ZoneData.rejectedOrders};
 
 		subform.AddSubscriptionReq(target, params);
 

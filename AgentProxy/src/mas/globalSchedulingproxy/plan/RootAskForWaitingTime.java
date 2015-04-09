@@ -1,10 +1,13 @@
 package mas.globalSchedulingproxy.plan;
 
+import java.awt.TrayIcon.MessageType;
+
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -40,6 +43,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	private long CumulativeWaitingTime = 0;
 	private BeliefBase bfBase;
 
+	private WebLafGSA WeblafGSAgui;
+
 	@Override
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
@@ -55,6 +60,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		blackboard = (AID) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 
+		WeblafGSAgui=(WebLafGSA)bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance)
+			.getValue();
 		mt = MessageTemplate.and(
 				MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime),
 				MessageTemplate.MatchReplyWith(msgReplyID));
@@ -133,8 +140,16 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			JobToSend.resetCurrentOperationNumber();
 			JobToSend.setWaitingTime(CumulativeWaitingTime+System.currentTimeMillis());
 
-			if(JobToSend.getWaitingTime() < 0) {
-				log.info("cannot process Batch no " + JobToSend.getBatchNumber() );
+			if(CumulativeWaitingTime < 0) {
+				log.info("cannot process Batch no " + JobToSend.getBatchNumber());
+				
+				ZoneDataUpdate rejectionUpdate = new ZoneDataUpdate.Builder(
+						ID.GlobalScheduler.ZoneData.rejectedOrders)
+				.value(JobToSend).Build();
+				AgentUtil.sendZoneDataUpdate(blackboard, rejectionUpdate, myAgent);	
+				
+				String message="Batch with ID "+JobToSend.getBatchId()+" is Rejected";
+				WeblafGSAgui.showNotification("Batch Rejected", message, MessageType.INFO);
 			}
 			else{
 				log.info("sending waiting time:" + CumulativeWaitingTime + " ms" + " : " +JobToSend.getCurrentOperationNumber() );

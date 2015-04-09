@@ -38,6 +38,7 @@ public class ID implements Serializable{
 			public static final String CURRENT_CONFIRMED_JOB = "customerBeliefBase_Current_confirmed_job";
 			public static final String CANCEL_ORDER = "customerBeliefBase_Cancel_job";
 			public static final String CHANGE_DUEDATE_JOB = "customerBeliefBase_Change_DueDate_job";
+			public static final String CUSTOMER_GUI = "customerGUI";
 		}
 
 		public class ZoneData {
@@ -131,7 +132,9 @@ public class ID implements Serializable{
 
 			public static final String Current_Negotiation_Job = "GSA_currentNegJob";
 
-			public static final String dueDateChangeBatches = "GSAbatchForDueDateChangeReq"; 
+			public static final String dueDateChangeBatches = "GSAbatchForDueDateChangeReq";
+
+			public static final String rejectedOrders = "rejected_orders"; 
 		}
 
 		public class BeliefBaseConst {

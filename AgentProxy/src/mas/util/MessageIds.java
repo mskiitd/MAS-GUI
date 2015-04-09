@@ -130,6 +130,8 @@ public class MessageIds {
 
 	public static final String msgChangeDueDate = "change_due_date";
 
+	public static final String RejectedOrder = "rejected_order";
+
 
 	//operation n is finished. now send job to GSA for n+1th operation
 	public static final String msgLSAfinishedJobs="finished_job_fromLSA";

@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+
 import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,13 +35,20 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
+
 import com.alee.extended.label.WebHotkeyLabel;
+import com.alee.extended.layout.HorizontalFlowLayout;
+import com.alee.laf.button.WebButton;
+import com.alee.laf.button.WebToggleButton;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
+import com.alee.utils.SwingUtils;
+
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 
@@ -75,6 +85,7 @@ public class WebLafGSA {
 	private static double height = screenSize.getHeight();
 
 	public static TrayIcon GSAguiIcon ;
+	private static WebToggleButton[] bottomButtons;
 
 	public WebLafGSA(GlobalSchedulingAgent globalSchedulingAgent){
 		this.GSA=globalSchedulingAgent;
@@ -110,10 +121,14 @@ public class WebLafGSA {
 		//		this.MainPanel.setOpaque(false);
 
 		currentJobListinfoPanel=new WebPanel(new MigLayout());
+//		currentJobListinfoPanel.setBackground(Color.decode("#ffebe3"));
 		//		currentJobListinfoPanel.setOpaque(false);
 		completedJobListinfoPanel=new WebPanel(new MigLayout());
+//		completedJobListinfoPanel.setBackground(Color.decode("#f1f7fd"));
 		//		completedJobListinfoPanel.setOpaque(false);
 		NegotiationJobListinfoPanel=new WebPanel(new MigLayout());
+//		NegotiationJobListinfoPanel.setBackground(Color.decode("#f7fdf1"));
+		
 		//		NegotiationJobListinfoPanel.setOpaque(false);
 
 
@@ -126,23 +141,27 @@ public class WebLafGSA {
 		initCurrentJobListPanel();
 		initNegotiationListPanel();
 
+//		WebPanel menu = new WebPanel ( new HorizontalFlowLayout ( 5, false ) );
 		WebPanel menu=new WebPanel(new FlowLayout());
+//		 WebPanel menu = new WebPanel ( new HorizontalFlowLayout ( 5, false ) );
 		menu.setPreferredSize(new Dimension((int)width, 100));
-		JButton[] bottomButtons=getButtons();
+		bottomButtons=getButtons();
+		
 
-		Color panelColor = Color.decode("#A2A3A2");
-		menu.setBackground(panelColor);
+//		Color panelColor = Color.decode("#A2A3A2");
+//		menu.setBackground(panelColor);
 
 		for(int i=0;i<bottomButtons.length;i++){
 			menu.add(bottomButtons[i]);	
 		}
-
+//		ButtonGroup bg=SwingUtils.groupButtons ( menu );
 		MainPanel.add(menu, BorderLayout.SOUTH);
-		MainPanel.add(currentJobList,BorderLayout.WEST);
+//		MainPanel.add(currentJobList,BorderLayout.WEST);
 
 		welcomeScreenFrame.add(MainPanel);
 		welcomeScreenFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		welcomeScreenFrame.setVisible(true);
+		bottomButtons[2].doClick();
 
 	}
 
@@ -151,7 +170,7 @@ public class WebLafGSA {
 		currentJobListTable=new JTable(currJobTileRenderer);
 		currentJobListTable.setDefaultRenderer(JobTile.class, new CurrentJobTileCell());
 		currentJobListTable.setDefaultEditor(JobTile.class, new CurrentJobTileCell());
-		currentJobListTable.setRowHeight(110);
+		currentJobListTable.setRowHeight(80);
 
 		currentJobList=new WebScrollPane(currentJobListTable);
 		currentJobList.setPreferredWidth(350);
@@ -163,7 +182,7 @@ public class WebLafGSA {
 
 		completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTileCell());
 		completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTileCell());
-		completedJobListTable.setRowHeight(110);
+		completedJobListTable.setRowHeight(90);
 
 		completedJobsList=new WebScrollPane(completedJobListTable);
 		completedJobsList.setPreferredWidth(350);
@@ -175,7 +194,7 @@ public class WebLafGSA {
 		negotiationJobListTable=new JTable(negotiationRenderer);
 		negotiationJobListTable.setDefaultRenderer(JobTile.class, new NegotitationJobTileCell());
 		negotiationJobListTable.setDefaultEditor(JobTile.class, new NegotitationJobTileCell());
-		negotiationJobListTable.setRowHeight(110);
+		negotiationJobListTable.setRowHeight(80);
 
 		negotiationJobList=new WebScrollPane(negotiationJobListTable);
 		negotiationJobList.setPreferredWidth(350);
@@ -206,31 +225,33 @@ public class WebLafGSA {
 		welcomeScreenFrame.setVisible(true);
 	}
 
-
 	public static void createCurrentJobInfoPanel(JobTile jobToShow){
 		MigLayout migLayout=new MigLayout("","200","[30]");
 		WebPanel detailsPanel=new WebPanel(migLayout);
 
-		final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		final Format formatter = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
 
-		WebLabel JobNametextlbl,JobIDTxtlbl,jobCustStartDateTxtlbl,jobCustDueDateTextlbl,
+		WebLabel JobNametextlbl,JobIDTxtlbl,jobCustStartDateTxtlbl,jobCustDueDateTextlbl, customerTxtlbl,
 		jobGSAStartDateTxtlbl,jobGSADueDateTxtlbl, durationTextlbl, priorityTextlbl;
 
 		WebHotkeyLabel JobNamelbl,JobIDlbl,jobCustStartDatelbl,jobCustDueDatelbl,
-		jobGSAStartDatelbl,jobGSADueDatelbl, durationlbl, prioritylbl;
+		jobGSAStartDatelbl,jobGSADueDatelbl, durationlbl, prioritylbl, customerlbl;
 
 		Font TextlblFont=UIManager.getDefaults().getFont("TabbedPane.font");
 		//		TextlblFont=TextlblFont.deriveFont(Font.PLAIN, 12);
 		Font lblFont = TextlblFont.deriveFont(Font.PLAIN, 20);
 
-		JobNametextlbl=new WebLabel("Job Name");
-		JobNamelbl=new WebHotkeyLabel(jobToShow.getJobName());
+//		JobNametextlbl=new WebLabel("Job Name");
+//		JobNamelbl=new WebHotkeyLabel(jobToShow.getJobName());
 		//		JobNamelbl.setMinimumWidth(200);
 
 		JobIDTxtlbl=new WebLabel("Job ID");
 		JobIDlbl=new WebHotkeyLabel(jobToShow.getBatchID().toString());
 		//		JobIDlbl.setMinimumWidth(150);
 
+		customerTxtlbl=new WebLabel("Customer");
+		customerlbl=new WebHotkeyLabel(jobToShow.getCustomerName());
+		
 		jobCustStartDateTxtlbl=new WebLabel("Start Date by customer");
 		jobCustStartDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getCustStartDate()));
 		//		jobCustStartDatelbl.setMinimumWidth(150);
@@ -239,12 +260,12 @@ public class WebLafGSA {
 		jobCustDueDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getCustDueDate()));
 		//		jobCustDueDatelbl.setMinimumWidth(150);
 
-		jobGSAStartDateTxtlbl=new WebLabel("Start date by MAS");
-		jobGSAStartDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getStartDatebyGSA()));
-		//		jobGSAStartDatelbl.setMinimumWidth(150);
-
-		jobGSADueDateTxtlbl=new WebLabel("Due date by MAS");
-		jobGSADueDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getDueDatebyGSA()));
+//		jobGSAStartDateTxtlbl=new WebLabel("Start date by MAS");
+//		jobGSAStartDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getStartDatebyGSA()));
+//		//		jobGSAStartDatelbl.setMinimumWidth(150);
+//
+//		jobGSADueDateTxtlbl=new WebLabel("Due date by MAS");
+//		jobGSADueDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getDueDatebyGSA()));
 		//		jobGSADueDatelbl.setMinimumWidth(150);
 
 		durationTextlbl=new WebLabel("Duration (seconds)");
@@ -264,35 +285,43 @@ public class WebLafGSA {
 		durationTextlbl.setFont(TextlblFont);
 		priorityTextlbl.setFont(TextlblFont);*/
 
-		JobNamelbl.setFont(lblFont);
+//		JobNamelbl.setFont(lblFont);
 		JobIDlbl.setFont(lblFont);
 		jobCustStartDatelbl.setFont(lblFont);
 		jobCustDueDatelbl.setFont(lblFont);
 		durationlbl.setFont(lblFont);
 		prioritylbl.setFont(lblFont);
-		jobGSAStartDatelbl.setFont(lblFont);
-		jobGSADueDatelbl.setFont(lblFont);
+		customerlbl.setFont(lblFont);
+//		jobGSAStartDatelbl.setFont(lblFont);
+//		jobGSADueDatelbl.setFont(lblFont);
 
-		detailsPanel.add(JobNametextlbl,"growx");
+//		detailsPanel.add(JobNametextlbl,"growx");
 		detailsPanel.add(JobIDTxtlbl,"growx");
+		detailsPanel.add(JobIDlbl,"wrap, growx");
+		
+		detailsPanel.add(customerTxtlbl,"growx");
+		detailsPanel.add(customerlbl,"wrap, growx");
+		
 		detailsPanel.add(jobCustStartDateTxtlbl,"growx");
-		detailsPanel.add(jobCustDueDateTextlbl,"wrap, growx");
-
-		detailsPanel.add(JobNamelbl,"growx");
-		detailsPanel.add(JobIDlbl,"growx");
-		detailsPanel.add(jobCustDueDatelbl,"growx");
-		detailsPanel.add(jobCustStartDatelbl,"growx");
+		detailsPanel.add(jobCustStartDatelbl,"wrap, growx");
+		
+		detailsPanel.add(jobCustDueDateTextlbl,"growx");
 		detailsPanel.add(jobCustDueDatelbl,"wrap, growx");
 
-		detailsPanel.add(durationTextlbl,"growx");
-		detailsPanel.add(priorityTextlbl,"growx");
-		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
-		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
+//		detailsPanel.add(jobCustDueDatelbl,"wrap, growx");
 
-		detailsPanel.add(durationlbl,"growx");
-		detailsPanel.add(prioritylbl,"growx");
-		detailsPanel.add(jobGSAStartDatelbl,"growx");
-		detailsPanel.add(jobGSADueDatelbl,"wrap, growx");
+		detailsPanel.add(durationTextlbl,"growx");
+		detailsPanel.add(durationlbl,"wrap, growx");
+		
+		detailsPanel.add(priorityTextlbl,"growx");
+		detailsPanel.add(prioritylbl,"wrap, growx");
+//		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
+//		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
+
+		
+		
+//		detailsPanel.add(jobGSAStartDatelbl,"growx");
+//		detailsPanel.add(jobGSADueDatelbl,"wrap, growx");
 
 		currentJobListinfoPanel.add(detailsPanel,"wrap");
 
@@ -312,40 +341,47 @@ public class WebLafGSA {
 		MigLayout migLayout=new MigLayout("","200","[30]");
 		WebPanel detailsPanel=new WebPanel(migLayout);
 
-		final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		final Format formatter = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
 
-		WebLabel JobNametextlbl,JobIDTxtlbl,jobCustStartDateTxtlbl,jobCustDueDateTextlbl,
-		jobGSAStartDateTxtlbl,jobGSADueDateTxtlbl, durationTextlbl, priorityTextlbl;
+		WebLabel JobNametextlbl,JobIDTxtlbl,jobCustStartDateTxtlbl,jobCustDueDateTextlbl, customerTxtlbl,
+		jobGSAStartDateTxtlbl,jobGSADueDateTxtlbl, durationTextlbl, priorityTextlbl, actualCompletionTxtlbl;
 
 		WebHotkeyLabel JobNamelbl,JobIDlbl,jobCustStartDatelbl,jobCustDueDatelbl,
-		jobGSAStartDatelbl,jobGSADueDatelbl, durationlbl, prioritylbl;
+		jobGSAStartDatelbl,jobGSADueDatelbl, durationlbl, prioritylbl, customerlbl, actualCompletionlbl;
 
 		Font TextlblFont=UIManager.getDefaults().getFont("TabbedPane.font");
 		//		TextlblFont=TextlblFont.deriveFont(Font.PLAIN, 12);
 		Font lblFont = TextlblFont.deriveFont(Font.PLAIN, 20);
 
-		JobNametextlbl=new WebLabel("Batch Name");
-		JobNamelbl=new WebHotkeyLabel(jobTileInCell.getJobName());
+//		JobNametextlbl=new WebLabel("Job Name");
+//		JobNamelbl=new WebHotkeyLabel(jobToShow.getJobName());
 		//		JobNamelbl.setMinimumWidth(200);
 
-		JobIDTxtlbl=new WebLabel("Batch ID");
+		JobIDTxtlbl=new WebLabel("Job ID");
 		JobIDlbl=new WebHotkeyLabel(jobTileInCell.getBatchID().toString());
 		//		JobIDlbl.setMinimumWidth(150);
 
+		customerTxtlbl=new WebLabel("Customer");
+		customerlbl=new WebHotkeyLabel(jobTileInCell.getCustomerName());
+		
 		jobCustStartDateTxtlbl=new WebLabel("Start Date by customer");
 		jobCustStartDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getCustStartDate()));
 		//		jobCustStartDatelbl.setMinimumWidth(150);
 
 		jobCustDueDateTextlbl=new WebLabel("Due Date by customer");
 		jobCustDueDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getCustDueDate()));
+		
+		actualCompletionTxtlbl=new WebLabel("Manufacturing completed on");
+		actualCompletionlbl=new WebHotkeyLabel(formatter.format(
+				jobTileInCell.getActualOrderCompletionTime()));
 		//		jobCustDueDatelbl.setMinimumWidth(150);
 
-		jobGSAStartDateTxtlbl=new WebLabel("Start date by MAS");
-		jobGSAStartDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getStartDatebyGSA()));
-		//		jobGSAStartDatelbl.setMinimumWidth(150);
-
-		jobGSADueDateTxtlbl=new WebLabel("Due date by MAS");
-		jobGSADueDatelbl=new WebHotkeyLabel(formatter.format(jobTileInCell.getDueDatebyGSA()));
+//		jobGSAStartDateTxtlbl=new WebLabel("Start date by MAS");
+//		jobGSAStartDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getStartDatebyGSA()));
+//		//		jobGSAStartDatelbl.setMinimumWidth(150);
+//
+//		jobGSADueDateTxtlbl=new WebLabel("Due date by MAS");
+//		jobGSADueDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getDueDatebyGSA()));
 		//		jobGSADueDatelbl.setMinimumWidth(150);
 
 		durationTextlbl=new WebLabel("Duration (seconds)");
@@ -365,36 +401,49 @@ public class WebLafGSA {
 		durationTextlbl.setFont(TextlblFont);
 		priorityTextlbl.setFont(TextlblFont);*/
 
-		JobNamelbl.setFont(lblFont);
+//		JobNamelbl.setFont(lblFont);
 		JobIDlbl.setFont(lblFont);
 		jobCustStartDatelbl.setFont(lblFont);
 		jobCustDueDatelbl.setFont(lblFont);
 		durationlbl.setFont(lblFont);
 		prioritylbl.setFont(lblFont);
-		jobGSAStartDatelbl.setFont(lblFont);
-		jobGSADueDatelbl.setFont(lblFont);
+		customerlbl.setFont(lblFont);
+		actualCompletionlbl.setFont(lblFont);
+//		jobGSAStartDatelbl.setFont(lblFont);
+//		jobGSADueDatelbl.setFont(lblFont);
 
-		detailsPanel.add(JobNametextlbl,"growx");
+//		detailsPanel.add(JobNametextlbl,"growx");
 		detailsPanel.add(JobIDTxtlbl,"growx");
+		detailsPanel.add(JobIDlbl,"wrap, growx");
+		
+		detailsPanel.add(customerTxtlbl,"growx");
+		detailsPanel.add(customerlbl,"wrap, growx");
+		
 		detailsPanel.add(jobCustStartDateTxtlbl,"growx");
-		detailsPanel.add(jobCustDueDateTextlbl,"wrap, growx");
-
-		detailsPanel.add(JobNamelbl,"growx");
-		detailsPanel.add(JobIDlbl,"growx");
-		detailsPanel.add(jobCustDueDatelbl,"growx");
-		detailsPanel.add(jobCustStartDatelbl,"growx");
+		detailsPanel.add(jobCustStartDatelbl,"wrap, growx");
+		
+		detailsPanel.add(jobCustDueDateTextlbl,"growx");
 		detailsPanel.add(jobCustDueDatelbl,"wrap, growx");
+		
+		detailsPanel.add(actualCompletionTxtlbl,"growx");
+		detailsPanel.add(actualCompletionlbl,"wrap, growx");
+
+//		detailsPanel.add(jobCustDueDatelbl,"wrap, growx");
 
 		detailsPanel.add(durationTextlbl,"growx");
+		detailsPanel.add(durationlbl,"wrap, growx");
+		
 		detailsPanel.add(priorityTextlbl,"growx");
-		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
-		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
+		detailsPanel.add(prioritylbl,"wrap, growx");
+//		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
+//		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
 
-		detailsPanel.add(durationlbl,"growx");
-		detailsPanel.add(prioritylbl,"growx");
-		detailsPanel.add(jobGSAStartDatelbl,"growx");
-		detailsPanel.add(jobGSADueDatelbl,"wrap, growx");
+		
+		
+//		detailsPanel.add(jobGSAStartDatelbl,"growx");
+//		detailsPanel.add(jobGSADueDatelbl,"wrap, growx");
 
+		
 		completedJobListinfoPanel.add(detailsPanel,"wrap");
 
 		MainPanel.add(completedJobListinfoPanel,BorderLayout.CENTER);
@@ -415,31 +464,36 @@ public class WebLafGSA {
 	}
 
 
-	private static JButton[] getButtons(){
-		JButton[] buttons=new JButton[4];
-		JButton About = new JButton();
+	private static WebToggleButton[] getButtons(){
+		
+		WebToggleButton[] buttons=new WebToggleButton[4];
+		WebToggleButton About = new WebToggleButton();
 		Image img = null;
 		try {
 			img = ImageIO.read (new File("resources/about.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(img);
+//		System.out.println(img);
 		About.setIcon(new ImageIcon(img));
 		About.setPreferredSize(new Dimension(90,90));
 		About.setActionCommand("about");
 		About.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				cleanMainPanel();	
-				welcomeScreenFrame.revalidate();
-				welcomeScreenFrame.repaint();
-				welcomeScreenFrame.setVisible(true);
+	                untoggleAllBottonButtons();
+					About.setSelected(true);
+					cleanMainPanel();	
+					welcomeScreenFrame.revalidate();
+					welcomeScreenFrame.repaint();
+					welcomeScreenFrame.setVisible(true);
 
 			}
 		});  
+		About.setRolloverDecoratedOnly ( true );
+		About.setDrawFocus (false);
 		buttons[0]=About;
 
-		JButton Negotiation = new JButton();
+		WebToggleButton Negotiation = new WebToggleButton();
 		Image negotiationImg = null;
 		try {
 			negotiationImg = ImageIO.read (new File("resources/negotiation.png"));
@@ -453,6 +507,9 @@ public class WebLafGSA {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+                untoggleAllBottonButtons();
+				Negotiation.setSelected(true);
+				
 				cleanMainPanel();
 				MainPanel.add(negotiationJobList,BorderLayout.WEST);
 				welcomeScreenFrame.revalidate();
@@ -460,10 +517,12 @@ public class WebLafGSA {
 				welcomeScreenFrame.setVisible(true);
 			}
 		});
-
+		
+		Negotiation.setRolloverDecoratedOnly ( true );
+		Negotiation.setDrawFocus (false);
 		buttons[1]=Negotiation;
 
-		JButton JobManager = new JButton();
+		WebToggleButton JobManager = new WebToggleButton();
 		Image JobManagerImg = null;
 		try {
 			JobManagerImg = ImageIO.read (new File("resources/JobManager.png"));
@@ -476,6 +535,9 @@ public class WebLafGSA {
 
 		JobManager.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
+                untoggleAllBottonButtons();
+                JobManager.setSelected(true);
+				
 				cleanMainPanel();
 
 				MainPanel.add(currentJobList,BorderLayout.WEST);
@@ -486,7 +548,10 @@ public class WebLafGSA {
 
 
 		});  
-
+		
+		JobManager.setRolloverDecoratedOnly ( true );
+		JobManager.setDrawFocus (false);
+		
 		buttons[2]=JobManager;
 
 		/* 		JButton signOut = new JButton();
@@ -516,7 +581,7 @@ public class WebLafGSA {
 
  		buttons[3]=signOut;*/
 
-		JButton completedJobs = new JButton();
+		WebToggleButton completedJobs = new WebToggleButton();
 		Image CompletedJobsImg = null;
 		try {
 			CompletedJobsImg = ImageIO.read (new File("resources/completedJob.png"));
@@ -529,6 +594,8 @@ public class WebLafGSA {
 
 		completedJobs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
+                untoggleAllBottonButtons();
+                completedJobs.setSelected(true);
 				cleanMainPanel();
 
 				MainPanel.add(completedJobsList,BorderLayout.WEST);
@@ -538,11 +605,19 @@ public class WebLafGSA {
 			}
 		});
 
+		completedJobs.setRolloverDecoratedOnly ( true );
+		completedJobs.setDrawFocus (false);
 		buttons[3]=completedJobs;
 
 		return buttons;
 	}
 
+	private static void untoggleAllBottonButtons(){
+		for(int i=0;i<bottomButtons.length;i++){
+			bottomButtons[i].setSelected(false);
+		}
+	}
+	
 	public static JTable getNegotiationJobListTable() {
 		return negotiationJobListTable;
 	}
