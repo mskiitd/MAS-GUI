@@ -1,4 +1,4 @@
-package mas.maintenance.behavior;
+package mas.maintenanceproxy.behavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

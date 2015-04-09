@@ -8,7 +8,6 @@ import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.SubscriptionForm;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,9 +66,16 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 				MsgID(MessageIds.msgaskJobFromLSA).
 				appendValue(false).
 				build();
+		
+		NamedZoneData ZoneDataName7 =
+				new NamedZoneData.Builder(ID.Machine.ZoneData.prevMaintConfirmation).
+				MsgID(MessageIds.msgPrevMaintConfirmation).
+				appendValue(false).
+				build();
 
 		NamedZoneData[] ZoneDataNames =  { ZoneDataName1, ZoneDataName2,
-				ZoneDataName3, ZoneDataName4, ZoneDataName5, ZoneDataName6};
+				ZoneDataName3, ZoneDataName4, ZoneDataName5, ZoneDataName6,
+				ZoneDataName7 };
 
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 
@@ -99,7 +105,8 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 			 	AID.ISLOCALNAME);
 
 		String[] lMaintenanceParams = {ID.Maintenance.ZoneData.correctiveMaintdata,
-				ID.Maintenance.ZoneData.prevMaintData, ID.Maintenance.ZoneData.inspectionJobData};
+				ID.Maintenance.ZoneData.prevMaintData, ID.Maintenance.ZoneData.inspectionJobData,
+				ID.Maintenance.ZoneData.preventiveMaintJob };
 
 		lMaintenanceSubForm.AddSubscriptionReq(lMaintenanceTarget, lMaintenanceParams);
 

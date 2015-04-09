@@ -20,7 +20,7 @@ public class AddJobBehavior extends Behaviour {
 	private static final long serialVersionUID = 1L;
 	private job comingJob;
 	boolean IsJobComplete;
-	private String maintJobID = "0";
+	private String inspectionJobId = "0";
 	private Logger log;
 	private int step = 0;
 	private long processingTime;
@@ -40,7 +40,7 @@ public class AddJobBehavior extends Behaviour {
 		switch(step) {
 		// in step 0 generate processing times
 		case 0:
-			if(! comingJob.getJobID().equals(maintJobID)) {
+			if(! comingJob.getJobID().equals(inspectionJobId)) {
 
 				if(this.machineSimulator == null) {
 					this.machineSimulator = (Simulator) getDataStore().
@@ -92,15 +92,7 @@ public class AddJobBehavior extends Behaviour {
 					step = 1;
 				}
 			}
-			else if (comingJob.getJobID().equals(maintJobID)) {
-				log.info("Maintenance Job loading");
-				IsJobComplete = true;
-				HandlePreventiveMaintenanceBehavior pm = 
-						new HandlePreventiveMaintenanceBehavior(comingJob);
-				pm.setDataStore(this.getDataStore());
-				myAgent.addBehaviour(pm);
-			}
-			else if(comingJob.getJobID().equals(maintJobID)) { 
+			else if(comingJob.getJobID().equals(inspectionJobId)) { 
 				log.info("Inspection Job loading");
 				IsJobComplete = true;
 				HandleInspectionJobBehavior inspector = 

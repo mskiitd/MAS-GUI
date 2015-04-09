@@ -83,6 +83,8 @@ public class MessageIds {
 
 	// update inspection job for machine here
 	public static final String msginspectionJob = "Maintenance_inspectionJob";
+	
+	public static final String msgmachineStatus =  "MaintenanceMsg_machineStatus";
 
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -105,6 +107,8 @@ public class MessageIds {
 
 	// update machine's failure here i.e. when machine is failed
 	public static final String msgmachineFailures ="machine_machineFailures";
+	
+	public static final String msgPrevMaintConfirmation = "MachineMsg_prevMaintConfirmation";
 
 	//---------------------------------------------------------------------------------------------------------------------
 
@@ -128,9 +132,9 @@ public class MessageIds {
 
 
 	//operation n is finished. now send job to GSA for n+1th operation
-	public static String msgLSAfinishedJobs="finished_job_fromLSA";
+	public static final String msgLSAfinishedJobs="finished_job_fromLSA";
 
-	public static String msgJobFromBatchForMachine = "job_from_Batch";
+	public static final String msgJobFromBatchForMachine = "job_from_Batch";
 
 	//	// Local scheduling Agent id's here
 	//	public static final String LSJobForMachine = "LSJobForMachine";

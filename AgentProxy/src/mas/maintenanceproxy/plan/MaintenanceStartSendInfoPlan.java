@@ -6,15 +6,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.machineproxy.SimulatorInternals;
-import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.gui.MaintenanceGUI;
-import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
-import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;

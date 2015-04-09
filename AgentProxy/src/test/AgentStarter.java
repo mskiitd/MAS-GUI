@@ -20,7 +20,9 @@ import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
+import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.ID;
+import mas.util.ID.Maintenance;
 import mas.util.TableUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -77,12 +79,12 @@ public class AgentStarter {
 	public static void main(String[] args) {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
-		WebLookAndFeel.install();
-
-		new AgentStarter();
+		TableUtil.loadFont();
+//		new AgentStarter();
 		
 		try {
 			Thread.sleep(2000);
+			MaintenanceGUI gui = new MaintenanceGUI(new LocalMaintenanceAgent());
 			createSimulator();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -94,7 +96,7 @@ public class AgentStarter {
 		//		log.info(log.isInfoEnabled());
 
 		List<String> params = new ArrayList<String>();
-						params.add("-gui");
+//						params.add("-gui");
 		//		params.add("-detect-main:false");
 
 		this.bootProfile = new BootProfileImpl(params.toArray(new String[0]));

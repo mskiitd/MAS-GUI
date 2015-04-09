@@ -148,7 +148,7 @@ public class ID implements Serializable{
 			public static final String GlobalDueDate = "Global";
 		}
 
-		public class requestType{
+		public class requestType {
 			//enum is most suitable (http://docs.oracle.com/javase/1.5.0/docs/guide/language/enums.html)
 			//but it can't be defined in inner class :(
 			public static final String currentStatus="currentStatus";
@@ -158,8 +158,9 @@ public class ID implements Serializable{
 	}
 
 	public class Maintenance {
-		public static final String Service="machine-simulator-maint";
+		public static final String Service = "machine-simulator-maint";
 		public static final String LocalName ="machine-simulator-maint";
+		public static final String maintJobPrefix = "maint_";
 
 		public class ZoneData {
 			// update data for preventive maintenance data for machine
@@ -176,6 +177,10 @@ public class ID implements Serializable{
 
 			// update inspection job for machine here
 			public static final String inspectionJob = "Maintenance_inspectionJob";
+
+			// update status of machine here as in critical when the preventive
+			// maintenance is getting delayed
+			public static final String machineStatus =  "Maintenance_machineStatus";
 		}
 
 		public class BeliefBaseConst {
@@ -183,9 +188,10 @@ public class ID implements Serializable{
 			public static final String machine = "Maintenance_machine";
 			public static final String globalSchAgentAID = "Maintenance_gsAgent";
 			public static final String dataTracker = "Maintenance_data-tracker";
-			public static final String maintenanceJob = "Maintenance_machine-maintenance-tracker";
+			public static final String preventiveMaintJob = "Maintenance_machine-maintenance-tracker";
 			public static final String correctiveRepairData = "Maintenance_Corrective_Repair_Data" ;
 			public static final String gui_maintenance = "gui_maintenance";
+			public static final String prevMaintFromMachine = "prevMaint_Status_From_Machine";
 		}
 	}
 
@@ -193,7 +199,7 @@ public class ID implements Serializable{
 		public static final String Service="machine_service";
 		public static final String LocalName ="machine_simulator";
 
-		public class ZoneData{
+		public class ZoneData {
 
 			//update new job for the machine
 			public static final String askJobFromLSA = "_askJobFromLSA";
@@ -212,6 +218,8 @@ public class ID implements Serializable{
 
 			// update machine's failure here i.e. when machine is failed
 			public static final String machineFailures ="machine_machineFailures";
+
+			public static final String prevMaintConfirmation = "machine_prevMaintConfirmation";
 		}
 	}
 }

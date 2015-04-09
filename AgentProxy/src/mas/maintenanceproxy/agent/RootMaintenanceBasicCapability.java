@@ -5,9 +5,11 @@ import jade.core.AID;
 import java.util.HashSet;
 import java.util.Set;
 
-import mas.machineproxy.gui.MachineGUI;
-import mas.maintenanceproxy.goal.CorrectiveMachineComponentsRepairGoal;
+import mas.maintenanceproxy.classes.PMaintenance;
+import mas.maintenanceproxy.goal.CorrectiveMachineRepairGoal;
 import mas.maintenanceproxy.goal.MaintenanceStartSendInfoGoal;
+import mas.maintenanceproxy.goal.PeriodicPreventiveMaintenanceGoal;
+import mas.maintenanceproxy.goal.RecievePreventiceMaintenanceConfirmationGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentServiceGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentToBlackboardGoal;
 import mas.maintenanceproxy.goal.SendCorrectiveRepairDataGoal;
@@ -15,6 +17,8 @@ import mas.maintenanceproxy.goal.machineHealthCheckGoal;
 import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.maintenanceproxy.plan.MaintenanceStartSendInfoPlan;
 import mas.maintenanceproxy.plan.ManualMachineRepairPlan;
+import mas.maintenanceproxy.plan.PeriodicPreventiveMaintenancePlan;
+import mas.maintenanceproxy.plan.RecievePreventiveMaintenanceConfirmationPlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentServicePlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentToBlackboardPlan;
 import mas.maintenanceproxy.plan.SendCorrectiveRepairDataPlan;
@@ -48,18 +52,21 @@ public class RootMaintenanceBasicCapability extends Capability{
 		Belief<AID> mygsAgent = new TransientBelief<AID>(
 				ID.Maintenance.BeliefBaseConst.globalSchAgentAID);
 
-		Belief<AID> maintJob  = new TransientBelief<AID>(
-				ID.Maintenance.BeliefBaseConst.maintenanceJob);
+		Belief<PMaintenance> maintJob  = new TransientBelief<PMaintenance>(
+				ID.Maintenance.BeliefBaseConst.preventiveMaintJob);
 
 		Belief<Double> CorrectiveRepair = new TransientBelief<Double>(
 				ID.Maintenance.BeliefBaseConst.correctiveRepairData);
-		
+
 		Belief<MaintenanceGUI> gui = new TransientBelief<MaintenanceGUI>(
 				ID.Maintenance.BeliefBaseConst.gui_maintenance);
+		
+		Belief<PMaintenance> pmStatus = new TransientBelief<PMaintenance>(
+				ID.Maintenance.BeliefBaseConst.prevMaintFromMachine);
 
 		gui.setValue(null);
 		CorrectiveRepair.setValue(null);
-		
+
 		beliefs.add(bboard);
 		beliefs.add(myMachine);
 		beliefs.add(mygsAgent);
@@ -82,7 +89,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 		plans.add(new SimplePlan(machineHealthCheckGoal.class,
 				machineHealthCheckPlan.class));
 
-		plans.add(new SimplePlan(CorrectiveMachineComponentsRepairGoal.class,
+		plans.add(new SimplePlan(CorrectiveMachineRepairGoal.class,
 				ManualMachineRepairPlan.class));
 
 		plans.add(new SimplePlan(MaintenanceStartSendInfoGoal.class,
@@ -91,6 +98,12 @@ public class RootMaintenanceBasicCapability extends Capability{
 		plans.add(new SimplePlan(SendCorrectiveRepairDataGoal.class,
 				SendCorrectiveRepairDataPlan.class));
 
+		plans.add(new SimplePlan(PeriodicPreventiveMaintenanceGoal.class,
+				PeriodicPreventiveMaintenancePlan.class));
+		
+		plans.add(new SimplePlan(RecievePreventiceMaintenanceConfirmationGoal.class,
+				RecievePreventiveMaintenanceConfirmationPlan.class));
+
 		return plans;
 	}	
 
@@ -98,8 +111,11 @@ public class RootMaintenanceBasicCapability extends Capability{
 	protected void setup() {
 		myAgent.addGoal(new RegisterMaintenanceAgentServiceGoal());
 		myAgent.addGoal(new RegisterMaintenanceAgentToBlackboardGoal());
-		myAgent.addGoal(new machineHealthCheckGoal());
-		myAgent.addGoal(new CorrectiveMachineComponentsRepairGoal());
-		myAgent.addGoal(new MaintenanceStartSendInfoGoal());
+		
+//		myAgent.addGoal(new machineHealthCheckGoal());
+		
+		myAgent.addGoal(new CorrectiveMachineRepairGoal());
+		myAgent.addGoal(new PeriodicPreventiveMaintenanceGoal());
+		myAgent.addGoal(new RecievePreventiceMaintenanceConfirmationGoal());
 	}
 }

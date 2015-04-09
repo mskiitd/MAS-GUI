@@ -5,15 +5,12 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import mas.jobproxy.job;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
-import mas.machineproxy.behaviors.AddJobBehavior.timeProcessing;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -28,25 +25,26 @@ import org.apache.logging.log4j.Logger;
  *
  */
 
-public class HandlePreventiveMaintenanceBehavior extends Behaviour{
+public class ReceivePreventiveMaintenanceBehavior extends Behaviour{
 
 	private static final long serialVersionUID = 1L;
 	private job comingJob;
 	private Logger log;
 	private int step = 0;
-	private MessageTemplate pmDataMsgTemplate;
+	private MessageTemplate pmMsgTemplate;
 	private ACLMessage maintenanceDataMsg;
 	private String maintData;
 	private Simulator machineSimulator;
 	private int remainingMaintenanceTime;
+	private ACLMessage msg;
 
 	private ScheduledThreadPoolExecutor executor;
 
-	public HandlePreventiveMaintenanceBehavior(job comingJob) {
+	public ReceivePreventiveMaintenanceBehavior(job comingJob) {
 		this.comingJob = comingJob;
 		log = LogManager.getLogger();
-		pmDataMsgTemplate = MessageTemplate.MatchConversationId(
-				MessageIds.msgprevMaintData);
+		pmMsgTemplate = MessageTemplate.MatchConversationId(
+				MessageIds.msgpreventiveMaintJob);
 		machineSimulator = null;
 	}
 
@@ -54,25 +52,19 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 	public void action() {
 		switch(step) {
 		case 0 :
-
-			if(machineSimulator == null) { 
-				machineSimulator = (Simulator) getDataStore().
-						get(Simulator.simulatorStoreName);
+			msg = myAgent.receive(pmMsgTemplate);
+			if(msg != null) {
+				
+				log.info("Maintenance Job Received");
+				
+				step = 1;
 			}
-
-			ZoneDataUpdate maintenanceStartUpdate = new ZoneDataUpdate.
-					Builder(ID.Machine.ZoneData.maintenanceStart).
-					value(comingJob).Build();
-
-			AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
-					maintenanceStartUpdate, myAgent);
-
-			machineSimulator.setStatus(MachineStatus.UNDER_MAINTENANCE);
-			step = 1;
-			break;
+			else 
+				block();
+				break;
 
 		case 1:
-			maintenanceDataMsg = myAgent.receive(pmDataMsgTemplate);
+			maintenanceDataMsg = myAgent.receive(pmMsgTemplate);
 			if(maintenanceDataMsg != null) {
 				// parse the received data and perform maintenance of the machine
 				log.info("Maintenenace data arrived");
@@ -101,7 +93,7 @@ public class HandlePreventiveMaintenanceBehavior extends Behaviour{
 			// this won't affect working of the behavior however
 			block(15);
 			break;
-			
+
 		case 3:
 			/**
 			 * perform the maintenance for the machine now

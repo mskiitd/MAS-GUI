@@ -2,7 +2,7 @@ package mas.maintenanceproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import mas.maintenance.behavior.ShowCorrectiveGuiBehavior;
+import mas.maintenanceproxy.behavior.ShowCorrectiveGuiBehavior;
 import mas.util.ID;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
@@ -13,7 +13,7 @@ import bdi4jade.plan.PlanInstance.EndState;
  * @author Anand Prajapati
  */
 
-public class CorrectiveMachineComponentsRepairPlan extends Behaviour implements PlanBody {
+public class CorrectiveMachineRepairPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private AID blackboard;

@@ -55,8 +55,13 @@ public class RegisterMaintenanceAgentToBlackboardPlan extends OneShotBehaviour i
 				MsgID(MessageIds.msginspectionJobData).
 				build();
 		
+		NamedZoneData ZoneDataName6 = 
+				new NamedZoneData.Builder(ID.Maintenance.ZoneData.machineStatus).
+				MsgID(MessageIds.msgmachineStatus).
+				build();
+		
 		NamedZoneData[] ZoneDataNames =  { ZoneDataName1,
-				ZoneDataName2, ZoneDataName3, ZoneDataName4, ZoneDataName5 };
+				ZoneDataName2, ZoneDataName3, ZoneDataName4, ZoneDataName5, ZoneDataName6 };
 
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 
@@ -67,7 +72,7 @@ public class RegisterMaintenanceAgentToBlackboardPlan extends OneShotBehaviour i
 
 		String[] params = { ID.Machine.ZoneData.myHealth,
 				ID.Machine.ZoneData.machineFailures, ID.Machine.ZoneData.maintenanceStart,
-				ID.Machine.ZoneData.inspectionStart };
+				ID.Machine.ZoneData.inspectionStart, ID.Machine.ZoneData.prevMaintConfirmation };
 
 		subform.AddSubscriptionReq(target, params);
 
