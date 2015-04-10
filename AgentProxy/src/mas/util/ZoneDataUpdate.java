@@ -1,17 +1,8 @@
 package mas.util;
 
-import java.io.IOException;
+import java.io.Serializable;
 
-import mas.blackboard.nameZoneData.NamedZoneData;
-import mas.blackboard.nameZoneData.NamedZoneData.Builder;
-
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import jade.core.AID;
-import jade.core.Agent;
-import jade.lang.acl.ACLMessage;
-import jade.util.leap.Serializable;
 
 public class ZoneDataUpdate implements Serializable {
 	String name=null;

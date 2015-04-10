@@ -51,7 +51,7 @@ public class PrevMaintTableModel extends AbstractTableModel implements TableMode
 		return true;
 	}
 
-	public void addBatch(PMaintenance pm){
+	public void addMaintJob(PMaintenance pm){
 		maintSchedules.add(pm);
 
 		super.fireTableRowsInserted(0, getRowCount()-1);

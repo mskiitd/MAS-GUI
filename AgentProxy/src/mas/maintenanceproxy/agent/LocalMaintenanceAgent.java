@@ -19,7 +19,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	private AID blackboard;
 	private Capability bCap;
 	private BeliefBase bfBase;
-	public static long prevMaintPeriod = 5000;
+	public static long prevMaintPeriod = 10000;
 
 	public MaintenanceGUI mgui = null;
 
@@ -52,9 +52,9 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 
 		if(mgui == null) {
 			mgui = new MaintenanceGUI(LocalMaintenanceAgent.this);
-			bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance, mgui);
 		}
-
+		bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance, mgui);
+		
 		blackboard = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(
 				ID.Maintenance.BeliefBaseConst.blackboardAgentAID, blackboard);

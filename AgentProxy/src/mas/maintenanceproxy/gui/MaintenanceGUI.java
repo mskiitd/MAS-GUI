@@ -120,16 +120,12 @@ public class MaintenanceGUI extends JFrame{
 		containerPanel.add(pmPanel, BorderLayout.CENTER);
 	}
 
-	public static void unloadPrevMaintSchedule() {
-		//		completedJobListinfoPanel.removeAll();
-		//		MainPanel.remove(completedJobListinfoPanel);
-		//		welcomeScreenFrame.validate();
-		//		welcomeScreenFrame.repaint();
-		//		welcomeScreenFrame.setVisible(true);
-	}
-
 	public void showMaintenanceStartNotification() {
 
+	}
+	
+	public void addMaintJobToDisplay(PMaintenance prevMaint) {
+		this.tableModel.addMaintJob(prevMaint);
 	}
 
 	private void initCalenderPane() {
@@ -183,10 +179,6 @@ public class MaintenanceGUI extends JFrame{
 		int centerY = (int)screenSize.getHeight() / 2;
 		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
 		super.setVisible(true);
-	}
-
-	public static void createPrevMaintPanel(PMaintenance pMaintTileCell) {
-
 	}
 
 }

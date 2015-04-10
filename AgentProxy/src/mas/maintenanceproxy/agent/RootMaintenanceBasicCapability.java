@@ -64,7 +64,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 		
 		Belief<PMaintenance> pmStatus = new TransientBelief<PMaintenance>(
 				ID.Maintenance.BeliefBaseConst.prevMaintFromMachine);
-
+		
 		gui.setValue(null);
 		CorrectiveRepair.setValue(null);
 		

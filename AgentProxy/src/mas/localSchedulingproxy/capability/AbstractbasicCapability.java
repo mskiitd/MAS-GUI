@@ -9,6 +9,7 @@ import java.util.Set;
 
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.database.OperationDataBase;
+import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.JobSchedulingGoal;
 import mas.localSchedulingproxy.goal.ReceiveMaintenanceJobGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
@@ -17,6 +18,7 @@ import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
 import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
 import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
+import mas.localSchedulingproxy.plan.FinishMaintenancePlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
 import mas.localSchedulingproxy.plan.ReceiveMaintenanceJobPlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentServicePlan;
@@ -176,6 +178,8 @@ public class AbstractbasicCapability extends Capability {
 		plans.add(new SimplePlan(StartMaintenanceGoal.class, StartMaintenancePlan.class));
 		
 		plans.add(new SimplePlan(ReceiveMaintenanceJobGoal.class,ReceiveMaintenanceJobPlan.class));
+		
+		plans.add(new SimplePlan(FinishMaintenanceGoal.class,FinishMaintenancePlan.class));
 
 		return plans;
 	}	
@@ -187,7 +191,7 @@ public class AbstractbasicCapability extends Capability {
 		myAgent.addGoal(new JobSchedulingGoal());
 		myAgent.addGoal(new UpdateOperationDatabaseGoal());
 		myAgent.addGoal(new ReceiveMaintenanceJobGoal());
-
+		
 		/*	myAgent.addGoal(new SendBidGoal());
 		myAgent.addGoal(new SendWaitingTimeGoal());
 		myAgent.addGoal(new EnqueueJobGoal());

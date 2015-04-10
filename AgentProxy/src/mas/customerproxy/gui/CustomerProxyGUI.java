@@ -33,15 +33,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.agent.Jobloader;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 import uiconstants.Labels;
@@ -61,7 +61,7 @@ public class CustomerProxyGUI extends JFrame{
 
 	private JTable jobChooserTable;
 	private Jobloader loader;
-	private tableModel jobChooserTableModel;
+	private jobGeneratorTableModel jobChooserTableModel;
 	private Vector<Batch> jobVector;
 	private Vector<String> tableHeadersVector;
 	private JPanel jobGenPanel, buttonPanel;
@@ -88,63 +88,63 @@ public class CustomerProxyGUI extends JFrame{
 	public static int countBatch = 1;
 
 	public CustomerProxyGUI(CustomerAgent cAgent) {
-			
+
 		this.cAgent = cAgent;
-		
+
 		Image image = Toolkit.getDefaultToolkit().getImage("resources/customer.png");
 		customerTrayIcon= new TrayIcon(image, cAgent.getLocalName());
 		if (SystemTray.isSupported()) {
 			SystemTray tray = SystemTray.getSystemTray();
-	
+
 			customerTrayIcon.setImageAutoSize(true);
 			try {
 				tray.add(customerTrayIcon);
 			} catch (AWTException e) {
 				log.info("TrayIcon could not be added.");
 			}
-			
-			
-		this.tPanes = new JTabbedPane(JTabbedPane.TOP);
-		this.panelsForTab = new JPanel[tabTitles.length];
 
-		menuItemCancel = new JMenuItem("Cancel Order");
-		menuItemChangeDueDate = new JMenuItem("Change Due Date");
 
-		menuItemCancel.addActionListener(new rightClickListener());
-		menuItemChangeDueDate.addActionListener(new rightClickListener());
+			this.tPanes = new JTabbedPane(JTabbedPane.TOP);
+			this.panelsForTab = new JPanel[tabTitles.length];
 
-		for (int i = 1, n = tabTitles.length; i < n; i++ ) {
-			panelsForTab[i] = new JPanel(new BorderLayout());
-		}
+			menuItemCancel = new JMenuItem("Cancel Order");
+			menuItemChangeDueDate = new JMenuItem("Change Due Date");
 
-		_initGeneratorJobsPanel();
-		panelsForTab[0] = new JPanel(new MigLayout());
-		panelsForTab[0].add(jobGenPanel,"wrap");
-		panelsForTab[0].add(buttonPanel);
+			menuItemCancel.addActionListener(new rightClickListener());
+			menuItemChangeDueDate.addActionListener(new rightClickListener());
 
-		tPanes.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
-		this.scroller = new JScrollPane(this.panelsForTab[0]);
-		this.tPanes.addTab(tabTitles[0],this.scroller );
+			for (int i = 1, n = tabTitles.length; i < n; i++ ) {
+				panelsForTab[i] = new JPanel(new BorderLayout());
+			}
 
-		_initAcceptedJobsPanel();
-		panelsForTab[1].add(acceptedJobsPanel, BorderLayout.CENTER);
+			_initGeneratorJobsPanel();
+			panelsForTab[0] = new JPanel(new MigLayout());
+			panelsForTab[0].add(jobGenPanel,"wrap");
+			panelsForTab[0].add(buttonPanel);
 
-		_initCompletedJobsPanel();
-		panelsForTab[2].add(completedJobsPanel, BorderLayout.CENTER);
+			tPanes.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+			this.scroller = new JScrollPane(this.panelsForTab[0]);
+			this.tPanes.addTab(tabTitles[0],this.scroller );
 
-		// start from 1 index as the 0th index has already been added
-		for (int i = 1, n = tabTitles.length; i < n; i++) {
-			this.tPanes.addTab(tabTitles[i],panelsForTab[i] );
-		}
+			_initAcceptedJobsPanel();
+			panelsForTab[1].add(acceptedJobsPanel, BorderLayout.CENTER);
 
-		add(this.tPanes);
-		showGui();
+			_initCompletedJobsPanel();
+			panelsForTab[2].add(completedJobsPanel, BorderLayout.CENTER);
+
+			// start from 1 index as the 0th index has already been added
+			for (int i = 1, n = tabTitles.length; i < n; i++) {
+				this.tPanes.addTab(tabTitles[i],panelsForTab[i] );
+			}
+
+			add(this.tPanes);
+			showGui();
 		}
 	}
 
 	private void _initGeneratorJobsPanel() {
 
-		this.loader = new Jobloader();
+		this.loader = new Jobloader(cAgent.getLocalName());
 		this.loader.readFile();
 		this.jobVector = this.loader.getjobVector();
 		this.tableHeadersVector = this.loader.getJobHeaders();
@@ -155,12 +155,16 @@ public class CustomerProxyGUI extends JFrame{
 		this.createJob = new JButton(Labels.createJobButton);
 		this.createJob.addActionListener(new createJobListener());
 
-		this.jobChooserTableModel = new tableModel();
+		this.jobChooserTableModel = new jobGeneratorTableModel();
 		this.jobChooserTable = new JTable(this.jobChooserTableModel);
-		this.jobChooserTable.getColumnModel().getColumn(1).setMinWidth(350);
-		this.jobChooserTable.getColumnModel().getColumn(3).setMinWidth(130);
+
 		this.jobChooserTable.setRowHeight(30);
 		this.jobChooserTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		for(int i = 0; i < jobChooserTable.getColumnCount(); i++) {
+			this.jobChooserTable.getColumnModel().getColumn(i).setMinWidth(180);
+		}
+
 		this.jobChooserTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		this.jobGenPanel = new JPanel(new BorderLayout());
@@ -175,7 +179,6 @@ public class CustomerProxyGUI extends JFrame{
 		jobChooserTable.getSelectionModel().
 		addListSelectionListener(
 				new ListSelectionListener() {
-
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
 
@@ -197,7 +200,7 @@ public class CustomerProxyGUI extends JFrame{
 		acceptedJobsTable = new JTable(acceptedJobsTableModel);
 
 		TableUtil.setColumnWidths(acceptedJobsTable);
-		
+
 		this.acceptedJobsTable.setRowHeight(30);
 		this.acceptedJobsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -272,16 +275,16 @@ public class CustomerProxyGUI extends JFrame{
 
 	private void showGui() {
 		setTitle(cAgent.getLocalName());
-//		setPreferredSize(new Dimension(800,800));
+		//		setPreferredSize(new Dimension(800,800));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
-		/*Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;
 		int centerY = (int)screenSize.getHeight() / 2;
-		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);*/
+		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
 		super.setVisible(true);
 	}
-	
+
 	public static void showNotification(String title, String message,TrayIcon.MessageType type){
 
 		switch(type){
@@ -301,7 +304,7 @@ public class CustomerProxyGUI extends JFrame{
 			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
 			break;
 		}
-		
+
 		String notificationSound = "resources/notification.wav";
 		InputStream in=null;
 		try {
@@ -321,20 +324,20 @@ public class CustomerProxyGUI extends JFrame{
 		// play the audio clip with the audioplayer class
 		AudioPlayer.player.start(audioStream);
 
-		}
+	}
 
 	public void addCompletedBatch(Batch j) {
 		/**if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.remove(j);
 		}
 		 **/
-		
-		
+
+
 		completedJobVector.addElement(j);
 		TableUtil.setColumnWidths(completedJobsTable);
 		completedJobsTable.revalidate();
 		completedJobsTable.repaint();
-		
+
 		showNotification("Order Completed", "Order with ID "+j.getBatchId()+
 				" completed ",MessageType.INFO); 
 	}
@@ -345,10 +348,7 @@ public class CustomerProxyGUI extends JFrame{
 		acceptedJobsTable.revalidate();
 		acceptedJobsTable.repaint();
 	}
-	
-	
-	
-	
+
 
 	class rightClickListener implements ActionListener {
 
@@ -383,7 +383,7 @@ public class CustomerProxyGUI extends JFrame{
 		}
 	};
 
-	class tableModel extends AbstractTableModel {
+	class jobGeneratorTableModel extends AbstractTableModel {
 
 		@Override
 		public int getColumnCount() {
@@ -404,16 +404,16 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getBatchId();
 				break;
 			case 1:
-				value = j.getSampleJob().getOperations();
-				break;
-			case 2:
 				value = j.getCPN();
 				break;
-			case 3:
+			case 2:
 				value = j.getPenaltyRate();
 				break;
+			case 3:
+				value = j.getBatchCount();
+				break;
 			default:
-				value = "null";
+				value = "not_found";
 				break;
 			}
 			return value;
@@ -446,19 +446,19 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getBatchId();
 				break;
 			case 1:
-				value = j.getSampleJob().getOperations();
-				break;
-			case 2:
 				value = j.getCPN();
 				break;
-			case 3:
+			case 2:
 				value = j.getPenaltyRate();
 				break;
+			case 3:
+				value = j.getBatchCount();
+				break;
 			case 4:
-				value = j.getDueDateByCustomer();
+				value = j.getCompletionTime();
 				break;
 			default:
-				value = "null";
+				value = "not_found";
 				break;
 			}
 			return value;
@@ -491,19 +491,19 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getBatchId();
 				break;
 			case 1:
-				value = j.getSampleJob().getOperations();
-				break;
-			case 2:
 				value = j.getCPN();
 				break;
-			case 3:
+			case 2:
 				value = j.getPenaltyRate();
 				break;
+			case 3:
+				value = j.getBatchCount();
+				break;
 			case 4:
-				value = j.getDueDateByCustomer();
+				value = j.getCompletionTime();
 				break;
 			default:
-				value = "null";
+				value = "not_found";
 				break;
 			}
 			return value;
@@ -511,8 +511,7 @@ public class CustomerProxyGUI extends JFrame{
 
 		@Override
 		public String getColumnName(int column) {
-			return completeJobTableHeaderVector.get(column);
-		}
+			return completeJobTableHeaderVector.get(column);		}
 	}
 
 }

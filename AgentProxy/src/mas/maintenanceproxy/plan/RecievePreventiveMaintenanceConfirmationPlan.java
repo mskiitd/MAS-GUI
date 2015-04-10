@@ -2,9 +2,6 @@ package mas.maintenanceproxy.plan;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.alee.log.Log;
-
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
@@ -12,6 +9,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.maintenanceproxy.classes.MaintStatus;
 import mas.maintenanceproxy.classes.PMaintenance;
+import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.ID;
 import mas.util.MessageIds;
 import bdi4jade.core.BeliefBase;
@@ -25,6 +23,7 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 	private AID blackboard;
 	private ACLMessage msg;
 	private BeliefBase bfBase;
+	private MaintenanceGUI gui;
 	private int step = 0;
 	private MessageTemplate pmConfirmaton;
 	private PMaintenance prevMaint;
@@ -37,7 +36,10 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 		this.blackboard = (AID) bfBase.
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
 				getValue();
-		this.pmConfirmaton = MessageTemplate.MatchConversationId(MessageIds.msgPrevMaintConfirmation);
+		this.pmConfirmaton = MessageTemplate.MatchConversationId(MessageIds.msgMaintConfirmationLSA);
+		this.gui = (MaintenanceGUI) bfBase.
+				getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).
+				getValue();
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 			if(msg != null) {
 				try {
 					prevMaint = (PMaintenance) msg.getContentObject();
-					log.info("maint job : " + prevMaint );
+//					log.info("Received pm confirmation");
 					step = 1;
 				} catch (UnreadableException e) {
 					e.printStackTrace();
@@ -59,10 +61,13 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 				block();
 			}
 			break;
+
 		case 1:
 			if(prevMaint.getMaintStatus() == MaintStatus.COMPLETE) { 
-				Log.info("done");
-				step = 2;
+				if(gui != null) {
+					gui.addMaintJobToDisplay(prevMaint);
+				}
+				step = 0;
 			}
 			break;
 		}
@@ -70,7 +75,7 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 
 	@Override
 	public boolean done() {
-		return step >= 2;
+		return step > 2;
 	}
 
 	public EndState getEndState() {

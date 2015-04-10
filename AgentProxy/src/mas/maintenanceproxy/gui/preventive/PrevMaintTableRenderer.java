@@ -2,22 +2,16 @@ package mas.maintenanceproxy.gui.preventive;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-
 import mas.maintenanceproxy.classes.PMaintenance;
-import mas.maintenanceproxy.gui.MaintenanceGUI;
 import net.miginfocom.swing.MigLayout;
-
 
 public class PrevMaintTableRenderer extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
 
@@ -29,7 +23,7 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 	private final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	public PrevMaintTableRenderer(){
-		tile=new JPanel(new MigLayout("",
+		tile = new JPanel(new MigLayout("",
 				"[]10",
 				""
 				));
@@ -47,14 +41,6 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 
 		tile.add(lblActualStartDate,"wrap");
 		tile.add(lblActualFinishDate,"wrap");
-
-		tile.addMouseListener ( new MouseAdapter() {
-			@Override
-			public void mousePressed ( final MouseEvent e ) {
-				MaintenanceGUI.unloadPrevMaintSchedule();
-				MaintenanceGUI.createPrevMaintPanel(pMaintTileCell);
-			}
-		} );
 
 		if (isSelected) {
 			tile.setBackground(table.getSelectionBackground());
@@ -81,7 +67,6 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		
-		MaintenanceGUI.unloadPrevMaintSchedule();
 		PMaintenance feed = (PMaintenance)value;
 
 		updateData(feed, true, table);

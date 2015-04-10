@@ -140,6 +140,8 @@ public class MessageIds {
 
 	public static final String msgJobFromBatchForMachine = "job_from_Batch";
 
+	public static final String msgMaintConfirmationLSA = "LSA_maintConfirmation";
+
 	//	// Local scheduling Agent id's here
 	//	public static final String LSJobForMachine = "LSJobForMachine";
 	//	public static final String LSjobFromGS = "LSjobFromGS";

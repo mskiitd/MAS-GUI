@@ -162,13 +162,13 @@ public class DefineJobFrame extends JFrame{
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
 
-		operationPanel.add(lblOpsHeading);
-		operationPanel.add(txtNumOps);
-		operationPanel.add(btnOperationPlus,"wrap");
+//		operationPanel.add(lblOpsHeading);
+//		operationPanel.add(txtNumOps);
+//		operationPanel.add(btnOperationPlus,"wrap");
 
-		btnOperationPlus.addActionListener(new AddOperationListener());
+//		btnOperationPlus.addActionListener(new AddOperationListener());
 
-		myPanel.add(operationPanel,"wrap");
+//		myPanel.add(operationPanel,"wrap");
 
 		myPanel.add(sendJob);
 
@@ -201,7 +201,7 @@ public class DefineJobFrame extends JFrame{
 				}else {
 					populatingBatch = new Batch(txtJobID.getText());
 				}
-				boolean x2 = false,x3 = false,x4 = false,x5 = false;
+				boolean x2 = false,x3 = true,x4 = true,x5 = true;
 				x2 = checkPenaltyRate();
 				if(x2) {
 					x3 = checkCPN();
@@ -211,9 +211,9 @@ public class DefineJobFrame extends JFrame{
 				if(x2 & x3) {
 					x4 = checkDueDate();
 
-					if(x4) {
-						x5 = checkJobOperations();
-					}
+//					if(x4) {
+//						x5 = checkJobOperations();
+//					}
 				}
 
 				dataOk = x2 & x3 & x4 & x5;

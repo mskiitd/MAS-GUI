@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.gui.custompanels.FadingPanel;
@@ -48,6 +49,7 @@ public class MachineGUI extends JFrame {
 	private LocalSchedulingAgent lAgent;
 	private Simulator machineSimulator;
 	private buttonPanelListener buttonPanelHandler;
+	private BufferedImage upIcon, startIcon, finishIcon;
 
 	private JMenuItem menuItemUpload, menuItemPmStart, menuItemPmDone;
 
@@ -363,17 +365,22 @@ public class MachineGUI extends JFrame {
 				"The only menu in this program that has menu items");
 		menuBar.add(menu);
 
-		BufferedImage upIcon;
 		menuItemListener mListener = new menuItemListener();
 		try {
 			upIcon = ImageIO.read(new File("resources/upload_48.jpg"));
+			startIcon = ImageIO.read(new File("resources/start_48.png"));
+			finishIcon = ImageIO.read(new File("resources/finish_48.png"));
+			
 			ImageIcon icon = new ImageIcon(upIcon);
 			menuItemUpload = new JMenuItem("Add job to Database", icon);
 			menuItemUpload.setMnemonic(KeyEvent.VK_B);
 			menuItemUpload.addActionListener(mListener);
 
-			menuItemPmStart = new JMenuItem("<html><p>Maintenance Start <b>" + maintJobCounter + "</b></p></html>");
-			menuItemPmDone = new JMenuItem("Maintenance Done");
+			ImageIcon startIc = new ImageIcon(startIcon);
+			ImageIcon finishIc = new ImageIcon(finishIcon);
+			menuItemPmStart = new JMenuItem("<html><p>Maintenance Start <b>" + maintJobCounter + "</b></p></html>",
+					startIc);
+			menuItemPmDone = new JMenuItem("Maintenance Done", finishIc);
 			menuItemPmDone.setEnabled(false);
 			menuItemPmStart.addActionListener(mListener);
 			menuItemPmDone.addActionListener(mListener);
@@ -407,18 +414,34 @@ public class MachineGUI extends JFrame {
 				UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI(lAgent.getLocalName());
 
 			} else if(e.getSource().equals(menuItemPmStart)) {
+
 				lAgent.addGoal(new StartMaintenanceGoal());
 
-				menuItemPmDone.setEnabled(true);
 			} else if(e.getSource().equals(menuItemPmDone)) {
 				maintJobDone();
-				menuItemPmDone.setEnabled(false);
+				lAgent.addGoal(new FinishMaintenanceGoal());
 			}
 		}
+	}
+	
+	public void enablePmDone() {
+		menuItemPmStart.setEnabled(false);
+		menuItemPmDone.setEnabled(true);
+	}
+	
+	public void enablePmStart() {
+		menuItemPmStart.setEnabled(true);
+		menuItemPmDone.setEnabled(false);
 	}
 
 	public void showNoMaintJobPopup() {
 		JOptionPane.showMessageDialog(this, "NO Maintenance Job to be done.");
+	}
+
+	public void pendingMaintPopUp() {
+		JOptionPane.showMessageDialog(this,
+				"You have pending Maintenance for this machine !!",
+				"Dialog",JOptionPane.WARNING_MESSAGE);
 	}
 
 }

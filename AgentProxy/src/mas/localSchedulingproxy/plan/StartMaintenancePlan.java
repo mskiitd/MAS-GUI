@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.classes.PMaintenance;
@@ -58,15 +59,25 @@ public class StartMaintenancePlan extends Behaviour implements PlanBody{
 		if(maintJobList.size() > 0) {
 			PMaintenance maintJob = maintJobList.remove(0);
 
+			maintJob.setActualStartTime(new Date());
+			
 			ZoneDataUpdate maintJobForMachine = new ZoneDataUpdate.
 					Builder(ID.LocalScheduler.ZoneData.maintenanceJobForMachine).value(maintJob).Build();
 
 			AgentUtil.sendZoneDataUpdate(blackboard, maintJobForMachine, myAgent);
 
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.preventiveJobsQueue, maintJobList);
+			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob, maintJob);
+			
+			if(gui != null) {
+				gui.enablePmDone();
+				gui.machineMaintenance();
+			}
 		}
 		else {
-			gui.showNoMaintJobPopup();
+			if(gui != null) {
+				gui.showNoMaintJobPopup();
+			}
 		}
 		done = true;
 	}

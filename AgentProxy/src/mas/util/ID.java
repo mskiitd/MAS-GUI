@@ -104,6 +104,8 @@ public class ID implements Serializable{
 			public static final String gui_machine = "guiMachine";
 
 			public static final String maintenanceJobForMachine = "LSA_MaintJobForMachine";
+
+			public static final String MaintConfirmationLSA = "LSA_maintCOnfirmation";
 		}
 	}
 
