@@ -25,7 +25,7 @@ public class Batch implements Serializable {
 			HighRegretMultiplier = 3;
 
 	private ArrayList<job> jobsInBatch;
-	private AID customerId = null;
+	private String customerId = null;
 	private String batchId = null;
 	private int batchNo;
 
@@ -61,11 +61,11 @@ public class Batch implements Serializable {
 		jobsInBatch = new ArrayList<job>();
 	}
 
-	public AID getCustomerId() {
+	public String getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(AID customerId) {
+	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
 
@@ -384,6 +384,12 @@ public class Batch implements Serializable {
 	public int getNumOperations() {
 		return getSampleJob().getOperations().size();
 	}
+	
+	public void setOperations(ArrayList<jobOperation> ops) {
+		for(int i = 0; i < jobsInBatch.size() ; i++) {
+			this.jobsInBatch.get(i).setOperations(ops);
+		}
+	}
 
 	public void updateJob(job comingJob) {
 		int jNum = comingJob.getJobNo();
@@ -430,7 +436,5 @@ public class Batch implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

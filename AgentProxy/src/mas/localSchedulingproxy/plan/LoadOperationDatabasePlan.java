@@ -36,7 +36,7 @@ public class LoadOperationDatabasePlan extends Behaviour implements PlanBody {
 	@Override
 	public void action() {
 		OperationDataBase db;
-		path = "resources/database/" + myAgent.getLocalName() + "_db.data";
+		path = "resources/LSA/database/" + myAgent.getLocalName() + "_db.data";
 		File toRead = new File(path);
 
 		try {

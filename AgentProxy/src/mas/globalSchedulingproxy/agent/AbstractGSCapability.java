@@ -6,8 +6,10 @@ import jade.lang.acl.MessageTemplate;
 import java.util.HashSet;
 import java.util.Set;
 
+import mas.globalSchedulingproxy.database.BatchDataBase;
 import mas.globalSchedulingproxy.goal.GSASendNegotitationGoal;
 import mas.globalSchedulingproxy.goal.GetNoOfMachinesGoal;
+import mas.globalSchedulingproxy.goal.LoadBatchOperationDetailsGoal;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.goal.RegisterAgentToBlackBoardGoal;
 import mas.globalSchedulingproxy.goal.RegisterServiceGoal;
@@ -17,13 +19,13 @@ import mas.globalSchedulingproxy.plan.CallBackChangeDueDatePlan;
 import mas.globalSchedulingproxy.plan.GSASendNegotiationJobPlan;
 import mas.globalSchedulingproxy.plan.GetNoOfMachinesPlan;
 import mas.globalSchedulingproxy.plan.HandleCompletedOrderbyLSAPlan;
+import mas.globalSchedulingproxy.plan.LoadBatchOperationDetailsPlan;
 import mas.globalSchedulingproxy.plan.NegotiateViaGuiPlan;
 import mas.globalSchedulingproxy.plan.QueryFromLSA;
 import mas.globalSchedulingproxy.plan.RegisterAgentToBlackboardPlan;
 import mas.globalSchedulingproxy.plan.RegisterServicePlan;
 import mas.globalSchedulingproxy.plan.TakeOrderAndRaiseBidPlan;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.ID;
 import mas.util.MessageIds;
 
@@ -43,7 +45,7 @@ public abstract class AbstractGSCapability  extends Capability {
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 
-	public AbstractGSCapability(){
+	public AbstractGSCapability() {
 		super(new BeliefBase(getBeliefs()), new PlanLibrary(getPlans()));
 	}
 
@@ -51,11 +53,9 @@ public abstract class AbstractGSCapability  extends Capability {
 		Set<Belief<?>> beliefs = new HashSet<Belief<?>>();
 
 		Belief<AID> BB_AID = new TransientBelief<AID>(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent);		
-		BB_AID.setValue(new AID(ID.Blackboard.LocalName,false));
 
 		Belief<String> DueDateCalcMethod = new TransientBelief<String>(ID.GlobalScheduler.
 				BeliefBaseConst.DueDateCalcMethod);
-		DueDateCalcMethod.setValue(ID.GlobalScheduler.OtherConst.LocalDueDate);
 
 		//no of machines = no. of LSA		
 		Belief<Integer> NoOfMachines=new TransientBelief<Integer>(ID.GlobalScheduler.
@@ -65,10 +65,16 @@ public abstract class AbstractGSCapability  extends Capability {
 
 		Belief<Batch> underNegotiation = new 
 				TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
-		underNegotiation.setValue(null);
 
-		Belief<WebLafGSA> GSA_gui = new TransientBelief<WebLafGSA>
-		(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance); 
+		Belief<WebLafGSA> GSA_gui = new TransientBelief<WebLafGSA>(
+				ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance); 
+
+		Belief<BatchDataBase> dBase = new TransientBelief<BatchDataBase>(ID.GlobalScheduler.BeliefBaseConst.batchDatabase);
+
+		dBase.setValue(null);
+		BB_AID.setValue(new AID(ID.Blackboard.LocalName,false));
+		DueDateCalcMethod.setValue(ID.GlobalScheduler.OtherConst.LocalDueDate);
+		underNegotiation.setValue(null);
 
 		beliefs.add(BB_AID);
 		beliefs.add(NoOfMachines);
@@ -76,6 +82,7 @@ public abstract class AbstractGSCapability  extends Capability {
 		beliefs.add(query);
 		beliefs.add(underNegotiation);
 		beliefs.add(GSA_gui);
+		beliefs.add(dBase);
 
 		return beliefs;
 	}
@@ -93,9 +100,8 @@ public abstract class AbstractGSCapability  extends Capability {
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgnewWorkOrderFromCustomer),
 				AskForWaitingTime.class));
 
-		plans.add(new SimplePlan
-				(MessageTemplate.MatchConversationId(MessageIds.msgcustomerJobsUnderNegotiation),
-						NegotiateViaGuiPlan.class));
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(
+				MessageIds.msgcustomerJobsUnderNegotiation), NegotiateViaGuiPlan.class));
 
 		plans.add(new SimplePlan(GSASendNegotitationGoal.class, GSASendNegotiationJobPlan.class));
 
@@ -112,6 +118,8 @@ public abstract class AbstractGSCapability  extends Capability {
 
 		plans.add(new SimplePlan(QueryJobGoal.class, QueryFromLSA.class));
 
+		plans.add(new SimplePlan(LoadBatchOperationDetailsGoal.class, LoadBatchOperationDetailsPlan.class));
+
 		return plans;
 	}	
 
@@ -121,6 +129,7 @@ public abstract class AbstractGSCapability  extends Capability {
 
 		myAgent.addGoal(new RegisterServiceGoal());
 		myAgent.addGoal(new RegisterAgentToBlackBoardGoal());
+		myAgent.addGoal(new LoadBatchOperationDetailsGoal());
 		myAgent.addGoal(new GetNoOfMachinesGoal());
 	}
 

@@ -222,11 +222,11 @@ public class DefineJobFrame extends JFrame{
 					dataOk = dataOk & checkBatchSize();
 				}
 				
-				populatingBatch.setCustomerId(cAgent.getAID());
+				populatingBatch.setCustomerId(cAgent.getLocalName());
 			}
 		}
 		else {
-			boolean x2 = false,x3 = false,x4 = false,x5 = false;
+			boolean x2 = true,x3 = true,x4 = true,x5 = true;
 			x2 = checkPenaltyRate();
 			if(x2) {
 				x3 = checkCPN();
@@ -236,9 +236,9 @@ public class DefineJobFrame extends JFrame{
 			if(x2 & x3) {
 				x4 = checkDueDate();
 
-				if(x4) {
-					x5 = checkJobOperations();
-				}
+//				if(x4) {
+//					x5 = checkJobOperations();
+//				}
 			}
 			dataOk = x1 & x2 & x3 & x4 & x5;
 
@@ -246,7 +246,7 @@ public class DefineJobFrame extends JFrame{
 				dataOk = dataOk & checkBatchSize();
 			}
 			
-			populatingBatch.setCustomerId(cAgent.getAID());
+			populatingBatch.setCustomerId(cAgent.getLocalName());
 		}
 	}
 

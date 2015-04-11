@@ -32,7 +32,7 @@ public class JobTile{
 //		dueDatebyGSA=new Date(0);
 		jobName="unknown";
 		givenBatch=batch;
-		customerName=batch.getCustomerId().getLocalName();
+		customerName = batch.getCustomerId();
 		actualOrderCompletionTime=new Date(batch.getCompletionTime());
 	}
 

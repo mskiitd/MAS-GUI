@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-
-import mas.MAS;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -39,7 +36,7 @@ public class Jobloader {
 		this.jobCPNs = new ArrayList<Double>();
 		this.jobPenaltyRate = new ArrayList<Double>();
 		this.sheets = new ArrayList<XSSFSheet>();
-		this.jobFilePath = System.getProperty("user.dir");
+		this.jobFilePath = "resources/customer/";
 	}
 
 	public Vector<Batch> getjobVector() {
@@ -47,10 +44,10 @@ public class Jobloader {
 
 		for(int index = 0 ; index < jobIdList.size() ; index ++) {
 
-			job j = new job.Builder(localName + MAS.sep + jobIdList.get(index))
+			job j = new job.Builder(jobIdList.get(index))
 			.build() ;
 
-			Batch batch = new Batch(localName + MAS.sep + jobIdList.get(index));
+			Batch batch = new Batch(jobIdList.get(index));
 			ArrayList<job> jobsList = new ArrayList<job>();
 			
 			for(int bSize = 0; bSize < this.jobQuantity.get(index); bSize++) {
@@ -94,15 +91,15 @@ public class Jobloader {
 			headers.add(tableHeaders[index]);
 		}
 
-		headers.add("Due Date");
+		headers.add("Completion Time");
 		return headers;
 	}
 
 	public void readFile() {
 		XSSFWorkbook wb;
 		try{
-			FileInputStream file=new FileInputStream(this.jobFilePath +
-					"\\jobdata.xlsx");	
+			FileInputStream file = new FileInputStream(this.jobFilePath +
+					"\\" + localName + ".xlsx");	
 			wb = new XSSFWorkbook(file);
 
 			this.NumJobs = wb.getNumberOfSheets();
@@ -150,6 +147,5 @@ public class Jobloader {
 			}
 			count ++;
 		}
-
 	}
 }

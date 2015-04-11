@@ -81,7 +81,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 	public UpdateOperationDbGUI(String agentName) {
 
 		this.aName = agentName;
-		path = "resources/database/" + aName + "_db.data";
+		path = "resources/LSA/database/" + aName + "_db.data";
 
 		operationIDs = new ArrayList<String>();
 

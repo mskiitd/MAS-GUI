@@ -7,6 +7,9 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import mas.globalSchedulingproxy.database.BatchDataBase;
+import mas.globalSchedulingproxy.database.CustomerBatches;
+import mas.globalSchedulingproxy.database.UnitBatchInfo;
 import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
 import mas.util.AgentUtil;
@@ -44,6 +47,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	private BeliefBase bfBase;
 
 	private WebLafGSA WeblafGSAgui;
+	private CustomerBatches customerBatchInfo;
 
 	@Override
 	public void init(PlanInstance PI) {
@@ -60,11 +64,38 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		blackboard = (AID) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 
-		WeblafGSAgui=(WebLafGSA)bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance)
-			.getValue();
+		WeblafGSAgui = (WebLafGSA)bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance)
+				.getValue();
+
 		mt = MessageTemplate.and(
 				MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime),
 				MessageTemplate.MatchReplyWith(msgReplyID));
+
+		BatchDataBase batchDb = (BatchDataBase) bfBase.
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.batchDatabase).
+				getValue();
+
+		if(batchDb != null) {
+			customerBatchInfo = batchDb.getBatchesInfo(dummyJob.getCustomerId());
+
+			log.info(customerBatchInfo);
+			if(customerBatchInfo != null) {
+				UnitBatchInfo bInfo = customerBatchInfo.getBatchInfo(dummyJob.getBatchId());
+				System.out.println(customerBatchInfo.getBatchInfo("j1").getOperations());
+				System.out.println(customerBatchInfo.getBatchInfo("j2").getOperations());
+				System.out.println(customerBatchInfo.getBatchInfo("j3").getOperations());
+				System.out.println(customerBatchInfo.getBatchInfo("j4").getOperations());
+				dummyJob.setOperations(bInfo.getOperations());
+				log.info("operations for job" + dummyJob.getBatchId()+":" + bInfo);
+			}
+			else {
+				step = 5;
+				log.info("Database for " + dummyJob.getCustomerId() + " not found !!" );
+				log.info("Rejecting the batch");
+			}
+		} else {
+			log.debug("Customer database is null");
+		}
 	}
 
 	@Override
@@ -114,14 +145,14 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			break;
 		case 3:
 			try {
-				
+
 				ACLMessage max = getWorstWaitingTime(WaitingTime);
 				CumulativeWaitingTime = CumulativeWaitingTime +
 						((Batch)max.getContentObject()).getWaitingTime();
 
 				JobToSend = (Batch)(max.getContentObject());
 				dummyJob.IncrementOperationNumber();
-				
+
 				if(dummyJob.getCurrentOperationNumber() < 
 						dummyJob.getSampleJob().getOperations().size()) {
 
@@ -142,12 +173,12 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 			if(CumulativeWaitingTime < 0) {
 				log.info("cannot process Batch no " + JobToSend.getBatchNumber());
-				
+
 				ZoneDataUpdate rejectionUpdate = new ZoneDataUpdate.Builder(
 						ID.GlobalScheduler.ZoneData.rejectedOrders)
 				.value(JobToSend).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard, rejectionUpdate, myAgent);	
-				
+
 				String message="Batch with ID "+JobToSend.getBatchId()+" is Rejected";
 				WeblafGSAgui.showNotification("Batch Rejected", message, MessageType.INFO);
 			}

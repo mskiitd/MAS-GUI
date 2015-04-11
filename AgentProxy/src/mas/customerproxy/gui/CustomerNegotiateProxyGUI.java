@@ -28,6 +28,7 @@ import javax.swing.SpinnerDateModel;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
+import mas.jobproxy.jobOperation;
 import mas.util.DateLabelFormatter;
 import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
@@ -41,6 +42,9 @@ import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
+import com.alee.extended.label.WebHotkeyLabel;
+
 import uiconstants.Labels;
 
 public class CustomerNegotiateProxyGUI extends JFrame{
@@ -136,12 +140,12 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		timeSpinner.setEditor(timeEditor);
 		timeSpinner.setValue(new Date());
 
-		try {
-			plusButtonIcon = ImageIO.read(new File("resources/plusbutton.png"));
-			btnOperationPlus = new JButton(new ImageIcon(plusButtonIcon));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//		try {
+		//			plusButtonIcon = ImageIO.read(new File("resources/plusbutton.png"));
+		//			btnOperationPlus = new JButton(new ImageIcon(plusButtonIcon));
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
 
 		this.lblHeading = new JLabel(Labels.CustomerLabels.jobGenerateHeading);
 		this.lblCPN = new JLabel(Labels.CustomerLabels.jobPriority);
@@ -198,20 +202,18 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
 
-		operationPanel.add(lblOpsHeading);
-		operationPanel.add(txtNumOps);
-		operationPanel.add(btnOperationPlus,"wrap");
-
-		btnOperationPlus.addActionListener(new AddOperationListener());
-
+		//		operationPanel.add(txtNumOps);
+		//		operationPanel.add(btnOperationPlus,"wrap");
+		//		btnOperationPlus.addActionListener(new AddOperationListener());
+		myPanel.add(lblOpsHeading,"wrap");
 		myPanel.add(operationPanel,"wrap");
 
 		btnPanel.add(confirmJob);
 		btnPanel.add(negotiateJob);
 		btnPanel.add(btnCancelNegotiation);
-		
+
 		myPanel.add(btnPanel);
-		
+
 		this.scroller = new JScrollPane(myPanel);
 		add(scroller);
 
@@ -250,6 +252,13 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			setDate(c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
 
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
+
+			ArrayList<jobOperation> ops = populatingBatch.getSampleJob().getOperations();
+			operationPanel.removeAll();
+			for(int i = 0; i < ops.size(); i++ ) {
+				WebHotkeyLabel lblOp = new WebHotkeyLabel(ops.get(i).getJobOperationType());
+				operationPanel.add(lblOp,"span " + ops.size());
+			}
 		}
 	}
 
@@ -263,9 +272,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		if(x2 & x3) {
 			x4 = checkDueDate();
 
-			if(x4) {
-				x5 = checkJobOperations();
-			}
+//			if(x4) {
+//				x5 = checkJobOperations();
+//			}
 		}
 
 		dataOk = x2&x3&x4&x5;
@@ -331,7 +340,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 						"Error" , JOptionPane.ERROR_MESSAGE );
 				status = false;
 			}else {
-				
+
 				populatingBatch.setDueDateByCustomer(calTime.getTime());
 				log.info("due date : "  + populatingBatch.getDueDateByCustomer());
 			}
@@ -393,7 +402,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 	private void showGui() {
 		setTitle("Customer - Negotiation Job");
-//		setPreferredSize(new Dimension(600,500));
+		//		setPreferredSize(new Dimension(600,500));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

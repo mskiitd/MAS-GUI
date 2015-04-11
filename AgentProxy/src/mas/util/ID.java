@@ -150,6 +150,7 @@ public class ID implements Serializable{
 			public static final String Current_Negotiation_Job = "GSA_negotiatin_job";
 			public static final String GSAqueryJob = "GSA_query_job";
 			public static final String GSA_GUI_instance = "GUIinstanceOfGSA";
+			public static final String batchDatabase = "GSA_batchDatabase";
 		}
 		
 		public class OtherConst{
