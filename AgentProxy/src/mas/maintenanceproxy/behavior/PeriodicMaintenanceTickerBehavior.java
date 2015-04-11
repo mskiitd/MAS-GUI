@@ -10,6 +10,7 @@ import mas.machineproxy.MachineStatus;
 import mas.machineproxy.SimulatorInternals;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.classes.PMaintenance;
+import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -26,6 +27,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 	private BeliefBase bfBase;
 	private Logger log;
 	private SimulatorInternals myMachine;
+	private MaintenanceGUI  gui;
 
 	public PeriodicMaintenanceTickerBehavior(Agent a, long period) {
 		super(a, period);
@@ -42,6 +44,10 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
 				getValue();
 
+		this.gui = (MaintenanceGUI) bfBase.
+				getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).
+				getValue();
+
 		log = LogManager.getLogger();
 	}
 
@@ -50,7 +56,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 
 		this.myMachine = (SimulatorInternals) bfBase.getBelief(ID.Maintenance.BeliefBaseConst.machineHealth).getValue();
 
-//		log.info("machine  : " + myMachine);
+		//		log.info("machine  : " + myMachine);
 		if(bbAgent != null && myMachine != null && 
 				myMachine.getStatus() != MachineStatus.FAILED) {
 
@@ -63,6 +69,8 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 			log.info("Sending maintenance.. " + maintJob);
 			AgentUtil.sendZoneDataUpdate(this.bbAgent ,maintenanceJob, myAgent);
 
+			myAgent.addBehaviour(new MonitorMaintenanceStatusBehavior(maintJob, bfBase));
+			gui.setNextMaintTime(LocalMaintenanceAgent.prevMaintPeriod);
 			bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.preventiveMaintJob, maintJob);
 
 		} else {
@@ -70,6 +78,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 			this.bbAgent = (AID) bfBase.
 					getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
 					getValue();
+			block(500);
 		}
 	}
 }

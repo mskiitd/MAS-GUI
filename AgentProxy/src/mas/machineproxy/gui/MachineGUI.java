@@ -44,8 +44,10 @@ import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
+import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.gui.custompanels.FadingPanel;
+import mas.maintenanceproxy.classes.MaintenanceResponse;
 import mas.util.TableUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -100,17 +102,31 @@ public class MachineGUI extends JFrame {
 	private String currOperationId = null;
 
 	private int maintJobCounter = 0;
+	private String notificationSound;
+	private static AudioStream audioStream;
 
 	public MachineGUI(LocalSchedulingAgent agent) {
 
 		this.lAgent = agent;
 		log = LogManager.getLogger();
+		
+		notificationSound = "resources/notification.wav";
 
 		this.mcPanel = new JPanel(new BorderLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
 		this.currentOpPanel = new FadingPanel();
 		initButtons();
+
+		InputStream in = null;
+		try {
+			in = new FileInputStream(notificationSound);
+			audioStream = new AudioStream(in);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		Image image = Toolkit.getDefaultToolkit().getImage("resources/repair_64.png");
 		customerTrayIcon = new TrayIcon(image, lAgent.getLocalName());
@@ -309,7 +325,7 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnFailMachineButton)) {
 
 				if(machineSimulator != null) {
-					machineSimulator.FailTheMachine();
+					machineSimulator.setStatus(MachineStatus.FAILED);
 					machineFailed();
 					btnFailMachineButton.setEnabled(false);
 					btnLoadJob.setEnabled(false);
@@ -453,26 +469,8 @@ public class MachineGUI extends JFrame {
 			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
 			break;
 		}
-
-		String notificationSound = "resources/notification.wav";
-		InputStream in = null;
-		try {
-			in = new FileInputStream(notificationSound);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		// create an audiostream from the inputstream
-		AudioStream audioStream = null;
-		try {
-			audioStream = new AudioStream(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// play the audio clip with the audioplayer class
+		// play the audio clip with the audio player class
 		AudioPlayer.player.start(audioStream);
-
 	}
 
 	class menuItemListener implements ActionListener {
@@ -495,6 +493,36 @@ public class MachineGUI extends JFrame {
 		}
 	}
 
+	/**
+	 * display a notification or pop up as warning for delayed maintenance
+	 * @param response
+	 */
+	public void delayedMaintWarning(MaintenanceResponse response) {
+		int degree = response.getDegree();
+		switch(degree) {
+		case 1:
+			showNotification("Preventive Maintenance", response.getMsg(),
+					MessageType.WARNING);
+			break;
+		case 2:
+			pendingMaintPopUp(response.getMsg());
+			break;
+		case 3:
+			markMachineDown(response.getMsg());
+			break;
+		}
+	}
+	
+	private void markMachineDown(String msg) {
+		JOptionPane.showMessageDialog(this, msg, "Dialog", JOptionPane.WARNING_MESSAGE);
+		machineSimulator.setStatus(MachineStatus.PAUSED);
+		showNotification("Machine Paused", "Maintenance is pending.", MessageType.WARNING);
+	}
+	
+	public void resumeMachine() {
+		machineSimulator.setStatus(MachineStatus.IDLE);
+	}
+
 	public void enablePmDone() {
 		menuItemPmStart.setEnabled(false);
 		menuItemPmDone.setEnabled(true);
@@ -506,15 +534,16 @@ public class MachineGUI extends JFrame {
 	}
 
 	public void showNoMaintJobPopup() {
-		JOptionPane.showMessageDialog(this, "NO Maintenance Job to be done.");
+		JOptionPane.showMessageDialog(this, "No Maintenance Job to be done.");
 	}
 
-	public void pendingMaintPopUp() {
-		
-		JOptionPane.showMessageDialog(this,
-				"You have pending Maintenance for this machine !!",
-				"Dialog",JOptionPane.WARNING_MESSAGE);
+	public void pendingMaintPopUp(String msg) {
+		JOptionPane.showMessageDialog(this, msg, "Dialog", JOptionPane.WARNING_MESSAGE);
 		showNotification("Maintenance Job", "Maintenance is Pending.", MessageType.WARNING);
+	}
+
+	public boolean isMachinePaused() {
+		return machineSimulator.getStatus() == MachineStatus.PAUSED;
 	}
 
 }

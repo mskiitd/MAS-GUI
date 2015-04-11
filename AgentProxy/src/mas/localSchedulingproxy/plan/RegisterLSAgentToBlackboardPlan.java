@@ -136,7 +136,7 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 		// subscription form for maintenance agent
 		SubscriptionForm maintSubform = new SubscriptionForm();
 		String[] maintParams = { ID.Maintenance.ZoneData.preventiveMaintJob,
-				ID.Maintenance.ZoneData.inspectionJob };
+				ID.Maintenance.ZoneData.inspectionJob, ID.Maintenance.ZoneData.machineStatus };
 		maintSubform.AddSubscriptionReq(maintenanceTarget, maintParams);
 
 		AgentUtil.subscribeToParam(myAgent, bb_aid, maintSubform);

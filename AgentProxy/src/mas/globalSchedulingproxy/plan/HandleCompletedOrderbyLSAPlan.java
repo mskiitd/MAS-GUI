@@ -144,6 +144,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			break;
 
 		case 3:
+			order.setCompletionTime(System.currentTimeMillis());
 			ZoneDataUpdate jobCompletionNotification = new ZoneDataUpdate.
 			Builder(ID.GlobalScheduler.ZoneData.completedJobByGSA).setReplyWith(msgReplyID).
 			value(order).Build();
@@ -151,7 +152,6 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			AgentUtil.sendZoneDataUpdate( blackboard ,
 					jobCompletionNotification, myAgent);
 			
-//			GlobalSchedulingAgent.GSAgui.addCompletedJob(order);
 			GlobalSchedulingAgent.weblafgui.addCompletedJob(order);
 			step = 4;
 			log.info("all operations of Batch No. " + order.getBatchNumber() + " completed");

@@ -20,6 +20,7 @@ import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
 import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
 import mas.localSchedulingproxy.plan.FinishMaintenancePlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
+import mas.localSchedulingproxy.plan.ReceiveDelayedMaintenanceResponsePlan;
 import mas.localSchedulingproxy.plan.ReceiveMaintenanceJobPlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentServicePlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentToBlackboardPlan;
@@ -80,7 +81,7 @@ public class AbstractbasicCapability extends Capability {
 		Belief<StatsTracker> dtrack = new TransientBelief<StatsTracker>(
 				ID.LocalScheduler.BeliefBaseConst.dataTracker);
 
-		Belief<Double> processingCost= new TransientBelief<Double>(
+		Belief<Double> processingCost = new TransientBelief<Double>(
 				ID.LocalScheduler.BeliefBaseConst.ProcessingCost);
 
 		Belief<String[]> supportedOperations = new TransientBelief<String[]>(
@@ -180,6 +181,9 @@ public class AbstractbasicCapability extends Capability {
 		plans.add(new SimplePlan(ReceiveMaintenanceJobGoal.class,ReceiveMaintenanceJobPlan.class));
 		
 		plans.add(new SimplePlan(FinishMaintenanceGoal.class,FinishMaintenancePlan.class));
+		
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgmachineStatus),
+				ReceiveDelayedMaintenanceResponsePlan.class));
 
 		return plans;
 	}	

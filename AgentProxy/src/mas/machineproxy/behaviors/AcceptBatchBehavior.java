@@ -1,8 +1,6 @@
 package mas.machineproxy.behaviors;
 
 import java.io.IOException;
-
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -10,9 +8,7 @@ import jade.lang.acl.UnreadableException;
 import mas.jobproxy.Batch;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
-import mas.util.ID;
 import mas.util.MessageIds;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,7 +36,8 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 
 	@Override
 	public void action() {
-		if(machineSimulator.getStatus() != MachineStatus.FAILED) {
+		if(machineSimulator.getStatus() != MachineStatus.FAILED &&
+				machineSimulator.getStatus() != MachineStatus.PAUSED) {
 
 			switch(step) {
 			case 0:

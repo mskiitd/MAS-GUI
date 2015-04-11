@@ -139,13 +139,15 @@ public class AddJobBehavior extends Behaviour {
 			 */
 
 			if(machineSimulator.getStatus() != MachineStatus.FAILED &&
+					machineSimulator.getStatus() != MachineStatus.PAUSED &&
 					! machineSimulator.isUnloadFlag()) {
 
 				processingTime = processingTime - Simulator.TIME_STEP; 
 				passedTime += Simulator.TIME_STEP;
 
 			} else if( machineSimulator.isUnloadFlag() &&
-					machineSimulator.getStatus() != MachineStatus.FAILED ) {
+					machineSimulator.getStatus() != MachineStatus.FAILED &&
+					machineSimulator.getStatus() != MachineStatus.PAUSED) {
 				step = 2;
 				executor.shutdown();
 			} 

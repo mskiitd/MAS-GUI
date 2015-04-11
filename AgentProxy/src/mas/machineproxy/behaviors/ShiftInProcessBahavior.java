@@ -25,7 +25,7 @@ public class ShiftInProcessBahavior extends CyclicBehaviour {
 	public ShiftInProcessBahavior(boolean byMean, boolean bySd ) {
 		this.mean = byMean;
 		this.sd = bySd;
-		
+
 	}
 
 	@Override
@@ -40,6 +40,7 @@ public class ShiftInProcessBahavior extends CyclicBehaviour {
 			break;
 		case 1:
 			if(machineSimulator.getStatus() != MachineStatus.FAILED &&
+			machineSimulator.getStatus() != MachineStatus.PAUSED &&
 			timeToOccur >= 0) {
 				timeToOccur = timeToOccur - Simulator.TIME_STEP;
 				block(Simulator.TIME_STEP);

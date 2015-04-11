@@ -3,6 +3,8 @@ package mas.maintenanceproxy.plan;
 import jade.core.behaviours.Behaviour;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.behavior.PeriodicMaintenanceTickerBehavior;
+import mas.maintenanceproxy.gui.MaintenanceGUI;
+import mas.util.ID;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
@@ -14,6 +16,7 @@ public class PeriodicPreventiveMaintenancePlan extends Behaviour implements Plan
 	private BeliefBase bfBase;
 	private boolean done = false;
 	private PeriodicMaintenanceTickerBehavior maintenance;
+	private MaintenanceGUI gui;
 
 	@Override
 	public EndState getEndState() {
@@ -24,16 +27,23 @@ public class PeriodicPreventiveMaintenancePlan extends Behaviour implements Plan
 	public void init(PlanInstance pInstance) {
 
 		this.bfBase = pInstance.getBeliefBase();
+		gui = (MaintenanceGUI) bfBase.getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).getValue();
+
+		maintenance = new PeriodicMaintenanceTickerBehavior(myAgent,
+				LocalMaintenanceAgent.prevMaintPeriod, bfBase);
 	}
 
 	@Override
 	public void action() {
-		maintenance = new PeriodicMaintenanceTickerBehavior(myAgent,
-													LocalMaintenanceAgent.prevMaintPeriod,
-													bfBase);
-		myAgent.addBehaviour(maintenance);
+		if(gui != null) {
+			myAgent.addBehaviour(maintenance);
+			gui.setNextMaintTime(LocalMaintenanceAgent.prevMaintPeriod);
+			done = true;
+		} else {
+			block(100);
+			gui = (MaintenanceGUI) bfBase.getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).getValue();
+		}
 		
-		done = true;
 	}
 
 	@Override

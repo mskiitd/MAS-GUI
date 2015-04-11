@@ -4,5 +4,6 @@ public enum MachineStatus {
 	IDLE,
 	PROCESSING,
 	FAILED,
-	UNDER_MAINTENANCE
+	UNDER_MAINTENANCE,
+	PAUSED,
 }

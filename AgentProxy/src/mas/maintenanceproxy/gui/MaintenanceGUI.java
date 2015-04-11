@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,11 +19,16 @@ import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import com.alee.laf.scroll.WebScrollPane;
+
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableModel;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableRenderer;
+import mas.util.AgentUtil;
+import mas.util.ID;
+import mas.util.ZoneDataUpdate;
 import net.miginfocom.swing.MigLayout;
 
 public class MaintenanceGUI extends JFrame {
@@ -113,15 +119,11 @@ public class MaintenanceGUI extends JFrame {
 
 		maintScroller = new WebScrollPane(pmScheduleTable);
 		maintScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//		maintScroller.setPreferredWidth(450);
-		
+		//		maintScroller.setPreferredWidth(450);
+
 		containerPanel.add(pmPanel, BorderLayout.CENTER);
 	}
 
-	public void showMaintenanceStartNotification() {
-
-	}
-	
 	public void addMaintJobToDisplay(PMaintenance prevMaint) {
 		this.tableModel.addMaintJob(prevMaint);
 	}
@@ -160,6 +162,10 @@ public class MaintenanceGUI extends JFrame {
 				calendarPanel.setYear(((Integer)spinnerNumberModel.getValue()).intValue());
 			}
 		});
+	}
+
+	public void setNextMaintTime(long prevMaintPeriod) {
+		pmPanel.setNextMaintTime(prevMaintPeriod);
 	}
 
 	public void showRepairTimeInput() {

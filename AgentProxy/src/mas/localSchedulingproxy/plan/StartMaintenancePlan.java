@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import mas.machineproxy.gui.MachineGUI;
+import mas.maintenanceproxy.classes.MaintStatus;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -58,13 +59,19 @@ public class StartMaintenancePlan extends Behaviour implements PlanBody{
 		log.info("No of Maintenance jobs : " + maintJobList.size());
 		if(maintJobList.size() > 0) {
 			PMaintenance maintJob = maintJobList.remove(0);
-
+			
+			maintJob.setMaintStatus(MaintStatus.UNDER_MAINTENANCE);
 			maintJob.setActualStartTime(new Date());
 			
 			ZoneDataUpdate maintJobForMachine = new ZoneDataUpdate.
 					Builder(ID.LocalScheduler.ZoneData.maintenanceJobForMachine).value(maintJob).Build();
-
 			AgentUtil.sendZoneDataUpdate(blackboard, maintJobForMachine, myAgent);
+			
+			ZoneDataUpdate maintConfirmation = new ZoneDataUpdate.Builder(
+					ID.LocalScheduler.ZoneData.MaintConfirmationLSA).
+					setReplyWith(maintJob.getMaintId()).
+					value(maintJob).Build();
+			AgentUtil.sendZoneDataUpdate(blackboard, maintConfirmation, myAgent);
 
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.preventiveJobsQueue, maintJobList);
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob, maintJob);

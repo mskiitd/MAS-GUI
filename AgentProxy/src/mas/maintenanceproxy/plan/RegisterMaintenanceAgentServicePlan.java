@@ -38,7 +38,7 @@ public class RegisterMaintenanceAgentServicePlan extends OneShotBehaviour implem
 		try {
 			DFService.register(myAgent, dfd);
 			log.info(myAgent.getLocalName() + " registered with DF");
-			
+
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}

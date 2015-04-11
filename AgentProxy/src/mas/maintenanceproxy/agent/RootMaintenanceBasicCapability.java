@@ -4,13 +4,11 @@ import jade.core.AID;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import mas.machineproxy.SimulatorInternals;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.maintenanceproxy.goal.ManualMachineRepairGoal;
 import mas.maintenanceproxy.goal.MaintenanceStartSendInfoGoal;
 import mas.maintenanceproxy.goal.PeriodicPreventiveMaintenanceGoal;
-import mas.maintenanceproxy.goal.RecievePreventiceMaintenanceConfirmationGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentServiceGoal;
 import mas.maintenanceproxy.goal.RegisterMaintenanceAgentToBlackboardGoal;
 import mas.maintenanceproxy.goal.SendCorrectiveRepairDataGoal;
@@ -19,7 +17,6 @@ import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.maintenanceproxy.plan.MaintenanceStartSendInfoPlan;
 import mas.maintenanceproxy.plan.ManualMachineRepairPlan;
 import mas.maintenanceproxy.plan.PeriodicPreventiveMaintenancePlan;
-import mas.maintenanceproxy.plan.RecievePreventiveMaintenanceConfirmationPlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentServicePlan;
 import mas.maintenanceproxy.plan.RegisterMaintenanceAgentToBlackboardPlan;
 import mas.maintenanceproxy.plan.SendCorrectiveRepairDataPlan;
@@ -105,9 +102,6 @@ public class RootMaintenanceBasicCapability extends Capability{
 		plans.add(new SimplePlan(PeriodicPreventiveMaintenanceGoal.class,
 				PeriodicPreventiveMaintenancePlan.class));
 		
-		plans.add(new SimplePlan(RecievePreventiceMaintenanceConfirmationGoal.class,
-				RecievePreventiveMaintenanceConfirmationPlan.class));
-
 		return plans;
 	}	
 
@@ -118,6 +112,5 @@ public class RootMaintenanceBasicCapability extends Capability{
 		myAgent.addGoal(new machineHealthCheckGoal());
 		myAgent.addGoal(new ManualMachineRepairGoal());
 		myAgent.addGoal(new PeriodicPreventiveMaintenanceGoal());
-		myAgent.addGoal(new RecievePreventiceMaintenanceConfirmationGoal());
 	}
 }

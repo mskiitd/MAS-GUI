@@ -311,7 +311,6 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 			@Override
 			public void action() {
-				System.out.println("health updated");
 				ZoneDataUpdate machineHealthUpdate = new ZoneDataUpdate.Builder(
 						ID.Machine.ZoneData.myHealth).
 						value(internals).
@@ -523,10 +522,6 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		} else {
 			return false;
 		}
-	}
-
-	public void FailTheMachine() {
-		this.setStatus(MachineStatus.FAILED);
 	}
 
 	public void loadJob() {

@@ -191,6 +191,7 @@ public class ID implements Serializable{
 			// update status of machine here as in critical when the preventive
 			// maintenance is getting delayed
 			public static final String machineStatus =  "Maintenance_machineStatus";
+
 		}
 
 		public class BeliefBaseConst {

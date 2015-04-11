@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -18,22 +17,30 @@ public class PMSchedulePanel extends JPanel {
 
 	private JLabel lblHeading;
 	private JLabel lblNextSchedule;
-	private int  x = 0;
+	private long remainingTime;
+	private int interval = 500;
 
 	public PMSchedulePanel() {
-		lblHeading = new JLabel("<html><h1>Next Schedule :</h1></html>");
+		lblHeading = new JLabel("<html><h1>Time remaining for next Schedule :</h1></html>");
 		lblNextSchedule = new JLabel("<html><h1></h1></html>");
 
 		add(lblHeading);
-		add(lblNextSchedule);
+		add(lblNextSchedule, "wrap");
 
 		ActionListener counter = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				repaint();
-				x++;
-			}};
-			new Timer(100, counter).start();
+				remainingTime = remainingTime - interval;
+				lblNextSchedule.setText(String.format("%d hr %d min %d sec",
+						remainingTime/(1000*60*60), (remainingTime%(1000*60*60))/(1000*60),
+						((remainingTime%(1000*60*60))%(1000*60))/1000));
+			}
+		};
+		new Timer(interval, counter).start();
+	}
+
+	public void setNextMaintTime(long time) {
+		remainingTime = time;
 	}
 
 	@Override
@@ -46,7 +53,6 @@ public class PMSchedulePanel extends JPanel {
 		g2.setPaint(paint);
 		g2.fillRect(0, 0, getWidth(), getHeight());
 
-		g.setColor(new Color(x));
 	}
 
 	public void setSchedule(long time) {

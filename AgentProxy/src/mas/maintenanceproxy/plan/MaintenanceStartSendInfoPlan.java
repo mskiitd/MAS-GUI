@@ -71,7 +71,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 			break;
 		case 1:
 
-			gui.showMaintenanceStartNotification();
+//			gui.showMaintenanceStartNotification();
 			//			String maintenanceData = "prev_maint_data";
 			//			
 			//			ZoneDataUpdate maintenanceStartData = new ZoneDataUpdate.Builder(ID.Maintenance.ZoneData.prevMaintData)
@@ -79,7 +79,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 			//
 			//			AgentUtil.sendZoneDataUpdate(this.bba ,maintenanceStartData, myAgent);
 
-			log.info("sending maintenance job data");
+//			log.info("sending maintenance job data");
 			// update the maintenance performed in the maintenance GUI
 			break;
 		}

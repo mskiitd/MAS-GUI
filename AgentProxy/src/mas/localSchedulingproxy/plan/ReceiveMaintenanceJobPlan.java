@@ -67,9 +67,9 @@ public class ReceiveMaintenanceJobPlan extends Behaviour implements PlanBody{
 
 					if(gui != null) {
 						gui.maintJobArrived();
-						if(maintJobList.size() > 1) {
-							gui.pendingMaintPopUp();
-						}
+//						if(maintJobList.size() > 1) {
+//							gui.pendingMaintPopUp();
+//						}
 					}
 
 				} catch (UnreadableException e) {

@@ -2,9 +2,7 @@ package mas.localSchedulingproxy.plan;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-
 import java.util.Date;
-
 import mas.machineproxy.gui.MachineGUI;
 import mas.machineproxy.gui.MaintenanceActivityCodeFrame;
 import mas.maintenanceproxy.classes.MaintStatus;
@@ -58,10 +56,12 @@ public class FinishMaintenancePlan extends Behaviour implements PlanBody{
 
 				maintJob.setActualFinishTime(new Date());
 				maintJob.setMaintStatus(MaintStatus.COMPLETE);
+				
 				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob, null);
 
 				ZoneDataUpdate finishedMaint = new ZoneDataUpdate.
 						Builder(ID.LocalScheduler.ZoneData.MaintConfirmationLSA).
+						setReplyWith(maintJob.getMaintId()).
 						value(maintJob).Build();
 
 				AgentUtil.sendZoneDataUpdate(blackboard ,finishedMaint, myAgent);
@@ -69,20 +69,23 @@ public class FinishMaintenancePlan extends Behaviour implements PlanBody{
 				if(gui != null) {
 					gui.machineIdle();
 					gui.enablePmStart();
+					if(gui.isMachinePaused()){
+						gui.resumeMachine();
+					}
 				}
 
 				done = true;
 			} else {
-				maintJob = (PMaintenance) bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob).getValue();
+				maintJob = (PMaintenance) bfBase.
+						getBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob).
+						getValue();
 			}
 			break;
 		}
-
 	}
 
 	@Override
 	public boolean done() {
 		return done;
 	}
-
 }
