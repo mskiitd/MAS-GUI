@@ -6,15 +6,11 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
 
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.Batch;
@@ -263,32 +260,45 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	}
 
 	private void createJobFromParams() {
-		boolean x2 = true,x3 = true,x4 = true,x5 = true;
 
-		x2 = checkPenaltyRate();
-		if(x2) {
-			x3 = checkCPN();
-		}
-		if(x2 & x3) {
-			x4 = checkDueDate();
+		new Thread(new Runnable() {
 
-//			if(x4) {
-//				x5 = checkJobOperations();
-//			}
-		}
+			@Override
+			public void run() {
+				boolean x2 = true, x3 = true,x4 = true,x5 = true;
 
-		dataOk = x2&x3&x4&x5;
+				x2 = checkPenaltyRate();
+				if(x2) {
+					x3 = checkCPN();
+				}
+				if(x2 & x3) {
+					x4 = checkDueDate();
 
-		if(dataOk) {
-			dataOk = dataOk & checkBatchSize();
-		}
+					//			if(x4) {
+					//				x5 = checkJobOperations();
+					//			}
+				}
+				dataOk = x2&x3&x4&x5;
+
+				if(dataOk) {
+					dataOk = dataOk & checkBatchSize();
+				}
+			}
+		}).start();
 	}
 
 	private boolean checkBatchSize() {
 		boolean status = true;
 		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for batch size !!", 
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
+							"Invalid input for batch size.",  "Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		}else {
 			populatingBatch.setBatchId(populatingBatch.getBatchId());
@@ -307,8 +317,15 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private boolean checkJobOperations() {
 		boolean status = true;
 		if(generatedJob.getOperations() == null || generatedJob.getOperations().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
+							"Please Give job Operation Details !!", "Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		}
 		return status;
@@ -320,8 +337,15 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		Date jobDueDate = (Date) datePicker.getModel().getValue();
 
 		if(time == null || jobDueDate == null) {
-			JOptionPane.showMessageDialog(this, "Invalid input for due date !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
+							"Invalid input for due date !!", "Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		} else {
 
@@ -336,8 +360,15 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					c1.get(Calendar.HOUR_OF_DAY), c1.get(Calendar.MINUTE), c1.get(Calendar.SECOND));
 
 			if(calTime.getTimeInMillis() < System.currentTimeMillis()) {
-				JOptionPane.showMessageDialog(this, "Please enter a due date after current Date !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
+								"Please enter a due date after current Date.", "Error" , JOptionPane.ERROR_MESSAGE );
+					}
+				});
+
 				status = false;
 			}else {
 
@@ -351,8 +382,15 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private boolean checkPenaltyRate() {
 		boolean status = true;
 		if(! txtPenaltyRate.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for penalty rate !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
+							"Invalid input for penalty rate !!", "Error", JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		}else {
 			populatingBatch.setPenaltyRate(Double.parseDouble(
@@ -364,8 +402,15 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for CPN !!", 
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
+							"Invalid input for CPN !!", "Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		}else {
 			populatingBatch.setCPN(Double.parseDouble(
@@ -391,8 +436,15 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		boolean  x2 = true;
 
 		if(! txtNumOps.getText().matches("-?\\d+?")) {
-			JOptionPane.showMessageDialog(this, "Invalid input for number of operations !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this, 
+							"Invalid input for number of operations.", "Error", JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			x2 = false;
 		} else {
 			NumOps = Integer.parseInt(txtNumOps.getText());
@@ -423,7 +475,14 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 				log.info("data format : " + dataOk);
 				if(dataOk) {
 					log.info("Confirming the job : " + generatedJob);
-					cAgent.confirmJob(populatingBatch);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							cAgent.confirmJob(populatingBatch);
+						}
+					}).start();
+
 					dispose();
 				}
 
@@ -433,11 +492,25 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 				log.info("Negotiation data format : " + dataOk);
 				if(dataOk) {
 					log.info("Negotiating the job : " + populatingBatch);
-					cAgent.negotiateJob(populatingBatch);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							cAgent.negotiateJob(populatingBatch);
+						}
+					}).start();
+
 					dispose();
 				}
 			} else if(e.getSource().equals(btnCancelNegotiation)) {
-				cAgent.rejectNegotiation();
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						cAgent.rejectNegotiation();
+					}
+				}).start();
+				
 				dispose();
 			}
 		}

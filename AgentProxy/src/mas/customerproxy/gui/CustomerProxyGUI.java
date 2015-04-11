@@ -82,63 +82,76 @@ public class CustomerProxyGUI extends JFrame{
 	private JMenuItem menuItemCancel ;
 	private JMenuItem menuItemChangeDueDate ;
 	private static TrayIcon customerTrayIcon;
-	private Logger log=LogManager.getLogger();
+	private Logger log;
 
 	public static int countBatch = 1;
+	private static InputStream in;
+	private static AudioStream audioStream;
+	private static String notificationSound = "resources/notification.wav";
 
 	public CustomerProxyGUI(CustomerAgent cAgent) {
 
+		log = LogManager.getLogger();
 		this.cAgent = cAgent;
 
-		Image image = Toolkit.getDefaultToolkit().getImage("resources/customer.png");
-		customerTrayIcon= new TrayIcon(image, cAgent.getLocalName());
-		if (SystemTray.isSupported()) {
-			SystemTray tray = SystemTray.getSystemTray();
+		this.tPanes = new JTabbedPane(JTabbedPane.TOP);
+		this.panelsForTab = new JPanel[tabTitles.length];
 
-			customerTrayIcon.setImageAutoSize(true);
-			try {
-				tray.add(customerTrayIcon);
-			} catch (AWTException e) {
-				log.info("TrayIcon could not be added.");
-			}
+		menuItemCancel = new JMenuItem("Cancel Order");
+		menuItemChangeDueDate = new JMenuItem("Change Due Date");
 
+		menuItemCancel.addActionListener(new rightClickListener());
+		menuItemChangeDueDate.addActionListener(new rightClickListener());
 
-			this.tPanes = new JTabbedPane(JTabbedPane.TOP);
-			this.panelsForTab = new JPanel[tabTitles.length];
-
-			menuItemCancel = new JMenuItem("Cancel Order");
-			menuItemChangeDueDate = new JMenuItem("Change Due Date");
-
-			menuItemCancel.addActionListener(new rightClickListener());
-			menuItemChangeDueDate.addActionListener(new rightClickListener());
-
-			for (int i = 1, n = tabTitles.length; i < n; i++ ) {
-				panelsForTab[i] = new JPanel(new BorderLayout());
-			}
-
-			_initGeneratorJobsPanel();
-			panelsForTab[0] = new JPanel(new MigLayout());
-			panelsForTab[0].add(jobGenPanel,"wrap");
-			panelsForTab[0].add(buttonPanel);
-
-			tPanes.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
-			this.scroller = new JScrollPane(this.panelsForTab[0]);
-			this.tPanes.addTab(tabTitles[0],this.scroller );
-
-			_initAcceptedJobsPanel();
-			panelsForTab[1].add(acceptedJobsPanel, BorderLayout.CENTER);
-
-			_initCompletedJobsPanel();
-			panelsForTab[2].add(completedJobsPanel, BorderLayout.CENTER);
-
-			// start from 1 index as the 0th index has already been added
-			for (int i = 1, n = tabTitles.length; i < n; i++) {
-				this.tPanes.addTab(tabTitles[i],panelsForTab[i] );
-			}
-
-			add(this.tPanes);
-			showGui();
+		for (int i = 1, n = tabTitles.length; i < n; i++ ) {
+			panelsForTab[i] = new JPanel(new BorderLayout());
 		}
+
+		_loadIconsAndFiles();
+		_initGeneratorJobsPanel();
+
+		panelsForTab[0] = new JPanel(new MigLayout());
+		panelsForTab[0].add(jobGenPanel,"wrap");
+		panelsForTab[0].add(buttonPanel);
+
+		tPanes.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+		this.scroller = new JScrollPane(this.panelsForTab[0]);
+		this.tPanes.addTab(tabTitles[0],this.scroller );
+
+		_initAcceptedJobsPanel();
+		panelsForTab[1].add(acceptedJobsPanel, BorderLayout.CENTER);
+
+		_initCompletedJobsPanel();
+		panelsForTab[2].add(completedJobsPanel, BorderLayout.CENTER);
+
+		// start from 1 index as the 0th index has already been added
+		for (int i = 1, n = tabTitles.length; i < n; i++) {
+			this.tPanes.addTab(tabTitles[i],panelsForTab[i] );
+		}
+
+		add(this.tPanes);
+		showGui();
+	}
+
+	private void _loadIconsAndFiles() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				Image image = Toolkit.getDefaultToolkit().getImage("resources/customer.png");
+				customerTrayIcon= new TrayIcon(image, cAgent.getLocalName());
+				if (SystemTray.isSupported()) {
+					SystemTray tray = SystemTray.getSystemTray();
+
+					customerTrayIcon.setImageAutoSize(true);
+					try {
+						tray.add(customerTrayIcon);
+					} catch (AWTException e) {
+						log.info("TrayIcon could not be added.");
+					}
+				}
+			}
+		}).start();
 	}
 
 	private void _initGeneratorJobsPanel() {
@@ -185,7 +198,6 @@ public class CustomerProxyGUI extends JFrame{
 
 						if(selectedRow.length > 0 )
 							currentJobToSend = selectedRow[0];
-
 					}
 				});
 	}
@@ -303,26 +315,18 @@ public class CustomerProxyGUI extends JFrame{
 			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
 			break;
 		}
-
-		String notificationSound = "resources/notification.wav";
-		InputStream in=null;
+		
 		try {
 			in = new FileInputStream(notificationSound);
+			audioStream = new AudioStream(in);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}
-
-		// create an audiostream from the inputstream
-		AudioStream audioStream=null;
-		try {
-			audioStream = new AudioStream(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// play the audio clip with the audioplayer class
+		
+		// play the audio clip with the audio player class
 		AudioPlayer.player.start(audioStream);
-
 	}
 
 	public void addCompletedBatch(Batch j) {
@@ -330,8 +334,6 @@ public class CustomerProxyGUI extends JFrame{
 			acceptedJobVector.remove(j);
 		}
 		 **/
-
-
 		completedJobVector.addElement(j);
 		TableUtil.setColumnWidths(completedJobsTable);
 		completedJobsTable.revalidate();

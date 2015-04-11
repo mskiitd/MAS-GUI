@@ -41,6 +41,7 @@ public class AgentStarter {
 		lAgents = new ArrayList<LocalSchedulingAgent>();
 
 		switch(agentNameToStart) {
+		
 		case GSA:
 			agents.put(ID.Blackboard.LocalName, new blackboard());
 			agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
@@ -61,29 +62,26 @@ public class AgentStarter {
 		case customer:
 			agents.put(ID.Customer.LocalName, new CustomerAgent());		
 			break;
+			
+		case All:
+			agents = new HashMap<String, Agent>();
+			lAgents = new ArrayList<LocalSchedulingAgent>();
+
+			agents.put(ID.Blackboard.LocalName, new blackboard());
+			agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
+
+			LocalSchedulingAgent lagent = new LocalSchedulingAgent();
+			lAgents.add(lagent);
+			agents.put(ID.LocalScheduler.LocalName + "#1", lagent);
+			agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
+
+			//			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
+			//			lAgents.add(lagent2);
+			//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
+			//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
+			agents.put(ID.Customer.LocalName, new CustomerAgent());	
+			break;
 		}
-		new AgentStarter();
-		createSimulator();
-	}
-
-	public static void startAllAgents() {
-		TableUtil.loadFont();
-		agents = new HashMap<String, Agent>();
-		lAgents = new ArrayList<LocalSchedulingAgent>();
-
-		agents.put(ID.Blackboard.LocalName, new blackboard());
-		agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
-
-		LocalSchedulingAgent lagent1 = new LocalSchedulingAgent();
-		lAgents.add(lagent1);
-		agents.put(ID.LocalScheduler.LocalName + "#1", lagent1);
-		agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
-
-		//			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
-		//			lAgents.add(lagent2);
-		//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
-		//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
-		agents.put(ID.Customer.LocalName, new CustomerAgent());		
 		new AgentStarter();
 		createSimulator();
 	}

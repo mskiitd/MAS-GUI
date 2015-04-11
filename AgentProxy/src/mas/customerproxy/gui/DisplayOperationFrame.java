@@ -2,11 +2,8 @@ package mas.customerproxy.gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 
@@ -17,8 +14,8 @@ public class DisplayOperationFrame extends JFrame{
 	public DisplayOperationFrame(job passedJob, int numOps, job populatingJob) {
 		setLayout(new MigLayout("","10","10"));
 		
-		for(int i=0;i<numOps;i++){
-			JLabel opTitle=new JLabel("operation #"+i+" : ");
+		for(int i = 0 ; i < numOps; i++) {
+			JLabel opTitle = new JLabel("operation #" + i + " : ");
 			add(opTitle);
 			
 			JLabel opNamelbl =new JLabel(passedJob.getOperations().get(i).

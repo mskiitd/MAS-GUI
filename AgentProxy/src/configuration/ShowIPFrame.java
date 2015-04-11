@@ -33,7 +33,13 @@ public class ShowIPFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				AgentStarter.start(agent);
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						AgentStarter.start(agent);
+					}
+				}).start();
 			}
 		});
 		add(msg,"wrap");

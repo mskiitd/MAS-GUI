@@ -88,7 +88,7 @@ public class ConfigFrame extends JFrame {
 				AgentStarter.start(agent);
 			} 
 			else if(agent == AgentToStart.All) {
-				AgentStarter.startAllAgents();
+				AgentStarter.start(AgentToStart.All);
 			} 
 			else if(agent == AgentToStart.customer) {
 
@@ -107,7 +107,6 @@ public class ConfigFrame extends JFrame {
 						new ShowIPFrame(AgentToStart.Machine);
 					}
 				});
-
 			}
 		}
 	}

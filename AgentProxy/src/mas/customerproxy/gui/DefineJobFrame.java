@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
 
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.Batch;
@@ -162,13 +163,13 @@ public class DefineJobFrame extends JFrame{
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
 
-//		operationPanel.add(lblOpsHeading);
-//		operationPanel.add(txtNumOps);
-//		operationPanel.add(btnOperationPlus,"wrap");
+		//		operationPanel.add(lblOpsHeading);
+		//		operationPanel.add(txtNumOps);
+		//		operationPanel.add(btnOperationPlus,"wrap");
 
-//		btnOperationPlus.addActionListener(new AddOperationListener());
+		//		btnOperationPlus.addActionListener(new AddOperationListener());
 
-//		myPanel.add(operationPanel,"wrap");
+		//		myPanel.add(operationPanel,"wrap");
 
 		myPanel.add(sendJob);
 
@@ -188,76 +189,73 @@ public class DefineJobFrame extends JFrame{
 	}
 
 	private void createJobFromParams() {
-		boolean x1 = true;
-		if(generatedJob == null) {
-			if(txtJobID.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Please enter batch ID !!");
-				x1 = false;
-			}else {
-				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
-				
-				if(populatingBatch != null) {
-					populatingBatch.setBatchId(txtJobID.getText().toString());
-				}else {
-					populatingBatch = new Batch(txtJobID.getText());
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				boolean x1 = true;
+				if(generatedJob == null) {
+					if(txtJobID.getText().isEmpty()) {
+
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								JOptionPane.showMessageDialog(DefineJobFrame.this,
+										"Please enter batch ID !!");
+							}
+						});
+
+						x1 = false;
+					}else {
+						generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+
+						if(populatingBatch != null) {
+							populatingBatch.setBatchId(txtJobID.getText().toString());
+						}else {
+							populatingBatch = new Batch(txtJobID.getText());
+						}
+						boolean x2 = false,x3 = true,x4 = true,x5 = true;
+						x2 = checkPenaltyRate();
+						if(x2) {
+							x3 = checkCPN();
+						}
+						populatingBatch.setGenerationTime(new Date());
+						populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
+						if(x2 & x3) {
+							x4 = checkDueDate();
+						}
+
+						dataOk = x2 & x3 & x4 & x5;
+
+						if(dataOk) {
+							dataOk = dataOk & checkBatchSize();
+						}
+
+						populatingBatch.setCustomerId(cAgent.getLocalName());
+					}
 				}
-				boolean x2 = false,x3 = true,x4 = true,x5 = true;
-				x2 = checkPenaltyRate();
-				if(x2) {
-					x3 = checkCPN();
+				else {
+					boolean x2 = true,x3 = true,x4 = true,x5 = true;
+					x2 = checkPenaltyRate();
+					if(x2) {
+						x3 = checkCPN();
+					}
+					populatingBatch.setGenerationTime(new Date());
+					populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
+					if(x2 & x3) {
+						x4 = checkDueDate();
+					}
+					dataOk = x1 & x2 & x3 & x4 & x5;
+
+					if(dataOk) {
+						dataOk = dataOk & checkBatchSize();
+					}
+					populatingBatch.setCustomerId(cAgent.getLocalName());
 				}
-				populatingBatch.setGenerationTime(new Date());
-				populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
-				if(x2 & x3) {
-					x4 = checkDueDate();
-
-//					if(x4) {
-//						x5 = checkJobOperations();
-//					}
-				}
-
-				dataOk = x2 & x3 & x4 & x5;
-
-				if(dataOk) {
-					dataOk = dataOk & checkBatchSize();
-				}
-				
-				populatingBatch.setCustomerId(cAgent.getLocalName());
 			}
-		}
-		else {
-			boolean x2 = true,x3 = true,x4 = true,x5 = true;
-			x2 = checkPenaltyRate();
-			if(x2) {
-				x3 = checkCPN();
-			}
-			populatingBatch.setGenerationTime(new Date());
-			populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
-			if(x2 & x3) {
-				x4 = checkDueDate();
+		}).start();
 
-//				if(x4) {
-//					x5 = checkJobOperations();
-//				}
-			}
-			dataOk = x1 & x2 & x3 & x4 & x5;
-
-			if(dataOk) {
-				dataOk = dataOk & checkBatchSize();
-			}
-			
-			populatingBatch.setCustomerId(cAgent.getLocalName());
-		}
-	}
-
-	private boolean checkJobOperations() {
-		boolean status = true;
-		if(generatedJob.getOperations() == null || generatedJob.getOperations().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
-			status = false;
-		}
-		return status;
 	}
 
 	private boolean checkDueDate() {
@@ -266,8 +264,15 @@ public class DefineJobFrame extends JFrame{
 		Date jobDueDate = (Date) datePicker.getModel().getValue();
 
 		if(time == null || jobDueDate == null) {
-			JOptionPane.showMessageDialog(this, "Invalid input for due date !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(DefineJobFrame.this,
+							"Invalid input for due date.", "Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		} else {
 
@@ -282,8 +287,15 @@ public class DefineJobFrame extends JFrame{
 					c1.get(Calendar.HOUR_OF_DAY), c1.get(Calendar.MINUTE), c1.get(Calendar.SECOND));
 
 			if(calTime.getTimeInMillis() < System.currentTimeMillis()) {
-				JOptionPane.showMessageDialog(this, "Please enter a due date after current Date !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(DefineJobFrame.this,
+								"Please enter a due date after current Date.", "Error" , JOptionPane.ERROR_MESSAGE );						
+					}
+				});
+
 				status = false;
 			}else {
 				populatingBatch.setDueDateByCustomer(calTime.getTime());
@@ -295,8 +307,15 @@ public class DefineJobFrame extends JFrame{
 	private boolean checkPenaltyRate() {
 		boolean status = true;
 		if(! txtPenalty.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for penalty rate !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(DefineJobFrame.this,
+							"Invalid input for penalty rate !!", "Error", JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		}else {
 			populatingBatch.setPenaltyRate(Double.parseDouble(
@@ -308,8 +327,14 @@ public class DefineJobFrame extends JFrame{
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for CPN !!", 
-					"Error" , JOptionPane.ERROR_MESSAGE );
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(DefineJobFrame.this,
+							"Invalid input for CPN.", "Error", JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		}else {
 			populatingBatch.setCPN(Double.parseDouble(
@@ -321,8 +346,15 @@ public class DefineJobFrame extends JFrame{
 	private boolean checkBatchSize() {
 		boolean status = true;
 		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for batch size !!", 
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(DefineJobFrame.this,
+							"Invalid input for batch size.", "Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		}else {
 			populatingBatch.clearAllJobs();
@@ -354,16 +386,30 @@ public class DefineJobFrame extends JFrame{
 		boolean x1 = true, x2 = true;
 		if(generatedJob == null) {
 			if(txtJobID.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Please enter job ID !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(DefineJobFrame.this,
+								"Please enter job ID.","Error" , JOptionPane.ERROR_MESSAGE );						
+					}
+				});
+
 				x1 = false;
 			}else {
 				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
 			}
 		}
 		if(! txtNumOps.getText().matches("-?\\d+?")) {
-			JOptionPane.showMessageDialog(this, "Invalid input for number of operations !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(DefineJobFrame.this,
+							"Invalid input for number of operations.", "Error" , JOptionPane.ERROR_MESSAGE );					
+				}
+			});
+
 			x2 = false;
 		} else {
 			NumOps = Integer.parseInt(txtNumOps.getText());
@@ -379,9 +425,15 @@ public class DefineJobFrame extends JFrame{
 			createJobFromParams();
 			log.info("data format : " + dataOk);
 			if(dataOk) {
-				cAgent.sendGeneratedBatch(populatingBatch);
-				CustomerProxyGUI.countBatch++ ;
 				dispose();
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						cAgent.sendGeneratedBatch(populatingBatch);
+						CustomerProxyGUI.countBatch ++ ;
+					}
+				}).start();
 			}
 		}
 	}

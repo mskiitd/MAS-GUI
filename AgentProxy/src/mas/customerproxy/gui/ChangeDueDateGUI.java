@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +22,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
+
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
@@ -28,11 +31,13 @@ import mas.util.DateLabelFormatter;
 import mas.util.TableUtil;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
 import net.miginfocom.swing.MigLayout;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
 import uiconstants.Labels;
 
 public class ChangeDueDateGUI extends JFrame{
@@ -82,7 +87,7 @@ public class ChangeDueDateGUI extends JFrame{
 
 		log = LogManager.getLogger();
 		populatingBatch = passedBatch;
-		
+
 		if(populatingBatch != null) {
 			this.populatingJob = populatingBatch.getSampleJob();
 		}
@@ -143,13 +148,13 @@ public class ChangeDueDateGUI extends JFrame{
 		this.txtJobNo = new JTextField(Labels.defaultJTextSize);
 		this.txtNumOps = new JTextField(Labels.defaultJTextSize/2);
 		this.txtPenaltyRate = new JTextField(Labels.defaultJTextSize);
-		
+
 		this.txtCPN.setEnabled(false);
 		this.txtJobID.setEnabled(false);
 		this.txtJobNo.setEnabled(false);
 		this.txtNumOps.setEnabled(false);
 		this.txtPenaltyRate.setEditable(false);
-		
+
 		this.txtBatchSize = new FormattedIntegerField();
 		txtBatchSize.setColumns(Labels.defaultJTextSize/2);
 		this.txtBatchSize.setEnabled(false);
@@ -168,7 +173,7 @@ public class ChangeDueDateGUI extends JFrame{
 
 		myPanel.add(lblPenalty);
 		myPanel.add(txtPenaltyRate,"wrap");
-		
+
 		myPanel.add(lblBatchSize);
 		myPanel.add(txtBatchSize,"wrap");
 
@@ -221,41 +226,59 @@ public class ChangeDueDateGUI extends JFrame{
 
 			datePicker.getModel().
 			setDate(c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
-			
+
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 			txtBatchSize.setEnabled(false);
 		}
 	}
 
 	private void createJobFromParams() {
-		boolean x2 = true,x3 = true,x4 = true,x5 = true;
 
-		x2 = checkPenaltyRate();
-		if(x2) {
-			x3 = checkCPN();
-		}
-		if(x2 & x3) {
-			x4 = checkDueDate();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				boolean x2 = true,x3 = true,x4 = true,x5 = true;
 
-			if(x4) {
-				x5 = checkJobOperations();
+				x2 = checkPenaltyRate();
+				if(x2) {
+					x3 = checkCPN();
+				}
+				if(x2 & x3) {
+					x4 = checkDueDate();
+
+					if(x4) {
+						x5 = checkJobOperations();
+					}
+				}
+
+				dataOk = x2 & x3 &x4 & x5;
 			}
-		}
-
-		dataOk = x2&x3&x4&x5;
+		}).start();
 	}
-
 
 	private boolean checkJobOperations() {
 		boolean status = true;
 		if(populatingJob.getOperations() == null ) {
-			JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
+							"Please Give job Operation Details !!", "Error" , JOptionPane.ERROR_MESSAGE );					
+				}
+			});
 			status = false;
+
 		}else {
 			if(populatingJob.getOperations().isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Please Give job Operation Details !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
+								"Please Give job Operation Details !!","Error" , JOptionPane.ERROR_MESSAGE );
+					}
+				});
 				status = false;
 			}
 		}
@@ -268,8 +291,16 @@ public class ChangeDueDateGUI extends JFrame{
 		Date jobDueDate = (Date) datePicker.getModel().getValue();
 
 		if(time == null || jobDueDate == null) {
-			JOptionPane.showMessageDialog(this, "Invalid input for due date !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
+							"Invalid input for due date !!", "Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
+
 			status = false;
 		} else {
 
@@ -284,8 +315,15 @@ public class ChangeDueDateGUI extends JFrame{
 					c1.get(Calendar.HOUR_OF_DAY), c1.get(Calendar.MINUTE), c1.get(Calendar.SECOND));
 
 			if(calTime.getTimeInMillis() < System.currentTimeMillis()) {
-				JOptionPane.showMessageDialog(this, "Please enter a due date after current Date !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
+								"Please enter a due date after current Date !!", "Error", JOptionPane.ERROR_MESSAGE );						
+					}
+				});
+
 				status = false;
 			}else {
 				populatingJob.setJobDuedatebyCust(calTime.getTime());
@@ -297,8 +335,16 @@ public class ChangeDueDateGUI extends JFrame{
 	private boolean checkPenaltyRate() {
 		boolean status = true;
 		if(! txtPenaltyRate.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for penalty rate !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
+							"Invalid input for penalty rate !!", "Error", JOptionPane.ERROR_MESSAGE );					
+				}
+			});
+
 			status = false;
 		}else {
 			populatingBatch.setPenaltyRate(Double.parseDouble(
@@ -310,8 +356,16 @@ public class ChangeDueDateGUI extends JFrame{
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for CPN !!", 
-					"Error" , JOptionPane.ERROR_MESSAGE );
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
+							"Invalid input for CPN !!", "Error", JOptionPane.ERROR_MESSAGE );
+				}
+			});
+			
 			status = false;
 		}else {
 			populatingBatch.setCPN(Double.parseDouble(
@@ -337,9 +391,16 @@ public class ChangeDueDateGUI extends JFrame{
 		boolean  x2 = true;
 
 		if(! txtNumOps.getText().matches("-?\\d+?")) {
-			JOptionPane.showMessageDialog(this, "Invalid input for number of operations !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
+							"Invalid input for number of operations !!", "Error", JOptionPane.ERROR_MESSAGE );
+				}
+			});
 			x2 = false;
+			
 		} else {
 			NumOps = Integer.parseInt(txtNumOps.getText());
 		}
@@ -348,8 +409,8 @@ public class ChangeDueDateGUI extends JFrame{
 
 	private void showGui() {
 		setTitle("Customer Agent - Change Due Date");
-//		setPreferredSize(new Dimension(600,500));
-		
+		//		setPreferredSize(new Dimension(600,500));
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -368,12 +429,18 @@ public class ChangeDueDateGUI extends JFrame{
 
 				createJobFromParams();
 				if(dataOk) {
-					custAgent.sendGeneratedBatch(populatingBatch);
-//					custAgent.(populatingBatch);
 					dispose();
+					new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							custAgent.sendGeneratedBatch(populatingBatch);
+						}
+					}).start();
+					//					custAgent.(populatingBatch);
 				}
 			}
-			
+
 			else if(e.getSource().equals(cancel)){
 				dispose();
 			}

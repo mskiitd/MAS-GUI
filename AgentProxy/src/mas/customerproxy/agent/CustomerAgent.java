@@ -73,15 +73,19 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
-		
+
 		try {
 			DFService.deregister(this);
 		}
 		catch (Exception e) {
 		}
-		
+
 		if(customerGUI != null) {
-			customerGUI.dispose();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					customerGUI.dispose();
+				} });
 		}
 	}
 
@@ -105,10 +109,10 @@ public class CustomerAgent extends AbstractCustomerAgent {
 			@Override
 			public void run() {
 				customerGUI = new CustomerProxyGUI(CustomerAgent.this);
-				bfBase.updateBelief(ID.Customer.BeliefBaseConst.CUSTOMER_GUI, customerGUI);
 			}
 		});
-
+		
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CUSTOMER_GUI, customerGUI);
 	}
 
 }
