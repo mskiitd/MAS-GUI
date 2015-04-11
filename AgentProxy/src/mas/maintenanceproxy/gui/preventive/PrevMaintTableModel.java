@@ -48,11 +48,11 @@ public class PrevMaintTableModel extends AbstractTableModel implements TableMode
 
 	@Override
 	public boolean isCellEditable(int columnIndex, int rowIndex) {
-		return true;
+		return false;
 	}
 
 	public void addMaintJob(PMaintenance pm){
-		maintSchedules.add(pm);
+		maintSchedules.add(0, pm);
 
 		super.fireTableRowsInserted(0, getRowCount()-1);
 		super.fireTableCellUpdated(0, getRowCount()-1);

@@ -8,6 +8,7 @@ public class PMaintenance implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String maintId;
+	private String activityCode;
 	private Date expectedStartTime;
 	private Date expectedFinishTime;
 	private Date actualStartTime;
@@ -54,6 +55,14 @@ public class PMaintenance implements Serializable {
 
 	public void setMaintStatus(MaintStatus maintStatus) {
 		this.maintStatus = maintStatus;
+	}
+
+	public String getActivityCode() {
+		return activityCode;
+	}
+
+	public void setActivityCode(String activityCode) {
+		this.activityCode = activityCode;
 	}
 
 }

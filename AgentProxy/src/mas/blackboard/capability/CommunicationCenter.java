@@ -2,21 +2,16 @@ package mas.blackboard.capability;
 
 import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
 import mas.blackboard.plan.AddAgent;
 import mas.blackboard.plan.SubscribeParameter;
 import mas.blackboard.plan.UpdateParam;
 import mas.util.ID;
 import mas.util.MessageIds;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.formula.functions.T;
-
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.TransientBelief;
 import bdi4jade.core.BDIAgent;

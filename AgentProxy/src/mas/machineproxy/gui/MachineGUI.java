@@ -1,5 +1,6 @@
 package mas.machineproxy.gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,13 +9,20 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -43,8 +51,14 @@ import mas.util.TableUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
+
 @SuppressWarnings("serial")
 public class MachineGUI extends JFrame {
+
+	private static TrayIcon customerTrayIcon;
+	private Logger log;
 
 	private LocalSchedulingAgent lAgent;
 	private Simulator machineSimulator;
@@ -90,12 +104,26 @@ public class MachineGUI extends JFrame {
 	public MachineGUI(LocalSchedulingAgent agent) {
 
 		this.lAgent = agent;
+		log = LogManager.getLogger();
 
 		this.mcPanel = new JPanel(new BorderLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
 		this.currentOpPanel = new FadingPanel();
 		initButtons();
+
+		Image image = Toolkit.getDefaultToolkit().getImage("resources/repair_64.png");
+		customerTrayIcon = new TrayIcon(image, lAgent.getLocalName());
+		if (SystemTray.isSupported()) {
+			SystemTray tray = SystemTray.getSystemTray();
+
+			customerTrayIcon.setImageAutoSize(true);
+			try {
+				tray.add(customerTrayIcon);
+			} catch (AWTException e) {
+				log.info("TrayIcon could not be added.");
+			}
+		}
 
 		try {
 			machineIcon = ImageIO.read(new File("resources/machine1.png"));
@@ -370,7 +398,7 @@ public class MachineGUI extends JFrame {
 			upIcon = ImageIO.read(new File("resources/upload_48.jpg"));
 			startIcon = ImageIO.read(new File("resources/start_48.png"));
 			finishIcon = ImageIO.read(new File("resources/finish_48.png"));
-			
+
 			ImageIcon icon = new ImageIcon(upIcon);
 			menuItemUpload = new JMenuItem("Add job to Database", icon);
 			menuItemUpload.setMnemonic(KeyEvent.VK_B);
@@ -398,10 +426,53 @@ public class MachineGUI extends JFrame {
 
 	public void maintJobArrived() {
 		this.menuItemPmStart.setText("<html><p>Maintenance Start <b>" + ++maintJobCounter + "</b></p></html>");
+		showNotification("Maintenance Job", "Maintenance Has Arrived.", MessageType.INFO);
 	}
 
 	private void maintJobDone() {
 		this.menuItemPmStart.setText("<html><p>Maintenance Start <b>" + --maintJobCounter + "</b></p></html>");
+		showNotification("Maintenance Job", "Maintenance Has Finished.", MessageType.INFO);
+	}
+
+	public static void showNotification(String title, String message,TrayIcon.MessageType type){
+
+		switch(type) {
+		case ERROR :
+			customerTrayIcon.displayMessage(title,message, TrayIcon.MessageType.ERROR);
+			break;
+
+		case INFO:
+			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.INFO);
+			break;
+
+		case WARNING:
+			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.WARNING);
+			break;
+
+		case NONE:
+			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
+			break;
+		}
+
+		String notificationSound = "resources/notification.wav";
+		InputStream in = null;
+		try {
+			in = new FileInputStream(notificationSound);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		// create an audiostream from the inputstream
+		AudioStream audioStream = null;
+		try {
+			audioStream = new AudioStream(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// play the audio clip with the audioplayer class
+		AudioPlayer.player.start(audioStream);
+
 	}
 
 	class menuItemListener implements ActionListener {
@@ -423,12 +494,12 @@ public class MachineGUI extends JFrame {
 			}
 		}
 	}
-	
+
 	public void enablePmDone() {
 		menuItemPmStart.setEnabled(false);
 		menuItemPmDone.setEnabled(true);
 	}
-	
+
 	public void enablePmStart() {
 		menuItemPmStart.setEnabled(true);
 		menuItemPmDone.setEnabled(false);
@@ -439,9 +510,11 @@ public class MachineGUI extends JFrame {
 	}
 
 	public void pendingMaintPopUp() {
+		
 		JOptionPane.showMessageDialog(this,
 				"You have pending Maintenance for this machine !!",
 				"Dialog",JOptionPane.WARNING_MESSAGE);
+		showNotification("Maintenance Job", "Maintenance is Pending.", MessageType.WARNING);
 	}
 
 }

@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,16 +18,14 @@ import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import com.alee.laf.scroll.WebScrollPane;
-
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableModel;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableRenderer;
 import net.miginfocom.swing.MigLayout;
 
-public class MaintenanceGUI extends JFrame{
+public class MaintenanceGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -110,12 +107,13 @@ public class MaintenanceGUI extends JFrame{
 		tableModel = new PrevMaintTableModel();
 		this.pmScheduleTable = new JTable(tableModel);
 
-		pmScheduleTable.setDefaultRenderer(PrevMaintTableRenderer.class, tableRenderer);
-		pmScheduleTable.setDefaultEditor(PrevMaintTableRenderer.class, tableRenderer);
+		pmScheduleTable.setDefaultRenderer(PMaintenance.class, tableRenderer);
+		pmScheduleTable.setDefaultEditor(PMaintenance.class, tableRenderer );
 		pmScheduleTable.setRowHeight(110);
 
 		maintScroller = new WebScrollPane(pmScheduleTable);
-		maintScroller.setPreferredWidth(350);
+		maintScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+//		maintScroller.setPreferredWidth(450);
 		
 		containerPanel.add(pmPanel, BorderLayout.CENTER);
 	}

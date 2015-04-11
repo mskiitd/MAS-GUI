@@ -1,6 +1,7 @@
 package mas.localSchedulingproxy.agent;
 
 import jade.core.AID;
+import jade.domain.DFService;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,11 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 	@Override
 	protected void takeDown() {
 		super.takeDown();
+		try {
+			DFService.deregister(this);
+		}
+		catch (Exception e) {
+		}
 		if(mGUI != null) {
 			mGUI.dispose();
 		}

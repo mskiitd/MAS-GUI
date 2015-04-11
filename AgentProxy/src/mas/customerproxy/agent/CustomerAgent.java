@@ -1,6 +1,7 @@
 package mas.customerproxy.agent;
 
 import jade.core.AID;
+import jade.domain.DFService;
 
 import javax.swing.SwingUtilities;
 
@@ -31,7 +32,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	public void sendGeneratedBatch(Batch batchOfJobs) {
 		//		log.info("Adding generated job " + j + " to belief base : " +bfBase);
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, batchOfJobs);
-		
+
 
 		addGoal(new dispatchJobGoal());
 	}
@@ -59,7 +60,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		// update the accepted in the GUI
 		CustomerAgent.customerGUI.addAcceptedJob(j);
 	}
-	
+
 	public void rejectNegotiation() {
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH, null);
 	}
@@ -72,6 +73,13 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
+		
+		try {
+			DFService.deregister(this);
+		}
+		catch (Exception e) {
+		}
+		
 		if(customerGUI != null) {
 			customerGUI.dispose();
 		}

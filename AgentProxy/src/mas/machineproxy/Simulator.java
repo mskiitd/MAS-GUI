@@ -8,12 +8,15 @@ import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
 import jade.lang.acl.MessageTemplate;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
@@ -121,6 +124,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private transient MachineGUI gui = null;
 	private transient LocalSchedulingAgent lAgent;
 
+	private transient ScheduledThreadPoolExecutor waitOnGuiThreadExecutor;
+
 	public Simulator(LocalSchedulingAgent localSchedulingAgent) {
 		this.lAgent = localSchedulingAgent;
 		//		System.out.println("gui is : "  + localSchedulingAgent + "-----");
@@ -200,7 +205,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 
 		functionality.addSubBehaviour(acceptIncomingBatch);
-//		functionality.addSubBehaviour(reportHealth);
+		//		functionality.addSubBehaviour(reportHealth);
 
 		functionality.addSubBehaviour(processDimensionShifter);
 		//		functionality.addSubBehaviour(machineParameterShifter);
@@ -212,34 +217,22 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		statusChangeSupport.addPropertyChangeListener (
 				new SimulatorStatusListener(Simulator.this) );
 
-		while(lAgent.mGUI==null){
-			Log.info("lAgent.mGUI=", lAgent.mGUI);
-		}
-
 		gui = lAgent.mGUI;
-		Log.info("gui="+gui);
-		gui.setMachineSimulator(Simulator.this);
+		// wait until GUI has started for Machine 
+		waitOnGuiThreadExecutor = new ScheduledThreadPoolExecutor(1);
+		waitOnGuiThreadExecutor.scheduleAtFixedRate(new Runnable() {
 
-		//		final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-		//		executor.scheduleAtFixedRate(new Runnable() {
-		//
-		//			@Override
-		//			public void run() {
-		//				if(gui != null) {
-		//					gui.setMachineSimulator(Simulator.this);
-		//					Log.info("simulator started for LSA GUI");
-		//					executor.shutdown();
-		//				} else {
-		//					ACLMessage msg = receive(guiMsgTemplate);
-		//					try {
-		//						gui = (MachineGUI) msg.getContentObject();
-		//					} catch (UnreadableException e) {
-		//						e.printStackTrace();
-		//					}
-		//				}
-		//			}
-		//		}, 0,1000, TimeUnit.MILLISECONDS );
-
+			@Override
+			public void run() {
+				if(gui != null) {
+					gui.setMachineSimulator(Simulator.this);
+					waitOnGuiThreadExecutor.shutdown();
+				} else {
+					gui = lAgent.mGUI;
+				}
+			}
+		}, 0, 500, TimeUnit.MILLISECONDS );
+		
 	}
 
 	public MachineGUI getGui() {
@@ -276,6 +269,11 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
+		try {
+			DFService.deregister(this);
+		}
+		catch (Exception e) {
+		}
 	}
 
 	@Override
@@ -306,9 +304,9 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 	public void repair() {
 		this.internals.setStatus(MachineStatus.IDLE) ;
-		
+
 		addBehaviour(new OneShotBehaviour() {
-			
+
 			private static final long serialVersionUID = 1L;
 
 			@Override

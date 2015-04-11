@@ -1,6 +1,7 @@
 package mas.maintenanceproxy.agent;
 
 import jade.core.AID;
+import jade.domain.DFService;
 import mas.maintenanceproxy.goal.SendCorrectiveRepairDataGoal;
 import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.AgentUtil;
@@ -19,7 +20,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	private AID blackboard;
 	private Capability bCap;
 	private BeliefBase bfBase;
-	public static long prevMaintPeriod = 50000;
+	public static long prevMaintPeriod = 5000;
 
 	public MaintenanceGUI mgui = null;
 
@@ -34,6 +35,11 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
+		try {
+			DFService.deregister(this);
+		}
+		catch (Exception e) {
+		}
 		if(mgui != null) {
 			mgui.dispose();
 		}

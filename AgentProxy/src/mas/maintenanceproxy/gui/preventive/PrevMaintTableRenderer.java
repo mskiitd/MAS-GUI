@@ -18,6 +18,7 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 	private static final long serialVersionUID = 1L;
 
 	private JLabel lblActualStartDate,lblActualFinishDate;
+	private JLabel lblActivityCode;
 	private JPanel tile;
 	private PMaintenance pMaintTileCell;
 	private final Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -28,19 +29,23 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 				""
 				));
 		lblActualStartDate = new JLabel();
-		lblActualStartDate.setName("Actual Start Date");
+		lblActualStartDate.setName("Start Time");
 		lblActualFinishDate = new JLabel();
-		lblActualFinishDate.setName("Actual Completion Date");
+		lblActualFinishDate.setName("Completion Time");
+		lblActivityCode = new JLabel();
+		lblActivityCode.setName("Activity Code");
 	}
 
 	private void updateData(PMaintenance feed, boolean isSelected, JTable table) {
 		this.pMaintTileCell = feed;
 
-		lblActualStartDate.setText("Actual Start Date : " + pMaintTileCell.getActualStartTime());
-		lblActualFinishDate.setText("Actual Completion Date : "+formatter.format(pMaintTileCell.getActualFinishTime()));
+		lblActualStartDate.setText("Start Time : " + pMaintTileCell.getActualStartTime());
+		lblActualFinishDate.setText("Completion Time : " + formatter.format(pMaintTileCell.getActualFinishTime()));
+		lblActivityCode.setText("Activity Code : " + pMaintTileCell.getActivityCode());
 
 		tile.add(lblActualStartDate,"wrap");
 		tile.add(lblActualFinishDate,"wrap");
+		tile.add(lblActivityCode, "wrap");
 
 		if (isSelected) {
 			tile.setBackground(table.getSelectionBackground());
@@ -68,8 +73,7 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 			boolean isSelected, int row, int column) {
 		
 		PMaintenance feed = (PMaintenance)value;
-
-		updateData(feed, true, table);
+		updateData(feed, true , table);
 		return tile;
 	}
 

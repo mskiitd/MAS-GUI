@@ -1,6 +1,7 @@
 package mas.globalSchedulingproxy.agent;
 
 import jade.core.AID;
+import jade.domain.DFService;
 
 import javax.swing.SwingUtilities;
 
@@ -72,6 +73,11 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 	@Override
 	protected void takeDown() {
 		super.takeDown();
+		try {
+			DFService.deregister(this);
+		}
+		catch (Exception e) {
+		}
 		if(weblafgui != null) {
 			weblafgui.dispose();
 		}

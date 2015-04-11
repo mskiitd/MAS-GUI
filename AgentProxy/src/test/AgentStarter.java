@@ -2,6 +2,7 @@ package test;
 
 import jade.BootProfileImpl;
 import jade.core.Agent;
+import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
@@ -13,24 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mas.blackboard.blackboard;
 import mas.customerproxy.agent.CustomerAgent;
-import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.Simulator;
-import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
-import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.ID;
-import mas.util.ID.Maintenance;
 import mas.util.TableUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import sun.launcher.resources.launcher;
-
-import com.alee.laf.WebLookAndFeel;
 
 public class AgentStarter {
 
@@ -40,32 +32,31 @@ public class AgentStarter {
 	private jade.core.Runtime runtime;
 	private static ArrayList<LocalSchedulingAgent> lAgents;
 	public static PlatformController controller;
+	public static String Ip = "192.168.137.1";
+	public static String JadePort = "1099";
 
 	static {
 		agents = new HashMap<String, Agent>();
 		lAgents = new ArrayList<LocalSchedulingAgent>();
-		agents.put(ID.Blackboard.LocalName, new blackboard());
 		agents.put(ID.Customer.LocalName, new CustomerAgent());
 
-		agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
-		
 		LocalSchedulingAgent lagent1 = new LocalSchedulingAgent();
 		lAgents.add(lagent1);
 		agents.put(ID.LocalScheduler.LocalName + "#1", lagent1);
 		agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
 
-//		LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
-//		lAgents.add(lagent2);
-//		agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
-//		agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
-		
+		//		LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
+		//		lAgents.add(lagent2);
+		//		agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
+		//		agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
+
 	};
 
 	public static void createSimulator() {
-		for(int i=0; i < lAgents.size(); i++) {
+		for(int i = 0 ; i < lAgents.size(); i++) {
 			AgentController ac;
 			try {
-//				System.out.println(lAgents.get(i) + "@@@@@@@@@@@@@@@@" + controller);
+				//				System.out.println(lAgents.get(i) + "@@@@@@@@@@@@@@@@" + controller);
 				ac = ((AgentContainer) controller)
 						.acceptNewAgent(ID.Machine.LocalName + "#" + (i + 1) ,
 								new Simulator(lAgents.get(i) ) );
@@ -81,7 +72,7 @@ public class AgentStarter {
 				.getResource("log4j.properties"));		*/
 		TableUtil.loadFont();
 		new AgentStarter();
-//		MachineGUI gui = new MachineGUI(new LocalSchedulingAgent());
+		//		MachineGUI gui = new MachineGUI(new LocalSchedulingAgent());
 		try {
 			Thread.sleep(2000);
 			createSimulator();
@@ -95,15 +86,16 @@ public class AgentStarter {
 		//		log.info(log.isInfoEnabled());
 
 		List<String> params = new ArrayList<String>();
-//						params.add("-gui");
+		params.add("-gui");
 		//		params.add("-detect-main:false");
 
-		this.bootProfile = new BootProfileImpl(params.toArray(new String[0]));
-
 		this.runtime = jade.core.Runtime.instance();
+		bootProfile = new ProfileImpl(Ip, 1099, null, false);
 
-		controller = runtime.createMainContainer(bootProfile);		
+		bootProfile.setParameter("hostID", Ip + ":" + JadePort + "/JADE");
+		bootProfile.setParameter(Profile.CONTAINER_NAME,  Ip + ":" + JadePort + "/JADE");
 
+		controller = runtime.createAgentContainer(bootProfile);
 
 		for (String agentName : agents.keySet()) {
 			try {

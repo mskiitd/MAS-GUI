@@ -6,6 +6,7 @@ import jade.core.behaviours.Behaviour;
 import java.util.Date;
 
 import mas.machineproxy.gui.MachineGUI;
+import mas.machineproxy.gui.MaintenanceActivityCodeFrame;
 import mas.maintenanceproxy.classes.MaintStatus;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.util.AgentUtil;
@@ -24,6 +25,7 @@ public class FinishMaintenancePlan extends Behaviour implements PlanBody{
 	private PMaintenance maintJob;
 	private boolean done = false;
 	private MachineGUI gui;
+	private int step = 0;
 
 	@Override
 	public EndState getEndState() {
@@ -37,31 +39,45 @@ public class FinishMaintenancePlan extends Behaviour implements PlanBody{
 		maintJob = (PMaintenance) bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob).getValue();
 		blackboard = (AID) bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).getValue();
 		gui = (MachineGUI) bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.gui_machine).getValue();
+
+		MaintenanceActivityCodeFrame aCode = new MaintenanceActivityCodeFrame(maintJob);
 	}
 
 	@Override
 	public void action() {
-		if(maintJob != null ) {
-
-			maintJob.setActualFinishTime(new Date());
-			maintJob.setMaintStatus(MaintStatus.COMPLETE);
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob, null);
-
-			ZoneDataUpdate finishedMaint = new ZoneDataUpdate.
-					Builder(ID.LocalScheduler.ZoneData.MaintConfirmationLSA).
-					value(maintJob).Build();
-
-			AgentUtil.sendZoneDataUpdate(blackboard ,finishedMaint, myAgent);
-
-			if(gui != null) {
-				gui.machineIdle();
-				gui.enablePmStart();
+		switch(step) {
+		case 0:
+			if(maintJob.getActivityCode() != null) {
+				step = 1;
+			} else{
+				block(100);
 			}
+			break;
+		case 1:
+			if(maintJob != null ) {
 
-			done = true;
-		} else {
-			maintJob = (PMaintenance) bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob).getValue();
+				maintJob.setActualFinishTime(new Date());
+				maintJob.setMaintStatus(MaintStatus.COMPLETE);
+				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob, null);
+
+				ZoneDataUpdate finishedMaint = new ZoneDataUpdate.
+						Builder(ID.LocalScheduler.ZoneData.MaintConfirmationLSA).
+						value(maintJob).Build();
+
+				AgentUtil.sendZoneDataUpdate(blackboard ,finishedMaint, myAgent);
+
+				if(gui != null) {
+					gui.machineIdle();
+					gui.enablePmStart();
+				}
+
+				done = true;
+			} else {
+				maintJob = (PMaintenance) bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob).getValue();
+			}
+			break;
 		}
+
 	}
 
 	@Override
