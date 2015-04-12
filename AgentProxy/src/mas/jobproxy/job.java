@@ -32,9 +32,6 @@ public class job implements Serializable {
 		//due date mentioned by customer for job
 		private Date custdDate;  
 		//this will be same as due date of last operation for local due date calculation
-		//start date of job given by customer i.e. start time of 1st operation
-		private Date custStartDate;
-		// Optional parameters - initialized to default values
 		private ArrayList<jobOperation> jOperations;
 
 		public Builder(String jobID) {
@@ -47,11 +44,6 @@ public class job implements Serializable {
 
 		public Builder jobDueDateTime(long val)
 		{ custdDate = new Date(val); return this; }
-
-		public Builder jobStartTimeByCust(long val){
-			custStartDate = new Date(val);
-			return this;
-		}
 
 		public Builder jobOperation(ArrayList<jobOperation> val)
 		{ jOperations.addAll(val); return this; }
@@ -66,7 +58,6 @@ public class job implements Serializable {
 		jobDuedate = builder.custdDate;
 		this.operations = new ArrayList<jobOperation>();
 		operations.addAll(builder.jOperations);
-		startTime=builder.custStartDate;
 	}
 
 	@Override
@@ -90,6 +81,9 @@ public class job implements Serializable {
 
 	public void setCurrentOperationStartTime(long startTime) {
 		this.operations.get(currentOperationNumber).setStartTime(startTime);
+		if(currentOperationNumber == 0) {
+			this.startTime = new Date(startTime);
+		}
 	}
 
 	public long getCurrentOperationStartTime() {
@@ -106,6 +100,9 @@ public class job implements Serializable {
 
 	public void setCurrentOperationCompletionTime(long completionTime) {
 		this.operations.get(currentOperationNumber).setCompletionTime(completionTime);
+		if(this.currentOperationNumber == operations.size()-1) {
+			this.completionTime = new Date(completionTime);
+		}
 	}
 
 	public long getCurrentOperationCompletionTime() {
@@ -146,18 +143,18 @@ public class job implements Serializable {
 		this.currentOperationNumber++ ;
 		if(this.currentOperationNumber > this.operations.size()-1){
 			IsComplete = true;
-			Log.info("set true", IsComplete);
+			Log.info("all operations done - flag : ", IsComplete);
 		}
 	}
 
 	public void resetOpnNoToZero(){
-		IsComplete=false;
+		IsComplete = false;
 		this.setCurrentOperationNumber(0);
 	}
 
-	public boolean isComplete(){
-		if(this.IsComplete==true){
-			System.out.println("####"+this.getCurrentOperationNumber());
+	public boolean isComplete() {
+		if(this.IsComplete == true) {
+			System.out.println("all operations done ####" + this.getCurrentOperationNumber());
 		}
 		return this.IsComplete;
 	}
@@ -208,14 +205,6 @@ public class job implements Serializable {
 
 	public long getStartTime(int index) {
 		return this.operations.get(index).getStartTime();
-	}
-
-	public void setCompletionTime(Date completionTime) {
-		this.completionTime = completionTime;
-	}
-
-	public void setCompletionTime(long completionTime) {
-		this.completionTime = new Date(completionTime);
 	}
 
 	public void setJobID(String jobID) {

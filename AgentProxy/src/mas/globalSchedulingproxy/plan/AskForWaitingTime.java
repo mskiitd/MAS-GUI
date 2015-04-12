@@ -9,9 +9,8 @@ public class AskForWaitingTime extends RootAskForWaitingTime {
 	@Override
 	public ACLMessage getWorstWaitingTime(ACLMessage[] WaitingTime) {
 		
-		//takes array of msg got froms all LSAs
+		//takes array of msg got from all LSAs
 		
-//		super.log.info("chooseing waiting time");
 		return super.getWorstWaitingTime(WaitingTime);
 	}
 }

@@ -2,7 +2,6 @@ package mas.globalSchedulingproxy.gui;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -23,10 +22,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -40,15 +36,11 @@ import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
 import com.alee.extended.label.WebHotkeyLabel;
-import com.alee.extended.layout.HorizontalFlowLayout;
-import com.alee.laf.button.WebButton;
 import com.alee.laf.button.WebToggleButton;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
-import com.alee.utils.SwingUtils;
-
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 
@@ -182,11 +174,11 @@ public class WebLafGSA {
 	}
 
 	private void initCompletedJobListPanel() {
-		CompletedJobTileRenderer completedJobRenderer= new CompletedJobTileRenderer();
+		CompletedJobTableModel completedJobRenderer= new CompletedJobTableModel();
 		completedJobListTable=new JTable(completedJobRenderer);
 
-		completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTileCell());
-		completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTileCell());
+		completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTableRenderer());
+		completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTableRenderer());
 		completedJobListTable.setRowHeight(90);
 
 		completedJobsList=new WebScrollPane(completedJobListTable);
@@ -664,8 +656,8 @@ public class WebLafGSA {
 		currentJobListTable.repaint();
 
 
-		CompletedJobTileRenderer completedJobRenderer=
-				(CompletedJobTileRenderer)completedJobListTable.getModel();
+		CompletedJobTableModel completedJobRenderer=
+				(CompletedJobTableModel)completedJobListTable.getModel();
 
 		if(completedJobListTable.getCellEditor() != null ) {
 			completedJobListTable.getCellEditor().stopCellEditing();

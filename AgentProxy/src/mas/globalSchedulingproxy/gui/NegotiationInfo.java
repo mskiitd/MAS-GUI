@@ -1,9 +1,5 @@
 package mas.globalSchedulingproxy.gui;
 
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -12,11 +8,9 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,7 +18,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
-
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
@@ -33,21 +26,16 @@ import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
 import net.miginfocom.swing.MigLayout;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-
 import com.alee.laf.panel.WebPanel;
-import com.sun.xml.internal.ws.org.objectweb.asm.Label;
-
 import uiconstants.Labels;
 
-public class NegotiationInfo{
+public class NegotiationInfo {
 
-	private static final long serialVersionUID = 1L;
 	private GlobalSchedulingAgent gAgent;
 	private BufferedImage plusButtonIcon;
 

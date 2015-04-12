@@ -30,7 +30,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 
-	private Batch dummyJob;
+	private Batch comingBatch;
 	private AID blackboard;
 	private int NoOfMachines;
 	private String msgReplyID;
@@ -54,18 +54,20 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		log = LogManager.getLogger();
 
 		try {
-			dummyJob = (Batch)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
-			msgReplyID = Integer.toString(dummyJob.getBatchNumber());
+			comingBatch = (Batch)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
+			msgReplyID = Integer.toString(comingBatch.getBatchNumber());
 
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
 		bfBase = PI.getBeliefBase();
-		blackboard = (AID) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
+		blackboard = (AID) bfBase.
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 
-		WeblafGSAgui = (WebLafGSA)bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance)
-				.getValue();
+		WeblafGSAgui = (WebLafGSA)bfBase.
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance).
+				getValue();
 
 		mt = MessageTemplate.and(
 				MessageTemplate.MatchConversationId(MessageIds.msgWaitingTime),
@@ -76,21 +78,16 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				getValue();
 
 		if(batchDb != null) {
-			customerBatchInfo = batchDb.getBatchesInfo(dummyJob.getCustomerId());
+			customerBatchInfo = batchDb.getBatchesInfo(comingBatch.getCustomerId());
 
-			log.info(customerBatchInfo);
 			if(customerBatchInfo != null) {
-				UnitBatchInfo bInfo = customerBatchInfo.getBatchInfo(dummyJob.getBatchId());
-				System.out.println(customerBatchInfo.getBatchInfo("j1").getOperations());
-				System.out.println(customerBatchInfo.getBatchInfo("j2").getOperations());
-				System.out.println(customerBatchInfo.getBatchInfo("j3").getOperations());
-				System.out.println(customerBatchInfo.getBatchInfo("j4").getOperations());
-				dummyJob.setOperations(bInfo.getOperations());
-				log.info("operations for job" + dummyJob.getBatchId()+":" + bInfo);
+				UnitBatchInfo bInfo = customerBatchInfo.getBatchInfo(comingBatch.getBatchId());
+				comingBatch.setOperations(bInfo.getOperations());
+				log.info("operations for job" + comingBatch.getBatchId()+":" + bInfo);
 			}
 			else {
 				step = 5;
-				log.info("Database for " + dummyJob.getCustomerId() + " not found !!" );
+				log.info("Database for " + comingBatch.getCustomerId() + " not found !!" );
 				log.info("Rejecting the batch");
 			}
 		} else {
@@ -115,7 +112,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		case 1:
 
 			ZoneDataUpdate update = new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GetWaitingTime)
-			.value(dummyJob).setReplyWith(msgReplyID).Build();
+			.value(comingBatch).setReplyWith(msgReplyID).Build();
 			AgentUtil.sendZoneDataUpdate(blackboard, update, myAgent);
 			WaitingTime = new ACLMessage[MachineCount];
 
@@ -140,21 +137,19 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				}
 			}
 			catch (Exception e3) {
-
 			}
 			break;
 		case 3:
 			try {
-
 				ACLMessage max = getWorstWaitingTime(WaitingTime);
 				CumulativeWaitingTime = CumulativeWaitingTime +
 						((Batch)max.getContentObject()).getWaitingTime();
 
 				JobToSend = (Batch)(max.getContentObject());
-				dummyJob.IncrementOperationNumber();
+				comingBatch.IncrementOperationNumber();
 
-				if(dummyJob.getCurrentOperationNumber() < 
-						dummyJob.getSampleJob().getOperations().size()) {
+				if(comingBatch.getCurrentOperationNumber() < 
+						comingBatch.getSampleJob().getOperations().size()) {
 
 					step = 1;
 				}
@@ -169,28 +164,33 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 		case 4:
 			JobToSend.resetCurrentOperationNumber();
-			JobToSend.setWaitingTime(CumulativeWaitingTime+System.currentTimeMillis());
+			JobToSend.setWaitingTime(CumulativeWaitingTime + System.currentTimeMillis());
 
 			if(CumulativeWaitingTime < 0) {
 				log.info("cannot process Batch no " + JobToSend.getBatchNumber());
 
 				ZoneDataUpdate rejectionUpdate = new ZoneDataUpdate.Builder(
-						ID.GlobalScheduler.ZoneData.rejectedOrders)
-				.value(JobToSend).Build();
-				AgentUtil.sendZoneDataUpdate(blackboard, rejectionUpdate, myAgent);	
+						ID.GlobalScheduler.ZoneData.rejectedOrders).
+						value(JobToSend).Build();
 
-				String message="Batch with ID "+JobToSend.getBatchId()+" is Rejected";
-				WeblafGSAgui.showNotification("Batch Rejected", message, MessageType.INFO);
+				AgentUtil.sendZoneDataUpdate(blackboard, rejectionUpdate, myAgent);	
+				String message = "Batch with ID " + JobToSend.getBatchId() + " is Rejected";
+				WebLafGSA.showNotification("Batch Rejected", message, MessageType.INFO);
 			}
 			else{
-				log.info("sending waiting time:" + CumulativeWaitingTime + " ms" + " : " +JobToSend.getCurrentOperationNumber() );
-				ZoneDataUpdate NegotiationUpdate = new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation)
-				.value(JobToSend).setReplyWith(msgReplyID).Build();
+				log.info("sending waiting time:" + CumulativeWaitingTime + " ms" + " : " 
+						+ JobToSend.getCurrentOperationNumber() );
+
+				ZoneDataUpdate NegotiationUpdate = new ZoneDataUpdate.
+						Builder(ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation).
+						value(JobToSend).
+						setReplyWith(msgReplyID).
+						Build();
+
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);	
 			}
 			step = 5;
 			break;
-
 		}   
 	}
 
@@ -209,7 +209,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			}
 
 		}
-		return MaxwaitingTimeMsg; //return maximum of all waiting times recieved from LSAs
+		//return maximum of all waiting times received from LSAs
+		return MaxwaitingTimeMsg; 
 	}
 
 	@Override
@@ -219,11 +220,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 	@Override
 	public EndState getEndState() {
-		if(step >= 5) {
-			return EndState.SUCCESSFUL;
-		}
-		else{
-			return EndState.FAILED;
-		}
+		return (step >= 5) ? EndState.SUCCESSFUL : null;
 	}
 }

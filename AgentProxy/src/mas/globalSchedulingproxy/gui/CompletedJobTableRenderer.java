@@ -2,44 +2,26 @@ package mas.globalSchedulingproxy.gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javax.swing.AbstractCellEditor;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import mas.jobproxy.job;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.alee.extended.menu.DynamicMenuType;
-import com.alee.extended.menu.WebDynamicMenu;
-import com.alee.extended.menu.WebDynamicMenuItem;
-import com.alee.laf.WebLookAndFeel;
-import com.alee.laf.combobox.WebComboBox;
-import com.alee.laf.text.WebTextField;
-import com.alee.log.Log;
-import com.alee.utils.SwingUtils;
 
-
-public class CompletedJobTileCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
-//same as cyrrentJobTileCell without dynamic menu
+public class CompletedJobTableRenderer extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
+	private static final long serialVersionUID = 1L;
+	//same as cyrrentJobTileCell without dynamic menu
 	private JLabel batchID,dueDate,/*startDate,*/priorityText,batchNo;
 	private JPanel tile;
 //	private JButton more;
@@ -48,7 +30,7 @@ public class CompletedJobTileCell extends AbstractCellEditor implements TableCel
 	private final Format formatter = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
 	protected Logger log=LogManager.getLogger();
     
-	public CompletedJobTileCell(){
+	public CompletedJobTableRenderer(){
 		tile=new JPanel(new MigLayout("",
 				"[]10",
 				""

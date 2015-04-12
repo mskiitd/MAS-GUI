@@ -52,27 +52,29 @@ public abstract class AbstractGSCapability  extends Capability {
 	public static Set<Belief<?>> getBeliefs() {
 		Set<Belief<?>> beliefs = new HashSet<Belief<?>>();
 
-		Belief<AID> BB_AID = new TransientBelief<AID>(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent);		
+		Belief<AID> BB_AID = new TransientBelief<AID>(
+				ID.GlobalScheduler.BeliefBaseConst.blackboardAgent);		
 
 		Belief<String> DueDateCalcMethod = new TransientBelief<String>(ID.GlobalScheduler.
 				BeliefBaseConst.DueDateCalcMethod);
 
 		//no of machines = no. of LSA		
-		Belief<Integer> NoOfMachines=new TransientBelief<Integer>(ID.GlobalScheduler.
+		Belief<Integer> NoOfMachines = new TransientBelief<Integer>(ID.GlobalScheduler.
 				BeliefBaseConst.NoOfMachines);
 
-		Belief<Batch> query = new TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob);
+		Belief<Batch> query = new TransientBelief<Batch>(
+				ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob);
 
-		Belief<Batch> underNegotiation = new 
-				TransientBelief<Batch>(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
+		Belief<Batch> underNegotiation = new TransientBelief<Batch>(
+				ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
 
 		Belief<WebLafGSA> GSA_gui = new TransientBelief<WebLafGSA>(
 				ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance); 
 
-		Belief<BatchDataBase> dBase = new TransientBelief<BatchDataBase>(ID.GlobalScheduler.BeliefBaseConst.batchDatabase);
+		Belief<BatchDataBase> dBase = new TransientBelief<BatchDataBase>(
+				ID.GlobalScheduler.BeliefBaseConst.batchDatabase);
 
 		dBase.setValue(null);
-		BB_AID.setValue(new AID(ID.Blackboard.LocalName,false));
 		DueDateCalcMethod.setValue(ID.GlobalScheduler.OtherConst.LocalDueDate);
 		underNegotiation.setValue(null);
 

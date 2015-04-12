@@ -52,7 +52,7 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 //			jDimensions.get(dIndex).setConforming(conforming);
 //		}
 //		comingJob.setCurrentOperationDimension(jDimensions);
-		comingJob.setCompletionTime(System.currentTimeMillis());
+		comingJob.setCurrentOperationCompletionTime(System.currentTimeMillis());
 		
 		log.info("start time was " + comingJob.getStartTimeByCust() );
 		log.info("Completion time : " + comingJob.getCurrentOperationDueDate());

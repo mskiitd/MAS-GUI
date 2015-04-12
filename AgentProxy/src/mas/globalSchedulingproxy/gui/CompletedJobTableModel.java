@@ -2,22 +2,19 @@ package mas.globalSchedulingproxy.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
-
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 
-public class CompletedJobTileRenderer extends AbstractTableModel implements TableModel {
+public class CompletedJobTableModel extends AbstractTableModel implements TableModel {
 
+	private static final long serialVersionUID = 1L;
 	List<JobTile> jobTiles=null; 
-	
-	public CompletedJobTileRenderer(){
+
+	public CompletedJobTableModel(){
 		this.jobTiles=new ArrayList<JobTile>();
 	}
-	
+
 	@Override
 	public Class<?> getColumnClass(int index) {
 		return JobTile.class ;
@@ -58,13 +55,8 @@ public class CompletedJobTileRenderer extends AbstractTableModel implements Tabl
 		return true;
 	}
 
-
-
 	public void addBatch(Batch b){
-			jobTiles.add(new JobTile(b));
-			super.fireTableRowsInserted(getRowCount()+1, getRowCount()+1);
+		jobTiles.add(new JobTile(b));
+		super.fireTableRowsInserted(getRowCount()+1, getRowCount()+1);
 	}
-
-
-
-	}
+}

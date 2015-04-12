@@ -1,16 +1,9 @@
 package mas.globalSchedulingproxy.gui;
-import java.awt.Font;
+
 import java.util.Date;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import net.miginfocom.swing.*;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 
-public class JobTile{
+public class JobTile {
 
 	private String jobID, jobName;
 	private Date custStartDate;

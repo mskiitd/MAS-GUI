@@ -361,6 +361,12 @@ public class Batch implements Serializable {
 		return this.getSampleJob().getCurrentOperationProcessTime() * getBatchCount();
 	}
 
+	/**
+	 * set processing time for current operation for each job in the batch.
+	 * processingTime is the time for one job of the corresponding operation
+	 * in the batch and not for the whole batch.
+	 * @param processingTime
+	 */
 	public void setCurrentOperationProcessingTime(long processingTime) {
 		for(int i = 0; i < jobsInBatch.size() ; i++ ) {
 			this.jobsInBatch.get(i).setCurrentOperationProcessingTime(processingTime);
@@ -406,8 +412,7 @@ public class Batch implements Serializable {
 
 	public void resetCurrentOperationNumber() {
 		this.currentOperationIndex = 0;
-		isBatchComplete=false;
-		
+		isBatchComplete = false;
 		for(int i = 0; i < jobsInBatch.size(); i++) {
 			jobsInBatch.get(i).resetOpnNoToZero();
 		}

@@ -18,12 +18,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.JobQueryObject;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
@@ -60,9 +60,7 @@ public class GSAproxyGUI extends JFrame{
 	public GSAproxyGUI(GlobalSchedulingAgent gAgent) {
 
 		this.gAgent = gAgent;
-
 		menuItemQuery = new JMenuItem("Query Order");
-
 		menuItemQuery.addActionListener(new menuItemClickListener());
 
 		this.tPanes = new JTabbedPane(JTabbedPane.TOP);
@@ -125,30 +123,51 @@ public class GSAproxyGUI extends JFrame{
 	public static void showQueryResult(JobQueryObject response) {
 		JobQueryReplyFrame reply = new JobQueryReplyFrame(response);
 	}
-	
-	public void addAcceptedJobToList(Batch j) {
-		acceptedJobVector.addElement(j);
-		TableUtil.setColumnWidths(jobsInSystemTable);
-		jobsInSystemTable.revalidate();
-		jobsInSystemTable.repaint();
-	}
 
 	/**
+	 * Runs on EDT
 	 * @param j
 	 */
+	public void addAcceptedJobToList(Batch j) {
+		acceptedJobVector.addElement(j);
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				TableUtil.setColumnWidths(jobsInSystemTable);
+				jobsInSystemTable.revalidate();
+				jobsInSystemTable.repaint();
+			}
+		});
+	}
+
+	/** Runs on EDT
+	 *  @param j
+	 */
 	public void addCompletedJob(Batch j) {
-		
+
 		if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.removeElement(j);
-			jobsInSystemTable.revalidate();
-			jobsInSystemTable.repaint();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					jobsInSystemTable.revalidate();
+					jobsInSystemTable.repaint();
+				}
+			});
 		}
-		
+
 		completedJobVector.addElement(j);
-		TableUtil.setColumnWidths(completedJobsTable);
-		completedJobsTable.revalidate();
-		completedJobsTable.repaint();
+		acceptedJobVector.removeElement(j);
 		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				TableUtil.setColumnWidths(completedJobsTable);
+				completedJobsTable.revalidate();
+				completedJobsTable.repaint();
+			}
+		});
 	}
 
 	class menuItemClickListener implements ActionListener {
@@ -158,9 +177,7 @@ public class GSAproxyGUI extends JFrame{
 			JMenuItem menu = (JMenuItem) event.getSource();
 			if (menu == menuItemQuery) {
 				currentSelecetdQueryJob = jobsInSystemTable.getSelectedRow();
-				
-//				gAgent.queryJob((Batch) acceptedJobVector.get(currentSelecetdQueryJob));
-
+				//				gAgent.queryJob((Batch) acceptedJobVector.get(currentSelecetdQueryJob));
 			} 
 		}
 	}
@@ -259,7 +276,7 @@ public class GSAproxyGUI extends JFrame{
 				value = j.getSampleJob().getOperations();
 				break;
 			default:
-				value = "null";
+				value = "not_found";
 				break;
 			}
 			return value;
