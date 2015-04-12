@@ -4,10 +4,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -16,11 +14,11 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-
 import com.alee.laf.WebLookAndFeel;
 
 public class TableUtil {
 	public static Font font;
+	public static Font defaultFont;
 	public static Font headings;
 
 	public static void setUIFont (FontUIResource f){
@@ -34,41 +32,35 @@ public class TableUtil {
 	} 
 
 	public static void loadFont() {
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-				try {
-					File font_file = new File("resources/Inconsolata.otf");
-					Font iconSolataFont = Font.createFont(Font.TRUETYPE_FONT, font_file);
-					ge.registerFont(iconSolataFont);
-					
-					font = iconSolataFont.deriveFont(Font.PLAIN, 18f);
-					headings = iconSolataFont.deriveFont(Font.BOLD, 20f);
-					
-					WebLookAndFeel.install ();
-					//					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-					//						if ("Nimbus".equals(info.getName())) {
-					//							UIManager.setLookAndFeel(info.getClassName());
-					//							break;
-					//						}
-					//					}
-					TableUtil.setUIFont (new FontUIResource(font));
-				} catch (FontFormatException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} 
+								GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+				//					File font_file = new File("resources/Inconsolata.otf");
+				//					Font iconSolataFont = Font.createFont(Font.TRUETYPE_FONT, font_file);
+				//					ge.registerFont(iconSolataFont);
+				defaultFont = new Font("Sans Serif", Font.PLAIN, 12);
+				font = defaultFont.deriveFont(Font.PLAIN, 14f);
+				headings = defaultFont.deriveFont(Font.BOLD, 18f);
+
+				WebLookAndFeel.install ();
+				TableUtil.setUIFont (new FontUIResource(font)); 
+				//					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				//						if ("Nimbus".equals(info.getName())) {
+				//							UIManager.setLookAndFeel(info.getClassName());
+				//							break;
+				//						}
+				//					}
 			}
 		} );
 	}
-	
+
 	public static boolean checkIfExists(JComponent parent,JComponent child) {
-		
+
 		if(child.getParent() == null)
 			return false;
-		
+
 		return child.getParent().equals(parent);
 	}
 

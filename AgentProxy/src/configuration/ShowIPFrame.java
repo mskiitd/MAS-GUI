@@ -16,7 +16,8 @@ import net.miginfocom.swing.MigLayout;
 public class ShowIPFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	AgentToStart agent;
+	private AgentToStart agent;
+	private JTextArea ipJtext;
 	
 	public ShowIPFrame(AgentToStart a) {
 
@@ -24,7 +25,7 @@ public class ShowIPFrame extends JFrame {
 		setTitle("IP configuration");
 		setLayout(new MigLayout());
 		JLabel msg = new JLabel("Enter IP address");
-		JTextArea ipJtext = new JTextArea(1, 15);
+		ipJtext = new JTextArea(1, 15);
 		ipJtext.setEditable(true);
 
 		JButton OKbtn = new JButton("OK");
@@ -37,6 +38,7 @@ public class ShowIPFrame extends JFrame {
 					
 					@Override
 					public void run() {
+						AgentStarter.ipAddress = ipJtext.getText();
 						AgentStarter.start(agent);
 					}
 				}).start();
