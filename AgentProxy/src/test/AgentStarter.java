@@ -36,12 +36,11 @@ public class AgentStarter {
 	private static ConfigFrame config;
 
 	public static void start(AgentToStart agentNameToStart) {
-		TableUtil.loadFont();
 		agents = new HashMap<String, Agent>();
 		lAgents = new ArrayList<LocalSchedulingAgent>();
 
 		switch(agentNameToStart) {
-		
+
 		case GSA:
 			agents.put(ID.Blackboard.LocalName, new blackboard());
 			agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
@@ -62,7 +61,7 @@ public class AgentStarter {
 		case customer:
 			agents.put(ID.Customer.LocalName, new CustomerAgent());		
 			break;
-			
+
 		case All:
 			agents = new HashMap<String, Agent>();
 			lAgents = new ArrayList<LocalSchedulingAgent>();
@@ -103,8 +102,8 @@ public class AgentStarter {
 	public static void main(String[] args) {
 		/*PropertyConfigurator.configure(AgentStarter.class
 				.getResource("log4j.properties"));		*/
+		TableUtil.loadFont();
 		SwingUtilities.invokeLater(new Runnable() {
-			
 			@Override
 			public void run() {
 				config = new ConfigFrame();
@@ -114,7 +113,6 @@ public class AgentStarter {
 
 	public AgentStarter() {
 		log = LogManager.getLogger();
-
 		List<String> params = new ArrayList<String>();
 		//						params.add("-gui");
 

@@ -162,7 +162,6 @@ public class DefineJobFrame extends JFrame{
 		myPanel.add(lblDueDate);
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
-
 		//		operationPanel.add(lblOpsHeading);
 		//		operationPanel.add(txtNumOps);
 		//		operationPanel.add(btnOperationPlus,"wrap");

@@ -15,7 +15,7 @@ import mas.machineproxy.gui.MachineGUI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AddJobBehavior extends Behaviour {
+public class LoadJobBehavior extends Behaviour {
 
 	private static final long serialVersionUID = 1L;
 	private job comingJob;
@@ -29,10 +29,13 @@ public class AddJobBehavior extends Behaviour {
 	private MachineGUI gui;
 	private ScheduledThreadPoolExecutor executor;
 
-	public AddJobBehavior(job comingJob) {
+	public LoadJobBehavior(job comingJob, Simulator machineSim) {
 		this.comingJob = comingJob;
 		this.IsJobComplete = false;
 		log = LogManager.getLogger();
+		this.machineSimulator = machineSim;
+		getDataStore().put(Simulator.simulatorStoreName, machineSimulator);
+		gui = machineSimulator.getGui();
 	}
 
 	public void action() {
@@ -40,66 +43,55 @@ public class AddJobBehavior extends Behaviour {
 		switch(step) {
 		// in step 0 generate processing times
 		case 0:
-			if(! comingJob.getJobID().equals(inspectionJobId)) {
 
-				if(this.machineSimulator == null) {
-					this.machineSimulator = (Simulator) getDataStore().
-							get(Simulator.simulatorStoreName);
-					gui = machineSimulator.getGui();
-					
-				}
+			machineSimulator.setStatus(MachineStatus.PROCESSING);
+			gui.machineProcessing(comingJob.getJobID(), comingJob.getCurrentOperation().getJobOperationType());
 
-				machineSimulator.setStatus(MachineStatus.PROCESSING);
-
-				gui.machineProcessing(comingJob.getJobID(),
-						comingJob.getCurrentOperation().getJobOperationType());
-
-				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessTime()/1000.0;
-
-				comingJob.setCurrentOperationStartTime(System.currentTimeMillis());
-				/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
+			double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessTime()/1000.0;
+			comingJob.setCurrentOperationStartTime(System.currentTimeMillis());
+			/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time before loading/unloading: " + comingJob.getCurrentOperationProcessTime());*/
 
-				double newProcessingTime =
-						Methods.normalRandom(ProcessingTimeInSeconds,/*
+			double newProcessingTime =
+					Methods.normalRandom(ProcessingTimeInSeconds,/*
 						getCurrentOperationProcessTime gives time in milliseconds*/
-								ProcessingTimeInSeconds*machineSimulator.getPercentProcessingTimeVariation())+
-								Methods.getLoadingTime(machineSimulator.getMeanLoadingTime(),
-										machineSimulator.getSdLoadingTime()) +
-										Methods.getunloadingTime(machineSimulator.getMeanUnloadingTime(),
-												machineSimulator.getSdUnloadingTime());
+							ProcessingTimeInSeconds*machineSimulator.getPercentProcessingTimeVariation())+
+							Methods.getLoadingTime(machineSimulator.getMeanLoadingTime(),
+									machineSimulator.getSdLoadingTime()) +
+									Methods.getunloadingTime(machineSimulator.getMeanUnloadingTime(),
+											machineSimulator.getSdUnloadingTime());
 
-				//this will introduce error
-				comingJob.setCurrentOperationProcessingTime((long) newProcessingTime) ; 
-				//ex. 0.1 with be converted into 0
+			//this will introduce error
+			comingJob.setCurrentOperationProcessingTime((long) newProcessingTime) ; 
+			//ex. 0.1 with be converted into 0
 
-				processingTime = comingJob.getCurrentOperationProcessTime();
-				passedTime = 0;
+			processingTime = comingJob.getCurrentOperationProcessTime();
+			passedTime = 0;
 
-				if(processingTime <= 0) {
-					processingTime = 1;// 1 milliseconds
-					log.info("ATTENTION : -ve processing time");
-				} //if processingTime=0, this behviour goes into infinite loop
+			if(processingTime <= 0) {
+				processingTime = 1;// 1 milliseconds
+				log.info("ATTENTION : -ve processing time");
+			} //if processingTime=0, this behviour goes into infinite loop
 
 
-				log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
-						"processing time : " + comingJob.getCurrentOperationProcessTime());
+			log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
+					"processing time : " + comingJob.getCurrentOperationProcessTime());
 
-				if( processingTime > 0 ) {
-					executor = new ScheduledThreadPoolExecutor(1);
-					executor.scheduleAtFixedRate(new timeProcessing(), 0,
-							Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
-					step = 1;
-				}
+			if( processingTime > 0 ) {
+				executor = new ScheduledThreadPoolExecutor(1);
+				executor.scheduleAtFixedRate(new timeProcessing(), 0,
+						Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
+				step = 1;
 			}
-			else if(comingJob.getJobID().equals(inspectionJobId)) { 
-				log.info("Inspection Job loading");
-				IsJobComplete = true;
-				HandleInspectionJobBehavior inspector = 
-						new HandleInspectionJobBehavior(comingJob);
-				inspector.setDataStore(this.getDataStore());
-				myAgent.addBehaviour(inspector);
-			}
+			//			}
+			//			else if(comingJob.getJobID().equals(inspectionJobId)) { 
+			//				log.info("Inspection Job loading");
+			//				IsJobComplete = true;
+			//				HandleInspectionJobBehavior inspector = 
+			//						new HandleInspectionJobBehavior(comingJob);
+			//				inspector.setDataStore(this.getDataStore());
+			//				myAgent.addBehaviour(inspector);
+			//			}
 			break;
 
 		case 1:

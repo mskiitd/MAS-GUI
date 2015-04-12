@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import mas.jobproxy.Batch;
@@ -102,44 +103,20 @@ public class MachineGUI extends JFrame {
 	private String currOperationId = null;
 
 	private int maintJobCounter = 0;
-	private String notificationSound;
+	private static String notificationSound = "resources/notification.wav";;
 	private static AudioStream audioStream;
 
 	public MachineGUI(LocalSchedulingAgent agent) {
 
 		this.lAgent = agent;
 		log = LogManager.getLogger();
-		
-		notificationSound = "resources/notification.wav";
 
 		this.mcPanel = new JPanel(new BorderLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
 		this.currentOpPanel = new FadingPanel();
 		initButtons();
-
-		InputStream in = null;
-		try {
-			in = new FileInputStream(notificationSound);
-			audioStream = new AudioStream(in);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		Image image = Toolkit.getDefaultToolkit().getImage("resources/repair_64.png");
-		customerTrayIcon = new TrayIcon(image, lAgent.getLocalName());
-		if (SystemTray.isSupported()) {
-			SystemTray tray = SystemTray.getSystemTray();
-
-			customerTrayIcon.setImageAutoSize(true);
-			try {
-				tray.add(customerTrayIcon);
-			} catch (AWTException e) {
-				log.info("TrayIcon could not be added.");
-			}
-		}
+		loadTrayIcon();
 
 		try {
 			machineIcon = ImageIO.read(new File("resources/machine1.png"));
@@ -183,6 +160,27 @@ public class MachineGUI extends JFrame {
 		machineIdle();
 		add(parentPanel);
 		showGui();
+	}
+
+	private void loadTrayIcon() {
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Image image = Toolkit.getDefaultToolkit().getImage("resources/repair_64.png");
+				customerTrayIcon = new TrayIcon(image, lAgent.getLocalName());
+				if (SystemTray.isSupported()) {
+					SystemTray tray = SystemTray.getSystemTray();
+
+					customerTrayIcon.setImageAutoSize(true);
+					try {
+						tray.add(customerTrayIcon);
+					} catch (AWTException e) {
+						log.info("TrayIcon could not be added.");
+					}
+				}
+			}
+		}).start();
 	}
 
 	public Simulator getMachineSimulator() {
@@ -280,9 +278,15 @@ public class MachineGUI extends JFrame {
 	public void machineProcessing(String id, String operation) {
 		this.currentBatchId = id;
 		this.currOperationId = operation;
-		this.currentOpPanel.setCurrentOperation(id, operation);
-		this.lblMachineStatus.setText("Processing");
-		this.lblMachineStatus.setForeground(CustomJobQueue.firstJobColor);
+		currentOpPanel.setCurrentOperation(id, operation);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				lblMachineStatus.setText("Processing");
+				lblMachineStatus.setForeground(CustomJobQueue.firstJobColor);
+			}
+		});
 	}
 
 	public void machineMaintenance() {
@@ -306,9 +310,15 @@ public class MachineGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource().equals(btnLoadJob)) {
 				if(machineSimulator != null) {
-					machineSimulator.loadJob();
 					btnUnloadJob.setEnabled(true);
 					btnLoadJob.setEnabled(false);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							machineSimulator.loadJob();
+						}
+					}).start();
 				}
 				else{
 					log.info("machineSimulator = " + machineSimulator);
@@ -317,35 +327,63 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnUnloadJob)) {
 
 				if(machineSimulator != null) {
-					machineSimulator.unloadJob();
+
 					btnUnloadJob.setEnabled(false);
 					btnLoadJob.setEnabled(true);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							machineSimulator.unloadJob();
+						}
+					}).start();
 				}
 
 			} else if(e.getSource().equals(btnFailMachineButton)) {
 
 				if(machineSimulator != null) {
-					machineSimulator.setStatus(MachineStatus.FAILED);
+
 					machineFailed();
 					btnFailMachineButton.setEnabled(false);
 					btnLoadJob.setEnabled(false);
 					btnUnloadJob.setEnabled(false);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							machineSimulator.setStatus(MachineStatus.FAILED);
+						}
+					}).start();
 				}
 
 			} else if(e.getSource().equals(btnRepairMachine)) {
 
 				if(machineSimulator != null) {
-					machineSimulator.repair();
+
 					machineResume();
 					btnFailMachineButton.setEnabled(true);
 					btnRepairMachine.setEnabled(false);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							machineSimulator.repair();
+						}
+					}).start();
+
 				}
 			}
 		}
 	}
 
 	public void enableRepair() {
-		this.btnRepairMachine.setEnabled(true);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				btnRepairMachine.setEnabled(true);
+			}
+		});
 	}
 
 	private void machineResume() {
@@ -469,8 +507,24 @@ public class MachineGUI extends JFrame {
 			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
 			break;
 		}
-		// play the audio clip with the audio player class
-		AudioPlayer.player.start(audioStream);
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				InputStream in = null;
+				try {
+					in = new FileInputStream(notificationSound);
+					audioStream = new AudioStream(in);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				// play the audio clip with the audio player class
+				AudioPlayer.player.start(audioStream);
+			}
+		}).start();
 	}
 
 	class menuItemListener implements ActionListener {
@@ -512,13 +566,19 @@ public class MachineGUI extends JFrame {
 			break;
 		}
 	}
-	
+
 	private void markMachineDown(String msg) {
-		JOptionPane.showMessageDialog(this, msg, "Dialog", JOptionPane.WARNING_MESSAGE);
+		final String msgToShow = msg;
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(MachineGUI.this, msgToShow, "Dialog", JOptionPane.WARNING_MESSAGE);
+				showNotification("Machine Paused", "Maintenance is pending.", MessageType.WARNING);
+			}
+		});
 		machineSimulator.setStatus(MachineStatus.PAUSED);
-		showNotification("Machine Paused", "Maintenance is pending.", MessageType.WARNING);
 	}
-	
+
 	public void resumeMachine() {
 		machineSimulator.setStatus(MachineStatus.IDLE);
 	}
@@ -534,16 +594,29 @@ public class MachineGUI extends JFrame {
 	}
 
 	public void showNoMaintJobPopup() {
-		JOptionPane.showMessageDialog(this, "No Maintenance Job to be done.");
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(MachineGUI.this, "No Maintenance Job to be done.");
+			}
+		});
+
 	}
 
-	public void pendingMaintPopUp(String msg) {
-		JOptionPane.showMessageDialog(this, msg, "Dialog", JOptionPane.WARNING_MESSAGE);
-		showNotification("Maintenance Job", "Maintenance is Pending.", MessageType.WARNING);
+	public void pendingMaintPopUp(final String msg) {
+		final String msgToShow = msg;
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(MachineGUI.this, msgToShow, "Dialog", JOptionPane.WARNING_MESSAGE);
+				showNotification("Maintenance Job", "Maintenance is Pending.", MessageType.WARNING);				
+			}
+		});
+
 	}
 
 	public boolean isMachinePaused() {
 		return machineSimulator.getStatus() == MachineStatus.PAUSED;
 	}
-
 }

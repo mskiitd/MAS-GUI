@@ -19,7 +19,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
@@ -355,12 +355,21 @@ public class DisplayOperationPanel extends JPanel {
 	public boolean datasaved() {
 		return this.dataSaved;
 	}
-
+	
+	/**
+	 * on edt
+	 */
 	public void reset() {
 		this.dataSaved = true;
-		txtOperationCost.setText("");
-		txtOperationID.setText("");
-		txtProcessingTime.setText("");
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				txtOperationCost.setText("");
+				txtOperationID.setText("");
+				txtProcessingTime.setText("");
+			}
+		});
 		
 	}
 }

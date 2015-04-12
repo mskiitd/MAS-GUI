@@ -9,19 +9,16 @@ import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
-import jade.lang.acl.MessageTemplate;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptBatchBehavior;
-import mas.machineproxy.behaviors.AcceptJobFromBatchBehavior;
+import mas.machineproxy.behaviors.TakeJobFromBatchBehavior;
 import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
 import mas.machineproxy.behaviors.LoadMachineParameterBehavior;
@@ -35,13 +32,9 @@ import mas.machineproxy.parametrer.Parameter;
 import mas.machineproxy.parametrer.RootCause;
 import mas.util.AgentUtil;
 import mas.util.ID;
-import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import com.alee.log.Log;
 
 public class Simulator extends Agent implements IMachine,Serializable {
 
@@ -51,7 +44,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	public transient static String machineStatusProperty = "_machineStatusProperty";
 
 	// time step in milliseconds
-	public static int TIME_STEP = 100;
+	public static int TIME_STEP = 500;
 
 	public static long healthReportTimeMillis = 5000;
 
@@ -525,7 +518,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	}
 
 	public void loadJob() {
-		addBehaviour(new AcceptJobFromBatchBehavior(Simulator.this));
+		addBehaviour(new TakeJobFromBatchBehavior(Simulator.this));
 	}
 
 	public void unloadJob() {

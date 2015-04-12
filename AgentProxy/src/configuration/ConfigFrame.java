@@ -4,15 +4,12 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
-
 import test.AgentStarter;
 import net.miginfocom.swing.MigLayout;
-
 import com.alee.extended.breadcrumb.WebBreadcrumbPanel;
 import com.alee.extended.layout.VerticalFlowLayout;
 import com.alee.laf.radiobutton.WebRadioButton;
@@ -42,7 +39,7 @@ public class ConfigFrame extends JFrame {
 		add(panel1, "wrap");
 
 		JButton submit = new JButton();
-		submit.setText("OK, start this agent");
+		submit.setText("Ok, Start this agent");
 
 		ActionListener selectionListener = new ActionListener() {
 			@Override
@@ -53,16 +50,16 @@ public class ConfigFrame extends JFrame {
 					dispose();
 				}
 				else if(machineBtn.isSelected()) {
-					dispose();
 					runObj = new runner(AgentToStart.Machine);
+					dispose();
 				}
 				else if(customerbtn.isSelected()) {
-					dispose();
 					runObj = new runner(AgentToStart.customer);
+					dispose();
 				}
 				else if(allAgentsbtn.isSelected()) {
-					dispose();
 					runObj = new runner(AgentToStart.All);
+					dispose();
 				}
 				
 				if(runObj != null) {

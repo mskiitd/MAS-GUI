@@ -2,8 +2,11 @@ package mas.machineproxy.gui.custompanels;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 
@@ -26,9 +29,20 @@ public class FadingPanel extends JPanel {
 		add(lblCurrOp);
 	}
 
+	/**
+	 * on edt
+	 */
 	public void setCurrentOperation(String jobNo, String opId) {
-		lblCurrJob.setText("Current Job No : " + jobNo);
-		lblCurrOp.setText("Current Operation : " + opId);
+		final String jNum = jobNo;
+		final String oId = opId;
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				lblCurrJob.setText("Current Job No : " + jNum);
+				lblCurrOp.setText("Current Operation : " + oId);
+			}
+		});
+		
 	}
 
 	@Override
@@ -45,8 +59,17 @@ public class FadingPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * on edt
+	 */
 	public void reset() {
-		lblCurrJob.setText("");
-		lblCurrOp.setText("");
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				lblCurrJob.setText("");
+				lblCurrOp.setText("");
+			}
+		});
 	}
 }

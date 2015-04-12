@@ -8,7 +8,7 @@ import mas.machineproxy.Simulator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AcceptJobFromBatchBehavior extends Behaviour {
+public class TakeJobFromBatchBehavior extends Behaviour {
 
 	private static final long serialVersionUID = 1L;
 	private transient Logger log;
@@ -19,18 +19,19 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 	private long time;
 	private long LIMIT = 10000;
 
-	public AcceptJobFromBatchBehavior(Simulator simulator) {
+	public TakeJobFromBatchBehavior(Simulator simulator) {
 		log = LogManager.getLogger();
 
 		machineSimulator = simulator;
 		getDataStore().put(Simulator.simulatorStoreName, simulator);
-
+		currBatch = machineSimulator.getCurrentBatch();
 		time = System.currentTimeMillis();
 	}
 
 	@Override
 	public void action() {
-		if(machineSimulator.getStatus() != MachineStatus.FAILED) {
+		if(machineSimulator.getStatus() != MachineStatus.FAILED && 
+				machineSimulator.getStatus() != MachineStatus.PAUSED ) {
 
 			switch(step) {
 			case 0:
@@ -41,7 +42,7 @@ public class AcceptJobFromBatchBehavior extends Behaviour {
 					this.jobFromBatch = currBatch.getCurrentJob();
 					currBatch.incrementCurrentJob();
 
-					AddJobBehavior addjob = new AddJobBehavior(this.jobFromBatch);
+					LoadJobBehavior addjob = new LoadJobBehavior(this.jobFromBatch,machineSimulator);
 					addjob.setDataStore(getDataStore());
 					myAgent.addBehaviour(addjob);
 
