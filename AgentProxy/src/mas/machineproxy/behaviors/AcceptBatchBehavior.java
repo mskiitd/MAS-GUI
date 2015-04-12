@@ -12,6 +12,14 @@ import mas.util.MessageIds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** 
+ * @author Anand Prajapati
+ * 
+ * Machine simulator accepts the whole batch without user intervention and when user presses
+ * load button job from batch is loaded.
+ * behavior to accept first batch in the queue from the local scheduling agent
+ * This behavior is paused when the machine is either paused or failed.
+ */
 public class AcceptBatchBehavior extends CyclicBehaviour {
 
 	private static final long serialVersionUID = 1L;
@@ -26,12 +34,10 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 		log = LogManager.getLogger();
 
 		machineSimulator = sim;
-		log.info("simulator = " + sim  + "name :" + sim.getLocalName());
 		getDataStore().put(Simulator.simulatorStoreName, sim);
 
 		batchMsgTemplate = MessageTemplate.
 				MatchConversationId(MessageIds.msgbatchForMachine);
-
 	}
 
 	@Override
@@ -58,7 +64,6 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 							batchToProcess.getStartTimeMillis() + " due date: " +
 							batchToProcess.getDueDateByCustomer() );
 
-					block(100);
 				} 
 				else {
 					block();

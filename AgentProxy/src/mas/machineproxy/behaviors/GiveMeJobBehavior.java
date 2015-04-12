@@ -9,6 +9,10 @@ import mas.util.ZoneDataUpdate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * @author Anand Prajapati
+ * this behavior marks the machine as ready for accepting a new batch
+ */
 public class GiveMeJobBehavior extends OneShotBehaviour{
 
 	private static final long serialVersionUID = 1L;

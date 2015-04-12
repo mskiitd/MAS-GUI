@@ -4,7 +4,6 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import mas.machineproxy.Simulator;
 import mas.machineproxy.SimulatorInternals;
 import mas.machineproxy.gui.MachineGUI;
@@ -48,7 +47,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 			 * update zone data for machine's failure
 			 */
 			gui.machineFailed();
-			log.info("******************** failure machine  : "  + machineInternals);
+			log.info("Machine failed : "  + machineInternals);
 			ZoneDataUpdate machineFailureUpdate  = new ZoneDataUpdate.
 					Builder(ID.Machine.ZoneData.machineFailures).
 					value(machineInternals).
@@ -70,7 +69,7 @@ public class HandleSimulatorFailedBehavior extends Behaviour{
 				try {
 					data = (String) correctiveDataMsg.getContentObject();
 					repairData = data;
-					log.info("Maintenance arrived ~~~~ repair time " + repairData);
+					log.info("Maintenance arrived repair time " + repairData);
 					repairTime = (long) Double.parseDouble(repairData);
 					step = 3;
 				} catch (UnreadableException e) {

@@ -270,16 +270,29 @@ public class MachineGUI extends JFrame {
 		lowerButtonPanel.add(btnUnloadJob, constraints);
 	}
 
+	/**
+	 * Runs on EDT
+	 */
 	public void machineFailed() {
-		this.lblMachineStatus.setText("Failed");
-		this.lblMachineStatus.setForeground(failColor);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				lblMachineStatus.setText("Failed");
+				lblMachineStatus.setForeground(failColor);
+			}
+		});
 	}
 
+	/**
+	 * Runs on EDT
+	 * @param id
+	 * @param operation
+	 */
 	public void machineProcessing(String id, String operation) {
 		this.currentBatchId = id;
 		this.currOperationId = operation;
 		currentOpPanel.setCurrentOperation(id, operation);
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -289,22 +302,36 @@ public class MachineGUI extends JFrame {
 		});
 	}
 
+	/**
+	 * Runs on EDT
+	 */
 	public void machineMaintenance() {
-		this.lblMachineStatus.setText("Under Maintenance");
-		this.lblMachineStatus.setForeground(maintenanceColor);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				lblMachineStatus.setText("Under Maintenance");
+				lblMachineStatus.setForeground(maintenanceColor);
+			}
+		});
 	}
-
+	/**
+	 * Runs on EDT
+	 */
 	public void machineIdle() {
-		this.currentOpPanel.reset();
-		this.lblMachineStatus.setText("Idle");
-		this.lblMachineStatus.setForeground(idleColor);
-		this.btnLoadJob.setEnabled(true);
-		this.btnUnloadJob.setEnabled(false);
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				currentOpPanel.reset();
+				lblMachineStatus.setText("Idle");
+				lblMachineStatus.setForeground(idleColor);
+				btnLoadJob.setEnabled(true);
+				btnUnloadJob.setEnabled(false);
+			}
+		});
 	}
 
 	class buttonPanelListener implements ActionListener {
-
-		private Logger log=LogManager.getLogger();
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -376,8 +403,11 @@ public class MachineGUI extends JFrame {
 		}
 	}
 
+	/**
+	 * Runs on EDT
+	 */
 	public void enableRepair() {
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -386,37 +416,71 @@ public class MachineGUI extends JFrame {
 		});
 	}
 
+	/**
+	 * Runs on EDT
+	 */
 	private void machineResume() {
 		if(this.currentBatchId != null) {
 			machineProcessing(this.currentBatchId,this.currOperationId);
-			btnUnloadJob.setEnabled(true);
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					btnUnloadJob.setEnabled(true);
+				}
+			});
+
 		} else {
 			machineIdle();
 		}
 	}
 
 	/**
-	 * Update the current queue for the machine with the new queue in the GUI
+	 * Update the current queue for the machine with the new queue in the GUI.
+	 * Runs on EDT
 	 * @param newQueue
 	 */
 	public void updateQueue(ArrayList<Batch> newQueue) {
+
 		jobQ.clear();
 		jobQ.addAll(newQueue);
-		queuePanel.revalidate();
-		queuePanel.repaint();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				queuePanel.revalidate();
+				queuePanel.repaint();
+			}
+		});
 	}
 
+	/**
+	 * Runs on EDT
+	 * @param comingJob
+	 */
 	public void addBatchToQueue(Batch comingJob) {
 		jobQ.add(comingJob);
-		queuePanel.revalidate();
-		queuePanel.repaint();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				queuePanel.revalidate();
+				queuePanel.repaint();
+			}
+		});
 	}
-
+	/**
+	 * Runs on EDT
+	 * @param j
+	 */
 	public void removeFromQueue(Batch j) {
 		if(jobQ.contains(j)) {
 			jobQ.remove(j);
-			queuePanel.revalidate();
-			queuePanel.repaint();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					queuePanel.revalidate();
+					queuePanel.repaint();
+				}
+			});
 		}
 	}
 
@@ -477,15 +541,30 @@ public class MachineGUI extends JFrame {
 
 		return menuBar;
 	}
-
+	/**
+	 * Runs on EDT
+	 */
 	public void maintJobArrived() {
-		this.menuItemPmStart.setText("<html><p>Maintenance Start <b>" + ++maintJobCounter + "</b></p></html>");
-		showNotification("Maintenance Job", "Maintenance Has Arrived.", MessageType.INFO);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				menuItemPmStart.setText("<html><p>Maintenance Start <b>" + ++maintJobCounter + "</b></p></html>");
+				showNotification("Maintenance Job", "Maintenance Has Arrived.", MessageType.INFO);
+			}
+		});
 	}
 
+	/**
+	 * Runs on EDT
+	 */
 	private void maintJobDone() {
-		this.menuItemPmStart.setText("<html><p>Maintenance Start <b>" + --maintJobCounter + "</b></p></html>");
-		showNotification("Maintenance Job", "Maintenance Has Finished.", MessageType.INFO);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				menuItemPmStart.setText("<html><p>Maintenance Start <b>" + --maintJobCounter + "</b></p></html>");
+				showNotification("Maintenance Job", "Maintenance Has Finished.", MessageType.INFO);
+			}
+		});
 	}
 
 	public static void showNotification(String title, String message,TrayIcon.MessageType type){

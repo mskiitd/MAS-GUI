@@ -8,7 +8,6 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +16,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -26,9 +26,6 @@ import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableModel;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableRenderer;
-import mas.util.AgentUtil;
-import mas.util.ID;
-import mas.util.ZoneDataUpdate;
 import net.miginfocom.swing.MigLayout;
 
 public class MaintenanceGUI extends JFrame {
@@ -42,13 +39,7 @@ public class MaintenanceGUI extends JFrame {
 	private JPanel[] panelsForTab;
 	private JScrollPane scroller;
 
-	private JButton btnSendPrevMaint;
-
 	private JPanel containerPanel;
-	// time in a week in milliseconds.
-	// this is the time between two consecutive preventive maintenance schedules
-	private long pmInterval = 604800000L;
-
 	//
 	private SpinnerListModel spinnerListModel;
 	private SpinnerNumberModel spinnerNumberModel;
@@ -124,8 +115,18 @@ public class MaintenanceGUI extends JFrame {
 		containerPanel.add(pmPanel, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Runs on EDT
+	 * @param prevMaint
+	 */
 	public void addMaintJobToDisplay(PMaintenance prevMaint) {
-		this.tableModel.addMaintJob(prevMaint);
+		final PMaintenance pm = prevMaint;
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				tableModel.addMaintJob(pm);
+			}
+		});
 	}
 
 	private void initCalenderPane() {
@@ -168,9 +169,17 @@ public class MaintenanceGUI extends JFrame {
 		pmPanel.setNextMaintTime(prevMaintPeriod);
 	}
 
+	/**
+	 * Runs on EDT
+	 */
 	public void showRepairTimeInput() {
-		this.setEnabled(false);
-		correctiveFrame = new CorrectiveMaintenanceFrame(mAgent,this);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				setEnabled(false);
+				correctiveFrame = new CorrectiveMaintenanceFrame(mAgent,MaintenanceGUI.this);
+			}
+		});
 	}
 
 	private void showGui() {

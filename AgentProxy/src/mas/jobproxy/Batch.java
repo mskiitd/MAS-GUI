@@ -391,6 +391,10 @@ public class Batch implements Serializable {
 		}
 	}
 
+	/**
+	 * update the job in the batch with the coming job.
+	 * @param comingJob
+	 */
 	public void updateJob(job comingJob) {
 		int jNum = comingJob.getJobNo();
 		for(int i = 0 ; i < jobsInBatch.size(); i++) {

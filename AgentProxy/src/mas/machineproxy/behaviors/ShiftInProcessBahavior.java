@@ -6,9 +6,6 @@ import mas.machineproxy.Methods;
 import mas.machineproxy.Simulator;
 
 public class ShiftInProcessBahavior extends CyclicBehaviour {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	boolean mean,sd;
 	int count;

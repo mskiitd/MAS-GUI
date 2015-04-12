@@ -48,7 +48,7 @@ public class ManualMachineRepairPlan extends Behaviour implements PlanBody {
 						log.info("recieved machine's failure msg");
 						failedMachine = (SimulatorInternals) msg.getContentObject();
 						bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machineHealth, failedMachine);
-						step ++;
+						step = 1;
 					} catch (UnreadableException e) {
 						e.printStackTrace();
 					}
@@ -61,7 +61,7 @@ public class ManualMachineRepairPlan extends Behaviour implements PlanBody {
 			case 1:
 				if(gui != null) {
 					gui.showRepairTimeInput();
-					step = 2;
+					step = 0;
 				}
 			}
 		}

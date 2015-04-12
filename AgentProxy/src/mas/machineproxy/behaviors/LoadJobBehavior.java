@@ -102,8 +102,11 @@ public class LoadJobBehavior extends Behaviour {
 
 		case 2:
 			IsJobComplete = true;
+			
 			log.info("Job No:" + comingJob.getJobNo() + " operation " + 
-					(comingJob.getCurrentOperationNumber() + 1 ) + "/" + comingJob.getOperations().size() + " completed");
+					(comingJob.getCurrentOperationNumber() + 1 ) + "/" +
+					comingJob.getOperations().size() + " completed");
+			
 			ProcessJobBehavior process = new ProcessJobBehavior(comingJob);
 			process.setDataStore(getDataStore());
 			myAgent.addBehaviour(process);
@@ -118,18 +121,17 @@ public class LoadJobBehavior extends Behaviour {
 		return (IsJobComplete);
 	}
 
+	/**
+	 * If machine is failed it won't do anything.
+	 * Executor will just keep scheduling this task
+	 * 
+	 * It is stuck in calling the executor task again and again until machine is failed
+	 * or the user presses unload button
+	 */
 	class timeProcessing implements Runnable {
 
 		@Override
 		public void run() {
-			/**
-			 * If machine is failed it won't do anything.
-			 * Executor will just keep scheduling this task
-			 * 
-			 * It is stuck in calling the executor task again and again until machine is failed
-			 * or the user presses unload button
-			 */
-
 			if(machineSimulator.getStatus() != MachineStatus.FAILED &&
 					machineSimulator.getStatus() != MachineStatus.PAUSED &&
 					! machineSimulator.isUnloadFlag()) {
@@ -138,8 +140,8 @@ public class LoadJobBehavior extends Behaviour {
 				passedTime += Simulator.TIME_STEP;
 
 			} else if( machineSimulator.isUnloadFlag() )
-//					&& machineSimulator.getStatus() != MachineStatus.FAILED &&
-//					machineSimulator.getStatus() != MachineStatus.PAUSED)
+				//					&& machineSimulator.getStatus() != MachineStatus.FAILED &&
+				//					machineSimulator.getStatus() != MachineStatus.PAUSED)
 			{
 				step = 2;
 				executor.shutdown();

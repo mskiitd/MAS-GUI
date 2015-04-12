@@ -24,9 +24,6 @@ import org.apache.logging.log4j.Logger;
 
 public class GetRootCauseDataBehavior extends OneShotBehaviour{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private  ArrayList<ArrayList<JTextField> > txt_meanShiftParameters = null;
 	private  ArrayList<ArrayList<JTextField> > txt_sdShiftParameters = null;

@@ -213,8 +213,8 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		gui = lAgent.mGUI;
 		// wait until GUI has started for Machine 
 		waitOnGuiThreadExecutor = new ScheduledThreadPoolExecutor(1);
-		waitOnGuiThreadExecutor.scheduleAtFixedRate(new Runnable() {
 
+		waitOnGuiThreadExecutor.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				if(gui != null) {
@@ -224,8 +224,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 					gui = lAgent.mGUI;
 				}
 			}
-		}, 0, 500, TimeUnit.MILLISECONDS );
-		
+		}, 0, 1000, TimeUnit.MILLISECONDS );
 	}
 
 	public MachineGUI getGui() {
@@ -296,10 +295,9 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	}
 
 	public void repair() {
-		this.internals.setStatus(MachineStatus.IDLE) ;
+		setStatus(MachineStatus.IDLE);
 
 		addBehaviour(new OneShotBehaviour() {
-
 			private static final long serialVersionUID = 1L;
 
 			@Override
