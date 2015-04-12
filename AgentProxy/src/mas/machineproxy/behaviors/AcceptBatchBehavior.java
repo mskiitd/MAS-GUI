@@ -58,12 +58,9 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 					} catch (UnreadableException e) {
 						e.printStackTrace();
 					}
-
 					log.info(" Batch No : '" + batchToProcess.getBatchNumber() +
-							"'accepted with starting time : " +
-							batchToProcess.getStartTimeMillis() + " due date: " +
-							batchToProcess.getDueDateByCustomer() );
-
+							"'accepted with processing time : " + batchToProcess.getBatchProcessingTime() +
+							" due date: " + batchToProcess.getDueDateByCustomer() );
 				} 
 				else {
 					block();

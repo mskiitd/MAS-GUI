@@ -88,8 +88,9 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 	
 			AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedBatchUpdate, myAgent);
 			if(gui != null) {
-				log.info("removing from the gui ");
 				gui.removeFromQueue(comingBatch);
+			} else {
+				log.info("Gui of machine is null");
 			}
 	
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine, comingBatch);

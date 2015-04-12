@@ -74,7 +74,8 @@ public class LoadJobBehavior extends Behaviour {
 			} //if processingTime=0, this behviour goes into infinite loop
 
 
-			log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
+			log.info("Job No : " + comingJob.getJobNo() + " Batch No : "  +
+					machineSimulator.getCurrentBatch().getBatchNumber() + " loading with" +
 					"processing time : " + comingJob.getCurrentOperationProcessTime());
 
 			if( processingTime > 0 ) {
@@ -82,6 +83,8 @@ public class LoadJobBehavior extends Behaviour {
 				executor.scheduleAtFixedRate(new timeProcessing(), 0,
 						Simulator.TIME_STEP, TimeUnit.MILLISECONDS);
 				step = 1;
+			} else {
+				log.info("Severe : negative processing time " );
 			}
 			//			}
 			//			else if(comingJob.getJobID().equals(inspectionJobId)) { 
@@ -97,16 +100,16 @@ public class LoadJobBehavior extends Behaviour {
 		case 1:
 			// block for some time in order to avoid too much CPU usage
 			// this won't affect working of the behavior however
-			block(15);
+			block(100);
 			break;
 
 		case 2:
 			IsJobComplete = true;
-			
+
 			log.info("Job No:" + comingJob.getJobNo() + " operation " + 
 					(comingJob.getCurrentOperationNumber() + 1 ) + "/" +
 					comingJob.getOperations().size() + " completed");
-			
+
 			ProcessJobBehavior process = new ProcessJobBehavior(comingJob);
 			process.setDataStore(getDataStore());
 			myAgent.addBehaviour(process);

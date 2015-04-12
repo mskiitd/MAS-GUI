@@ -43,6 +43,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 		return EndState.SUCCESSFUL;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(PlanInstance pInstance) {
 
@@ -75,7 +76,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 	public void action() {
 		//		log.info(comingJob.getBidWinnerLSA());
 		if(comingBatch.getWinnerLSA().equals(myAgent.getAID())) {
-			log.info("Adding the batch" + comingBatch.getBatchId()+  " to queue of lAgnt, " +
+			log.info("Adding the batch" + comingBatch.getBatchId()+  " to queue of agent, " +
 					myAgent.getLocalName());
 
 			comingBatch.setCurrentOperationProcessingTime(operationdb.

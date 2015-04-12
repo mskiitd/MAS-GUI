@@ -72,11 +72,9 @@ public class CurrentJobTileRenderer extends AbstractTableModel implements TableM
 			super.fireTableRowsInserted(0, getRowCount()-1);
 			super.fireTableCellUpdated(0, getRowCount()-1);
 			super.fireTableDataChanged();
-			log.info(b.getBatchNumber()+" "+jt.getBatch().getBatchNumber());
 	}
 
 	public void removeJob(Batch j) {
-		log.info("fired remove batch for "+j.getBatchNumber());
 		int count=0;
 		int tablesize=batchTiles.size()-1;
 		
@@ -88,7 +86,6 @@ public class CurrentJobTileRenderer extends AbstractTableModel implements TableM
 				.getBatch().getBatchNumber()))){
 			count++;
 		}
-		log.info("count="+count);
 		if(count!=batchTiles.size()){
 			batchTiles.remove(count);
 			super.fireTableRowsDeleted(0, tablesize);
