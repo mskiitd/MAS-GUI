@@ -128,7 +128,7 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 		// subscription form for simulator
 		SubscriptionForm simulatorSubform = new SubscriptionForm();
 		String[] simulatorParams = { ID.Machine.ZoneData.finishedBatch,
-				ID.Machine.ZoneData.askJobFromLSA, ID.Machine.ZoneData.askJobFromLSA };
+				ID.Machine.ZoneData.askJobFromLSA};
 		simulatorSubform.AddSubscriptionReq(simulatorTarget, simulatorParams);
 
 		AgentUtil.subscribeToParam(myAgent, bb_aid, simulatorSubform);

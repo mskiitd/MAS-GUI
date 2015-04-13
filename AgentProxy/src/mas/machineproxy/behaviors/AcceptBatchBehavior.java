@@ -51,7 +51,6 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 
 				if (msg != null) {
 					//					machineSimulator.setUnloadFlag(false);
-
 					try {
 						this.batchToProcess = (Batch) msg.getContentObject();
 						machineSimulator.setCurrentBatch(batchToProcess);

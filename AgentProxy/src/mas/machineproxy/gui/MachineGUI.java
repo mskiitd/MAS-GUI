@@ -111,23 +111,23 @@ public class MachineGUI extends JFrame {
 	private int screenHeight;
 	private static String notificationSound = "resources/notification.wav";;
 	private static AudioStream audioStream;
-	
+
 	private static Dimension windowSize;
 
 	public MachineGUI(LocalSchedulingAgent agent) {
 
 		this.lAgent = agent;
-		
+
 		log = LogManager.getLogger();
 
 		layers = new JLayeredPane();
 		maintMsgPanel = new MaintMsgPanel();
-		
+
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		screenWidth = (int) screenSize.getWidth();
 		screenHeight = (int) screenSize.getHeight();
 		windowSize = new Dimension(screenWidth/2,screenHeight);
-		
+
 		this.mcPanel = new JPanel(new VerticalFlowLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
@@ -182,15 +182,15 @@ public class MachineGUI extends JFrame {
 		this.parentPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(mcPanel), queueScroller);
 		this.parentPanel.setDividerLocation(0.30);
 		machineIdle();
-		
+
 		parentPanel.setBounds(0, 0,(int) windowSize.getWidth(),(int) windowSize.getHeight());
 		layers.add(parentPanel, new Integer(0), 0);
-		
+
 		maintMsgPanel.setOpaque(false);
 		maintMsgPanel.setVisible(false);
 		maintMsgPanel.setBounds(0, 0,(int) windowSize.getWidth(),(int) windowSize.getHeight());
 		layers.add(maintMsgPanel, new Integer(1), 1);
-		
+
 		add(layers);
 		showGui();
 	}
@@ -307,6 +307,7 @@ public class MachineGUI extends JFrame {
 	 * Runs on EDT
 	 */
 	public void machineFailed() {
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -413,19 +414,24 @@ public class MachineGUI extends JFrame {
 
 				if(machineSimulator != null) {
 
-					machineFailed();
-					btnFailMachineButton.setEnabled(false);
-					btnLoadJob.setEnabled(false);
-					btnUnloadJob.setEnabled(false);
+					// if the machine isn't loaded with some job, it can't be marked as failed
+					if(!machineSimulator.isUnloadFlag()) {
+						JOptionPane.showMessageDialog(MachineGUI.this, 
+								"Machine cannot fail while idle", "Dialog", JOptionPane.ERROR_MESSAGE);
+					} else {
+						machineFailed();
+						btnFailMachineButton.setEnabled(false);
+						btnLoadJob.setEnabled(false);
+						btnUnloadJob.setEnabled(false);
 
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							machineSimulator.setStatus(MachineStatus.FAILED);
-						}
-					}).start();
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								machineSimulator.setStatus(MachineStatus.FAILED);
+							}
+						}).start();
+					}
 				}
-
 			} else if(e.getSource().equals(btnRepairMachine)) {
 
 				if(machineSimulator != null) {
@@ -657,7 +663,13 @@ public class MachineGUI extends JFrame {
 
 			} else if(e.getSource().equals(menuItemPmStart)) {
 
-				lAgent.addGoal(new StartMaintenanceGoal());
+				// if machine is loaded with some job, you cannot start maintennace
+				if(machineSimulator.isUnloadFlag()) {
+					JOptionPane.showMessageDialog(MachineGUI.this,
+							"Please unload the job first.", "Dialog", JOptionPane.ERROR);
+				}else {
+					lAgent.addGoal(new StartMaintenanceGoal());
+				}
 
 			} else if(e.getSource().equals(menuItemPmDone)) {
 				maintJobDone();
