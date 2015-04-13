@@ -1,18 +1,15 @@
 package mas.globalSchedulingproxy.plan;
 
 import java.awt.TrayIcon.MessageType;
-
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.blackboard.zonedata.ZoneData;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
 import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.JobQueryObject;
@@ -26,7 +23,6 @@ import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-import mas.globalSchedulingproxy.goal.*;
 
 public class QueryFromLSA extends Behaviour implements PlanBody {
 

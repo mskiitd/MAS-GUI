@@ -45,6 +45,7 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 		return EndState.SUCCESSFUL;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(PlanInstance pInstance) {
 		log = LogManager.getLogger();
@@ -78,10 +79,12 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 		return agentType;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void action() {
 		String AgentType = getService(Agent);
 
+		@SuppressWarnings("unchecked")
 		Belief<HashMap<String,ZoneSpace>> ws=(Belief<HashMap<String,ZoneSpace>>)BBBeliefBase.getBelief(AgentType);
 
 		if(ws == null) {
@@ -99,7 +102,7 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 					zs.findZoneData(nzd).addItem(info.getValue(), msgStruct);
 				}
 				else{
-					log.info("couldn't find zone for "+nzd.getName());
+					log.info("couldn't find zone for " + nzd.getName());
 				}
 				ZoneSpaceHashMap.put(Agent.getLocalName(), zs);
 

@@ -129,7 +129,7 @@ public class AgentStarter {
 		int port = 1099;
 		log = LogManager.getLogger();
 		List<String> params = new ArrayList<String>();
-		//						params.add("-gui");
+		params.add("-gui");
 
 		this.runtime = jade.core.Runtime.instance();
 		if(container == MainContainer.local) {

@@ -47,6 +47,7 @@ public class AddAgent extends OneShotBehaviour implements PlanBody {
 		return EndState.SUCCESSFUL;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(PlanInstance PI) {
 
@@ -81,6 +82,7 @@ public class AddAgent extends OneShotBehaviour implements PlanBody {
 		return agentType;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void action() {		  
 		AgentType = getService(AgentToReg);

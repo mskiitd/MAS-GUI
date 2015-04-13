@@ -91,7 +91,7 @@ public class ManualMachineRepairPlan extends Behaviour implements PlanBody {
 		bfBase = planInstance.getBeliefBase();
 
 		this.blackboard = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).
 				getValue();
 
 		gui = (MaintenanceGUI) bfBase.

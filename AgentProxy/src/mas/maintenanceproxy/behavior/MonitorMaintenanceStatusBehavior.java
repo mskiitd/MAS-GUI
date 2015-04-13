@@ -52,7 +52,7 @@ public class MonitorMaintenanceStatusBehavior extends Behaviour{
 				getValue();
 
 		this.blackboard = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).
 				getValue();
 
 		this.pmConfirmation = MessageTemplate.and(

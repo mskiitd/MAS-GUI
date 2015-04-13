@@ -44,7 +44,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 				MessageIds.msgmaintenanceStart);
 
 		this.bba = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).
 				getValue();
 
 		gui = (MaintenanceGUI) bfBase.

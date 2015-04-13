@@ -35,12 +35,7 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 
 	@Override
 	public EndState getEndState() {
-		if(IsActionComplete) {
-			return EndState.SUCCESSFUL;
-		}
-		else {
-			return EndState.FAILED;
-		}
+		return (IsActionComplete) ? EndState.SUCCESSFUL : null;
 	}
 
 	@Override
@@ -51,7 +46,6 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 
 		ACLMessage RecievedMsg = mg.getMessage();
 		WhoWantsTOSubscribe=RecievedMsg.getSender();
-
 		try {					
 			ps = (SubscriptionForm)(mg.getMessage().getContentObject());
 			Subscriptions = ps.GetSubscriptions();
@@ -65,9 +59,8 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		//		log.info("Subscriptions"+Subscriptions);
-
 		for(int k = 0; k < Subscriptions.size(); k++) {
-			
+
 			AID AgentToReg = Subscriptions.get(k).Agent;
 			myAgent.addBehaviour(new SubscribeAgentBehavior(AgentToReg, BBBeliefbase, Subscriptions.get(k),WhoWantsTOSubscribe));						
 		}

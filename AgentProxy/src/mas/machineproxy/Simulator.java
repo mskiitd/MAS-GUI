@@ -9,15 +9,18 @@ import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptBatchBehavior;
+import mas.machineproxy.behaviors.LookUpAgentsBehavior;
 import mas.machineproxy.behaviors.TakeJobFromBatchBehavior;
 import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
@@ -33,6 +36,7 @@ import mas.machineproxy.parametrer.RootCause;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -50,6 +54,9 @@ public class Simulator extends Agent implements IMachine,Serializable {
 
 	// AID of blackboard agent to which it will connect and publish-receive information from
 	public transient static AID blackboardAgent;
+	
+	private transient AID lsAgent;
+	private transient AID maintAgent;
 
 	// name of data store used in behavior's to update this object
 	public transient static String simulatorStoreName = "simulatorStoreName";
@@ -124,6 +131,22 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		//		System.out.println("gui is : "  + localSchedulingAgent + "-----");
 	}
 
+	public AID getLsAgent() {
+		return lsAgent;
+	}
+
+	public void setLsAgent(AID lsAgent) {
+		this.lsAgent = lsAgent;
+	}
+
+	public AID getMaintAgent() {
+		return maintAgent;
+	}
+
+	public void setMaintAgent(AID maintAgent) {
+		this.maintAgent = maintAgent;
+	}
+
 	public Batch getCurrentBatch() {
 		return currentBatch;
 	}
@@ -156,6 +179,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private transient Behaviour reportHealth;
 	private transient Behaviour processDimensionShifter;
 	private transient Behaviour machineParameterShifter;
+	private transient Behaviour lookUpAndStoreAgents;
 
 	private transient ParallelBehaviour functionality ;
 	private transient ThreadedBehaviourFactory tbf;
@@ -196,11 +220,14 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		processDimensionShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 		machineParameterShifter = new ParameterShifterBehavaior();
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
+		
+		lookUpAndStoreAgents = new LookUpAgentsBehavior(Simulator.this);
 
 		functionality.addSubBehaviour(acceptIncomingBatch);
 		//		functionality.addSubBehaviour(reportHealth);
 
 		functionality.addSubBehaviour(processDimensionShifter);
+		functionality.addSubBehaviour(lookUpAndStoreAgents);
 		//		functionality.addSubBehaviour(machineParameterShifter);
 		addBehaviour(tbf.wrap(functionality));
 

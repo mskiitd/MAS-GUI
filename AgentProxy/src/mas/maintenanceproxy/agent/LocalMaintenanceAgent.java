@@ -64,7 +64,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 		
 		blackboard = AgentUtil.findBlackboardAgent(this);
 		bCap.getBeliefBase().updateBelief(
-				ID.Maintenance.BeliefBaseConst.blackboardAgentAID, blackboard);
+				ID.Maintenance.BeliefBaseConst.blackboardAgent, blackboard);
 
 	}
 }

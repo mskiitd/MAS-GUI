@@ -11,14 +11,19 @@ import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.JobSchedulingGoal;
+import mas.localSchedulingproxy.goal.LookUpAgentsLsaGoal;
 import mas.localSchedulingproxy.goal.ReceiveMaintenanceJobGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
+import mas.localSchedulingproxy.goal.SubscribeToGsaLsaGoal;
+import mas.localSchedulingproxy.goal.SubscribeToMachineLsaGoal;
+import mas.localSchedulingproxy.goal.SubscribeToMaintenanceLsaGoal;
 import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
 import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
 import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
 import mas.localSchedulingproxy.plan.FinishMaintenancePlan;
+import mas.localSchedulingproxy.plan.LookUpAgentsLsaPlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
 import mas.localSchedulingproxy.plan.ReceiveDelayedMaintenanceResponsePlan;
 import mas.localSchedulingproxy.plan.ReceiveMaintenanceJobPlan;
@@ -31,6 +36,9 @@ import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
 import mas.localSchedulingproxy.plan.StartMaintenancePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
 import mas.localSchedulingproxy.plan.LoadOperationDatabasePlan;
+import mas.localSchedulingproxy.plan.SubscribeToGsaLsaPlan;
+import mas.localSchedulingproxy.plan.SubscribeToMachineLsaPlan;
+import mas.localSchedulingproxy.plan.SubscribeToMaintenanceLsaPlan;
 import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.util.ID;
@@ -184,6 +192,14 @@ public class AbstractbasicCapability extends Capability {
 		
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgmachineStatus),
 				ReceiveDelayedMaintenanceResponsePlan.class));
+		
+		plans.add(new SimplePlan(SubscribeToMachineLsaGoal.class, SubscribeToMachineLsaPlan.class));
+		
+		plans.add(new SimplePlan(SubscribeToMaintenanceLsaGoal.class, SubscribeToMaintenanceLsaPlan.class));
+		
+		plans.add(new SimplePlan(SubscribeToGsaLsaGoal.class, SubscribeToGsaLsaPlan.class));
+		
+		plans.add(new SimplePlan(LookUpAgentsLsaGoal.class, LookUpAgentsLsaPlan.class));
 
 		return plans;
 	}	
@@ -192,6 +208,7 @@ public class AbstractbasicCapability extends Capability {
 	protected void setup() {
 		myAgent.addGoal(new RegisterLSAgentServiceGoal());
 		myAgent.addGoal(new RegisterLSAgentToBlackboardGoal());
+		myAgent.addGoal(new LookUpAgentsLsaGoal());
 		myAgent.addGoal(new JobSchedulingGoal());
 		myAgent.addGoal(new UpdateOperationDatabaseGoal());
 		myAgent.addGoal(new ReceiveMaintenanceJobGoal());

@@ -50,7 +50,6 @@ public class LookUpAgentsCustomerPlan extends Behaviour implements PlanBody {
 	public void action() {
 		switch(step) {
 		case 0:
-
 			DFAgentDescription[] result;
 			try {
 				result = DFService.search(myAgent, dfd);

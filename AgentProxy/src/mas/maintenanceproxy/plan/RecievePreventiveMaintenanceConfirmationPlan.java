@@ -34,7 +34,7 @@ public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour impl
 		bfBase = planInstance.getBeliefBase();
 
 		this.blackboard = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).
 				getValue();
 		this.pmConfirmaton = MessageTemplate.MatchConversationId(MessageIds.msgMaintConfirmationLSA);
 		this.gui = (MaintenanceGUI) bfBase.

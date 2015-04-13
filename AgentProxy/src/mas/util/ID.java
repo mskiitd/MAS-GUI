@@ -150,11 +150,13 @@ public class ID implements Serializable{
 			public static final String DueDateCalcMethod = "DueDateCalc";
 			public static final String Current_Negotiation_Job = "GSA_negotiatin_job";
 			public static final String GSAqueryJob = "GSA_query_job";
-			public static final String GSA_GUI_instance = "GUIinstanceOfGSA";
+			public static final String GSA_GUI_instance = "GUI_instanceOfGSA";
 			public static final String batchDatabase = "GSA_batchDatabase";
+			public static final String customerList = "GSA_customers";
+			public static final String lsaList = "GSA_lsaAgents";
 		}
 		
-		public class OtherConst{
+		public class OtherConst {
 			public static final String LocalDueDate="Local";
 			public static final String GlobalDueDate = "Global";
 		}
@@ -196,7 +198,7 @@ public class ID implements Serializable{
 		}
 
 		public class BeliefBaseConst {
-			public static final String blackboardAgentAID = "Maintenance_blackboard-agent";
+			public static final String blackboardAgent = "Maintenance_blackboard-agent";
 			public static final String machineHealth = "Maintenance_machine";
 			public static final String globalSchAgentAID = "Maintenance_gsAgent";
 			public static final String dataTracker = "Maintenance_data-tracker";
@@ -204,6 +206,8 @@ public class ID implements Serializable{
 			public static final String correctiveRepairData = "Maintenance_Corrective_Repair_Data" ;
 			public static final String gui_maintenance = "gui_maintenance";
 			public static final String prevMaintFromMachine = "prevMaint_Status_From_Machine";
+			public static final String lsAgent = "Maintenance_LsAgent";
+			public static final String machine = "Maintenance_machine";
 		}
 	}
 

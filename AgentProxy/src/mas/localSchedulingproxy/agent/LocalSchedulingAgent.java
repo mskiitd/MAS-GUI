@@ -58,18 +58,11 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 
 		AID bba = AgentUtil.findBlackboardAgent(this);
 		bfBase = bCap.getBeliefBase();
-		bfBase.updateBelief(
-				ID.LocalScheduler.BeliefBaseConst.blackboardAgent, bba);
+		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent, bba);
 
 		if(mGUI == null) {
 			mGUI = new MachineGUI(LocalSchedulingAgent.this);
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.gui_machine, mGUI);
-
-			ZoneDataUpdate guiUpdate = new ZoneDataUpdate.
-					Builder(ID.LocalScheduler.ZoneData.gui_machine).
-					value(mGUI).Build();
-
-			//			AgentUtil.sendZoneDataUpdate(bba, guiUpdate, LocalSchedulingAgent.this);
 		}
 	}
 }

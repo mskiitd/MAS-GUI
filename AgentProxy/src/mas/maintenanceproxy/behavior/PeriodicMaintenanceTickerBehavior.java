@@ -41,7 +41,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 		this.bfBase = bfBase;
 
 		this.bbAgent = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).
 				getValue();
 
 		this.gui = (MaintenanceGUI) bfBase.
@@ -76,7 +76,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 		} else {
 
 			this.bbAgent = (AID) bfBase.
-					getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+					getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).
 					getValue();
 			block(500);
 		}

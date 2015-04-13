@@ -78,40 +78,5 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 				ZoneDataName7 };
 
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
-
-		/**
-		 * subscribe to zonedata's of local scheduling agents
-		 */
-		SubscriptionForm lSchedulingSubForm = new SubscriptionForm();
-		String suffix=myAgent.getLocalName().split("#")[1];
-		
-	
-		AID lSchedulingTarget = new AID(ID.LocalScheduler.LocalName+"#"+suffix, AID.ISLOCALNAME);
-			
-
-		String[] lSchedulingParams = {ID.LocalScheduler.ZoneData.batchForMachine,
-				ID.LocalScheduler.ZoneData.gui_machine, ID.LocalScheduler.ZoneData.maintenanceJobForMachine };
-
-		lSchedulingSubForm.AddSubscriptionReq(lSchedulingTarget, lSchedulingParams);
-
-		AgentUtil.subscribeToParam(myAgent, bb_aid, lSchedulingSubForm);
-		
-		/**
-		 * subscribe to zonedata's of local maintenance agent
-		 */
-		
-		SubscriptionForm lMaintenanceSubForm = new SubscriptionForm();
-		AID lMaintenanceTarget = new AID(ID.Maintenance.LocalName + "#" + suffix,
-			 	AID.ISLOCALNAME);
-
-		String[] lMaintenanceParams = {ID.Maintenance.ZoneData.correctiveMaintdata,
-				ID.Maintenance.ZoneData.prevMaintData };
-
-		lMaintenanceSubForm.AddSubscriptionReq(lMaintenanceTarget, lMaintenanceParams);
-
-		AgentUtil.subscribeToParam(myAgent, bb_aid, lMaintenanceSubForm);
-		
-		// Add givemeJobBehavior to agent
-		myAgent.addBehaviour(new GiveMeJobBehavior());
 	}
 }
