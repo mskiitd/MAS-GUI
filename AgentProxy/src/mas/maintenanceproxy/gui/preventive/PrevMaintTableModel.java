@@ -14,10 +14,8 @@ public class PrevMaintTableModel extends AbstractTableModel implements TableMode
 
 	private static final long serialVersionUID = 1L;
 	ArrayList<PMaintenance> maintSchedules;
-	private Logger log; 
 
 	public PrevMaintTableModel() {
-		log = LogManager.getLogger();
 		this.maintSchedules = new ArrayList<PMaintenance>();
 	}
 

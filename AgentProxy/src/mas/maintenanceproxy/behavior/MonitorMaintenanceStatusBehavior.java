@@ -123,6 +123,8 @@ public class MonitorMaintenanceStatusBehavior extends Behaviour{
 						if(gui != null) {
 							log.info("Maintenance done");
 							gui.addMaintJobToDisplay(prevMaint);
+						} else {
+							log.info("SEVERE : Gui for maintenance is NULL");
 						}
 
 						done = true;

@@ -48,19 +48,19 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 			switch(step) {
 			case 0:
 				ACLMessage msg = myAgent.receive(batchMsgTemplate);
-				
+
 				if (msg != null) {
-//					machineSimulator.setUnloadFlag(false);
+					//					machineSimulator.setUnloadFlag(false);
 
 					try {
 						this.batchToProcess = (Batch) msg.getContentObject();
 						machineSimulator.setCurrentBatch(batchToProcess);
+						log.info(" Batch No : '" + batchToProcess.getBatchNumber() +
+								"'accepted with processing time : " + batchToProcess.getBatchProcessingTime());
+						
 					} catch (UnreadableException e) {
 						e.printStackTrace();
 					}
-					log.info(" Batch No : '" + batchToProcess.getBatchNumber() +
-							"'accepted with processing time : " + batchToProcess.getBatchProcessingTime() +
-							" due date: " + batchToProcess.getDueDateByCustomer() );
 				} 
 				else {
 					block();
@@ -71,9 +71,9 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 			case 1:
 
 				if(! batchToProcess.isAllJobsComplete()) {
-					
+
 					ACLMessage jobMsg = new ACLMessage(ACLMessage.INFORM);
-					
+
 					try {
 						jobMsg.setContentObject(this.batchToProcess.getCurrentJob() );
 					} catch (IOException e) {
@@ -82,9 +82,9 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 					jobMsg.setConversationId(MessageIds.msgJobFromBatchForMachine);
 					jobMsg.addReceiver(myAgent.getAID());
 					myAgent.send(jobMsg);
-					
+
 					block(100);
-					
+
 					this.batchToProcess.incrementCurrentJob();
 				} else {
 					step = 2;

@@ -47,14 +47,14 @@ public class FinishMaintenancePlan extends Behaviour implements PlanBody{
 		case 0:
 			if(maintJob.getActivityCode() != null) {
 				step = 1;
-			} else{
-				block(100);
+			} else {
+				block(400);
 			}
 			break;
 		case 1:
 			if(maintJob != null ) {
 
-				maintJob.setActualFinishTime(new Date());
+				maintJob.setActualFinishTime(new Date(System.currentTimeMillis()));
 				maintJob.setMaintStatus(MaintStatus.COMPLETE);
 				
 				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentMaintJob, null);

@@ -1,7 +1,6 @@
 package mas.machineproxy.gui;
 
 import java.awt.AWTException;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
@@ -26,10 +25,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -47,12 +48,15 @@ import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
-import mas.machineproxy.gui.custompanels.FadingPanel;
+import mas.machineproxy.gui.custompanels.MachineInfoPanel;
+import mas.machineproxy.gui.custompanels.MaintMsgPanel;
 import mas.maintenanceproxy.classes.MaintenanceResponse;
 import mas.util.TableUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.alee.extended.layout.VerticalFlowLayout;
 
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
@@ -63,6 +67,8 @@ public class MachineGUI extends JFrame {
 	private static TrayIcon customerTrayIcon;
 	private Logger log;
 
+	private JLayeredPane layers;
+	private MaintMsgPanel maintMsgPanel;
 	private LocalSchedulingAgent lAgent;
 	private Simulator machineSimulator;
 	private buttonPanelListener buttonPanelHandler;
@@ -70,7 +76,7 @@ public class MachineGUI extends JFrame {
 
 	private JMenuItem menuItemUpload, menuItemPmStart, menuItemPmDone;
 
-	private FadingPanel currentOpPanel;
+	private MachineInfoPanel currentOpPanel;
 	private JSplitPane parentPanel;
 
 	private JPanel mcPanel;
@@ -97,24 +103,35 @@ public class MachineGUI extends JFrame {
 	public static Color maintenanceColor = Color.yellow;
 	public static Color idleColor = Color.BLACK;
 
-	private int width = 600, height = 500;
-
 	private String currentBatchId = null;
 	private String currOperationId = null;
 
 	private int maintJobCounter = 0;
+	private int screenWidth;
+	private int screenHeight;
 	private static String notificationSound = "resources/notification.wav";;
 	private static AudioStream audioStream;
+	
+	private static Dimension windowSize;
 
 	public MachineGUI(LocalSchedulingAgent agent) {
 
 		this.lAgent = agent;
+		
 		log = LogManager.getLogger();
 
-		this.mcPanel = new JPanel(new BorderLayout());
+		layers = new JLayeredPane();
+		maintMsgPanel = new MaintMsgPanel();
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		screenWidth = (int) screenSize.getWidth();
+		screenHeight = (int) screenSize.getHeight();
+		windowSize = new Dimension(screenWidth/2,screenHeight);
+		
+		this.mcPanel = new JPanel(new VerticalFlowLayout());
 		this.machineSubPanel = new JPanel(new GridBagLayout());
 		this.lblMachineStatus = new JLabel();
-		this.currentOpPanel = new FadingPanel();
+		this.currentOpPanel = new MachineInfoPanel();
 		initButtons();
 		loadTrayIcon();
 
@@ -141,9 +158,16 @@ public class MachineGUI extends JFrame {
 			machineSubPanel.add(lblMachineIcon, iconConstraints);
 			mcPanel.setBorder((new EmptyBorder(5,5,5,5) ));
 
-			mcPanel.add(machineSubPanel, BorderLayout.CENTER);
-			mcPanel.add(upperButtonPanel, BorderLayout.PAGE_START);
-			mcPanel.add(lowerButtonPanel, BorderLayout.PAGE_END);
+			mcPanel.add(upperButtonPanel);
+			mcPanel.add(Box.createRigidArea(new Dimension(mcPanel.getWidth(),50)) );
+
+			mcPanel.add(new JScrollPane(currentOpPanel));
+			mcPanel.add(Box.createRigidArea(new Dimension(mcPanel.getWidth(),50)) );
+
+			mcPanel.add(machineSubPanel);
+			mcPanel.add(Box.createRigidArea(new Dimension(mcPanel.getWidth(),120)) );
+
+			mcPanel.add(lowerButtonPanel);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -158,15 +182,24 @@ public class MachineGUI extends JFrame {
 		this.parentPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(mcPanel), queueScroller);
 		this.parentPanel.setDividerLocation(0.30);
 		machineIdle();
-		add(parentPanel);
+		
+		parentPanel.setBounds(0, 0,(int) windowSize.getWidth(),(int) windowSize.getHeight());
+		layers.add(parentPanel, new Integer(0), 0);
+		
+		maintMsgPanel.setOpaque(false);
+		maintMsgPanel.setVisible(false);
+		maintMsgPanel.setBounds(0, 0,(int) windowSize.getWidth(),(int) windowSize.getHeight());
+		layers.add(maintMsgPanel, new Integer(1), 1);
+		
+		add(layers);
 		showGui();
 	}
 
 	private void loadTrayIcon() {
-
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+
 				Image image = Toolkit.getDefaultToolkit().getImage("resources/repair_64.png");
 				customerTrayIcon = new TrayIcon(image, lAgent.getLocalName());
 				if (SystemTray.isSupported()) {
@@ -291,7 +324,9 @@ public class MachineGUI extends JFrame {
 	public void machineProcessing(String id, String operation) {
 		this.currentBatchId = id;
 		this.currOperationId = operation;
-		currentOpPanel.setCurrentOperation(id, operation);
+
+		currentOpPanel.setJobId(id);
+		currentOpPanel.setOperation(operation);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -300,6 +335,14 @@ public class MachineGUI extends JFrame {
 				lblMachineStatus.setForeground(CustomJobQueue.firstJobColor);
 			}
 		});
+	}
+
+	public void setCustomerId(String id) {
+		currentOpPanel.setCustomer(id);
+	}
+
+	public void setBatch(String id) {
+		currentOpPanel.setbatch(id);
 	}
 
 	/**
@@ -487,13 +530,10 @@ public class MachineGUI extends JFrame {
 	private void showGui() {
 		setTitle(" Machine GUI : ");// + lAgent.getLocalName().split("#")[1]);
 		setJMenuBar(createMenuBar());
-		setPreferredSize(new Dimension(width,height));
+		setPreferredSize(windowSize);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int centerX = (int)screenSize.getWidth() / 2;
-		int centerY = (int)screenSize.getHeight() / 2;
-		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
+		setLocation(0,0);
 		super.setVisible(true);
 	}
 
@@ -651,8 +691,11 @@ public class MachineGUI extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				maintMsgPanel.setVisible(true);
 				JOptionPane.showMessageDialog(MachineGUI.this, msgToShow, "Dialog", JOptionPane.WARNING_MESSAGE);
 				showNotification("Machine Paused", "Maintenance is pending.", MessageType.WARNING);
+				revalidate();
+				repaint();
 			}
 		});
 		machineSimulator.setStatus(MachineStatus.PAUSED);
@@ -668,19 +711,18 @@ public class MachineGUI extends JFrame {
 	}
 
 	public void enablePmStart() {
+		maintMsgPanel.setVisible(false);
 		menuItemPmStart.setEnabled(true);
 		menuItemPmDone.setEnabled(false);
 	}
 
 	public void showNoMaintJobPopup() {
-
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				JOptionPane.showMessageDialog(MachineGUI.this, "No Maintenance Job to be done.");
 			}
 		});
-
 	}
 
 	public void pendingMaintPopUp(final String msg) {

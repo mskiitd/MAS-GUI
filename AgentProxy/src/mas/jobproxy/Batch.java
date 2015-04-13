@@ -305,7 +305,6 @@ public class Batch implements Serializable {
 	 */
 
 	public void IncrementOperationNumber() {
-		System.out.println("op index " + currentOperationIndex);
 		this.currentOperationIndex ++ ;
 		for(int i = 0; i < jobsInBatch.size(); i++) {
 			jobsInBatch.get(i).IncrementOperationNumber();

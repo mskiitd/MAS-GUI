@@ -371,9 +371,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 				status = false;
 			}else {
-
 				populatingBatch.setDueDateByCustomer(calTime.getTime());
-				log.info("due date : "  + populatingBatch.getDueDateByCustomer());
 			}
 		}
 		return status;

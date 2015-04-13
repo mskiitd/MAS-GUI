@@ -43,7 +43,7 @@ public class AgentStarter {
 	private static ConfigFrame config;
 	public static MainContainer container;
 	public static String ipAddress = "10.204.153.24";
-	public static int JadePort = 1099;
+	public static int JadePort = 1200;
 
 	public static void start(AgentToStart agentNameToStart) {
 		agents = new HashMap<String, Agent>();
@@ -125,6 +125,8 @@ public class AgentStarter {
 	}
 
 	public AgentStarter() {
+		String ip = "169.254.71.125";
+		int port = 1099;
 		log = LogManager.getLogger();
 		List<String> params = new ArrayList<String>();
 		//						params.add("-gui");
@@ -134,9 +136,9 @@ public class AgentStarter {
 			bootProfile = new BootProfileImpl(params.toArray(new String[0]));
 			controller = runtime.createMainContainer(bootProfile);
 		}else {
-			bootProfile = new ProfileImpl("10.204.153.24", 1099, null, false);
-			bootProfile.setParameter("hostID", "10.204.153.24" + ":" + JadePort + "/JADE");
-			bootProfile.setParameter(Profile.CONTAINER_NAME, "10.204.153.24" + ":" + JadePort + "/JADE");
+			bootProfile = new ProfileImpl(ip, port, null, false);
+			bootProfile.setParameter("hostID", ip + ":" + port + "/JADE");
+			bootProfile.setParameter(Profile.CONTAINER_NAME, ip + ":" + port + "/JADE");
 			controller = runtime.createAgentContainer(bootProfile);
 		}
 
