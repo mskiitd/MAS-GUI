@@ -523,10 +523,20 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		this.setUnloadFlag(true);
 	}
 
+	/**
+	 * @return true if the user has pressed unload button in the gui of this machine.
+	 * This variable is as a flag to determine when to unload the job from the machine
+	 * as well as from the gui.
+	 */
 	public boolean isUnloadFlag() {
 		return unloadFlag;
 	}
 
+	/**
+	 * set the value of the unload flag variable which is used to determine when to unload the job
+	 * from the machine
+	 * @param unloadFlag
+	 */
 	public void setUnloadFlag(boolean unloadFlag) {
 		this.unloadFlag = unloadFlag;
 	}

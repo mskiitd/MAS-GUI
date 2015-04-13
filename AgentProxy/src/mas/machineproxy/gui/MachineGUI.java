@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -41,7 +40,6 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
@@ -52,12 +50,9 @@ import mas.machineproxy.gui.custompanels.MachineInfoPanel;
 import mas.machineproxy.gui.custompanels.MaintMsgPanel;
 import mas.maintenanceproxy.classes.MaintenanceResponse;
 import mas.util.TableUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.alee.extended.layout.VerticalFlowLayout;
-
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
@@ -381,9 +376,7 @@ public class MachineGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource().equals(btnLoadJob)) {
 				if(machineSimulator != null) {
-					btnUnloadJob.setEnabled(true);
-					btnLoadJob.setEnabled(false);
-
+					loadJobGui();
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -398,10 +391,7 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(btnUnloadJob)) {
 
 				if(machineSimulator != null) {
-
-					btnUnloadJob.setEnabled(false);
-					btnLoadJob.setEnabled(true);
-
+					unloadJobGui();
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -451,6 +441,27 @@ public class MachineGUI extends JFrame {
 			}
 		}
 	}
+
+	public void loadJobGui() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				btnUnloadJob.setEnabled(false);
+				btnLoadJob.setEnabled(false);
+			}
+		});
+	}
+
+	public void unloadJobGui() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				btnUnloadJob.setEnabled(false);
+				btnLoadJob.setEnabled(true);
+			}
+		});
+	}
+
 
 	/**
 	 * Runs on EDT
@@ -666,7 +677,7 @@ public class MachineGUI extends JFrame {
 				// if machine is loaded with some job, you cannot start maintennace
 				if(machineSimulator.isUnloadFlag()) {
 					JOptionPane.showMessageDialog(MachineGUI.this,
-							"Please unload the job first.", "Dialog", JOptionPane.ERROR);
+							"Please unload the job first.", "Dialog", JOptionPane.ERROR_MESSAGE);
 				}else {
 					lAgent.addGoal(new StartMaintenanceGoal());
 				}
@@ -698,6 +709,41 @@ public class MachineGUI extends JFrame {
 		}
 	}
 
+	/**
+	 * Runs on EDT.
+	 * this unlocks the unload button on the machine UI
+	 */
+	public void unlockUnloadButton() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				btnUnloadJob.setEnabled(true);
+			}
+		});
+	}
+
+	/**
+	 * Runs on EDT. 
+	 * This show an info dialog in case there is no job to load from when the user presses the load
+	 * button in the machine UI.
+	 */
+	public void showNoJobInBatch() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				unloadJobGui();
+				JOptionPane.showMessageDialog(MachineGUI.this,
+						"No batch to load from.", "Dialog", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+	}
+
+	/**
+	 * This is called when machine has reached a critical state as a result of delaying preventive maintenance.
+	 * This pauses the machine and as a result machine stops until it is repaired.
+	 * NB - Machine doesn't fail. It pauses.
+	 * @param msg
+	 */
 	private void markMachineDown(String msg) {
 		final String msgToShow = msg;
 		SwingUtilities.invokeLater(new Runnable() {
@@ -746,7 +792,6 @@ public class MachineGUI extends JFrame {
 				showNotification("Maintenance Job", "Maintenance is Pending.", MessageType.WARNING);				
 			}
 		});
-
 	}
 
 	public boolean isMachinePaused() {
