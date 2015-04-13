@@ -136,9 +136,9 @@ public class AgentStarter {
 			bootProfile = new BootProfileImpl(params.toArray(new String[0]));
 			controller = runtime.createMainContainer(bootProfile);
 		}else {
-			bootProfile = new ProfileImpl(ip, port, null, false);
-			bootProfile.setParameter("hostID", ip + ":" + port + "/JADE");
-			bootProfile.setParameter(Profile.CONTAINER_NAME, ip + ":" + port + "/JADE");
+			bootProfile = new ProfileImpl(ipAddress, port, null, false);
+			bootProfile.setParameter("hostID", ipAddress + ":" + port + "/JADE");
+			bootProfile.setParameter(Profile.CONTAINER_NAME, ipAddress + ":" + port + "/JADE");
 			controller = runtime.createAgentContainer(bootProfile);
 		}
 

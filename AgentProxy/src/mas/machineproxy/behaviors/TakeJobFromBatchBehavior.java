@@ -48,6 +48,7 @@ public class TakeJobFromBatchBehavior extends Behaviour {
 					addjob.setDataStore(getDataStore());
 					myAgent.addBehaviour(addjob);
 
+					log.info("job : " + jobFromBatch + " loaded on the machine " + myAgent);
 					step = 1;
 				}
 				else {

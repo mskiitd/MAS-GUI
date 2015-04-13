@@ -39,6 +39,7 @@ public class ID implements Serializable{
 			public static final String CANCEL_ORDER = "customerBeliefBase_Cancel_job";
 			public static final String CHANGE_DUEDATE_JOB = "customerBeliefBase_Change_DueDate_job";
 			public static final String CUSTOMER_GUI = "customerGUI";
+			public static final String gsAgent = "GSA_Agent"; 
 		}
 
 		public class ZoneData {

@@ -102,17 +102,15 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		blackboard = AgentUtil.findBlackboardAgent(this);
 
 		bfBase = bCap.getBeliefBase();
-		bfBase.updateBelief(
-				ID.Customer.BeliefBaseConst.blackboardAgent, blackboard);
+		bfBase.updateBelief(ID.Customer.BeliefBaseConst.blackboardAgent, blackboard);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				customerGUI = new CustomerProxyGUI(CustomerAgent.this);
+				bfBase.updateBelief(ID.Customer.BeliefBaseConst.CUSTOMER_GUI, customerGUI);
 			}
 		});
-		
-		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CUSTOMER_GUI, customerGUI);
 	}
 
 }

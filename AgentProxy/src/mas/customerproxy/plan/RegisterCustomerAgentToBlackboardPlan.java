@@ -3,13 +3,11 @@ package mas.customerproxy.plan;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import mas.blackboard.nameZoneData.NamedZoneData;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
-import mas.util.SubscriptionForm;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
@@ -26,13 +24,11 @@ public class RegisterCustomerAgentToBlackboardPlan extends OneShotBehaviour impl
 
 	@Override
 	public void init(PlanInstance planInstance) {
-		log=LogManager.getLogger();
+		log = LogManager.getLogger();
 	}
 
 	@Override
 	public void action() {
-
-		AID bb_aid = AgentUtil.findBlackboardAgent(myAgent);
 
 		NamedZoneData ZoneDataName1 = 
 				new NamedZoneData.Builder(ID.Customer.ZoneData.customerConfirmedJobs).
@@ -67,20 +63,7 @@ public class RegisterCustomerAgentToBlackboardPlan extends OneShotBehaviour impl
 		NamedZoneData[] ZoneDataNames =  { ZoneDataName1,
 				ZoneDataName2,ZoneDataName3, ZoneDataName4, ZoneDataName5 };
 
-
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 
-		SubscriptionForm subform = new SubscriptionForm();
-		AID target = new AID(ID.GlobalScheduler.LocalName, AID.ISLOCALNAME);
-
-		String[] params = { ID.GlobalScheduler.ZoneData.GSAjobsUnderNegaotiation,
-				ID.GlobalScheduler.ZoneData.GSAConfirmedOrder,
-				ID.GlobalScheduler.ZoneData.completedJobByGSA ,
-				ID.GlobalScheduler.ZoneData.dueDateChangeBatches,
-				ID.GlobalScheduler.ZoneData.rejectedOrders};
-
-		subform.AddSubscriptionReq(target, params);
-
-		AgentUtil.subscribeToParam(myAgent, bb_aid, subform);
 	}
 }

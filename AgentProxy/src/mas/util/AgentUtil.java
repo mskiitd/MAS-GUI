@@ -21,13 +21,10 @@ public class AgentUtil {
 
 		//		log.info("GetAgentService called by " + CurrentAgent.getLocalName());
 		DFAgentDescription dfd = new DFAgentDescription();
-
 		ServiceDescription sd = new ServiceDescription();
-
 		dfd.addServices(sd);
 
 		try {
-
 			DFAgentDescription[] result = DFService.search(CurrentAgent, dfd);
 
 			AID s = null;
@@ -50,10 +47,10 @@ public class AgentUtil {
 	}
 
 	public static AID findBlackboardAgent(Agent a) {
-		
+
 		if(blackBoard != null) 
 			return blackBoard;
-		
+
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd  = new ServiceDescription();
 		sd.setType(ID.Blackboard.Service);
@@ -63,7 +60,6 @@ public class AgentUtil {
 		try {
 			result = DFService.search(a, dfd);
 			while(result.length == 0) {
-				//				 System.out.println(result.length + " results" );
 				result = DFService.search(a, dfd);
 				Thread.sleep(1000);
 			} 
@@ -122,6 +118,6 @@ public class AgentUtil {
 		update.setConversationId(MessageIds.UpdateParameter);
 		update.setReplyWith(zdu.getReplyWith());
 		Sender.send(update);
-//		log.info(update);
+		//		log.info(update);
 	}
 }
