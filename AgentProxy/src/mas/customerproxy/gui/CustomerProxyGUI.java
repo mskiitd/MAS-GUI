@@ -83,6 +83,7 @@ public class CustomerProxyGUI extends JFrame{
 	private JMenuItem menuItemChangeDueDate ;
 	private static TrayIcon customerTrayIcon;
 	private Logger log;
+	protected SystemTray tray;
 
 	public static int countBatch = 1;
 	private static InputStream in;
@@ -136,12 +137,14 @@ public class CustomerProxyGUI extends JFrame{
 	private void _loadIconsAndFiles() {
 		new Thread(new Runnable() {
 
+			
+
 			@Override
 			public void run() {
 				Image image = Toolkit.getDefaultToolkit().getImage("resources/customer.png");
 				customerTrayIcon= new TrayIcon(image, cAgent.getLocalName());
 				if (SystemTray.isSupported()) {
-					SystemTray tray = SystemTray.getSystemTray();
+					tray = SystemTray.getSystemTray();
 
 					customerTrayIcon.setImageAutoSize(true);
 					try {
@@ -513,6 +516,11 @@ public class CustomerProxyGUI extends JFrame{
 		@Override
 		public String getColumnName(int column) {
 			return completeJobTableHeaderVector.get(column);		}
+	}
+
+	public void clean() {
+		tray.remove(customerTrayIcon);
+		
 	}
 
 }

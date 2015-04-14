@@ -83,6 +83,7 @@ public class WebLafGSA {
 
 	public static TrayIcon GSAguiIcon ;
 	private static WebToggleButton[] bottomButtons;
+	private SystemTray tray;
 
 	public WebLafGSA(GlobalSchedulingAgent globalSchedulingAgent){
 		this.GSA=globalSchedulingAgent;
@@ -102,7 +103,7 @@ public class WebLafGSA {
 		Image image = Toolkit.getDefaultToolkit().getImage("resources/smartMachine.png");
 		GSAguiIcon= new TrayIcon(image, "GSA");
 		if (SystemTray.isSupported()) {
-			SystemTray tray = SystemTray.getSystemTray();
+			tray = SystemTray.getSystemTray();
 
 			GSAguiIcon.setImageAutoSize(true);
 			try {
@@ -754,6 +755,11 @@ public class WebLafGSA {
 
 		// play the audio clip with the audioplayer class
 		AudioPlayer.player.start(audioStream);
+	}
+
+	public void clean() {
+		tray.remove(GSAguiIcon);
+		
 	}
 
 }

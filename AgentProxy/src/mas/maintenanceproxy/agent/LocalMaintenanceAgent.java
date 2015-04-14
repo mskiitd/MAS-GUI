@@ -42,6 +42,7 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 		catch (Exception e) {
 		}
 		if(mgui != null) {
+			mgui.clean();
 			mgui.dispose();
 		}
 	}

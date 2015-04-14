@@ -42,6 +42,7 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 		catch (Exception e) {
 		}
 		if(mGUI != null) {
+			mGUI.clean();
 			mGUI.dispose();
 		}
 	}

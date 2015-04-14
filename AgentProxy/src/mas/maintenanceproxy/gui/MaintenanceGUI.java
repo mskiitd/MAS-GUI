@@ -194,4 +194,8 @@ public class MaintenanceGUI extends JFrame {
 		super.setVisible(true);
 	}
 
+	public void clean() {
+		
+	}
+
 }

@@ -90,7 +90,7 @@ public class MachineGUI extends JFrame {
 	private JScrollPane queueScroller;
 	private JLabel lblMachineIcon;
 	private JLabel lblMachineStatus;
-	private BufferedImage machineIcon;
+	private TrayIcon machineTrayIcon;
 	private CustomJobQueue queuePanel;
 	private ArrayList<Batch> jobQ;
 
@@ -104,6 +104,8 @@ public class MachineGUI extends JFrame {
 	private int maintJobCounter = 0;
 	private int screenWidth;
 	private int screenHeight;
+	protected SystemTray tray;
+	private BufferedImage machineIcon2;
 	private static String notificationSound = "resources/notification.wav";;
 	private static AudioStream audioStream;
 
@@ -131,8 +133,11 @@ public class MachineGUI extends JFrame {
 		loadTrayIcon();
 
 		try {
-			machineIcon = ImageIO.read(new File("resources/machine1.png"));
-			lblMachineIcon = new JLabel(new ImageIcon(machineIcon));
+			Image machineIconImage = Toolkit.getDefaultToolkit().getImage("resources/machine1.png");
+			machineTrayIcon=new TrayIcon(machineIconImage,"Machine#"+ 
+			lAgent.getLocalName().split("#")[1]);
+			machineIcon2 = ImageIO.read(new File("resources/machine1.png"));
+			lblMachineIcon = new JLabel(new ImageIcon(machineIcon2));
 			lblMachineIcon.setVerticalAlignment(SwingConstants.CENTER);
 			lblMachineIcon.setHorizontalAlignment(SwingConstants.LEFT);
 
@@ -198,11 +203,12 @@ public class MachineGUI extends JFrame {
 				Image image = Toolkit.getDefaultToolkit().getImage("resources/repair_64.png");
 				customerTrayIcon = new TrayIcon(image, lAgent.getLocalName());
 				if (SystemTray.isSupported()) {
-					SystemTray tray = SystemTray.getSystemTray();
+					tray = SystemTray.getSystemTray();
 
 					customerTrayIcon.setImageAutoSize(true);
 					try {
 						tray.add(customerTrayIcon);
+						tray.add(machineTrayIcon);
 					} catch (AWTException e) {
 						log.info("TrayIcon could not be added.");
 					}
@@ -797,5 +803,11 @@ public class MachineGUI extends JFrame {
 
 	public boolean isMachinePaused() {
 		return machineSimulator.getStatus() == MachineStatus.PAUSED;
+	}
+
+	public void clean() {
+		tray.remove(customerTrayIcon);
+		tray.remove(machineTrayIcon);
+		
 	}
 }
