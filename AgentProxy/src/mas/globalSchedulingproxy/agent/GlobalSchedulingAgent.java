@@ -79,6 +79,7 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		catch (Exception e) {
 		}
 		if(weblafgui != null) {
+			weblafgui.clean();
 			weblafgui.dispose();
 		}
 	}

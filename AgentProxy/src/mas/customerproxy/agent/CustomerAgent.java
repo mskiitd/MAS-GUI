@@ -84,6 +84,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					customerGUI.clean();
 					customerGUI.dispose();
 				} });
 		}
