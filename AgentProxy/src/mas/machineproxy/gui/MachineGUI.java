@@ -103,6 +103,7 @@ public class MachineGUI extends JFrame {
 	public static Color failColor = Color.RED;
 	public static Color maintenanceColor = Color.yellow;
 	public static Color idleColor = Color.BLACK;
+	public static Color processingColor =  new Color(46, 139, 87);
 
 	private String currentBatchId = null;
 	private String currOperationId = null;
@@ -142,7 +143,7 @@ public class MachineGUI extends JFrame {
 			Image machineIconImage = Toolkit.getDefaultToolkit().getImage("resources/machine1.png");
 			machineTrayIcon=new TrayIcon(machineIconImage,"Machine#"+ 
 					lAgent.getLocalName().split("#")[1]);
-			machineIcon2 = ImageIO.read(new File("resources/machine1.png"));
+			machineIcon2 = ImageIO.read(new File("resources/machineBigIcon.png"));
 			lblMachineIcon = new JLabel(new ImageIcon(machineIcon2));
 			lblMachineIcon.setVerticalAlignment(SwingConstants.CENTER);
 			lblMachineIcon.setHorizontalAlignment(SwingConstants.LEFT);
@@ -340,7 +341,7 @@ public class MachineGUI extends JFrame {
 			@Override
 			public void run() {
 				lblMachineStatus.setText("Processing");
-				lblMachineStatus.setForeground(CustomJobQueue.firstJobColor);
+				lblMachineStatus.setForeground(processingColor);
 			}
 		});
 	}
@@ -351,6 +352,10 @@ public class MachineGUI extends JFrame {
 
 	public void setBatch(String id) {
 		currentOpPanel.setbatch(id);
+	}
+	
+	public void setBatchNo(String bNum) {
+		currentOpPanel.setBatchNo(bNum);
 	}
 
 	/**

@@ -202,13 +202,12 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		machineParameterShifter = new ParameterShifterBehavaior();
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 
-		functionality.addSubBehaviour(acceptIncomingBatch);
 		//		functionality.addSubBehaviour(reportHealth);
 
 		functionality.addSubBehaviour(processDimensionShifter);
 		//		functionality.addSubBehaviour(machineParameterShifter);
 		addBehaviour(tbf.wrap(functionality));
-
+		addBehaviour(tbf.wrap(acceptIncomingBatch));
 		/**
 		 *  Adding a listener to the change in value of the status of simulator 
 		 */

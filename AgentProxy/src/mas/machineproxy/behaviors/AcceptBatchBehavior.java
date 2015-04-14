@@ -1,6 +1,5 @@
 package mas.machineproxy.behaviors;
 
-import java.io.IOException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -38,10 +37,12 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 
 		batchMsgTemplate = MessageTemplate.
 				MatchConversationId(MessageIds.msgbatchForMachine);
+		log.info("running...");
 	}
 
 	@Override
 	public void action() {
+		log.info(machineSimulator);
 		if(machineSimulator.getStatus() != MachineStatus.FAILED &&
 				machineSimulator.getStatus() != MachineStatus.PAUSED) {
 
@@ -66,33 +67,32 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 				}
 
 				break;
-
-			case 1:
-
-				if(! batchToProcess.isAllJobsComplete()) {
-
-					ACLMessage jobMsg = new ACLMessage(ACLMessage.INFORM);
-
-					try {
-						jobMsg.setContentObject(this.batchToProcess.getCurrentJob() );
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					jobMsg.setConversationId(MessageIds.msgJobFromBatchForMachine);
-					jobMsg.addReceiver(myAgent.getAID());
-					myAgent.send(jobMsg);
-
-					block(100);
-
-					this.batchToProcess.incrementCurrentJob();
-				} else {
-					step = 2;
-				}
-
-				break;
-
-			case 2:
-				break;
+//			case 1:
+//
+//				if(! batchToProcess.isAllJobsComplete()) {
+//
+//					ACLMessage jobMsg = new ACLMessage(ACLMessage.INFORM);
+//
+//					try {
+//						jobMsg.setContentObject(this.batchToProcess.getCurrentJob() );
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//					jobMsg.setConversationId(MessageIds.msgJobFromBatchForMachine);
+//					jobMsg.addReceiver(myAgent.getAID());
+//					myAgent.send(jobMsg);
+//
+//					block(100);
+//
+//					this.batchToProcess.incrementCurrentJob();
+//				} else {
+//					step = 2;
+//				}
+//
+//				break;
+//
+//			case 2:
+//				break;
 			}
 		}
 	}

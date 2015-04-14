@@ -21,7 +21,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
 	private ArrayList<Batch> jobQueue;
-	private double regretThreshold = 0;
+	private double regretThreshold = -1;
 	private Logger log;
 	private MachineGUI gui;
 
@@ -41,6 +41,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 		log = LogManager.getLogger();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onTick() {
 
@@ -50,7 +51,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 					getValue();
 		}
 
-		if(regretThreshold == 0) {
+		if(regretThreshold == -1) {
 			regretThreshold = (double) bfBase.
 					getBelief(ID.LocalScheduler.BeliefBaseConst.regretThreshold).
 					getValue();
@@ -60,7 +61,10 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			calculateRegretAndSchedule();
 		}
 	}
-
+	
+	/**
+	 * Schedules the sequence of batches based on processing time of current operation
+	 */
 	private void calculateRegretAndSchedule() {
 		int qSize = jobQueue.size();
 		double lateness;			

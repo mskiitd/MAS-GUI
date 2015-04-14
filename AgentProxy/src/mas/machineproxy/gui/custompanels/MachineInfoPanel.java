@@ -7,18 +7,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.alee.extended.label.WebHotkeyLabel;
+
 import net.miginfocom.swing.MigLayout;
 
 public class MachineInfoPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private JLabel lblCurrJobNum,lblCurrOperation,lblCurrBatchNum, lblCustomerId;
-	private String pref1 = "Customer Id : ",
-			pref2 = "Job Id : ",
-			pref3 = "Operation : ",
-			pref4 = "Batch Id : ";
-
+	private JLabel lblPref3, lblPref2, lblPref4, lblPref1, lblPref5;
+	private WebHotkeyLabel valPref1, valPref2, valPref3, valPref4, valPref5;
+	
 	public MachineInfoPanel() {
 
 		setLayout(new MigLayout("",
@@ -26,16 +25,33 @@ public class MachineInfoPanel extends JPanel {
 				""
 				));
 
-		lblCurrJobNum = new JLabel();
-		lblCurrOperation = new JLabel();
-		lblCurrBatchNum = new JLabel();
-		lblCustomerId = new JLabel();
+		lblPref3 = new JLabel("Operation : ");
+		lblPref2 = new JLabel("Job Id : ");
+		lblPref4 = new JLabel("Batch Id : ");
+		lblPref1 = new JLabel("Customer Id : ");
+		lblPref5 = new JLabel("Batch No : ");
+		
+		valPref1 = new WebHotkeyLabel();
+		valPref2 = new WebHotkeyLabel();
+		valPref3 = new WebHotkeyLabel();
+		valPref4 = new WebHotkeyLabel();
+		valPref5 = new WebHotkeyLabel();
 
-		add(lblCustomerId,"wrap");
-		add(lblCurrBatchNum,"wrap");
-		add(lblCurrJobNum,"wrap");
-		add(lblCurrOperation,"wrap");
-
+		add(lblPref1);
+		add(valPref1, "wrap");
+		
+		add(lblPref4);
+		add(valPref4,"wrap");
+		
+		add(lblPref5);
+		add(valPref5,"wrap");
+		
+		add(lblPref2);
+		add(valPref2,"wrap");
+		
+		add(lblPref3);
+		add(valPref3,"wrap");
+		
 		setBackground(Color.WHITE);
 		Component[] comps = getComponents();
 		for(int i = 0; i < comps.length; i++) {
@@ -47,7 +63,7 @@ public class MachineInfoPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				lblCurrBatchNum.setText(pref4 + batch);
+				valPref4.setText(batch);
 			}
 		});
 	}
@@ -56,7 +72,7 @@ public class MachineInfoPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				lblCurrOperation.setText(pref3 + op);
+				valPref3.setText(op);
 			}
 		});
 	}
@@ -65,7 +81,16 @@ public class MachineInfoPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				lblCurrJobNum.setText(pref2 + jobId); 
+				valPref2.setText( jobId); 
+			}
+		});
+	}
+	
+	public void setBatchNo(final String batchNo) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				valPref5.setText( batchNo); 
 			}
 		});
 	}
@@ -74,7 +99,7 @@ public class MachineInfoPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				lblCustomerId.setText(pref1 + cust); 
+				valPref1.setText(cust); 
 			}
 		});
 	}
@@ -83,7 +108,7 @@ public class MachineInfoPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				lblCurrJobNum.setText(pref2);
+				valPref2.setText("");
 			}
 		});
 	}
@@ -92,7 +117,7 @@ public class MachineInfoPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				lblCurrBatchNum.setText(pref4);
+				valPref4.setText("");
 			}
 		});
 	}
@@ -104,10 +129,11 @@ public class MachineInfoPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				lblCurrBatchNum.setText(pref4);
-				lblCurrJobNum.setText(pref2);
-				lblCurrOperation.setText(pref3);
-				lblCustomerId.setText(pref1);
+				valPref4.setText("");
+				valPref2.setText("");
+				valPref3.setText("");
+				valPref1.setText("");
+				valPref5.setText("");
 			}
 		});
 	}

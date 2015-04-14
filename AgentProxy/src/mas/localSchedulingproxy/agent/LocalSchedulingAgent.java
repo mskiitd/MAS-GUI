@@ -23,7 +23,7 @@ public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 	private static final long serialVersionUID = 1L;
 	private Logger log;
 	public MachineGUI mGUI;
-	public static long schedulingPeriod = 5000;
+	public static long schedulingPeriod = 10000;
 	private BeliefBase bfBase;
 
 	public void UpdateJobQueue(ArrayList<Batch> newQueue) {

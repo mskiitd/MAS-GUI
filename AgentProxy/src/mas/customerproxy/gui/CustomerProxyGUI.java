@@ -17,7 +17,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -504,7 +506,7 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getBatchCount();
 				break;
 			case 4:
-				value = j.getCompletionTime();
+				value = new Date(j.getCompletionTime());
 				break;
 			default:
 				value = "not_found";

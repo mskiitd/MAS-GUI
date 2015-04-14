@@ -10,7 +10,7 @@ import java.util.Set;
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
-import mas.localSchedulingproxy.goal.JobSchedulingGoal;
+import mas.localSchedulingproxy.goal.BatchSchedulingGoal;
 import mas.localSchedulingproxy.goal.ReceiveMaintenanceJobGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
@@ -170,7 +170,7 @@ public class AbstractbasicCapability extends Capability {
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgaskJobFromLSA),
 				SendJobToMachinePlan.class));
 
-		plans.add(new SimplePlan(JobSchedulingGoal.class,BatchSchedulingPlan.class));
+		plans.add(new SimplePlan(BatchSchedulingGoal.class,BatchSchedulingPlan.class));
 
 		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, LoadOperationDatabasePlan.class));
 
@@ -193,7 +193,7 @@ public class AbstractbasicCapability extends Capability {
 	protected void setup() {
 		myAgent.addGoal(new RegisterLSAgentServiceGoal());
 		myAgent.addGoal(new RegisterLSAgentToBlackboardGoal());
-		myAgent.addGoal(new JobSchedulingGoal());
+		myAgent.addGoal(new BatchSchedulingGoal());
 		myAgent.addGoal(new UpdateOperationDatabaseGoal());
 		myAgent.addGoal(new ReceiveMaintenanceJobGoal());
 		

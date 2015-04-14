@@ -46,6 +46,7 @@ public class LoadJobBehavior extends Behaviour {
 
 			machineSimulator.setStatus(MachineStatus.PROCESSING);
 			
+			gui.setBatchNo(String.valueOf(machineSimulator.getCurrentBatch().getBatchNumber()));
 			gui.setCustomerId(machineSimulator.getCurrentBatch().getCustomerId());
 			gui.setBatch(machineSimulator.getCurrentBatch().getBatchId());
 			gui.machineProcessing(comingJob.getJobID(), comingJob.getCurrentOperation().getJobOperationType());
