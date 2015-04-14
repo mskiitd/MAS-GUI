@@ -48,19 +48,17 @@ public class RootMaintenanceBasicCapability extends Capability{
 	public static Set<Belief<?>> getBeliefs() {
 		Set<Belief<?>> beliefs = new HashSet<Belief<?>>();
 
-		Belief<AID> bboard = new TransientBelief<AID>(
-				ID.Maintenance.BeliefBaseConst.blackboardAgent);
+		Belief<AID> bboard = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.blackboardAgent);
 
-		Belief<SimulatorInternals> myMachine = new TransientBelief<SimulatorInternals>(
-				ID.Maintenance.BeliefBaseConst.machineHealth);
-
-		Belief<AID> mygsAgent = new TransientBelief<AID>(
-				ID.Maintenance.BeliefBaseConst.globalSchAgentAID);
+		Belief<AID> gsAgent = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.globalSchAgentAID);
 		
 		Belief<AID> lsaAgent = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.lsAgent);
 		
-		Belief<AID> machine = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.machineHealth);
+		Belief<AID> machine = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.machineAgent);
 
+		Belief<SimulatorInternals> myMachine = new TransientBelief<SimulatorInternals>(
+				ID.Maintenance.BeliefBaseConst.machineHealth);
+		
 		Belief<PMaintenance> maintJob  = new TransientBelief<PMaintenance>(
 				ID.Maintenance.BeliefBaseConst.preventiveMaintJob);
 
@@ -82,7 +80,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 
 		beliefs.add(bboard);
 		beliefs.add(myMachine);
-		beliefs.add(mygsAgent);
+		beliefs.add(gsAgent);
 		beliefs.add(maintJob);
 		beliefs.add(CorrectiveRepair);
 		beliefs.add(gui);

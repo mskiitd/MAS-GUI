@@ -105,7 +105,9 @@ public class LookUpAgentsLsaPlan extends Behaviour implements PlanBody {
 				resultGsa = DFService.search(myAgent, dfdGsa);
 				if (resultGsa.length > 0) {
 					gsa = resultGsa[0].getName();
-					step  = 5;
+					gsaFound = true;
+					bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.globalSchAgent, gsa);
+					((BDIAgent)myAgent).addGoal(new SubscribeToGsaLsaGoal());
 				}
 
 				resultMaint = DFService.search(myAgent, dfdMaint);
@@ -164,7 +166,7 @@ public class LookUpAgentsLsaPlan extends Behaviour implements PlanBody {
 				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
 						dfdMachine, sc));
 			}
-			
+
 			step = 2;
 			break;
 
@@ -181,7 +183,6 @@ public class LookUpAgentsLsaPlan extends Behaviour implements PlanBody {
 						if(ID.GlobalScheduler.Service.equals(service)) {
 							gsa = dfds[0].getName();
 							step  = 5;
-
 						} else if(ID.Maintenance.Service.equals(service)) {
 							maintenance = dfds[0].getName();
 
@@ -192,7 +193,6 @@ public class LookUpAgentsLsaPlan extends Behaviour implements PlanBody {
 							if(mySurname.equals(maintSurName)) {
 								step = 6;
 							}
-
 						} else if(ID.Machine.Service.equals(service)) {
 							machine = dfds[0].getName();
 							String machineName = machine.getLocalName();

@@ -52,6 +52,7 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 
 		dfdCustomer = new DFAgentDescription();
 		dfdLsa = new DFAgentDescription();
+		
 		sdCustomer  = new ServiceDescription();
 		sdLsa = new ServiceDescription();
 
@@ -85,15 +86,15 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 				if (resultCustomer.length > 0) {
 					for(int i = 0; i < resultCustomer.length; i ++) {
 						customer = resultCustomer[i].getName();
-
-						log.info("Customer found : " + customer);
-						if(!listCustomer.contains(customer)) {
+						log.info("customer found");
+						SubscribeID customerId = new SubscribeID(customer,false);
+						if(!listCustomer.contains(customerId)) {
 							log.info("Subscribing to customer : " + customer);
-							SubscribeID customerId = new SubscribeID(customer,false);
 
 							listCustomer.add(customerId);
 							bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.customerList, listCustomer);
 							((BDIAgent)myAgent).addGoal(new SubscribeToCustomerGsaGoal());
+							break;
 						} else {
 							log.info("duplicate customer agent registering");
 						}
@@ -104,10 +105,11 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 				if(resultLsa.length > 0 ) {
 					for(int i = 0; i < resultLsa.length; i ++) {
 						lsa = resultLsa[i].getName();
-						log.info("LSA found  : " + lsa);
-						if(!listLsa.contains(lsa)) {
+						SubscribeID lsaId = new SubscribeID(lsa,false);
+						log.info("lsa found");
+						
+						if(!listLsa.contains(lsaId)) {
 							log.info("Subscribing to LSA : " + lsa);
-							SubscribeID lsaId = new SubscribeID(lsa,false);
 							listLsa.add(lsaId);
 							bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.lsaList, listLsa);
 
@@ -139,7 +141,6 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 				try {
 					DFAgentDescription[] dfds = DFService.decodeNotification(msg.getContent());
 
-					log.info("dfd length : " + dfds.length);
 					if (dfds.length > 0) {
 						String service = ((ServiceDescription) dfds[0].getAllServices().next()).getType();
 						if(ID.Customer.Service.equals(service)) {
@@ -159,9 +160,8 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 
 		case 5:
 			log.info("Customer found  : " + customer);
-			if(!listCustomer.contains(customer)) {
-				SubscribeID customerId = new SubscribeID(customer,false);
-
+			SubscribeID customerId = new SubscribeID(customer,false);
+			if(!listCustomer.contains(customerId)) {
 				listCustomer.add(customerId);
 				bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.customerList, listCustomer);
 				((BDIAgent)myAgent).addGoal(new SubscribeToCustomerGsaGoal());
@@ -173,11 +173,10 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 
 		case 6:
 			log.info("LSA found  : " + lsa);
-			if(!listLsa.contains(lsa)) {
-				SubscribeID lsaId = new SubscribeID(lsa,false);
+			SubscribeID lsaId = new SubscribeID(lsa,false);
+			if(!listLsa.contains(lsaId)) {
 				listLsa.add(lsaId);
 				bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.lsaList, listLsa);
-
 				((BDIAgent)myAgent).addGoal(new SubscribeToLsaGsaGoal());
 			}else {
 				log.info("duplicate LSA agent registering");

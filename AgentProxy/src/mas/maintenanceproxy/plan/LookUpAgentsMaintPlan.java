@@ -96,7 +96,6 @@ public class LookUpAgentsMaintPlan extends Behaviour implements PlanBody {
 							((BDIAgent)myAgent).addGoal(new SubscribeToLsaMaintGoal());
 							break;
 						}
-
 					} 
 				}
 				resultMachine =  DFService.search(myAgent, dfdMachine);
@@ -123,13 +122,10 @@ public class LookUpAgentsMaintPlan extends Behaviour implements PlanBody {
 			step = 1;
 			break;
 		case 1:
-			log.info("step 1 ");
-
 			if(! lsaFound) {
 				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
 						dfdLsa, sc));
 			}
-
 			if(! machineFound) {
 				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
 						dfdMachine, sc));
