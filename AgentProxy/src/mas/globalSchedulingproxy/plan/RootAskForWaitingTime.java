@@ -10,8 +10,10 @@ import jade.lang.acl.UnreadableException;
 import mas.globalSchedulingproxy.database.BatchDataBase;
 import mas.globalSchedulingproxy.database.CustomerBatches;
 import mas.globalSchedulingproxy.database.UnitBatchInfo;
+import mas.globalSchedulingproxy.goal.GetNoOfMachinesGoal;
 import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
+import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
@@ -20,6 +22,7 @@ import mas.util.ZoneDataUpdate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -52,7 +55,6 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	@Override
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
-
 		try {
 			comingBatch = (Batch)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
 			msgReplyID = Integer.toString(comingBatch.getBatchNumber());
@@ -99,13 +101,16 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	public void action() {
 		switch (step) {
 		case 0:
-
+			
 			this.MachineCount = (int) bfBase.
 			getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
 			getValue();
 
 			if(MachineCount != 0) {
 				step = 1;
+			}
+			else{
+				((BDIAgent)myAgent).addGoal(new GetNoOfMachinesGoal());
 			}
 			break;
 

@@ -77,7 +77,8 @@ public abstract class AbstractGSCapability  extends Capability {
 		dBase.setValue(null);
 		DueDateCalcMethod.setValue(ID.GlobalScheduler.OtherConst.LocalDueDate);
 		underNegotiation.setValue(null);
-
+		NoOfMachines.setValue(0);
+		
 		beliefs.add(BB_AID);
 		beliefs.add(NoOfMachines);
 		beliefs.add(DueDateCalcMethod);

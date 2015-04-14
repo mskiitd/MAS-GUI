@@ -4,11 +4,22 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import test.AgentStarter;
 import net.miginfocom.swing.MigLayout;
@@ -17,7 +28,9 @@ public class ShowIPFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private AgentToStart agent;
-	private JTextArea ipJtext;
+	private JTextArea ipJtext,portJText;
+	private Logger log=LogManager.getLogger();
+	private FileOutputStream outputStream;
 	
 	public ShowIPFrame(AgentToStart a) {
 
@@ -25,8 +38,11 @@ public class ShowIPFrame extends JFrame {
 		setTitle("IP configuration");
 		setLayout(new MigLayout());
 		JLabel msg = new JLabel("Enter IP address");
+		JLabel msg2 = new JLabel("Enter Jade port");
 		ipJtext = new JTextArea(1, 15);
 		ipJtext.setEditable(true);
+		portJText = new JTextArea(1, 4);
+		portJText.setEditable(true);
 
 		JButton OKbtn = new JButton("OK");
 		OKbtn.addActionListener(new ActionListener() {
@@ -39,13 +55,16 @@ public class ShowIPFrame extends JFrame {
 					@Override
 					public void run() {
 						AgentStarter.ipAddress = ipJtext.getText();
+						AgentStarter.JadePort = Integer.parseInt(portJText.getText());
 						AgentStarter.start(agent);
 					}
 				}).start();
 			}
 		});
-		add(msg,"wrap");
+		add(msg);
 		add(ipJtext,"wrap");
+		add(msg2);
+		add(portJText,"wrap");
 		add(OKbtn);
 		showGui();
 	}
@@ -53,6 +72,36 @@ public class ShowIPFrame extends JFrame {
 	private void showGui() {
 		setTitle("IP configuration");
 //		setPreferredSize(new Dimension(600,500));
+		Properties prop = new Properties();
+		String propFileName = "mas.properties";
+ 
+		InputStream inputStream=null;
+		try {
+			inputStream = new FileInputStream("resources/mas.properties");
+//			outputStream= new FileOutputStream("resources/mas.properties");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+ 
+		if (inputStream != null) {
+			try {
+				prop.load(inputStream);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			log.error("mas.properties file is not found");
+		}
+ 
+		String IPAddress = prop.getProperty("ipAddress");
+		String JADEport = prop.getProperty("jadePort");
+		
+		ipJtext.setText(IPAddress);
+		portJText.setText(JADEport);
+		
+		
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();

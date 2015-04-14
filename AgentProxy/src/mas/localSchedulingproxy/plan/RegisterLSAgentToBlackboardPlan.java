@@ -107,7 +107,7 @@ public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 
 		AID gSchedulingTarget = new AID(ID.GlobalScheduler.LocalName, AID.ISLOCALNAME);
-		
+		log.info("gSchedulingTarget="+gSchedulingTarget);
 		String suffix=myAgent.getLocalName().split("#")[1];
 
 		AID simulatorTarget = new AID(ID.Machine.LocalName+"#"+suffix, AID.ISLOCALNAME);

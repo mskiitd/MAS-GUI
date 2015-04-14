@@ -71,7 +71,7 @@ public class SubscribeAgentBehavior extends Behaviour {
 			if(AgentType != null) { //check if agent exists in DF
 				step++;
 			}else {
-				block(200);
+				block(1000);
 			}
 
 		case 2:

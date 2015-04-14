@@ -16,7 +16,7 @@ public class ID implements Serializable{
 		public static final String LocalName = "blackboard";
 
 		public class BeliefBaseConst{
-			public static final String NoOfMachines = "NoOfMachines";
+//			public static final String NoOfMachines = "NoOfMachines";
 			public static final String serviceDiary = "servicesOfferedByOtherAgents";
 		}
 
