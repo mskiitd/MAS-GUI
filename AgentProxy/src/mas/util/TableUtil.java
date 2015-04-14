@@ -36,7 +36,7 @@ public class TableUtil {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-								GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 				//					File font_file = new File("resources/Inconsolata.otf");
 				//					Font iconSolataFont = Font.createFont(Font.TRUETYPE_FONT, font_file);
 				//					ge.registerFont(iconSolataFont);

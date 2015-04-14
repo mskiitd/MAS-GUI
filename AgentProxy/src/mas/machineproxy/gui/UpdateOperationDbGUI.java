@@ -7,6 +7,9 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -31,11 +34,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import mas.globalSchedulingproxy.goal.LoadBatchOperationDetailsGoal;
+import mas.globalSchedulingproxy.gui.WebLafGSA;
+import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationInfo;
 import mas.localSchedulingproxy.database.OperationItemId;
@@ -49,6 +56,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private LocalSchedulingAgent lschAgent;
 	private String aName;
 	public static OperationDataBase ops;
 	private ArrayList<OperationItemId> operationIDs;
@@ -80,9 +88,10 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 	private String path;
 
-	public UpdateOperationDbGUI(String agentName) {
+	public UpdateOperationDbGUI(LocalSchedulingAgent lAgent) {
 
-		this.aName = agentName;
+		this.lschAgent = lAgent;
+		this.aName = lAgent.getLocalName();
 		path = "resources/LSA/database/" + aName + "_db.data";
 
 		operationIDs = new ArrayList<OperationItemId>();
@@ -146,15 +155,20 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 		@Override
 		protected void done() {
-			acceptedJobsListModel = new listModel();
-			acceptedJobList = new JList<Object>(acceptedJobsListModel);
+			if(acceptedJobsListModel == null) {
+				acceptedJobsListModel = new listModel();
+				acceptedJobList = new JList<Object>(acceptedJobsListModel);
 
-			acceptedJobList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			acceptedJobList.addListSelectionListener(new ListSelectionHandler());
-			acceptedJobList.setCellRenderer(new customListRenderer());
-			operationsData.add(acceptedJobList);
+				acceptedJobList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				acceptedJobList.addListSelectionListener(new ListSelectionHandler());
+				acceptedJobList.setCellRenderer(new customListRenderer());
+				operationsData.add(acceptedJobList);
 
-			hSplitPane.setDividerLocation(0.35);
+				hSplitPane.setDividerLocation(0.35);
+			}else {
+				acceptedJobList.revalidate();
+				acceptedJobList.repaint();
+			}
 			super.done();
 		}
 	}
@@ -226,6 +240,8 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 				OperationInfo info = comp.getOperationInfo();
 				OperationItemId id = comp.getOperationId();
 				ops.put(id, info);
+
+				// update the database
 			}
 		}
 		comp.reset();
@@ -233,25 +249,35 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 	private void showOperation(OperationItemId id, OperationInfo op) {
 
+		final OperationItemId finalId = id;
+		final OperationInfo finalInfo = op;
 		// check if the panel was already added i.e. some input was being entered
 		// check if that input is saved or not
 		if(TableUtil.checkIfExists(rightPanel, addOperationPanel)) {
 			checkNewOperationSave(addOperationPanel);
-			rightPanel.remove(addOperationPanel);
-			rightPanel.add(displayDataPanel);
-			displayDataPanel.populate(id,op);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					rightPanel.remove(addOperationPanel);
+					rightPanel.add(displayDataPanel);
+				}
+			});
 
 		} else if(TableUtil.checkIfExists(rightPanel, displayDataPanel)) {
 			checkDisplayOperationSave(displayDataPanel);
-			displayDataPanel.populate(id,op);
 		}
 		else {
 			rightPanel.add(displayDataPanel);
-			displayDataPanel.populate(id,op);
 		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				displayDataPanel.populate(finalId,finalInfo);
+				rightPanel.revalidate();
+				rightPanel.repaint();
+			}
+		});
 
-		rightPanel.revalidate();
-		rightPanel.repaint();
 	}
 
 	private void showGui() {
@@ -320,7 +346,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
-			OperationItemId entry = (OperationItemId) value;
+			final OperationItemId entry = (OperationItemId) value;
 			setDisplay(entry.getOperationId(), entry.getCustomerId());
 
 			if (isSelected) {
@@ -352,16 +378,24 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 		if(dialogResult == JOptionPane.YES_OPTION) {
 
-			try {
-				File file = new File(path);
-				FileOutputStream fos = new FileOutputStream(file);
-				ObjectOutputStream oos = new ObjectOutputStream(fos);
-				oos.writeObject(ops);
-				oos.close();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						File file = new File(path);
+						FileOutputStream fos = new FileOutputStream(file);
+						ObjectOutputStream oos = new ObjectOutputStream(fos);
+						oos.writeObject(ops);
+						oos.close();
 
-			} catch (IOException iox) {
-				iox.printStackTrace();
-			}
+						// trigger plan to update current belief of operations
+						lschAgent.addGoal(new LoadBatchOperationDetailsGoal());
+					} catch (IOException iox) {
+						iox.printStackTrace();
+					}
+				}
+			}).start();
+
 		}
 		dispose();
 	}

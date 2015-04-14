@@ -3,6 +3,8 @@ package mas.machineproxy.gui.custompanels;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import mas.jobproxy.jobDimension;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.stringformatter.FormattedStringField;
@@ -30,7 +32,7 @@ public class DimensionInputPanel extends JPanel {
 
 		txtName = new FormattedStringField();
 		txtTarget = new FormattedDoubleField();
-		
+
 		txtName.setColumns(Labels.defaultJTextSize);
 		txtTarget.setColumns(Labels.defaultJTextSize);
 
@@ -57,8 +59,14 @@ public class DimensionInputPanel extends JPanel {
 
 	private void checkData() {
 		if(! txtTarget.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			JOptionPane.showMessageDialog(this, "Invalid input for Target dimension !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(DimensionInputPanel.this,
+							"Invalid input for Target dimension !!",
+							"Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
 			status = false;
 		} else {
 			status = true;
@@ -66,8 +74,14 @@ public class DimensionInputPanel extends JPanel {
 
 		if(status) {
 			if(txtName.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Invalid input for dimension Name !!",
-						"Error" , JOptionPane.ERROR_MESSAGE );
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(DimensionInputPanel.this,
+								"Invalid input for dimension Name !!",
+								"Error" , JOptionPane.ERROR_MESSAGE );
+					}
+				});
 				status = false;
 			}
 		}

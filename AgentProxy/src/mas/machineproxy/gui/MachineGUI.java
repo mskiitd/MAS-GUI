@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -40,19 +41,24 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
+import mas.machineproxy.gui.custompanels.BatchQueuePanel;
 import mas.machineproxy.gui.custompanels.MachineInfoPanel;
 import mas.machineproxy.gui.custompanels.MaintMsgPanel;
 import mas.maintenanceproxy.classes.MaintenanceResponse;
 import mas.util.TableUtil;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import com.alee.extended.layout.VerticalFlowLayout;
+
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
@@ -135,7 +141,7 @@ public class MachineGUI extends JFrame {
 		try {
 			Image machineIconImage = Toolkit.getDefaultToolkit().getImage("resources/machine1.png");
 			machineTrayIcon=new TrayIcon(machineIconImage,"Machine#"+ 
-			lAgent.getLocalName().split("#")[1]);
+					lAgent.getLocalName().split("#")[1]);
 			machineIcon2 = ImageIO.read(new File("resources/machine1.png"));
 			lblMachineIcon = new JLabel(new ImageIcon(machineIcon2));
 			lblMachineIcon.setVerticalAlignment(SwingConstants.CENTER);
@@ -677,7 +683,7 @@ public class MachineGUI extends JFrame {
 
 			if(e.getSource().equals(menuItemUpload)) {
 
-				UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI(lAgent.getLocalName());
+				UpdateOperationDbGUI updatedb = new UpdateOperationDbGUI(lAgent);
 
 			} else if(e.getSource().equals(menuItemPmStart)) {
 
@@ -686,7 +692,12 @@ public class MachineGUI extends JFrame {
 					JOptionPane.showMessageDialog(MachineGUI.this,
 							"Please unload the job first.", "Dialog", JOptionPane.ERROR_MESSAGE);
 				}else {
-					lAgent.addGoal(new StartMaintenanceGoal());
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							lAgent.addGoal(new StartMaintenanceGoal());
+						}
+					}).start();
 				}
 
 			} else if(e.getSource().equals(menuItemPmDone)) {
@@ -808,6 +819,6 @@ public class MachineGUI extends JFrame {
 	public void clean() {
 		tray.remove(customerTrayIcon);
 		tray.remove(machineTrayIcon);
-		
+
 	}
 }

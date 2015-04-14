@@ -3,6 +3,8 @@ package mas.machineproxy.gui.custompanels;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import mas.jobproxy.JobGNGattribute;
 import mas.util.formatter.stringformatter.FormattedStringField;
 import uiconstants.Labels;
@@ -33,7 +35,7 @@ public class AttributeInputPanel extends JPanel {
 	public AttributeInputPanel() {
 		this(null);
 	}
-	
+
 	public boolean isDataOk() {
 		checkData();
 		return status;
@@ -41,8 +43,14 @@ public class AttributeInputPanel extends JPanel {
 
 	private void checkData() {
 		if(txtName.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Invalid input for attribute Name !!",
-					"Error" , JOptionPane.ERROR_MESSAGE );
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(AttributeInputPanel.this,
+							"Invalid input for attribute Name !!",
+							"Error" , JOptionPane.ERROR_MESSAGE );
+				}
+			});
 			status = false;
 		} else {
 			status = true;

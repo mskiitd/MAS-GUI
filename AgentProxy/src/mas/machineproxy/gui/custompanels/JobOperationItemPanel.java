@@ -1,11 +1,8 @@
 package mas.machineproxy.gui.custompanels;
 
-import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import net.miginfocom.swing.MigLayout;
-
 import com.alee.extended.label.WebHotkeyLabel;
 
 public class JobOperationItemPanel extends JPanel {

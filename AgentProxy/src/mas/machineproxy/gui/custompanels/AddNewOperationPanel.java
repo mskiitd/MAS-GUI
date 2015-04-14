@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
@@ -62,7 +63,7 @@ public class AddNewOperationPanel extends JPanel {
 	private JPanel attributePanel;
 
 	private JButton btnSave;
-	
+
 	private boolean dataOk = true;
 
 	private boolean datasaved = true;
@@ -112,16 +113,16 @@ public class AddNewOperationPanel extends JPanel {
 
 		txtProcessingTime = new FormattedIntegerField();
 		txtProcessingTime.setColumns(Labels.defaultJTextSize);
-		
+
 		txtOperationCost = new FormattedDoubleField();
 		txtOperationCost.setColumns(Labels.defaultJTextSize);
-		
+
 		txtOperationID = new FormattedStringField();
 		txtOperationID.setColumns(Labels.defaultJTextSize);
-		
+
 		txtCustomerId = new FormattedStringField();
 		txtCustomerId.setColumns(Labels.defaultJTextSize);
-		
+
 		lblCustomerIdHeading = new JLabel("Customer Id ");
 
 		lblDimensionHeading = new JLabel(" Dimensions ");
@@ -146,7 +147,7 @@ public class AddNewOperationPanel extends JPanel {
 
 		add(lblCustomerIdHeading);
 		add(txtCustomerId, "wrap");
-		
+
 		add(lblOperationID);
 		add(txtOperationID,"wrap");
 
@@ -194,7 +195,13 @@ public class AddNewOperationPanel extends JPanel {
 			if(jdim != null) {
 				dimList.add(jdim);
 			} else {
-				JOptionPane.showMessageDialog(this, "Invalid input for dimension !!");
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(AddNewOperationPanel.this,
+								"Invalid input for dimension !!");
+					}
+				});
 				status = false;
 				break;
 			}
@@ -212,7 +219,13 @@ public class AddNewOperationPanel extends JPanel {
 			if(jAttribute != null) {
 				attList.add(jAttribute);
 			} else {
-				JOptionPane.showMessageDialog(this, "Invalid input for Attributes !!");
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(AddNewOperationPanel.this,
+								"Invalid input for Attributes !!");
+					}
+				});
 				status = false;
 				break;
 			}
@@ -229,7 +242,13 @@ public class AddNewOperationPanel extends JPanel {
 			op.setProcessingTime(timeUnitConversion * pTime);
 		}
 		else {
-			JOptionPane.showMessageDialog(this, "Invalid input for Processing time !!");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(AddNewOperationPanel.this,
+							"Invalid input for Processing time !!");
+				}
+			});
 			status = false;
 		}
 		return status;
@@ -243,7 +262,13 @@ public class AddNewOperationPanel extends JPanel {
 			op.setProcessingCost(pTime);
 		}
 		else {
-			JOptionPane.showMessageDialog(this, "Invalid input for Processing time !!");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(AddNewOperationPanel.this,
+							"Invalid input for Processing time !!");
+				}
+			});
 			status = false;
 		}
 		return status;
@@ -318,7 +343,13 @@ public class AddNewOperationPanel extends JPanel {
 	private boolean checkCustomerId(OperationItemId id) {
 		boolean status = true;
 		if(txtCustomerId.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Please enter Customer ID !!");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(AddNewOperationPanel.this,
+							"Please enter Customer ID !!");
+				}
+			});
 			status = false;
 		} else {
 			id.setCustomerId(txtCustomerId.getText());
@@ -331,7 +362,12 @@ public class AddNewOperationPanel extends JPanel {
 
 		boolean status = true;
 		if(txtOperationID.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Please enter job ID !!");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(AddNewOperationPanel.this, "Please enter job ID !!");
+				}
+			});
 			status = false;
 		} else {
 			id.setOperationId(txtOperationID.getText());
@@ -340,12 +376,20 @@ public class AddNewOperationPanel extends JPanel {
 		return status;
 	}
 
+	/**
+	 * Runs on EDT
+	 */
 	public void reset() {
 		this.dataOk = true;
 		this.datasaved = true;
-		txtOperationCost.setText("");
-		txtOperationID.setText("");
-		txtProcessingTime.setText("");
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				txtOperationCost.setText("");
+				txtOperationID.setText("");
+				txtProcessingTime.setText("");
+			}
+		});
 	}
 
 	public boolean datasaved() {
