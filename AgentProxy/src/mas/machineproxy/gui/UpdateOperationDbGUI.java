@@ -38,6 +38,7 @@ import javax.swing.event.ListSelectionListener;
 
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationInfo;
+import mas.localSchedulingproxy.database.OperationItemId;
 import mas.machineproxy.gui.custompanels.AddNewOperationPanel;
 import mas.machineproxy.gui.custompanels.DisplayOperationPanel;
 import mas.util.TableUtil;
@@ -49,7 +50,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 	private String aName;
 	public static OperationDataBase ops;
-	private ArrayList<String> operationIDs;
+	private ArrayList<OperationItemId> operationIDs;
 
 	private JList<Object> acceptedJobList;
 	private listModel acceptedJobsListModel;
@@ -83,7 +84,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 		this.aName = agentName;
 		path = "resources/LSA/database/" + aName + "_db.data";
 
-		operationIDs = new ArrayList<String>();
+		operationIDs = new ArrayList<OperationItemId>();
 
 		rightPanel = new JPanel(new BorderLayout());
 
@@ -116,13 +117,16 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 		@Override
 		protected OperationDataBase doInBackground() throws Exception {
 
-			File file = new File(path);
+			File toRead = new File(path);
 			FileInputStream fis;
+
 			try {
-				fis = new FileInputStream(file);
-				ObjectInputStream ois = new ObjectInputStream(fis);
-				ops = (OperationDataBase)ois.readObject();
-				ois.close();
+				if(toRead.exists() && toRead.length() != 0) {
+					fis = new FileInputStream(toRead);
+					ObjectInputStream ois = new ObjectInputStream(fis);
+					ops = (OperationDataBase)ois.readObject();
+					ois.close();
+				}
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -132,6 +136,9 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 			if(ops != null) {
 				operationIDs = ops.getOperationTypes();
+			} else {
+				ops = new OperationDataBase();
+				operationIDs = new ArrayList<OperationItemId>();
 			}
 			return ops;
 		}
@@ -198,7 +205,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 			if(dialogResult == JOptionPane.YES_OPTION) {
 
 				OperationInfo info = comp.getOperationInfo();
-				String id = comp.getOperationId();
+				OperationItemId id = comp.getOperationId();
 				ops.put(id, info);
 			}
 		}
@@ -216,14 +223,14 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 			if(dialogResult == JOptionPane.YES_OPTION) {
 
 				OperationInfo info = comp.getOperationInfo();
-				String id = comp.getOperationId();
+				OperationItemId id = comp.getOperationId();
 				ops.put(id, info);
 			}
 		}
 		comp.reset();
 	}
 
-	private void showOperation(String id, OperationInfo op) {
+	private void showOperation(OperationItemId id, OperationInfo op) {
 
 		// check if the panel was already added i.e. some input was being entered
 		// check if that input is saved or not
@@ -276,7 +283,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 			int idx = acceptedJobList.getSelectedIndex();
 			if (idx != -1) {
-				String opItem = operationIDs.get(idx);
+				OperationItemId opItem = operationIDs.get(idx);
 				OperationInfo info = ops.getOperationInfo(opItem);
 				showOperation(opItem,info);
 			}
@@ -298,7 +305,7 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 		}
 	}
 
-	class customListRenderer extends JobOperationItem implements ListCellRenderer<Object> {
+	class customListRenderer extends JobOperationItemPanel implements ListCellRenderer<Object> {
 
 		public customListRenderer() {
 			super();
@@ -313,8 +320,8 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
-			String entry = (String) value;
-			setDisplay(entry);
+			OperationItemId entry = (OperationItemId) value;
+			setDisplay(entry.getOperationId(), entry.getCustomerId());
 
 			if (isSelected) {
 				setBackground(HIGHLIGHT_COLOR);

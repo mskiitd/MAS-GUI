@@ -12,6 +12,7 @@ import java.util.Random;
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.algorithm.ScheduleSequence;
 import mas.localSchedulingproxy.database.OperationDataBase;
+import mas.localSchedulingproxy.database.OperationItemId;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -92,10 +93,8 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Batch setBid(Batch batchToBidFor){
-
-		//		Random r = new Random();	
-		//		j.setBidByLSA(r.nextDouble());
 
 		batchQueue = (ArrayList<Batch>) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
@@ -103,7 +102,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 		log.info("batch : " + batchToBidFor.getBatchCount() + " operation : " +
 				batchToBidFor.getSampleJob().getCurrentOperation());
-		if( ! operationdb.contains(batchToBidFor.getCurrentOperationType()) ) {
+		if( ! operationdb.contains(batchToBidFor) ) {
 
 			log.info("Operation " + batchToBidFor.getCurrentOperationType() +
 					" unsupported on machine : " + myAgent.getLocalName());
@@ -112,8 +111,10 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			return batchToBidFor;
 		} 
 
-		batchToBidFor.setCurrentOperationProcessingTime(operationdb.
-				getOperationInfo(batchToBidFor.getCurrentOperationType()).getProcessingTime()*
+		OperationItemId id = new OperationItemId(batchToBidFor.getCurrentOperationType(),
+				batchToBidFor.getCustomerId());
+
+		batchToBidFor.setCurrentOperationProcessingTime(operationdb. getOperationInfo(id).getProcessingTime()*
 				batchToBidFor.getBatchCount());
 
 		ArrayList<Batch> tempQueue = new  ArrayList<Batch>();
@@ -136,7 +137,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		bidNo = /*r.nextInt(10)+*/PenaltyAfter-PenaltyBefore;
 		batchToBidFor.setBidByLSA(bidNo);
 		batchToBidFor.setLSABidder(myAgent.getAID());
-		
+
 		return batchToBidFor;
 	}
 
@@ -158,23 +159,23 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			cumulativeProcessingTime = cumulativeProcessingTime + sequence.get(i).getCurrentOperationProcessingTime();
 			double tardiness = 0.0;
 
-//						log.info(myAgent.getLocalName()+ " cpt="+cumulativeProcessingTime +" L="+l+
-//			"ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
+			//						log.info(myAgent.getLocalName()+ " cpt="+cumulativeProcessingTime +" L="+l+
+			//			"ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
 
 			if (finishTime > sequence.get(i).getCurrentOperationDueDate()) {
 				tardiness = (finishTime - sequence.get(i).getCurrentOperationDueDate())/1000.0;
 				//				log.info(myAgent.getLocalName()+ " tardiness="+tardiness+" L="+l+"
-//				ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
+				//				ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
 			}
 			else{
 				tardiness = 0.0;
 			}
-						/*log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
+			/*log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
 								"finishTime="+new Date(finishTime)+"CurrentOperationDueDate="+
 								new Date(sequence.get(i).getCurrentOperationDueDate())+
 								"CurrentOperationStartTime="+new Date(sequence.get(i).getCurrentOperationStartTime())
 						+"cumulativeProcessingTime="+cumulativeProcessingTime);
-						*/
+			 */
 			cost += tardiness * sequence.get(i).getPenaltyRate() ;/*+ sequence.get(i).getCost();*/
 		}
 

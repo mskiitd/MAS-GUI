@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 import mas.localSchedulingproxy.database.OperationInfo;
+import mas.localSchedulingproxy.database.OperationItemId;
 import mas.machineproxy.gui.UpdateOperationDbGUI;
 import mas.util.TableUtil;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
@@ -41,8 +42,10 @@ public class AddNewOperationPanel extends JPanel {
 	private JLabel lblOperationCost;
 	private JLabel lblDimensionHeading;
 	private JLabel lblAttributeHeading;
+	private JLabel lblCustomerIdHeading;
 
 	private FormattedStringField txtOperationID;
+	private FormattedStringField txtCustomerId;
 	private FormattedIntegerField txtProcessingTime;
 	private FormattedDoubleField txtOperationCost;
 
@@ -58,7 +61,6 @@ public class AddNewOperationPanel extends JPanel {
 	private JButton btnDelAttribute;
 	private JPanel attributePanel;
 
-	private String operationId;
 	private JButton btnSave;
 	
 	private boolean dataOk = true;
@@ -116,6 +118,11 @@ public class AddNewOperationPanel extends JPanel {
 		
 		txtOperationID = new FormattedStringField();
 		txtOperationID.setColumns(Labels.defaultJTextSize);
+		
+		txtCustomerId = new FormattedStringField();
+		txtCustomerId.setColumns(Labels.defaultJTextSize);
+		
+		lblCustomerIdHeading = new JLabel("Customer Id ");
 
 		lblDimensionHeading = new JLabel(" Dimensions ");
 		lblDimensionHeading.setFont(TableUtil.headings);
@@ -137,6 +144,9 @@ public class AddNewOperationPanel extends JPanel {
 
 		add(lblAddNewHeading, "wrap");
 
+		add(lblCustomerIdHeading);
+		add(txtCustomerId, "wrap");
+		
 		add(lblOperationID);
 		add(txtOperationID,"wrap");
 
@@ -163,6 +173,7 @@ public class AddNewOperationPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
+				OperationItemId operationId = getOperationId();
 				OperationInfo info = getOperationInfo();
 				if(info != null)
 					UpdateOperationDbGUI.ops.put(operationId, info);
@@ -278,8 +289,14 @@ public class AddNewOperationPanel extends JPanel {
 		}
 	}
 
-	public String getOperationId() {
-		return this.operationId;
+	public OperationItemId getOperationId() {
+		OperationItemId id = new OperationItemId();
+		boolean x5 = checkOperationId(id);
+		boolean x6 = checkCustomerId(id);
+		boolean ok = x5&x6;
+		if(ok) 
+			return id;
+		return null;
 	}
 
 	public OperationInfo getOperationInfo() {
@@ -289,24 +306,35 @@ public class AddNewOperationPanel extends JPanel {
 		boolean x2 = checkAttribute(info);
 		boolean x3 = checkProcTime(info);
 		boolean x4 = checkProcCost(info);
-		boolean x5 = checkOperationId();
 
 		datasaved = true;
-		dataOk = x1 & x2 & x3 & x4 & x5;
+		dataOk = x1 & x2 & x3 & x4;
 
 		if(dataOk)
 			return info;
 		return null;
 	}
 
-	private boolean checkOperationId() {
+	private boolean checkCustomerId(OperationItemId id) {
+		boolean status = true;
+		if(txtCustomerId.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please enter Customer ID !!");
+			status = false;
+		} else {
+			id.setCustomerId(txtCustomerId.getText());
+			status = true;
+		}
+		return status;
+	}
+
+	private boolean checkOperationId(OperationItemId id) {
 
 		boolean status = true;
 		if(txtOperationID.getText().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Please enter job ID !!");
 			status = false;
 		} else {
-			this.operationId = txtOperationID.getText();
+			id.setOperationId(txtOperationID.getText());
 			status = true;
 		}
 		return status;

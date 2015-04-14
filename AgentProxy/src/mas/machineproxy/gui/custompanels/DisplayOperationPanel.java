@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 import mas.localSchedulingproxy.database.OperationInfo;
+import mas.localSchedulingproxy.database.OperationItemId;
 import mas.util.TableUtil;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
@@ -45,10 +46,12 @@ public class DisplayOperationPanel extends JPanel {
 	private JLabel lblOperationCost;
 	private JLabel lblDimensionHeading;
 	private JLabel lblAttributeHeading;
+	private JLabel lblCustomerIdHeading;
 
 	private FormattedStringField txtOperationID;
 	private FormattedIntegerField txtProcessingTime;
 	private FormattedDoubleField txtOperationCost;
+	private FormattedStringField txtCustomerId;
 
 	private Queue<DimensionInputPanel> listPanelDimensions;
 	private BufferedImage iconBtnAddDimension;
@@ -62,7 +65,6 @@ public class DisplayOperationPanel extends JPanel {
 	private JButton btnDelAttribute;
 	private JPanel attributePanel;
 
-	private String operationId;
 	private boolean dataSaved = true;
 
 	public DisplayOperationPanel() {
@@ -121,9 +123,13 @@ public class DisplayOperationPanel extends JPanel {
 		txtOperationID = new FormattedStringField();
 		txtOperationID.setColumns(Labels.defaultJTextSize);
 
+		txtCustomerId = new FormattedStringField();
+		txtCustomerId.setColumns(Labels.defaultJTextSize);
+		
 		lblDimensionHeading = new JLabel(" Dimensions ");
 		lblDimensionHeading.setFont(TableUtil.headings);
 
+		lblCustomerIdHeading = new JLabel(" Customer Id ");
 		lblAttributeHeading = new JLabel(" Attributes ");
 		lblAttributeHeading.setFont(TableUtil.headings);
 
@@ -138,6 +144,9 @@ public class DisplayOperationPanel extends JPanel {
 
 		add(lblDisplayHeading, "wrap");
 
+		add(lblCustomerIdHeading);
+		add(txtCustomerId,"wrap");
+		
 		add(lblOperationID);
 		add(txtOperationID,"wrap");
 
@@ -226,23 +235,10 @@ public class DisplayOperationPanel extends JPanel {
 		return status;
 	}
 	
-	private boolean checkOperationId() {
-
-		boolean status = true;
-		if(txtOperationID.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Please enter job ID !!");
-			status = false;
-		} else {
-			this.operationId = txtOperationID.getText();
-			status = true;
-		}
-		return status;
-	}
-
-	public void populate(String id, OperationInfo op) {
+	public void populate(OperationItemId id, OperationInfo op) {
 		if(op != null) {
-			this.operationId = id;
-			txtOperationID.setText(id);
+			txtOperationID.setText(id.getOperationId());
+			txtCustomerId.setText(id.getCustomerId());
 			txtProcessingTime.setText(String.valueOf(op.getProcessingTime()/timeUnitConversion) );
 			txtOperationCost.setText(String.valueOf(op.getProcessingCost()) );
 
@@ -341,17 +337,48 @@ public class DisplayOperationPanel extends JPanel {
 		boolean x2 = checkAttribute(info);
 		boolean x3 = checkProcTime(info);
 		boolean x4 = checkProcCost(info);
-		boolean x5 = checkOperationId();
 
-		if(x1 & x2 & x3 & x4 & x5)
+		if(x1 & x2 & x3 & x4 )
 			return info;
 		return null;
 	}
 
-	public String getOperationId() {
-		return this.operationId;
+	public OperationItemId getOperationId() {
+		OperationItemId id = new OperationItemId();
+		boolean x5 = checkOperationId(id);
+		boolean x6 = checkCustomerId(id);
+		
+		if( x5 && x6) 
+			return id;
+		return null;
+	}
+	
+	private boolean checkCustomerId(OperationItemId id) {
+
+		boolean status = true;
+		if(txtCustomerId.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please enter customer ID !!");
+			status = false;
+		} else {
+			id.setCustomerId(txtCustomerId.getText());
+			status = true;
+		}
+		return status;
 	}
 
+	private boolean checkOperationId(OperationItemId id) {
+
+		boolean status = true;
+		if(txtOperationID.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please enter job ID !!");
+			status = false;
+		} else {
+			id.setOperationId(txtOperationID.getText());
+			status = true;
+		}
+		return status;
+	}
+	
 	public boolean datasaved() {
 		return this.dataSaved;
 	}

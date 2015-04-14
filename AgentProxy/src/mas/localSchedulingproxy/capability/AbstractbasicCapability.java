@@ -121,6 +121,7 @@ public class AbstractbasicCapability extends Capability {
 		maintJobs.setValue(new ArrayList<PMaintenance>());
 		currentMaintJob.setValue(null);
 		jobSet.setValue(new ArrayList<Batch>());
+		operationDB.setValue(new OperationDataBase());
 
 		double threshVal = 0;
 		regretThreshold.setValue(threshVal);

@@ -80,7 +80,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 					myAgent.getLocalName());
 
 			comingBatch.setCurrentOperationProcessingTime(operationdb.
-					getOperationInfo(comingBatch.getCurrentOperationType()).
+					getOperationInfo(comingBatch).
 					getProcessingTime() );
 			
 			jobQueue.add(comingBatch);

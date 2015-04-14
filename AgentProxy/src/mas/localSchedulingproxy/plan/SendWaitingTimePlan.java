@@ -4,14 +4,19 @@ import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
 import java.util.ArrayList;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.database.OperationDataBase;
+import mas.localSchedulingproxy.database.OperationItemId;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -49,6 +54,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		return EndState.SUCCESSFUL;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(PlanInstance pInstance) {
 		bfBase = pInstance.getBeliefBase();
@@ -95,7 +101,10 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessingTime();
 		}
 
-		if(operationdb.contains(j.getSampleJob().getCurrentOperation().getJobOperationType()) ) {
+		OperationItemId id = new OperationItemId(j.getCustomerId(),
+				j.getSampleJob().getCurrentOperation().getJobOperationType());
+		
+		if(operationdb.contains(id) ) {
 			j.setWaitingTime(avgWaitingTime ); //WaitingTime+ j.getCurrentOperationProcessTime());
 		} else {
 			log.info("Operation" + j.getSampleJob().getCurrentOperation().getJobOperationType() +

@@ -38,12 +38,12 @@ public class LoadOperationDatabasePlan extends Behaviour implements PlanBody {
 		OperationDataBase db;
 		path = "resources/LSA/database/" + myAgent.getLocalName() + "_db.data";
 		File toRead = new File(path);
-
 		try {
-			if(toRead.exists() && !toRead.isDirectory()) {
+			if(toRead.exists() && toRead.length() != 0) {
 				FileInputStream fis;
 
 				fis = new FileInputStream(toRead);
+				
 				ObjectInputStream ois = new ObjectInputStream(fis);
 				db = (OperationDataBase)ois.readObject();
 				ois.close();
