@@ -1,7 +1,7 @@
 package mas.maintenanceproxy.plan;
 
 import jade.core.AID;
-import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -9,9 +9,6 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import mas.localSchedulingproxy.goal.SubscribeToGsaLsaGoal;
-import mas.localSchedulingproxy.goal.SubscribeToMachineLsaGoal;
-import mas.localSchedulingproxy.goal.SubscribeToMaintenanceLsaGoal;
 import mas.maintenanceproxy.goal.SubscribeToLsaMaintGoal;
 import mas.maintenanceproxy.goal.SubscribeToMachineMaintGoal;
 import mas.util.ID;
@@ -25,12 +22,13 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
+public class LookUpAgentsMaintPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private int step = 0;
 	private BeliefBase bfBase;
-	private DFAgentDescription dfd;
+	private DFAgentDescription dfdLsa;
+	private DFAgentDescription dfdMachine;
 	private AID machine;
 	private AID lsa;
 	private Logger log;
@@ -40,9 +38,14 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 	private ServiceDescription sdLsa;
 	private ServiceDescription sdMachine;
 
+	private boolean machineFound = false;
+	private boolean lsaFound = false;
+
+	private String mySurName;
+
 	@Override
 	public EndState getEndState() {
-		return null;
+		return (lsaFound && machineFound) ? EndState.SUCCESSFUL : null;
 	}
 
 	@Override
@@ -51,15 +54,17 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 		bfBase = planInstance.getBeliefBase();
 		log = LogManager.getLogger();
 
-		dfd = new DFAgentDescription();
+		dfdLsa = new DFAgentDescription();
+		dfdMachine = new DFAgentDescription();
+
 		sdLsa  = new ServiceDescription();
 		sdMachine = new ServiceDescription();
 
 		sdLsa.setType(ID.LocalScheduler.Service);
-		dfd.addServices(sdLsa);
+		dfdLsa.addServices(sdLsa);
 
 		sdMachine.setType(ID.Machine.Service);
-		dfd.addServices(sdMachine);
+		dfdMachine.addServices(sdMachine);
 
 		sc = new SearchConstraints();
 		sc.setMaxResults(new Long(1));
@@ -70,31 +75,48 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 		switch(step) {
 		case 0:
 
-			DFAgentDescription[] result;
+			String name = myAgent.getLocalName();
+			mySurName = name.substring(name.lastIndexOf("#") + 1, name.length());
+
+			DFAgentDescription[] resultLsa, resultMachine;
 			try {
-				result = DFService.search(myAgent, dfd);
-				log.info("result length : " + result.length );
-				if (result.length > 0) {
+				resultLsa = DFService.search(myAgent, dfdLsa);
+				if (resultLsa.length > 0) {
 
-					for(int i = 0; i < result.length; i ++) {
-						String service = ((ServiceDescription) result[i].getAllServices().next()).getType();
+					for(int i = 0; i < resultLsa.length; i ++) {
+						lsa = resultLsa[i].getName();
+						String lsaName = lsa.getLocalName();
+						int hashIdx = lsaName.lastIndexOf("#");
+						String lsaSurName = lsaName.substring(hashIdx + 1, lsaName.length());
 
-						if(ID.LocalScheduler.Service.equals(service)) {
-
-							lsa = result[i].getName();
+						if(mySurName.equals(lsaSurName)) {
 							log.info("Lsa found : " + lsa);
+							lsaFound = true;
 							bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.lsAgent, lsa);
 							((BDIAgent)myAgent).addGoal(new SubscribeToLsaMaintGoal());
+							break;
+						}
 
-						} else if(ID.Machine.Service.equals(service)) {
+					} 
+				}
+				resultMachine =  DFService.search(myAgent, dfdMachine);
+				if (resultMachine.length > 0) {
+					for(int i = 0; i < resultMachine.length; i ++) {
+						machine = resultMachine[i].getName();
 
-							machine = result[i].getName();
+						String machineName = lsa.getLocalName();
+						int hashIdx = machineName.lastIndexOf("#");
+						String mSurName = machineName.substring(hashIdx + 1, machineName.length());
+
+						if(mySurName.equals(mSurName)) {
 							log.info("machine found  : " + machine);
+							machineFound = true;
 							bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machineAgent, machine);
 							((BDIAgent)myAgent).addGoal(new SubscribeToMachineMaintGoal());
+							break;
 						}
-					}
-				} 
+					} 
+				}
 			} catch (FIPAException e) {
 				e.printStackTrace();
 			}
@@ -103,8 +125,15 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 		case 1:
 			log.info("step 1 ");
 
-			myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
-					dfd, sc));
+			if(! lsaFound) {
+				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+						dfdLsa, sc));
+			}
+
+			if(! machineFound) {
+				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+						dfdMachine, sc));
+			}
 			step = 2;
 			break;
 
@@ -115,17 +144,30 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 				try {
 					DFAgentDescription[] dfds = DFService.decodeNotification(msg.getContent());
 
-					log.info("dfd length : " + dfds.length);
 					if (dfds.length > 0) {
 						String service = ((ServiceDescription) dfds[0].getAllServices().next()).getType();
 
 						if(ID.LocalScheduler.Service.equals(service)) {
 							lsa = dfds[0].getName();
-							step  = 5;
+
+							String lsaName = lsa.getLocalName();
+							int hashIdx = lsaName.lastIndexOf("#");
+							String lsaSurName = lsaName.substring(hashIdx + 1, lsaName.length());
+
+							if(mySurName.equals(lsaSurName)) {
+								step  = 5;
+							}
 
 						} else if(ID.Machine.Service.equals(service)) {
 							machine = dfds[0].getName();
-							step = 6;
+
+							String machineName = lsa.getLocalName();
+							int hashIdx = machineName.lastIndexOf("#");
+							String mSurName = machineName.substring(hashIdx + 1, machineName.length());
+
+							if(mySurName.equals(mSurName)) {
+								step = 6;
+							}
 						}
 					}
 				}
@@ -150,5 +192,10 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 			break;
 
 		}
+	}
+
+	@Override
+	public boolean done() {
+		return lsaFound && machineFound;
 	}
 }

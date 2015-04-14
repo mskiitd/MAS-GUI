@@ -222,7 +222,7 @@ public class LookUpAgentsLsaPlan extends Behaviour implements PlanBody {
 		case 6:
 			log.info("Maintenance found  : " + maintenance);
 			maintFound = true;
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.globalSchAgent, maintenance);
+			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.maintAgent, maintenance);
 			((BDIAgent)myAgent).addGoal(new SubscribeToMaintenanceLsaGoal());
 			step = 2;
 			break;

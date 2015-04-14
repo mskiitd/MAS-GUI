@@ -23,8 +23,10 @@ public class SubscribeToMaintMachineBehavior extends OneShotBehaviour {
 	@Override
 	public void action() {
 		SubscriptionForm subform = new SubscriptionForm();
+		
 		String[] lMaintenanceParams = {ID.Maintenance.ZoneData.correctiveMaintdata,
 				ID.Maintenance.ZoneData.prevMaintData };
+		
 		subform.AddSubscriptionReq(maintenance, lMaintenanceParams);
 		AgentUtil.subscribeToParam(myAgent, blackBoard, subform);
 	}

@@ -1,6 +1,5 @@
 package mas.globalSchedulingproxy.plan;
 
-import java.io.IOException;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import mas.blackboard.nameZoneData.NamedZoneData;
@@ -28,9 +27,6 @@ public class RegisterAgentToBlackboardPlan extends OneShotBehaviour implements P
 
 	@Override
 	public void action() {
-
-		ACLMessage msg2 = new ACLMessage(ACLMessage.CFP);
-		msg2.setConversationId(MessageIds.RegisterMe);
 
 		NamedZoneData ZoneDataName1 = new NamedZoneData.Builder
 				(ID.GlobalScheduler.ZoneData.GSAConfirmedOrder).
@@ -77,16 +73,10 @@ public class RegisterAgentToBlackboardPlan extends OneShotBehaviour implements P
 				ID.GlobalScheduler.ZoneData.rejectedOrders).
 				MsgID(MessageIds.RejectedOrder).build();
 
-		NamedZoneData[] ZoneDataNames={ZoneDataName1, ZoneDataName2,
-				ZoneDataName3,ZoneDataName4,
-				ZoneDataName5,ZoneDataName6, ZoneDataName7, ZoneDataName8 
-				,ZoneDataName9, ZoneDataName10};
-		try {
-			msg2.setContentObject(ZoneDataNames);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		NamedZoneData[] ZoneDataNames = {ZoneDataName1, ZoneDataName2,
+				ZoneDataName3, ZoneDataName4, ZoneDataName5, ZoneDataName6,
+				ZoneDataName7, ZoneDataName8, ZoneDataName9, ZoneDataName10 };
+
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 	}
-
 }

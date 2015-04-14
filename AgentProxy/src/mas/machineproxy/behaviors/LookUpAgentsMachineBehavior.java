@@ -1,7 +1,7 @@
 package mas.machineproxy.behaviors;
 
 import jade.core.AID;
-import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -10,24 +10,16 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import mas.machineproxy.Simulator;
-import mas.maintenanceproxy.goal.SubscribeToLsaMaintGoal;
-import mas.maintenanceproxy.goal.SubscribeToMachineMaintGoal;
 import mas.util.ID;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import bdi4jade.core.BDIAgent;
-import bdi4jade.core.BeliefBase;
-import bdi4jade.plan.PlanBody;
-import bdi4jade.plan.PlanInstance;
-import bdi4jade.plan.PlanInstance.EndState;
-
-public class LookUpAgentsMachineBehavior  extends CyclicBehaviour {
+public class LookUpAgentsMachineBehavior  extends Behaviour {
 
 	private static final long serialVersionUID = 1L;
 	private int step = 0;
-	private DFAgentDescription dfd;
+	private DFAgentDescription dfdLsa;
+	private DFAgentDescription dfdMaint;
 	private AID maintenance;
 	private AID lsa;
 	private Logger log;
@@ -38,6 +30,11 @@ public class LookUpAgentsMachineBehavior  extends CyclicBehaviour {
 	private ServiceDescription sdLsa;
 	private ServiceDescription sdMaintenance;
 
+	private boolean lsaFound = false;
+	private boolean maintFound = false;
+
+	private String mySurName;
+
 	public LookUpAgentsMachineBehavior(Simulator sim) {
 		log = LogManager.getLogger();
 
@@ -45,62 +42,82 @@ public class LookUpAgentsMachineBehavior  extends CyclicBehaviour {
 		lsa = sim.getLsAgent();
 		maintenance = sim.getMaintAgent();
 
-		dfd = new DFAgentDescription();
+		dfdLsa = new DFAgentDescription();
 		sdLsa  = new ServiceDescription();
 		sdMaintenance = new ServiceDescription();
 
 		sdLsa.setType(ID.LocalScheduler.Service);
-		dfd.addServices(sdLsa);
+		dfdLsa.addServices(sdLsa);
 
 		sdMaintenance.setType(ID.Maintenance.Service);
-		dfd.addServices(sdMaintenance);
+		dfdLsa.addServices(sdMaintenance);
 
 		sc = new SearchConstraints();
 		sc.setMaxResults(new Long(1));
-
-		log.info("Looking up ...");
 	}
 
 	@Override
 	public void action() {
 		switch(step) {
 		case 0:
+			String name = myAgent.getLocalName();
+			mySurName = name.substring(name.lastIndexOf("#") + 1, name.length());
 
-			DFAgentDescription[] result;
+			DFAgentDescription[] resultLsa, resultMaint;
 			try {
-				result = DFService.search(myAgent, dfd);
-				log.info("result length : " + result.length );
-				if (result.length > 0) {
+				resultLsa = DFService.search(myAgent, dfdLsa);
+				if (resultLsa.length > 0) {
+					for(int i = 0; i < resultLsa.length; i ++) {
+						lsa = resultLsa[i].getName();
 
-					for(int i = 0; i < result.length; i ++) {
-						String service = ((ServiceDescription) result[i].getAllServices().next()).getType();
+						String lsaName = maintenance.getLocalName();
+						int hashIdx = lsaName.lastIndexOf("#");
+						String lsaSurName = lsaName.substring(hashIdx + 1, lsaName.length());
 
-						if(ID.LocalScheduler.Service.equals(service)) {
-
-							lsa = result[i].getName();
+						if(mySurName.equals(lsaSurName)) {
 							log.info("Lsa found : " + lsa);
+							lsaFound = true;
 							machineSimulator.setLsAgent(lsa);
 							myAgent.addBehaviour(new SubscribeToLsaMachineBehavior(machineSimulator));
+							break;
+						}
+					}
+				}
+				resultMaint = DFService.search(myAgent, dfdMaint);
+				if (resultMaint.length > 0) {
+					for(int i = 0; i < resultMaint.length; i ++) {
 
-						} else if(ID.Maintenance.Service.equals(service)) {
+						maintenance = resultMaint[i].getName();
 
-							maintenance = result[i].getName();
+						String maintName = maintenance.getLocalName();
+						int hashIdx = maintName.lastIndexOf("#");
+						String maintSurName = maintName.substring(hashIdx + 1, maintName.length());
+
+						if(mySurName.equals(maintSurName)) {
+							maintFound = true;
 							log.info("maintenance found  : " + maintenance);
 							machineSimulator.setMaintAgent(maintenance);
 							myAgent.addBehaviour(new SubscribeToMaintMachineBehavior(machineSimulator));
+							break;
 						}
 					}
 				} 
+
 			} catch (FIPAException e) {
 				e.printStackTrace();
 			}
 			step = 1;
 			break;
 		case 1:
-			log.info("step 1 ");
+			if(!maintFound) {
+				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+						dfdMaint, sc));
+			}
 
-			myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
-					dfd, sc));
+			if(!lsaFound) {
+				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+						dfdLsa, sc));
+			}
 			step = 2;
 			break;
 
@@ -117,11 +134,24 @@ public class LookUpAgentsMachineBehavior  extends CyclicBehaviour {
 
 						if(ID.LocalScheduler.Service.equals(service)) {
 							lsa = dfds[0].getName();
-							step  = 5;
+							String lsaName = maintenance.getLocalName();
+							int hashIdx = lsaName.lastIndexOf("#");
+							String lsaSurName = lsaName.substring(hashIdx + 1, lsaName.length());
+
+							if(mySurName.equals(lsaSurName)) {
+								step  = 5;
+							}
 
 						} else if(ID.Maintenance.Service.equals(service)) {
 							maintenance = dfds[0].getName();
-							step = 6;
+
+							String maintName = maintenance.getLocalName();
+							int hashIdx = maintName.lastIndexOf("#");
+							String maintSurName = maintName.substring(hashIdx + 1, maintName.length());
+
+							if(mySurName.equals(maintSurName)) {
+								step = 6;
+							}
 						}
 					}
 				}
@@ -145,5 +175,10 @@ public class LookUpAgentsMachineBehavior  extends CyclicBehaviour {
 			step = 2;
 			break;
 		}
+	}
+
+	@Override
+	public boolean done() {
+		return lsaFound && maintFound;
 	}
 }

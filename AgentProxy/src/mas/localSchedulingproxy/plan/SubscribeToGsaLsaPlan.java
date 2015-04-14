@@ -31,12 +31,15 @@ public class SubscribeToGsaLsaPlan extends Behaviour implements PlanBody{
 	@Override
 	public void init(PlanInstance planInstance) {
 		bfBase = planInstance.getBeliefBase();
+		
 		gsa = (AID) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.globalSchAgent).
 				getValue();
+		
 		blackBoard = (AID) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
+		
 		log = LogManager.getLogger();
 	}
 
