@@ -21,7 +21,7 @@ public class job implements Serializable {
 	private Date completionTime;
 
 	private ArrayList<jobOperation> operations;
-	public int currentOperationNumber = 0;
+	private int currentOperationNumber = 0;
 
 	// a flag to indicate that all operations of the job are finished
 	private boolean IsComplete = false;

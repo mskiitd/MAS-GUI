@@ -100,9 +100,10 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		for(int i = 0; i < jobQueue.size(); i++) {
 			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessingTime();
 		}
-
+		log.info(j.getSampleJob().getCurrentOperation());
 		OperationItemId id = new OperationItemId(j.getSampleJob().getCurrentOperation().getJobOperationType(),
 				j.getCustomerId());
+		
 		
 		if(operationdb.contains(id) ) {
 			j.setWaitingTime(avgWaitingTime ); //WaitingTime+ j.getCurrentOperationProcessTime());

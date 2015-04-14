@@ -25,6 +25,10 @@ public class Batch implements Serializable {
 			HighRegretMultiplier = 3;
 
 	private ArrayList<job> jobsInBatch;
+//	jobsInBatch contains copies of jobs with same reference
+	//hence if u change any property of any job in jobsInBatch, changes will occur in every job
+	//of jobsInBatch
+	
 	private String customerId = null;
 	private String batchId = null;
 	private int batchNo;
@@ -45,7 +49,7 @@ public class Batch implements Serializable {
 	private AID LSABidder;
 	private double BidByLSA ;
 
-	public double slack;
+	private double slack;
 	private double regret;
 
 	private int currentJobIndex = 0;
@@ -306,9 +310,12 @@ public class Batch implements Serializable {
 
 	public void IncrementOperationNumber() {
 		this.currentOperationIndex ++ ;
-		for(int i = 0; i < jobsInBatch.size(); i++) {
-			jobsInBatch.get(i).IncrementOperationNumber();
-		}
+//		for(int i = 0; i < jobsInBatch.size(); i++) {
+			jobsInBatch.get(0).IncrementOperationNumber();
+			//no need to loop through as jobsInBatch contains copies of jobs with same reference
+			//hence if u change any property of any job in jobsInBatch, changes will occur in every job
+			//of jobsInBatch
+//		}
 		/**
 		 *  if index becomes >= the size of the operations it means all operations are done
 		 *  index for last operation is 'size()-1'
