@@ -41,6 +41,7 @@ import mas.localSchedulingproxy.database.OperationInfo;
 import mas.localSchedulingproxy.database.OperationItemId;
 import mas.machineproxy.gui.custompanels.AddNewOperationPanel;
 import mas.machineproxy.gui.custompanels.DisplayOperationPanel;
+import mas.machineproxy.gui.custompanels.JobOperationItemPanel;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 
@@ -280,7 +281,6 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 	class ListSelectionHandler implements ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) { 
-
 			int idx = acceptedJobList.getSelectedIndex();
 			if (idx != -1) {
 				OperationItemId opItem = operationIDs.get(idx);
@@ -313,9 +313,9 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 		}
 
 		private static final long serialVersionUID = 1L;
-		private final Color HIGHLIGHT_COLOR = new Color(132, 112, 255);
-		private final Color BackGround_COLOR = new Color(238, 233, 233);
-		private final Color ForeGround_COLOR = new Color(205, 201, 201);
+		private final Color HIGHLIGHT_COLOR = new Color(100, 149, 237);
+		private final Color BackGround_COLOR = Color.WHITE;
+		private final Color ForeGround_COLOR = Color.BLACK;
 
 		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {

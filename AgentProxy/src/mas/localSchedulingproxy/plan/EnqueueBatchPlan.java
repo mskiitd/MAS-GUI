@@ -10,6 +10,7 @@ import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.database.OperationDataBase;
+import mas.localSchedulingproxy.database.OperationItemId;
 import mas.machineproxy.gui.MachineGUI;
 import mas.util.ID;
 
@@ -79,10 +80,10 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 			log.info("Adding the batch" + comingBatch.getBatchId()+  " to queue of agent, " +
 					myAgent.getLocalName());
 
-			comingBatch.setCurrentOperationProcessingTime(operationdb.
-					getOperationInfo(comingBatch).
-					getProcessingTime() );
+			OperationItemId id = new OperationItemId(comingBatch.getCurrentOperationType(), comingBatch.getCustomerId());
 			
+			comingBatch.setCurrentOperationProcessingTime(operationdb.getOperationInfo(id).getProcessingTime());
+		
 			jobQueue.add(comingBatch);
 			/**
 			 * update the belief base

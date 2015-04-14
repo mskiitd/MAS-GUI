@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import mas.jobproxy.JobGNGattribute;
 import mas.jobproxy.jobDimension;
 
+/**
+ * @author Anand Prajapati
+ * info about single operation
+ */
 public class OperationInfo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -51,4 +55,5 @@ public class OperationInfo implements Serializable{
 	public void setGngAttributes(ArrayList<JobGNGattribute> gngAttributes) {
 		this.gngAttributes = gngAttributes;
 	}
+
 }

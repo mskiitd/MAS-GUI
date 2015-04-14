@@ -26,8 +26,6 @@ public class MaintenanceActivityCodeFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private Logger log;
-
 	private String activityCode;
 
 	private JScrollPane scroller;
@@ -41,7 +39,6 @@ public class MaintenanceActivityCodeFrame extends JFrame {
 
 	public MaintenanceActivityCodeFrame(PMaintenance pm) {
 
-		log = LogManager.getLogger();
 		this.localPm = pm;
 		setLayout(new BorderLayout());
 		this.myPanel = new JPanel(new MigLayout());

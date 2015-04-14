@@ -34,8 +34,8 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
 	private static final long LargeLongNegativeValue =-3*((long)Math.pow(10,10));
-			//3*((long)Math.pow(10,10)) milliseconds ~ 0.95 years
-	//if we set Long.MIN_VALUE, and addition happends in calculation of waiting in time in GSA,
+	//3*((long)Math.pow(10,10)) milliseconds ~ 0.95 years
+	//if we set Long.MIN_VALUE, and addition happens in calculation of waiting in time in GSA,
 	//due to bit limit, Long.MIN_VALUE+Long.MIN_VALUE becomes 0 which is wrong
 	private ACLMessage msg;
 	private ArrayList<Batch> jobQueue;
@@ -101,14 +101,15 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessingTime();
 		}
 
-		OperationItemId id = new OperationItemId(j.getCustomerId(),
-				j.getSampleJob().getCurrentOperation().getJobOperationType());
+		OperationItemId id = new OperationItemId(j.getSampleJob().getCurrentOperation().getJobOperationType(),
+				j.getCustomerId());
 		
 		if(operationdb.contains(id) ) {
 			j.setWaitingTime(avgWaitingTime ); //WaitingTime+ j.getCurrentOperationProcessTime());
 		} else {
-			log.info("Operation" + j.getSampleJob().getCurrentOperation().getJobOperationType() +
-					"unsupported on this machine");
+			log.info(" Operation " + j.getSampleJob().getCurrentOperation().getJobOperationType() +
+					" customer id : '" + j.getCustomerId() +  
+					"' unsupported on this machine");
 			j.setWaitingTime(LargeLongNegativeValue);
 		}
 		//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());

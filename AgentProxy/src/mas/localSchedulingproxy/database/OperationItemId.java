@@ -7,16 +7,16 @@ public class OperationItemId implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String operationId;
 	private String customerId;
-	
+
 	public OperationItemId(String op, String customer) {
 		this.operationId = op;
 		this.customerId = customer;
 	}
-	
+
 	public OperationItemId() {
 		this(null, null);
 	}
-	
+
 	public String getOperationId() {
 		return operationId;
 	}
@@ -49,6 +49,7 @@ public class OperationItemId implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		
 		OperationItemId other = (OperationItemId) obj;
 		if (customerId == null) {
 			if (other.customerId != null)
@@ -62,5 +63,13 @@ public class OperationItemId implements Serializable{
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return new StringBuilder().
+				append(" cid : " + customerId).
+				append(" oid : " + operationId).
+				toString();
+	}
+
 }

@@ -84,8 +84,7 @@ public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody
 			getValue();
 
 			if (MachineCount != 0) {
-				//				log.info("due date: "+order.getDuedate());
-				order.setStartTimeMillis(System.currentTimeMillis());
+//				order.setStartTimeMillis(System.currentTimeMillis());
 
 				ZoneDataUpdate zdu = new ZoneDataUpdate.
 						Builder(ID.GlobalScheduler.ZoneData.askBidForJobFromLSA).

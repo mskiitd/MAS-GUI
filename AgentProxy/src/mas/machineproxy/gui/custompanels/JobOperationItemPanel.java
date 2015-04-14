@@ -1,8 +1,11 @@
-package mas.machineproxy.gui;
+package mas.machineproxy.gui.custompanels;
 
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 import net.miginfocom.swing.MigLayout;
+
 import com.alee.extended.label.WebHotkeyLabel;
 
 public class JobOperationItemPanel extends JPanel {
@@ -28,6 +31,7 @@ public class JobOperationItemPanel extends JPanel {
 		
 		add(lblOpIdHeading);
 		add(lblOperationId,"wrap");
+		setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 	}
 
 	public JobOperationItemPanel(String job,String cust) {
@@ -39,8 +43,6 @@ public class JobOperationItemPanel extends JPanel {
 		this.CustomerId = cust;
 		lblCustomerId.setText(this.CustomerId);
 		lblOperationId.setText(this.opInfo);
-		revalidate();
-		repaint();
 	}
 
 }
