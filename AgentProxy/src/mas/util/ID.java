@@ -199,7 +199,7 @@ public class ID implements Serializable{
 
 		public class BeliefBaseConst {
 			public static final String blackboardAgent = "Maintenance_blackboard-agent";
-			public static final String machineHealth = "Maintenance_machine";
+			public static final String machineHealth = "Maintenance_machine_health";
 			public static final String globalSchAgentAID = "Maintenance_gsAgent";
 			public static final String dataTracker = "Maintenance_data-tracker";
 			public static final String preventiveMaintJob = "Maintenance_machine-maintenance-tracker";
@@ -207,7 +207,7 @@ public class ID implements Serializable{
 			public static final String gui_maintenance = "gui_maintenance";
 			public static final String prevMaintFromMachine = "prevMaint_Status_From_Machine";
 			public static final String lsAgent = "Maintenance_LsAgent";
-			public static final String machine = "Maintenance_machine";
+			public static final String machineAgent = "Maintenance_machine_agent";
 		}
 	}
 

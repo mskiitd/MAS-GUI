@@ -48,6 +48,7 @@ public class SubscribeToGsaLsaPlan extends Behaviour implements PlanBody{
 				ID.GlobalScheduler.ZoneData.GetWaitingTime , ID.GlobalScheduler.ZoneData.jobForLSA,
 				ID.GlobalScheduler.ZoneData.GSAConfirmedOrder, ID.GlobalScheduler.ZoneData.QueryRequest };
 		
+		log.info("lsa : gsa " + gsa);
 		subform.AddSubscriptionReq(gsa, gSchedulingParams);
 		AgentUtil.subscribeToParam(myAgent, blackBoard, subform);
 		done = true;

@@ -1,7 +1,7 @@
 package mas.localSchedulingproxy.plan;
 
 import jade.core.AID;
-import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -13,20 +13,24 @@ import mas.localSchedulingproxy.goal.SubscribeToGsaLsaGoal;
 import mas.localSchedulingproxy.goal.SubscribeToMachineLsaGoal;
 import mas.localSchedulingproxy.goal.SubscribeToMaintenanceLsaGoal;
 import mas.util.ID;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
+public class LookUpAgentsLsaPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private int step = 0;
 	private BeliefBase bfBase;
-	private DFAgentDescription dfd;
+	private DFAgentDescription dfdGsa;
+	private DFAgentDescription dfdMaint;
+	private DFAgentDescription dfdMachine;
 	private AID machine;
 	private AID gsa;
 	private AID maintenance;
@@ -38,9 +42,15 @@ public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
 	private ServiceDescription sdMaintenance;
 	private ServiceDescription sdMachine;
 
+	private boolean gsaFound = false;
+	private boolean maintFound = false;
+	private boolean machineFound = false;
+
+	private String mySurname;
+
 	@Override
 	public EndState getEndState() {
-		return null;
+		return (gsaFound && maintFound && machineFound) ? EndState.SUCCESSFUL : null;
 	}
 
 	@Override
@@ -61,72 +71,100 @@ public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
 				getBelief(ID.LocalScheduler.BeliefBaseConst.maintAgent).
 				getValue();
 
-		dfd = new DFAgentDescription();
+		dfdMaint = new DFAgentDescription();
+		dfdGsa = new DFAgentDescription();
+		dfdMachine = new DFAgentDescription();
+
 		sdGsa  = new ServiceDescription();
 		sdMaintenance = new ServiceDescription();
 		sdMachine = new ServiceDescription();
 
 		sdGsa.setType(ID.GlobalScheduler.Service);
-		dfd.addServices(sdGsa);
+		dfdGsa.addServices(sdGsa);
 
 		sdMaintenance.setType(ID.Maintenance.Service);
-		dfd.addServices(sdMaintenance);
+		dfdMaint.addServices(sdMaintenance);
 
 		sdMachine.setType(ID.Machine.Service);
-		dfd.addServices(sdMachine);
+		dfdMachine.addServices(sdMachine);
 
 		sc = new SearchConstraints();
 		sc.setMaxResults(new Long(1));
+
 	}
 
 	@Override
 	public void action() {
 		switch(step) {
 		case 0:
+			String name = myAgent.getLocalName();
+			mySurname = name.substring(name.lastIndexOf("#") + 1, name.length());
 
-			DFAgentDescription[] result;
+			DFAgentDescription[] resultGsa, resultMaint, resultMachine;
 			try {
-				result = DFService.search(myAgent, dfd);
-				log.info("result length : " + result.length );
-				if (result.length > 0) {
+				resultGsa = DFService.search(myAgent, dfdGsa);
+				if (resultGsa.length > 0) {
+					gsa = resultGsa[0].getName();
+					step  = 5;
+				}
 
-					for(int i = 0; i < result.length; i ++) {
-						String service = ((ServiceDescription) result[i].getAllServices().next()).getType();
+				resultMaint = DFService.search(myAgent, dfdMaint);
+				if (resultMaint.length > 0) {
+					for(int i = 0; i < resultMaint.length; i ++) {
 
-						if(ID.GlobalScheduler.Service.equals(service)) {
+						maintenance = resultMaint[i].getName();
 
-							gsa = result[i].getName();
-							log.info("Gsa found : " + gsa);
-							bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.globalSchAgent, gsa);
-							((BDIAgent)myAgent).addGoal(new SubscribeToGsaLsaGoal());
-						}
-						else if(ID.Maintenance.Service.equals(service)) {
-
-							maintenance = result[i].getName();
+						String maintName = maintenance.getLocalName();
+						int hashIdx = maintName.lastIndexOf("#");
+						String maintSurName = maintName.substring(hashIdx + 1, maintName.length());
+						if(mySurname.equals(maintSurName)) {
 							log.info("Maintenance found  : " + maintenance);
+							maintFound = true;
 							bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.maintAgent, maintenance);
 							((BDIAgent)myAgent).addGoal(new SubscribeToMaintenanceLsaGoal());
+							break;
+						}
+					}
+				}
 
-						} else if(ID.Machine.Service.equals(service)) {
+				resultMachine = DFService.search(myAgent, dfdMachine);
+				if (resultMachine.length > 0) {
+					for(int i = 0; i < resultMachine.length; i ++) {
 
-							machine = result[i].getName();
+						machine = resultMachine[i].getName();
+						String machineName = machine.getLocalName();
+						int hashIdx = machineName.lastIndexOf("#");
+						String machineSurName = machineName.substring(hashIdx + 1, machineName.length());
+						if(mySurname.equals(machineSurName)) {
+							machineFound = true;
 							log.info("machine found  : " + machine);
 							bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.machine, machine);
 							((BDIAgent)myAgent).addGoal(new SubscribeToMachineLsaGoal());
+							break;
 						}
 					}
-				} else {
-					step = 1;
 				}
 			} catch (FIPAException e) {
 				e.printStackTrace();
 			}
+			step = 1;
 			break;
 		case 1:
-			log.info("step 1 ");
+			if(!gsaFound) {
+				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+						dfdGsa, sc));
+			}
 
-			myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
-					dfd, sc));
+			if(!maintFound) {
+				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+						dfdMaint, sc));
+			}
+
+			if(!machineFound) {
+				myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+						dfdMachine, sc));
+			}
+			
 			step = 2;
 			break;
 
@@ -137,7 +175,6 @@ public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
 				try {
 					DFAgentDescription[] dfds = DFService.decodeNotification(msg.getContent());
 
-					log.info("dfd length : " + dfds.length);
 					if (dfds.length > 0) {
 						String service = ((ServiceDescription) dfds[0].getAllServices().next()).getType();
 
@@ -147,11 +184,24 @@ public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
 
 						} else if(ID.Maintenance.Service.equals(service)) {
 							maintenance = dfds[0].getName();
-							step = 6;
+
+							String maintName = maintenance.getLocalName();
+							int hashIdx = maintName.lastIndexOf("#");
+							String maintSurName = maintName.substring(hashIdx + 1, maintName.length());
+
+							if(mySurname.equals(maintSurName)) {
+								step = 6;
+							}
 
 						} else if(ID.Machine.Service.equals(service)) {
 							machine = dfds[0].getName();
-							step = 7;
+							String machineName = machine.getLocalName();
+							int hashIdx = machineName.lastIndexOf("#");
+
+							String machineSurName = machineName.substring(hashIdx + 1, machineName.length());
+							if(mySurname.equals(machineSurName)) {
+								step = 7;
+							}
 						}
 					}
 				}
@@ -163,6 +213,7 @@ public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
 
 		case 5:
 			log.info("GSA found  : " + gsa);
+			gsaFound = true;
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.globalSchAgent, gsa);
 			((BDIAgent)myAgent).addGoal(new SubscribeToGsaLsaGoal());
 			step = 2;
@@ -170,6 +221,7 @@ public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
 
 		case 6:
 			log.info("Maintenance found  : " + maintenance);
+			maintFound = true;
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.globalSchAgent, maintenance);
 			((BDIAgent)myAgent).addGoal(new SubscribeToMaintenanceLsaGoal());
 			step = 2;
@@ -177,11 +229,17 @@ public class LookUpAgentsLsaPlan extends CyclicBehaviour implements PlanBody {
 
 		case 7:
 			log.info("Machine found  : " + machine);
-			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.globalSchAgent, machine);
+			gsaFound = true;
+			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.machine, machine);
 			((BDIAgent)myAgent).addGoal(new SubscribeToMachineLsaGoal());
 			step = 2;
 			break;
 		}
+	}
+
+	@Override
+	public boolean done() {
+		return gsaFound && maintFound && machineFound;
 	}
 
 }

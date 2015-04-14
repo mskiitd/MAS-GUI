@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptBatchBehavior;
-import mas.machineproxy.behaviors.LookUpAgentsBehavior;
+import mas.machineproxy.behaviors.LookUpAgentsMachineBehavior;
 import mas.machineproxy.behaviors.TakeJobFromBatchBehavior;
 import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
@@ -221,7 +221,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		machineParameterShifter = new ParameterShifterBehavaior();
 		machineParameterShifter.getDataStore().put(simulatorStoreName, Simulator.this);
 		
-		lookUpAndStoreAgents = new LookUpAgentsBehavior(Simulator.this);
+		lookUpAndStoreAgents = new LookUpAgentsMachineBehavior(Simulator.this);
 
 		functionality.addSubBehaviour(acceptIncomingBatch);
 		//		functionality.addSubBehaviour(reportHealth);

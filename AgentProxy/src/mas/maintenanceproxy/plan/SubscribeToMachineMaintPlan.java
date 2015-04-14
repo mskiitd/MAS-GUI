@@ -30,7 +30,7 @@ public class SubscribeToMachineMaintPlan  extends Behaviour implements PlanBody{
 	public void init(PlanInstance planInstance) {
 		bfBase = planInstance.getBeliefBase();
 		machine = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.machine).
+				getBelief(ID.Maintenance.BeliefBaseConst.machineHealth).
 				getValue();
 		blackBoard = (AID) bfBase.
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgent).

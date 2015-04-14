@@ -52,6 +52,7 @@ public class SubscribeToMachineLsaPlan  extends Behaviour implements PlanBody{
 				ID.Machine.ZoneData.askJobFromLSA};
 
 		subform.AddSubscriptionReq(machine, simulatorParams);
+		log.info("lsa : machine " + machine);
 		AgentUtil.subscribeToParam(myAgent, blackBoard, subform);
 		done = true;
 	}

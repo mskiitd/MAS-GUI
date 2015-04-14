@@ -23,7 +23,7 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class LookUpAgentsBehavior  extends CyclicBehaviour {
+public class LookUpAgentsMachineBehavior  extends CyclicBehaviour {
 
 	private static final long serialVersionUID = 1L;
 	private int step = 0;
@@ -38,7 +38,7 @@ public class LookUpAgentsBehavior  extends CyclicBehaviour {
 	private ServiceDescription sdLsa;
 	private ServiceDescription sdMaintenance;
 
-	public LookUpAgentsBehavior(Simulator sim) {
+	public LookUpAgentsMachineBehavior(Simulator sim) {
 		log = LogManager.getLogger();
 
 		this.machineSimulator = sim;
@@ -57,7 +57,7 @@ public class LookUpAgentsBehavior  extends CyclicBehaviour {
 
 		sc = new SearchConstraints();
 		sc.setMaxResults(new Long(1));
-		
+
 		log.info("Looking up ...");
 	}
 
@@ -90,12 +90,11 @@ public class LookUpAgentsBehavior  extends CyclicBehaviour {
 							myAgent.addBehaviour(new SubscribeToMaintMachineBehavior(machineSimulator));
 						}
 					}
-				} else {
-					step = 1;
-				}
+				} 
 			} catch (FIPAException e) {
 				e.printStackTrace();
 			}
+			step = 1;
 			break;
 		case 1:
 			log.info("step 1 ");

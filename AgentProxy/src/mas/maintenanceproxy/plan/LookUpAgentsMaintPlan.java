@@ -51,14 +51,6 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 		bfBase = planInstance.getBeliefBase();
 		log = LogManager.getLogger();
 
-		lsa = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.lsAgent).
-				getValue();
-
-		machine = (AID) bfBase.
-				getBelief(ID.Maintenance.BeliefBaseConst.machine).
-				getValue();
-
 		dfd = new DFAgentDescription();
 		sdLsa  = new ServiceDescription();
 		sdMachine = new ServiceDescription();
@@ -98,16 +90,15 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 
 							machine = result[i].getName();
 							log.info("machine found  : " + machine);
-							bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machine, machine);
+							bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machineAgent, machine);
 							((BDIAgent)myAgent).addGoal(new SubscribeToMachineMaintGoal());
 						}
 					}
-				} else {
-					step = 1;
-				}
+				} 
 			} catch (FIPAException e) {
 				e.printStackTrace();
 			}
+			step = 1;
 			break;
 		case 1:
 			log.info("step 1 ");
@@ -153,7 +144,7 @@ public class LookUpAgentsMaintPlan extends CyclicBehaviour implements PlanBody {
 
 		case 6:
 			log.info("Machine found  : " + machine);
-			bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machine, machine);
+			bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.machineAgent, machine);
 			((BDIAgent)myAgent).addGoal(new SubscribeToMachineMaintGoal());
 			step = 2;
 			break;

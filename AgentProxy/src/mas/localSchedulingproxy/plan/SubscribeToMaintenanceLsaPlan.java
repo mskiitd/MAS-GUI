@@ -52,6 +52,7 @@ public class SubscribeToMaintenanceLsaPlan  extends Behaviour implements PlanBod
 				ID.Maintenance.ZoneData.inspectionJob, ID.Maintenance.ZoneData.machineStatus };
 
 		subform.AddSubscriptionReq(maintenance, maintParams);
+		log.info("lsa : maint " + maintenance);
 		AgentUtil.subscribeToParam(myAgent, blackBoard, subform);
 		done = true;
 	}

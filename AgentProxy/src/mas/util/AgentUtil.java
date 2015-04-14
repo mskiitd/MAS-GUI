@@ -28,10 +28,9 @@ public class AgentUtil {
 			DFAgentDescription[] result = DFService.search(CurrentAgent, dfd);
 
 			AID s = null;
-			ServiceDescription sdd;
 			if ((result != null) && (result.length > 0)){
 				for(DFAgentDescription d : result) {
-					//			    		  log.info("found :"+d.getName()+" VS "+AgentToFind);
+//					log.info("found : " + d.getName() + " VS "  + AgentToFind);
 					if(d.getName().getLocalName().equals(AgentToFind.getLocalName())){
 						//							  log.info("Found service type "+((ServiceDescription) d.getAllServices().next()).getType());
 						return ((ServiceDescription) d.getAllServices().next()).getType();
@@ -40,7 +39,6 @@ public class AgentUtil {
 			}
 		} catch (Exception fe) {
 			fe.printStackTrace();
-			System.out.println(fe);
 		}
 		//		log.info("Service not found");
 		return null;

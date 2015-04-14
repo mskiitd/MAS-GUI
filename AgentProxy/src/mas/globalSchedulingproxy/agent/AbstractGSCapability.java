@@ -16,7 +16,7 @@ import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.goal.RegisterAgentToBlackBoardGoal;
 import mas.globalSchedulingproxy.goal.RegisterServiceGoal;
 import mas.globalSchedulingproxy.goal.SubscribeToCustomerGsaGoal;
-import mas.globalSchedulingproxy.goal.SubscribeToLsaGoal;
+import mas.globalSchedulingproxy.goal.SubscribeToLsaGsaGoal;
 import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.globalSchedulingproxy.plan.AskForWaitingTime;
 import mas.globalSchedulingproxy.plan.CallBackChangeDueDatePlan;
@@ -140,7 +140,7 @@ public abstract class AbstractGSCapability  extends Capability {
 
 		plans.add(new SimplePlan(LoadBatchOperationDetailsGoal.class, LoadBatchOperationDetailsPlan.class));
 
-		plans.add(new SimplePlan(SubscribeToLsaGoal.class, SubscribeToLsaGsaPlan.class));
+		plans.add(new SimplePlan(SubscribeToLsaGsaGoal.class, SubscribeToLsaGsaPlan.class));
 
 		plans.add(new SimplePlan(SubscribeToCustomerGsaGoal.class, SubscribeToCustomerGsaPlan.class));
 

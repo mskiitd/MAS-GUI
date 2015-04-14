@@ -34,6 +34,7 @@ public class SubscribeAgentBehavior extends Behaviour {
 	private AID AgentToReg; 
 	private HashMap<AID, String> serviceBase;
 
+	@SuppressWarnings("unchecked")
 	public SubscribeAgentBehavior(AID agent_to_reg, BeliefBase tempBeliefbase,
 			SubscriptionForm.parameterSubscription subscription, AID whoWantsTOSubscribe) {
 
@@ -49,7 +50,7 @@ public class SubscribeAgentBehavior extends Behaviour {
 				getBelief(ID.Blackboard.BeliefBaseConst.serviceDiary).
 				getValue();
 	}
-	
+
 	private String getService(AID agentToRegister) {
 		if(serviceBase != null && serviceBase.containsKey(agentToRegister)) {
 			return serviceBase.get(agentToRegister);
@@ -66,7 +67,7 @@ public class SubscribeAgentBehavior extends Behaviour {
 		step = 1;
 		switch(step) {
 		case 1:
-
+			log.info("AgentToReg" + AgentToReg);
 			this.AgentType = AgentUtil.GetAgentService(AgentToReg,myAgent);
 			if(AgentType != null) { //check if agent exists in DF
 				step++;
@@ -75,7 +76,6 @@ public class SubscribeAgentBehavior extends Behaviour {
 			}
 
 		case 2:
-
 			Belief<HashMap<String,ZoneSpace>> ws = (Belief<HashMap<String,ZoneSpace>>)BBbeliefBase.getBelief(AgentType);
 
 			//Check if workspace is created for AgentType
@@ -111,7 +111,7 @@ public class SubscribeAgentBehavior extends Behaviour {
 					ZoneSpaceHashMap.put(tempSubscription.Agent.getLocalName(), zs);
 
 					((Belief<HashMap<String, ZoneSpace>>)BBbeliefBase.getBelief(AgentType)).setValue(ZoneSpaceHashMap);
-//					step++;	
+					//					step++;	
 				}
 			}
 		}

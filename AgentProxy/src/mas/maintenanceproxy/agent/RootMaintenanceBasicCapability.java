@@ -59,7 +59,7 @@ public class RootMaintenanceBasicCapability extends Capability{
 		
 		Belief<AID> lsaAgent = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.lsAgent);
 		
-		Belief<AID> machine = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.machine);
+		Belief<AID> machine = new TransientBelief<AID>(ID.Maintenance.BeliefBaseConst.machineHealth);
 
 		Belief<PMaintenance> maintJob  = new TransientBelief<PMaintenance>(
 				ID.Maintenance.BeliefBaseConst.preventiveMaintJob);

@@ -11,7 +11,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import java.util.ArrayList;
 import mas.globalSchedulingproxy.goal.SubscribeToCustomerGsaGoal;
-import mas.globalSchedulingproxy.goal.SubscribeToLsaGoal;
+import mas.globalSchedulingproxy.goal.SubscribeToLsaGsaGoal;
 import mas.util.ID;
 import mas.util.SubscribeID;
 import org.apache.logging.log4j.LogManager;
@@ -29,12 +29,13 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 	private BeliefBase bfBase;
 	private AID customer;
 	private AID lsa;
-	private DFAgentDescription dfd, dfd2;
 	private ArrayList<SubscribeID> listCustomer;
 	private ArrayList<SubscribeID> listLsa;
 	private Logger log;
 	private SearchConstraints sc;
+	private DFAgentDescription dfdCustomer;
 	private ServiceDescription sdCustomer;
+	private DFAgentDescription dfdLsa;
 	private ServiceDescription sdLsa;
 
 	@Override
@@ -49,22 +50,24 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 		bfBase = planInstance.getBeliefBase();
 		log = LogManager.getLogger();
 
+		dfdCustomer = new DFAgentDescription();
+		dfdLsa = new DFAgentDescription();
+		sdCustomer  = new ServiceDescription();
+		sdLsa = new ServiceDescription();
+
 		listCustomer = (ArrayList<SubscribeID>) bfBase.
 				getBelief(ID.GlobalScheduler.BeliefBaseConst.customerList).
 				getValue();
+
 		listLsa = (ArrayList<SubscribeID>) bfBase.
 				getBelief(ID.GlobalScheduler.BeliefBaseConst.lsaList).
 				getValue();
 
-		dfd = new DFAgentDescription();
-		sdCustomer  = new ServiceDescription();
-		sdLsa = new ServiceDescription();
-
 		sdCustomer.setType(ID.Customer.Service);
-		dfd.addServices(sdCustomer);
+		dfdCustomer.addServices(sdCustomer);
 
 		sdLsa.setType(ID.LocalScheduler.Service);
-		dfd.addServices(sdLsa);
+		dfdLsa.addServices(sdLsa);
 
 		sc = new SearchConstraints();
 		sc.setMaxResults(new Long(1));
@@ -75,64 +78,63 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 		switch(step) {
 		case 0:
 
-			DFAgentDescription[] result;
+			DFAgentDescription[] resultCustomer, resultLsa;
 			try {
-				result = DFService.search(myAgent, dfd);
-				log.info("result length : " + result.length );
-				if (result.length > 0) {
-					for(int i = 0; i < result.length; i ++) {
-						String service = ((ServiceDescription) result[i].getAllServices().next()).getType();
-						if(ID.Customer.Service.equals(service)) {
-							customer = result[i].getName();
+				resultCustomer = DFService.search(myAgent, dfdCustomer);
 
-							log.info("Customer found : " + customer);
-							if(!listCustomer.contains(customer)) {
-								SubscribeID customerId = new SubscribeID(customer,false);
+				if (resultCustomer.length > 0) {
+					for(int i = 0; i < resultCustomer.length; i ++) {
+						customer = resultCustomer[i].getName();
 
-								listCustomer.add(customerId);
-								bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.customerList, listCustomer);
-								((BDIAgent)myAgent).addGoal(new SubscribeToCustomerGsaGoal());
-							} else {
-								log.info("duplicate customer agent registering");
-							}
-						} else if(ID.LocalScheduler.Service.equals(service)) {
-							lsa = result[i].getName();
+						log.info("Customer found : " + customer);
+						if(!listCustomer.contains(customer)) {
+							log.info("Subscribing to customer : " + customer);
+							SubscribeID customerId = new SubscribeID(customer,false);
 
-							log.info("LSA found  : " + lsa);
-							if(!listLsa.contains(lsa)) {
-								SubscribeID lsaId = new SubscribeID(lsa,false);
-								listLsa.add(lsaId);
-								bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.lsaList, listLsa);
-
-								((BDIAgent)myAgent).addGoal(new SubscribeToLsaGoal());
-							}else {
-								log.info("duplicate LSA agent registering");
-							}
+							listCustomer.add(customerId);
+							bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.customerList, listCustomer);
+							((BDIAgent)myAgent).addGoal(new SubscribeToCustomerGsaGoal());
+						} else {
+							log.info("duplicate customer agent registering");
 						}
 					}
-				} else {
-					step = 1;
+				}
+				
+				resultLsa = DFService.search(myAgent, dfdLsa);
+				if(resultLsa.length > 0 ) {
+					for(int i = 0; i < resultLsa.length; i ++) {
+						lsa = resultLsa[i].getName();
+						log.info("LSA found  : " + lsa);
+						if(!listLsa.contains(lsa)) {
+							log.info("Subscribing to LSA : " + lsa);
+							SubscribeID lsaId = new SubscribeID(lsa,false);
+							listLsa.add(lsaId);
+							bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.lsaList, listLsa);
+
+							((BDIAgent)myAgent).addGoal(new SubscribeToLsaGsaGoal());
+						}else {
+							log.info("duplicate LSA agent registering");
+						}
+					}
 				}
 			} catch (FIPAException e) {
 				e.printStackTrace();
 			}
+			step = 1;
 			break;
 		case 1:
-			log.info("step 1 ");
-			
-			DFAgentDescription dfd3 = new DFAgentDescription();
-			ServiceDescription s1 = new ServiceDescription();
-			s1.setType(ID.LocalScheduler.Service);
-			dfd3.addServices(s1);
 			myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
-					dfd3, sc));
+					dfdCustomer, sc));
+			
+			myAgent.send(DFService.createSubscriptionMessage(myAgent, myAgent.getDefaultDF(), 
+					dfdLsa, sc));
 			step = 2;
 			break;
 
 		case 2:
 			ACLMessage msg = myAgent.receive(
 					MessageTemplate.MatchSender(myAgent.getDefaultDF()));
-			log.info("step 2 : " + msg);
+			//			log.info("step 2 : " + msg);
 			if (msg != null) {
 				try {
 					DFAgentDescription[] dfds = DFService.decodeNotification(msg.getContent());
@@ -176,7 +178,7 @@ public class LookUpAgentsGsaPlan extends CyclicBehaviour implements PlanBody {
 				listLsa.add(lsaId);
 				bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.lsaList, listLsa);
 
-				((BDIAgent)myAgent).addGoal(new SubscribeToLsaGoal());
+				((BDIAgent)myAgent).addGoal(new SubscribeToLsaGsaGoal());
 			}else {
 				log.info("duplicate LSA agent registering");
 			}
