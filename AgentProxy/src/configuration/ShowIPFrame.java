@@ -31,9 +31,10 @@ public class ShowIPFrame extends JFrame {
 	private JTextArea ipJtext,portJText;
 	private Logger log=LogManager.getLogger();
 	private FileOutputStream outputStream;
+	private Properties prop = new Properties();;
 	
 	public ShowIPFrame(AgentToStart a) {
-
+		
 		this.agent = a;
 		setTitle("IP configuration");
 		setLayout(new MigLayout());
@@ -54,8 +55,30 @@ public class ShowIPFrame extends JFrame {
 					
 					@Override
 					public void run() {
+						try {
+							outputStream= new FileOutputStream("resources/mas.properties");
+						} catch (FileNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
 						AgentStarter.ipAddress = ipJtext.getText();
+						prop.setProperty("ipAddress", AgentStarter.ipAddress);
 						AgentStarter.JadePort = Integer.parseInt(portJText.getText());
+						prop.setProperty("jadePort", Integer.toString(AgentStarter.JadePort));
+						try {
+							prop.store(outputStream, "Comment");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						try {
+							outputStream.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 						AgentStarter.start(agent);
 					}
 				}).start();
@@ -72,13 +95,13 @@ public class ShowIPFrame extends JFrame {
 	private void showGui() {
 		setTitle("IP configuration");
 //		setPreferredSize(new Dimension(600,500));
-		Properties prop = new Properties();
+		
 		String propFileName = "mas.properties";
  
 		InputStream inputStream=null;
 		try {
 			inputStream = new FileInputStream("resources/mas.properties");
-//			outputStream= new FileOutputStream("resources/mas.properties");
+			
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
