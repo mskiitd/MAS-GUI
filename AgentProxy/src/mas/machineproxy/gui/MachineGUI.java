@@ -404,8 +404,9 @@ public class MachineGUI extends JFrame {
 
 				if(machineSimulator != null) {
 
+					log.info("unload : " + machineSimulator.isUnloadFlag());
 					// if the machine isn't loaded with some job, it can't be marked as failed
-					if(!machineSimulator.isUnloadFlag()) {
+					if(machineSimulator.getCurrentJob() == null) {
 						JOptionPane.showMessageDialog(MachineGUI.this, 
 								"Machine cannot fail while idle", "Dialog", JOptionPane.ERROR_MESSAGE);
 					} else {
@@ -675,7 +676,7 @@ public class MachineGUI extends JFrame {
 			} else if(e.getSource().equals(menuItemPmStart)) {
 
 				// if machine is loaded with some job, you cannot start maintennace
-				if(machineSimulator.isUnloadFlag()) {
+				if(machineSimulator.getCurrentJob() != null) {
 					JOptionPane.showMessageDialog(MachineGUI.this,
 							"Please unload the job first.", "Dialog", JOptionPane.ERROR_MESSAGE);
 				}else {

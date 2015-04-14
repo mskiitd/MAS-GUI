@@ -38,6 +38,7 @@ public class HandleCompletedJobBehavior extends Behaviour{
 				
 				Batch cBatch = machineSimulator.getCurrentBatch();
 				cBatch.updateJob(completedJob);
+				machineSimulator.setCurrentJob(null);
 				machineSimulator.setCurrentBatch(cBatch);
 				/**
 				 * update zone-data for completed jobs from machine

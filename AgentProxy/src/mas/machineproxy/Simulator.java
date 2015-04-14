@@ -9,13 +9,16 @@ import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import mas.jobproxy.Batch;
+import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptBatchBehavior;
 import mas.machineproxy.behaviors.TakeJobFromBatchBehavior;
@@ -33,6 +36,7 @@ import mas.machineproxy.parametrer.RootCause;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -113,6 +117,7 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	private boolean unloadFlag = false;
 
 	private Batch currentBatch = null;
+	private job currentJob = null;
 
 	private transient MachineGUI gui = null;
 	private transient LocalSchedulingAgent lAgent;
@@ -539,6 +544,14 @@ public class Simulator extends Agent implements IMachine,Serializable {
 	 */
 	public void setUnloadFlag(boolean unloadFlag) {
 		this.unloadFlag = unloadFlag;
+	}
+
+	public job getCurrentJob() {
+		return currentJob;
+	}
+
+	public void setCurrentJob(job currentJob) {
+		this.currentJob = currentJob;
 	}
 
 }

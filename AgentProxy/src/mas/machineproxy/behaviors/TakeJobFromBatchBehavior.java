@@ -17,7 +17,7 @@ public class TakeJobFromBatchBehavior extends Behaviour {
 	private Simulator machineSimulator;
 	private int step = 0;
 	private long time;
-	private long LIMIT = 4000;
+	private long LIMIT = 1000;
 	private boolean isMsgDisplayed = false;
 
 	public TakeJobFromBatchBehavior(Simulator simulator) {
@@ -43,7 +43,7 @@ public class TakeJobFromBatchBehavior extends Behaviour {
 
 					this.jobFromBatch = currBatch.getCurrentJob();
 					currBatch.incrementCurrentJob();
-
+					machineSimulator.setCurrentJob(jobFromBatch);
 					LoadJobBehavior addjob = new LoadJobBehavior(this.jobFromBatch,machineSimulator);
 					addjob.setDataStore(getDataStore());
 					myAgent.addBehaviour(addjob);
@@ -56,7 +56,7 @@ public class TakeJobFromBatchBehavior extends Behaviour {
 						machineSimulator.getGui().showNoJobInBatch();
 						isMsgDisplayed = true;
 					}
-					block(500);
+					block(100);
 				}
 				break;
 			}
