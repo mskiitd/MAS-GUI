@@ -10,7 +10,7 @@ public class Labels {
 		public static final String jobPriority = "CPN :";
 		public static final String jobPenalty = "Penalty Rate (/time) :";
 		public static final String jobDueDate = "Due date :";
-		public static final String jobID = "Job ID :";
+		public static final String BatchID = "Batch ID :";
 		public static final String jobDimension = "Dimensions :";
 		public static final String jobOperationHeading = "Job-Operations :";
 		public static final String jobOpeationsDoneButton = "Done";

@@ -1,5 +1,7 @@
 package mas.machineproxy.behaviors;
 
+import java.util.Date;
+
 import jade.core.behaviours.Behaviour;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
@@ -52,11 +54,11 @@ public class HandleCompletedJobBehavior extends Behaviour{
 				myAgent.addBehaviour(new GiveMeJobBehavior());
 				machineSimulator.setCurrentBatch(null);
 
-				log.info("job no: '"+ completedJob.getJobNo() + 
-						"job ID : " + completedJob.getJobID() + 
-						"'\ncompletion : " + completedJob.getJobCompletionTime() + 
-						"\nStarting time : " + completedJob.getJobStartTime() + 
-						"\nDue date : " + completedJob.getJobDuedatebyCust());
+				log.info("batch no: '"+ cBatch.getBatchNumber() + 
+						"'\tbatch ID : " + cBatch.getBatchId() + 
+						"\n\tcompletion : " + new Date(cBatch.getCompletionTime()) + 
+						"\n\tStarting time : " + new Date(cBatch.getStartTimeMillis()) + 
+						"\n\tDue date : " + cBatch.getDueDateByCustomer());
 				
 				log.info("sending completed batch to blackboard");
 			} else {

@@ -98,11 +98,12 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 //		for(int i = 0; i < batchQueue.size(); i++) {
 //			WaitingTime = WaitingTime + batchQueue.get(i).getCurrentOperationProcessingTime();
 //		}
+		
 		OperationItemId id = new OperationItemId(batch.getFirstJob().getCurrentOperation().getJobOperationType(),
 				batch.getCustomerId());
 		
 		if(operationdb.contains(id) ) {
-			batch.setWaitingTime(avgWaitingTime + batch.getTotalBatchProcessingTime());
+			batch.setWaitingTime(avgWaitingTime + batch.getCurrentOperationProcessingTime());
 		} else {
 			log.info(" Operation " + batch.getFirstJob().getCurrentOperation().getJobOperationType() +
 					" customer id : '" + batch.getCustomerId() +  

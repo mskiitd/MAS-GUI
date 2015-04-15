@@ -74,8 +74,10 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private JLabel lblPenalty;
 	private JLabel lblWaitingTimeHeading;
 	private JLabel lblBatchSize;
+	private JLabel lblCustomerIdHeading;
 	private JButton btnOperationPlus;
 
+	private WebHotkeyLabel lblCustomerId;
 	private FormattedStringField txtJobID;
 	private FormattedIntegerField txtJobNo;
 	private FormattedDoubleField txtCPN;
@@ -147,11 +149,13 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.lblHeading = new JLabel(Labels.CustomerLabels.jobGenerateHeading);
 		this.lblCPN = new JLabel(Labels.CustomerLabels.jobPriority);
 		this.lblDueDate = new JLabel(Labels.CustomerLabels.jobDueDate);
-		this.lblJobID = new JLabel(Labels.CustomerLabels.jobID);
+		this.lblJobID = new JLabel(Labels.CustomerLabels.BatchID);
 		this.lblJobNo = new JLabel(Labels.CustomerLabels.jobNo);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
 		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
+		this.lblCustomerIdHeading = new JLabel("Customer Id : ");
+		this.lblCustomerId = new WebHotkeyLabel();
 
 		this.lblWaitingTimeHeading = new JLabel("Expected Time by GSA : ");
 		this.txtWaitingTime = new JTextField(Labels.defaultJTextSize*2);
@@ -177,6 +181,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.lblHeading.setFont(TableUtil.headings);
 		myPanel.add(lblHeading,"wrap");
 
+		myPanel.add(lblCustomerIdHeading);
+		myPanel.add(lblCustomerId,"wrap");
+		
 		myPanel.add(lblJobID);
 		myPanel.add(txtJobID,"wrap");
 
@@ -220,12 +227,13 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		btnCancelNegotiation.addActionListener(clickListener);
 
 		_populate();
-
 		showGui();
 	}
 
 	private void _populate() {
 		if(populatingBatch != null) {
+			lblCustomerId.setText(populatingBatch.getCustomerId());
+			
 			txtJobID.setText(populatingBatch.getBatchId());
 			txtJobID.setEnabled(false);
 
@@ -261,30 +269,24 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 	private void createJobFromParams() {
 
-		new Thread(new Runnable() {
+		boolean x2 = true, x3 = true,x4 = true,x5 = true;
 
-			@Override
-			public void run() {
-				boolean x2 = true, x3 = true,x4 = true,x5 = true;
+		x2 = checkPenaltyRate();
+		if(x2) {
+			x3 = checkCPN();
+		}
+		if(x2 & x3) {
+			x4 = checkDueDate();
 
-				x2 = checkPenaltyRate();
-				if(x2) {
-					x3 = checkCPN();
-				}
-				if(x2 & x3) {
-					x4 = checkDueDate();
+			//			if(x4) {
+			//				x5 = checkJobOperations();
+			//			}
+		}
+		dataOk = x2&x3&x4&x5;
 
-					//			if(x4) {
-					//				x5 = checkJobOperations();
-					//			}
-				}
-				dataOk = x2&x3&x4&x5;
-
-				if(dataOk) {
-					dataOk = dataOk & checkBatchSize();
-				}
-			}
-		}).start();
+		if(dataOk) {
+			dataOk = dataOk & checkBatchSize();
+		}
 	}
 
 	private boolean checkBatchSize() {
@@ -502,14 +504,14 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 					dispose();
 				}
 			} else if(e.getSource().equals(btnCancelNegotiation)) {
-				
+
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
 						cAgent.rejectNegotiation();
 					}
 				}).start();
-				
+
 				dispose();
 			}
 		}

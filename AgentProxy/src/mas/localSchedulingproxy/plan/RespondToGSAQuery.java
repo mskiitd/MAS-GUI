@@ -22,7 +22,7 @@ import bdi4jade.plan.PlanInstance.EndState;
 public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
-	private int JobNo;
+	private int batchNo;
 	private BeliefBase beleifBase;
 	private AID machineAID=null;
 	private AID blackboard_AID;
@@ -40,13 +40,13 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 		try {
 			requestJobQuery= ( (JobQueryObject)((MessageGoal)PI.getGoal()).
 					getMessage().getContentObject());
-			JobNo = ( (JobQueryObject)((MessageGoal)PI.getGoal()).getMessage().getContentObject()).
-					getCurrentJob().getBatchNumber();
+			batchNo = ( (JobQueryObject)((MessageGoal)PI.getGoal()).getMessage().getContentObject()).
+					getCurrentBatch().getBatchNumber();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
 
-		log.info("Job No "+JobNo +" is queried");
+		log.info("Batch No " + batchNo + " is queried");
 		beleifBase = PI.getBeliefBase();
 		blackboard_AID = (AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
@@ -58,24 +58,27 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 				getValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void action() {
-		JobQueryObject response=new JobQueryObject.Builder().currentJob(null)
+		JobQueryObject response = new JobQueryObject.Builder().currentJob(null)
 				.currentMachine(null).build();
 
 		ArrayList<Batch> jobQ = (ArrayList<Batch>)beleifBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
-		Object currBatchObj=beleifBase.
+		
+		Object currBatchObj = beleifBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
-		Batch currentJob=null;
-		if(currBatchObj!=null){
+		
+		Batch currentJob = null;
+		if(currBatchObj != null){
 			currentJob = (Batch)(((Belief<Batch>)currBatchObj).getValue());
 		}
 
-		for(int i=0;i<jobQ.size();i++){
-			if(JobNo==jobQ.get(i).getBatchNumber() ){
-				response=new JobQueryObject.Builder().currentJob(jobQ.get(i))
+		for(int i = 0 ; i < jobQ.size(); i++) {
+			if(batchNo == jobQ.get(i).getBatchNumber() ){
+				response = new JobQueryObject.Builder().currentJob(jobQ.get(i))
 						.requestType(requestJobQuery.getType())//notes down for what req type this reply was
 						.underProcess(false)
 						.currentMachine(machineAID).build();
@@ -89,7 +92,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 					ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
 							beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
-					BatchToTakeAction.add(response.getCurrentJob());
+					BatchToTakeAction.add(response.getCurrentBatch());
 					beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
 							, BatchToTakeAction);
 
@@ -101,7 +104,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 			}
 		}
 
-		if(currentJob!=null && currentJob.getBatchNumber() ==JobNo){
+		if(currentJob!=null && currentJob.getBatchNumber() ==batchNo){
 			response=new JobQueryObject.Builder().currentJob(currentJob).currentMachine(machineAID)
 					.requestType(requestJobQuery.getType())
 					.underProcess(true)
@@ -112,7 +115,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 				ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
 						beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
-				BatchToTakeAction.add(response.getCurrentJob());
+				BatchToTakeAction.add(response.getCurrentBatch());
 				beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
 						, BatchToTakeAction);
 			}
