@@ -32,31 +32,33 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 
 		jobOperation ops = comingJob.getCurrentOperation();
 		// Assign dimensions to the job
-//		ArrayList<jobDimension> jDimensions = ops.getjDims();
-//		int numDims = jDimensions.size();
-//		int dIndex;
-//
-//		BinomialDistribution bernoulli =
-//				new BinomialDistribution(1, machineSimulator.getFractionDefective());
-//
-//		boolean conforming;
-//
-//		for(dIndex = 0; dIndex < numDims; dIndex++) {
-//
-//			jDimensions.get(dIndex).setTargetDimension(
-//					jDimensions.get(dIndex).getTargetDimension() +
-//					Methods.normalRandom(machineSimulator.getMean_shift(),
-//							machineSimulator.getSd_shift()));
-//
-//			conforming = (bernoulli.sample()==1)? Boolean.TRUE :Boolean.FALSE;
-//			jDimensions.get(dIndex).setConforming(conforming);
-//		}
-//		comingJob.setCurrentOperationDimension(jDimensions);
+		//		ArrayList<jobDimension> jDimensions = ops.getjDims();
+		//		int numDims = jDimensions.size();
+		//		int dIndex;
+		//
+		//		BinomialDistribution bernoulli =
+		//				new BinomialDistribution(1, machineSimulator.getFractionDefective());
+		//
+		//		boolean conforming;
+		//
+		//		for(dIndex = 0; dIndex < numDims; dIndex++) {
+		//
+		//			jDimensions.get(dIndex).setTargetDimension(
+		//					jDimensions.get(dIndex).getTargetDimension() +
+		//					Methods.normalRandom(machineSimulator.getMean_shift(),
+		//							machineSimulator.getSd_shift()));
+		//
+		//			conforming = (bernoulli.sample()==1)? Boolean.TRUE :Boolean.FALSE;
+		//			jDimensions.get(dIndex).setConforming(conforming);
+		//		}
+		//		comingJob.setCurrentOperationDimension(jDimensions);
 		comingJob.setCurrentOperationCompletionTime(System.currentTimeMillis());
-		
-		log.info("start time was " + comingJob.getCurrentOperationStartTime() );
-		log.info("Completion time : " + comingJob.getCurrentOperationFinishTime());
-//		log.info("processed for "+ (comingJob.getCompletionTime().getTime() - comingJob.getStartTimeByCust().getTime()));
+
+		log.info("processing time was : " + comingJob.getCurrentOperationProcessingTime() );
+		log.info("start time was " + new Date(comingJob.getCurrentOperationStartTime()) );
+		log.info("Completion time : " + new Date(comingJob.getCurrentOperationCompletionTime()) );
+		log.info("Actual processing time : " + (comingJob.getCurrentOperationCompletionTime() -
+				comingJob.getCurrentOperationStartTime()));
 
 		// send completed job to blackboard in handleCompletedJobBehavior
 		myAgent.addBehaviour(new HandleCompletedJobBehavior(comingJob,machineSimulator));

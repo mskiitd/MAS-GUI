@@ -55,7 +55,7 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 						this.batchToProcess = (Batch) msg.getContentObject();
 						machineSimulator.setCurrentBatch(batchToProcess);
 						log.info(" Batch No : '" + batchToProcess.getBatchNumber() +
-								"'accepted with processing time : " + batchToProcess.getTotalBatchProcessingTime());
+								"'accepted with processing time : " + batchToProcess.getCurrentOperationProcessingTime() + " ms");
 						
 					} catch (UnreadableException e) {
 						e.printStackTrace();

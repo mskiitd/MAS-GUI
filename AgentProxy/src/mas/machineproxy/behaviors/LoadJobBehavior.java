@@ -66,8 +66,7 @@ public class LoadJobBehavior extends Behaviour {
 											machineSimulator.getSdUnloadingTime());
 
 			//this will introduce error
-			comingJob.setCurrentOperationProcessingTime((long) newProcessingTime) ; 
-			//ex. 0.1 with be converted into 0
+//			comingJob.setCurrentOperationProcessingTime((long) newProcessingTime*1000) ; 
 
 			processingTime = comingJob.getCurrentOperationProcessingTime();
 			passedTime = 0;
@@ -75,8 +74,7 @@ public class LoadJobBehavior extends Behaviour {
 			if(processingTime <= 0) {
 				processingTime = 1;// 1 milliseconds
 				log.info("ATTENTION : -ve processing time");
-			} //if processingTime=0, this behviour goes into infinite loop
-
+			}
 
 			log.info("Job No : " + comingJob.getJobNo() + " Batch No : "  +
 					machineSimulator.getCurrentBatch().getBatchNumber() + " loading with" +
