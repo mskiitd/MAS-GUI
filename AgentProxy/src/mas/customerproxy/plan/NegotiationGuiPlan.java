@@ -56,8 +56,10 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 
 	@Override
 	public void action() {
-		CustomerNegotiateProxyGUI nego = new CustomerNegotiateProxyGUI(
-				(CustomerAgent)myAgent, negotiationJob);
+		if(negotiationJob.getCustomerId().equals(myAgent.getLocalName())){
+			CustomerNegotiateProxyGUI nego = new CustomerNegotiateProxyGUI(
+					(CustomerAgent)myAgent, negotiationJob);
+		}
 		done = true;
 	}
 

@@ -183,7 +183,7 @@ public class MaintenanceGUI extends JFrame {
 	}
 
 	private void showGui() {
-		setTitle(" Local Maintenance Agent : " );//+ mAgent.getLocalName().split("#")[1]);
+		setTitle(" Local Maintenance Agent #"+mAgent.getLocalName().split("#")[1] );//+ mAgent.getLocalName().split("#")[1]);
 		setPreferredSize(new Dimension(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();

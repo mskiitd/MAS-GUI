@@ -94,10 +94,15 @@ public class RegisterAgentToBlackboardPlan extends OneShotBehaviour implements P
 		AgentUtil.makeZoneBB(myAgent,ZoneDataNames);
 
 		SubscriptionForm subform = new SubscriptionForm();
-		AID target = new AID(ID.Customer.LocalName, AID.ISLOCALNAME);
-		String[] params = {ID.Customer.ZoneData.customerConfirmedJobs,ID.Customer.ZoneData.newWorkOrderFromCustomer,
+		AID targetCustomer1 = new AID(ID.Customer.LocalName+"#1", AID.ISLOCALNAME);
+		String[] params1 = {ID.Customer.ZoneData.customerConfirmedJobs,ID.Customer.ZoneData.newWorkOrderFromCustomer,
 				ID.Customer.ZoneData.customerJobsUnderNegotiation};
-		subform.AddSubscriptionReq(target, params);
+		subform.AddSubscriptionReq(targetCustomer1, params1);
+		
+		AID targetCustomer2 = new AID(ID.Customer.LocalName+"#2", AID.ISLOCALNAME);
+		String[] params2 = {ID.Customer.ZoneData.customerConfirmedJobs,ID.Customer.ZoneData.newWorkOrderFromCustomer,
+				ID.Customer.ZoneData.customerJobsUnderNegotiation};
+		subform.AddSubscriptionReq(targetCustomer2, params2);
 		
 		AID target_LSA=new AID(ID.LocalScheduler.LocalName+"#1",AID.ISLOCALNAME);
 		String[] LSAparams={ID.LocalScheduler.ZoneData.WaitingTime, ID.LocalScheduler.ZoneData.bidForJob,
