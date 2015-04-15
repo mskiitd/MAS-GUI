@@ -92,7 +92,7 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 		String suffix=myAgent.getLocalName().split("#")[1];
 		
 	
-		AID lSchedulingTarget = new AID(ID.LocalScheduler.LocalName+"#"+suffix, AID.ISLOCALNAME);
+		AID lSchedulingTarget = new AID(ID.LocalScheduler.LocalName + "#" + suffix, AID.ISLOCALNAME);
 			
 
 		String[] lSchedulingParams = {ID.LocalScheduler.ZoneData.batchForMachine,

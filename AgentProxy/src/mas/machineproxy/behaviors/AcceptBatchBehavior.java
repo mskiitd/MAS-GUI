@@ -42,11 +42,13 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 
 	@Override
 	public void action() {
+		log.info("machinesim : " + machineSimulator.getStatus());
 		if(machineSimulator.getStatus() != MachineStatus.FAILED &&
 				machineSimulator.getStatus() != MachineStatus.PAUSED) {
 
 			switch(step) {
 			case 0:
+				log.info("receiveing msg");
 				ACLMessage msg = myAgent.receive(batchMsgTemplate);
 
 				if (msg != null) {

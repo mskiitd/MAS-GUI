@@ -13,6 +13,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -33,7 +34,7 @@ public class CustomJobQueue extends JPanel {
 	private int cWidth = 120;
 	private int cHeight = 80;
 	public static final int padding = 10;
-	private List<Batch> jQueue;
+	private ArrayList<Batch> jQueue;
 	public static Color boxColor = Color.WHITE;
 	public static Color stringColor = Color.BLACK;
 	public static Color firstJobColor = new Color(224, 224, 224);
@@ -44,11 +45,11 @@ public class CustomJobQueue extends JPanel {
 
 	private BasicStroke stoke;
 
-	public CustomJobQueue(List<Batch> q) {
+	public CustomJobQueue(ArrayList<Batch> q) {
 		this.jQueue = q;
 		this.stoke = new BasicStroke(4,1,1);
 	}
-
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);

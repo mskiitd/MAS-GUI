@@ -5,6 +5,7 @@ import jade.core.behaviours.TickerBehaviour;
 
 import java.awt.TrayIcon.MessageType;
 import java.util.ArrayList;
+import java.util.Date;
 
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
@@ -62,22 +63,26 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			calculateRegretAndSchedule();
 		}
 	}
-	
+
 	/**
 	 * Schedules the sequence of batches based on processing time of current operation
 	 */
 	private void calculateRegretAndSchedule() {
 		int qSize = jobQueue.size();
-		double lateness;			
 
 		double totalRegret = 0;
 
 		for ( int i = 0; i < qSize ; i++) {
 			double batchLateness = 0;
 
-			batchLateness =	jobQueue.get(i).getCurrentOperationStartTime() +
-					jobQueue.get(i).getCurrentOperationProcessingTime() -
-					jobQueue.get(i).getCurrentOperationDueDate();
+			batchLateness =	jobQueue.get(i).getCurrentOperationStartTime()-
+					jobQueue.get(i).getCurrentOperationDueDate() +
+					jobQueue.get(i).getCurrentOperationProcessingTime();
+			
+			log.info("latesness : "+ batchLateness);
+			log.info("start time " + new Date(jobQueue.get(i).getCurrentOperationStartTime()) );
+			log.info("proc time " + jobQueue.get(i).getCurrentOperationProcessingTime() );
+			log.info("finish time " + new Date(jobQueue.get(i).getCurrentOperationDueDate()) );
 
 			if(batchLateness < 0)
 				batchLateness = 0;
@@ -86,13 +91,15 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			totalRegret += jobQueue.get(i).getRegret();
 			//			lateness += batchLateness;
 		}
-
+		log.info("total regret : " + totalRegret);
 		if(totalRegret > regretThreshold) {
 
-			MachineGUI.showNotification("Scheduling", "Scheduling of batches starting", MessageType.INFO);
-			
-			reset(100 * LocalSchedulingAgent.schedulingPeriod);
+			if(gui != null) {
+				gui.showNotification("Scheduling", "Scheduling of batches starting", MessageType.INFO);
+			}
 
+			reset(100 * LocalSchedulingAgent.schedulingPeriod);
+			log.info("old queue : " + jobQueue);
 			ScheduleSequence scheduler = new ScheduleSequence(jobQueue);
 			ArrayList<Batch> newQ = scheduler.getSolution();
 
@@ -100,10 +107,10 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue,
 					newQ);
 
-			log.info("update new queue in the machine gui ");
+			log.info("update new queue in the machine gui " + newQ);
 			if(gui != null) {
 				gui.updateQueue(newQ);
-				MachineGUI.showNotification("Scheduling", "Scheduling of batches complete", MessageType.INFO);
+				gui.showNotification("Scheduling", "Scheduling of batches complete", MessageType.INFO);
 			}
 
 			reset(LocalSchedulingAgent.schedulingPeriod);

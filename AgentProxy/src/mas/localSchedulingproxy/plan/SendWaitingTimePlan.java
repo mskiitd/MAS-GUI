@@ -107,7 +107,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		} else {
 			log.info(" Operation " + batch.getFirstJob().getCurrentOperation().getJobOperationType() +
 					" customer id : '" + batch.getCustomerId() +  
-					"' unsupported on this machine");
+					"' unsupported on " + myAgent.getLocalName());
 			batch.setWaitingTime(LargeLongNegativeValue);
 		}
 		//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());

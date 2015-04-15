@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -41,14 +40,12 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
-import mas.machineproxy.gui.custompanels.BatchQueuePanel;
 import mas.machineproxy.gui.custompanels.MachineInfoPanel;
 import mas.machineproxy.gui.custompanels.MaintMsgPanel;
 import mas.maintenanceproxy.classes.MaintenanceResponse;
@@ -65,7 +62,7 @@ import sun.audio.AudioStream;
 @SuppressWarnings("serial")
 public class MachineGUI extends JFrame {
 
-	private static TrayIcon customerTrayIcon;
+	private TrayIcon customerTrayIcon;
 	private Logger log;
 
 	private JLayeredPane layers;
@@ -519,9 +516,15 @@ public class MachineGUI extends JFrame {
 	 * @param newQueue
 	 */
 	public void updateQueue(ArrayList<Batch> newQueue) {
-
-		jobQ.clear();
-		jobQ.addAll(newQueue);
+		Batch first = jobQ.get(0);
+		if(!newQueue.contains(first)) {
+			jobQ.clear();
+			jobQ.add(first);
+			jobQ.addAll(newQueue);
+		} else {
+			jobQ.clear();
+			jobQ.addAll(newQueue);
+		}
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -563,7 +566,7 @@ public class MachineGUI extends JFrame {
 	}
 
 	private void showGui() {
-		setTitle(" Machine GUI : ");// + lAgent.getLocalName().split("#")[1]);
+		setTitle(" Machine GUI : " + lAgent.getLocalName().split("#")[1]);
 		setJMenuBar(createMenuBar());
 		setPreferredSize(windowSize);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -642,7 +645,7 @@ public class MachineGUI extends JFrame {
 		});
 	}
 
-	public static void showNotification(final String title, final String message,final TrayIcon.MessageType type){
+	public void showNotification(final String title, final String message,final TrayIcon.MessageType type){
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
