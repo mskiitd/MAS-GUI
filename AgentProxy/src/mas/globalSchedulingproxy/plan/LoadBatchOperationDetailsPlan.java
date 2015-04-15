@@ -60,7 +60,7 @@ public class LoadBatchOperationDetailsPlan extends Behaviour implements PlanBody
 					wb = new XSSFWorkbook(fileIs);
 
 					int NumJobs = wb.getNumberOfSheets();
-					String fName = file.getName().replaceFirst("[.][^.]+$", "");
+					String fName = file.getName().split("\\.")[0];
 
 					XSSFSheet localSheet;
 					for(int i = 0 ; i < NumJobs ; i++) {

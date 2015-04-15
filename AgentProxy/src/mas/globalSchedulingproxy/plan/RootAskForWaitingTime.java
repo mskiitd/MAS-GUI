@@ -195,7 +195,11 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 						setReplyWith(msgReplyID).
 						Build();
 
-				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);	
+				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);
+				
+				WeblafGSAgui.showNotification("Order", JobToSend.getCustomerId()+
+						" placed order for batch ID "+JobToSend.getBatchId(), MessageType.INFO);
+
 			}
 			step = 5;
 			break;

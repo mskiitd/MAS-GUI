@@ -59,8 +59,10 @@ public class ChangeDueDate extends OneShotBehaviour implements PlanBody {
 			jobArray.add(tempJob);
 		}
 		batchTosend.setJobsInBatch(jobArray);
-		
-		ChangeDueDateGUI gui = new ChangeDueDateGUI((CustomerAgent)myAgent, batchTosend);
+		if(batchTosend.getCustomerId().equals(myAgent.getLocalName())){
+			ChangeDueDateGUI gui = new ChangeDueDateGUI
+					((CustomerAgent)myAgent, batchTosend);
+		}
 		
 	}
 
