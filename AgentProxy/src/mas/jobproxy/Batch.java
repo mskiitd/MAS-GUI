@@ -373,7 +373,7 @@ public class Batch implements Serializable {
 	 * set processing time for current operation for each job in the batch.
 	 * processingTime is the time for one job of the corresponding operation
 	 * in the batch and not for the whole batch. Processing time should be passed in 
-	 * milli seconds.
+	 * milliseconds.
 	 * @param processingTime
 	 */
 	public void setCurrentOperationProcessingTime(long processingTime) {

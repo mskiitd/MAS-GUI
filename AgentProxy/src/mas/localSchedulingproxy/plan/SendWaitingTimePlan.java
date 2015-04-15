@@ -38,8 +38,8 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 	//if we set Long.MIN_VALUE, and addition happens in calculation of waiting in time in GSA,
 	//due to bit limit, Long.MIN_VALUE+Long.MIN_VALUE becomes 0 which is wrong
 	private ACLMessage msg;
-	private ArrayList<Batch> jobQueue;
-	private Batch j;
+	private ArrayList<Batch> batchQueue;
+	private Batch batch;
 	private BeliefBase bfBase;
 	private StatsTracker sTracker;
 	private double averageProcessingTime;
@@ -61,12 +61,12 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		log = LogManager.getLogger();
 		try {
 			msg = ((MessageGoal)pInstance.getGoal()).getMessage();
-			j = (Batch)(msg.getContentObject());
+			batch = (Batch)(msg.getContentObject());
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
 
-		jobQueue = (ArrayList<Batch>) bfBase.
+		batchQueue = (ArrayList<Batch>) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
 
@@ -87,7 +87,7 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 
 	@Override
 	public void action() {		
-		sTracker.addSize( jobQueue.size() );
+		sTracker.addSize( batchQueue.size() );
 
 		// get average queue size and waiting time in the queue
 		averageQueueSize = sTracker.getAverageQueueSize().doubleValue();
@@ -95,27 +95,24 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 
 		long avgWaitingTime = (long) (averageProcessingTime * averageQueueSize);
 
-		long WaitingTime = 0;
-
-		for(int i = 0; i < jobQueue.size(); i++) {
-			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessingTime();
-		}
-		
-		OperationItemId id = new OperationItemId(j.getFirstJob().getCurrentOperation().getJobOperationType(),
-				j.getCustomerId());
+//		for(int i = 0; i < batchQueue.size(); i++) {
+//			WaitingTime = WaitingTime + batchQueue.get(i).getCurrentOperationProcessingTime();
+//		}
+		OperationItemId id = new OperationItemId(batch.getFirstJob().getCurrentOperation().getJobOperationType(),
+				batch.getCustomerId());
 		
 		if(operationdb.contains(id) ) {
-			j.setWaitingTime(avgWaitingTime ); //WaitingTime+ j.getCurrentOperationProcessTime());
+			batch.setWaitingTime(avgWaitingTime + batch.getTotalBatchProcessingTime());
 		} else {
-			log.info(" Operation " + j.getFirstJob().getCurrentOperation().getJobOperationType() +
-					" customer id : '" + j.getCustomerId() +  
+			log.info(" Operation " + batch.getFirstJob().getCurrentOperation().getJobOperationType() +
+					" customer id : '" + batch.getCustomerId() +  
 					"' unsupported on this machine");
-			j.setWaitingTime(LargeLongNegativeValue);
+			batch.setWaitingTime(LargeLongNegativeValue);
 		}
 		//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());
 		ZoneDataUpdate waitingTimeUpdate = new ZoneDataUpdate.
 				Builder(ID.LocalScheduler.ZoneData.WaitingTime).
-				value(this.j).
+				value(this.batch).
 				setReplyWith(replyWith).
 				Build();
 

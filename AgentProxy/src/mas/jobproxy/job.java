@@ -79,8 +79,7 @@ public class job implements Serializable {
 			this.completionTime = (Date) other.completionTime.clone();
 		}
 
-		this.operations = new ArrayList<jobOperation>();
-		this.operations.addAll(other.operations);
+		this.operations = new ArrayList<jobOperation>(other.operations);
 
 		this.currentOperationIndex = other.currentOperationIndex;
 		this.IsComplete = other.IsComplete;
@@ -97,9 +96,9 @@ public class job implements Serializable {
 		return (this.jobNo == j.jobNo) && (this.jobID.equals(j.jobID));
 	}
 
-	public long getCurrentOperationFinishTime() {
-		return this.operations.get(currentOperationIndex).getCompletionTime();
-	}
+//	public long getCurrentOperationFinishTime() {
+//		return this.operations.get(currentOperationIndex).getCompletionTime();
+//	}
 
 	/**
 	 * sets start time for current operation of the job
