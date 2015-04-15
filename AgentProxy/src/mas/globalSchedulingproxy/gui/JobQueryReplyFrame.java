@@ -8,6 +8,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import com.alee.extended.label.WebHotkeyLabel;
+
 import mas.jobproxy.Batch;
 import mas.util.JobQueryObject;
 import net.miginfocom.swing.MigLayout;
@@ -21,29 +23,29 @@ public class JobQueryReplyFrame extends JFrame{
 
 	private JLabel lblHeading;
 
-	private JLabel lblJobIDHeading;
-	private JLabel lblJobID;
+	private JLabel lblBatchIDHeading;
+	private WebHotkeyLabel lblBatchID;
 
 	private JLabel lblCPNHeading;
-	private JLabel lblCPN;
+	private WebHotkeyLabel lblCPN;
 
 	private JLabel lblDueDateHeading;
-	private JLabel lblDueDate;
+	private WebHotkeyLabel lblDueDate;
 
 	private JLabel lblPenaltyHeading;
-	private JLabel lblPenaltyRate;
+	private WebHotkeyLabel lblPenaltyRate;
 
 	private JLabel lblOperationsHeading;
-	private JLabel lblOperations;
+	private WebHotkeyLabel lblOperations;
 
 	private JLabel lblOperationsDoneHeading;
-	private JLabel lblOperationsDone;
+	private WebHotkeyLabel lblOperationsDone;
 	
 	private JLabel lblCurrentOperationheading;
-	private JLabel lblCurrentOperation;
+	private WebHotkeyLabel lblCurrentOperation;
 	
 	private JLabel lblCurrentMachineHeading;
-	private JLabel lblCurrentMachine;
+	private WebHotkeyLabel lblCurrentMachine;
 	
 	public JobQueryReplyFrame( JobQueryObject response) {
 
@@ -52,7 +54,7 @@ public class JobQueryReplyFrame extends JFrame{
 
 		this.lblHeading = new JLabel("Job Query Results");
 
-		this.lblJobIDHeading = new JLabel(Labels.CustomerLabels.jobID);
+		this.lblBatchIDHeading = new JLabel(Labels.CustomerLabels.BatchID);
 		this.lblCPNHeading = new JLabel(Labels.CustomerLabels.jobPriority);
 		this.lblDueDateHeading = new JLabel(Labels.CustomerLabels.jobDueDate);
 		this.lblPenaltyHeading = new JLabel(Labels.CustomerLabels.jobPenalty);
@@ -61,48 +63,47 @@ public class JobQueryReplyFrame extends JFrame{
 		this.lblCurrentOperationheading = new JLabel("Current Operations : ");
 		this.lblCurrentMachineHeading = new JLabel("Current Machine : ");
 
-		this.lblJobID = new JLabel();
-		this.lblCPN = new JLabel();
-		this.lblDueDate = new JLabel();
-		this.lblPenaltyRate = new JLabel();
-		this.lblOperations = new JLabel();
-		this.lblOperationsDone = new JLabel();
-		this.lblCurrentOperation = new JLabel();
-		this.lblCurrentMachine = new JLabel();
+		this.lblBatchID = new WebHotkeyLabel();
+		this.lblCPN = new WebHotkeyLabel();
+		this.lblDueDate = new WebHotkeyLabel();
+		this.lblPenaltyRate = new WebHotkeyLabel();
+		this.lblOperations = new WebHotkeyLabel();
+		this.lblOperationsDone = new WebHotkeyLabel();
+		this.lblCurrentOperation = new WebHotkeyLabel();
+		this.lblCurrentMachine = new WebHotkeyLabel();
 
-		if(response != null && response.getCurrentJob() != null ) {
-			Batch theJob = response.getCurrentJob();
-			lblCPN.setText(String.valueOf(theJob.getCPN()) );
-			lblJobID.setText(theJob.getBatchId());
-			lblDueDate.setText(String.valueOf(theJob.getDueDateByCustomer()));
-			lblPenaltyRate.setText(String.valueOf(theJob.getPenaltyRate()));
+		if(response != null && response.getCurrentBatch() != null ) {
+			Batch batch = response.getCurrentBatch();
+			lblCPN.setText(String.valueOf(batch.getCPN()) );
+			lblBatchID.setText(batch.getBatchId());
+			lblDueDate.setText(String.valueOf(batch.getDueDateByCustomer()));
+			lblPenaltyRate.setText(String.valueOf(batch.getPenaltyRate()));
 			this.lblOperations.setText(String.valueOf(
-					theJob.getFirstJob().getOperations()));
+					batch.getFirstJob().getOperations()));
 			
-			String currOps="[";
-			for(int i=0;i<theJob.getCurrentJobNo();i++){
-				currOps=currOps+theJob.getCurrentOperationType();
-				if(i!=(theJob.getNumOperations()-1)){
-					currOps=currOps+",";
+			String completedOperations = "[ ";
+			for(int i = 0; i < batch.getCurrentOperationNumber();i++) {
+				completedOperations = completedOperations + batch.getFirstJob().getOperations().get(i).getJobOperationType();
+				if( i != (batch.getNumOperations()-1) ){
+					completedOperations = completedOperations + ", ";
 				}
 			}
-			currOps=currOps+"]";
-			this.lblOperationsDone.setText(currOps);
+			completedOperations = completedOperations + " ]";
+			this.lblOperationsDone.setText(completedOperations);
 			
-			this.lblCurrentOperation.setText(theJob.getCurrentOperationType());
+			this.lblCurrentOperation.setText(batch.getCurrentOperationType());
 			
-			if(response.isOnMachine()){
-				this.lblCurrentMachine.setText(response.getCurrentMachine().getLocalName()+" (loaded)");
+			if(response.isOnMachine()) {
+				this.lblCurrentMachine.setText(response.getCurrentMachine().getLocalName()+" (Loaded)");
 			}
 			else{
 				this.lblCurrentMachine.setText(response.getCurrentMachine().getLocalName());
 			}
 		}
-
 //		mainInfoPanel.add(lblHeading);
 
-		mainInfoPanel.add(lblJobIDHeading);
-		mainInfoPanel.add(lblJobID,"wrap");
+		mainInfoPanel.add(lblBatchIDHeading);
+		mainInfoPanel.add(lblBatchID,"wrap");
 
 		mainInfoPanel.add(lblCPNHeading);
 		mainInfoPanel.add(lblCPN,"wrap");

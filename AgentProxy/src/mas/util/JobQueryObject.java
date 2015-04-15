@@ -3,15 +3,15 @@ package mas.util;
 import jade.core.AID;
 import jade.util.leap.Serializable;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 
 public class JobQueryObject implements Serializable {
 
-	private Batch currentJob;
+	private static final long serialVersionUID = 1L;
+	private Batch currentBatch;
 	private AID currentMachine;
 	private boolean isJobOnMachine;
-	private String type; //must be take from ID.GlobalScheduler.requestType
-
+	//must be take from ID.GlobalScheduler.requestType
+	private String type; 
 
 	public static class Builder {
 		Batch currJob;
@@ -38,30 +38,30 @@ public class JobQueryObject implements Serializable {
 			return this;
 
 		}
-		
+
 		public Builder requestType(String reqType){
 			requestType=reqType;
 			return this;
 		}
-		
+
 		public JobQueryObject build() {
 			return new JobQueryObject(this);
 		}
 	}
 
 	private JobQueryObject(Builder builder) {
-		currentJob=builder.currJob;
-		currentMachine=builder.currMachine;
-		isJobOnMachine=builder.isUnderProcess;
-		type=builder.requestType;
+		currentBatch = builder.currJob;
+		currentMachine = builder.currMachine;
+		isJobOnMachine = builder.isUnderProcess;
+		type = builder.requestType;
 	}
 
 	public AID getCurrentMachine() {
 		return currentMachine;
 	}
 
-	public Batch getCurrentJob() {
-		return currentJob;
+	public Batch getCurrentBatch() {
+		return currentBatch;
 	}
 
 	public boolean isOnMachine(){
@@ -71,11 +71,16 @@ public class JobQueryObject implements Serializable {
 	public String getType() {
 		return type;
 	}
-/*
+	/*
 	public void setType(String type) {
 		this.type = type;
 	}*/
 
-	
+	@Override
+	public String toString() {
+		return "JobQueryObject [currentBatch=" + currentBatch
+				+ ", currentMachine=" + currentMachine + ", isJobOnMachine="
+				+ isJobOnMachine + ", type=" + type + "]";
+	}
 
 }

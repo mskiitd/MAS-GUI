@@ -120,7 +120,7 @@ public class DefineJobFrame extends JFrame{
 		this.lblHeading = new JLabel(Labels.CustomerLabels.jobGenerateHeading);
 		this.lblCPN = new JLabel(Labels.CustomerLabels.jobPriority);
 		this.lblDueDate = new JLabel(Labels.CustomerLabels.jobDueDate);
-		this.lblJobID = new JLabel(Labels.CustomerLabels.jobID);
+		this.lblJobID = new JLabel(Labels.CustomerLabels.BatchID);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
 		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
@@ -189,72 +189,65 @@ public class DefineJobFrame extends JFrame{
 
 	private void createJobFromParams() {
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+		boolean x1 = true;
+		if(generatedJob == null) {
+			if(txtJobID.getText().isEmpty()) {
 
-				boolean x1 = true;
-				if(generatedJob == null) {
-					if(txtJobID.getText().isEmpty()) {
-
-						SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								JOptionPane.showMessageDialog(DefineJobFrame.this,
-										"Please enter batch ID !!");
-							}
-						});
-
-						x1 = false;
-					}else {
-						generatedJob = new job.Builder(txtJobID.getText().toString()).build();
-
-						if(populatingBatch != null) {
-							populatingBatch.setBatchId(txtJobID.getText().toString());
-						}else {
-							populatingBatch = new Batch(txtJobID.getText());
-						}
-						boolean x2 = false,x3 = true,x4 = true,x5 = true;
-						x2 = checkPenaltyRate();
-						if(x2) {
-							x3 = checkCPN();
-						}
-						populatingBatch.setGenerationTime(new Date());
-						populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
-						if(x2 & x3) {
-							x4 = checkDueDate();
-						}
-
-						dataOk = x2 & x3 & x4 & x5;
-
-						if(dataOk) {
-							dataOk = dataOk & checkBatchSize();
-						}
-
-						populatingBatch.setCustomerId(cAgent.getLocalName());
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(DefineJobFrame.this,
+								"Please enter batch ID !!");
 					}
+				});
+
+				x1 = false;
+			}else {
+				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+
+				if(populatingBatch != null) {
+					populatingBatch.setBatchId(txtJobID.getText().toString());
+				}else {
+					populatingBatch = new Batch(txtJobID.getText());
 				}
-				else {
-					boolean x2 = true,x3 = true,x4 = true,x5 = true;
-					x2 = checkPenaltyRate();
-					if(x2) {
-						x3 = checkCPN();
-					}
-					populatingBatch.setGenerationTime(new Date());
-					populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
-					if(x2 & x3) {
-						x4 = checkDueDate();
-					}
-					dataOk = x1 & x2 & x3 & x4 & x5;
-
-					if(dataOk) {
-						dataOk = dataOk & checkBatchSize();
-					}
-					populatingBatch.setCustomerId(cAgent.getLocalName());
+				boolean x2 = false,x3 = true,x4 = true,x5 = true;
+				x2 = checkPenaltyRate();
+				if(x2) {
+					x3 = checkCPN();
 				}
+				populatingBatch.setGenerationTime(new Date());
+				populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
+				if(x2 & x3) {
+					x4 = checkDueDate();
+				}
+
+				dataOk = x2 & x3 & x4 & x5;
+
+				if(dataOk) {
+					dataOk = dataOk & checkBatchSize();
+				}
+
+				populatingBatch.setCustomerId(cAgent.getLocalName());
 			}
-		}).start();
+		}
+		else {
+			boolean x2 = true,x3 = true,x4 = true,x5 = true;
+			x2 = checkPenaltyRate();
+			if(x2) {
+				x3 = checkCPN();
+			}
+			populatingBatch.setGenerationTime(new Date());
+			populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
+			if(x2 & x3) {
+				x4 = checkDueDate();
+			}
+			dataOk = x1 & x2 & x3 & x4 & x5;
 
+			if(dataOk) {
+				dataOk = dataOk & checkBatchSize();
+			}
+			populatingBatch.setCustomerId(cAgent.getLocalName());
+		}
 	}
 
 	private boolean checkDueDate() {
@@ -359,12 +352,12 @@ public class DefineJobFrame extends JFrame{
 			populatingBatch.clearAllJobs();
 			int bSize = Integer.parseInt(txtBatchSize.getText());
 			ArrayList<job> jobs = new ArrayList<job>();
-			
+
 			for(int i = 0; i < bSize ; i++ ) {
 				job j = new job(generatedJob);
 				jobs.add(j);
 			}
-			
+
 			populatingBatch.setJobsInBatch(jobs);
 		}
 

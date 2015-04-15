@@ -7,26 +7,21 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.blackboard.zonedata.ZoneData;
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.globalSchedulingproxy.gui.GSAproxyGUI;
 import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.JobQueryObject;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-import mas.globalSchedulingproxy.goal.*;
 
 public class QueryFromLSA extends Behaviour implements PlanBody {
 
@@ -54,14 +49,14 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 
 	@Override
 	public void init(PlanInstance PI) {
-		
+
 		bfBase = PI.getBeliefBase();
 		QueryJobGoal queryGoal= ((QueryJobGoal)(PI.getGoal()));
 		this.queryJob=	queryGoal.getBatchToQuery();
 		requestType=queryGoal.getQueryType();
 		blackboard_AID = new AID(ID.Blackboard.LocalName, false);
 		mt = MessageTemplate.MatchConversationId(MessageIds.msgLSAQueryResponse);
-		
+
 		weblafGSAgui=(WebLafGSA)bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst
 				.GSA_GUI_instance).getValue();
 	}
@@ -75,9 +70,9 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 			getValue();
 
 			if (MachineCount != 0) {
-				
+
 				JobQueryObject queryForm = new JobQueryObject.Builder().
-				currentJob(this.queryJob).requestType(requestType).build();
+						currentJob(this.queryJob).requestType(requestType).build();
 
 				LSAqueryResponse=new ACLMessage[MachineCount];
 				ZoneDataUpdate QueryRequest = new ZoneDataUpdate.
@@ -92,14 +87,14 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 		case 1:
 			try {
 				ACLMessage reply = myAgent.receive(mt);
-//				log.info("recieved"+reply);
+				//				log.info("recieved"+reply);
 				if (reply != null) {
 					LSAqueryResponse[repliesCnt] = reply;
 					repliesCnt++;
 					if (repliesCnt == MachineCount) {
 						step = 2;
 						repliesCnt=0;
-//						log.info("got replies");
+						//						log.info("got replies");
 					}
 				}
 				else {
@@ -113,31 +108,33 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 		case 2:
 			JobQueryObject response = getQueryResponse(LSAqueryResponse);
 			log.info(response);
-			switch(response.getType()){
+			
+			switch(response.getType()) {
+			
 			case ID.GlobalScheduler.requestType.currentStatus:
 				GSAproxyGUI.showQueryResult(response);
 				break;
-			
+
 			case ID.GlobalScheduler.requestType.cancelBatch:
-				weblafGSAgui.cancelBatchUnderProcess(response.getCurrentJob());
-				
-				WebLafGSA.showNotification("Batch cancelled","Batch No. "+response.getCurrentJob().getBatchNumber()+
+				weblafGSAgui.cancelBatchUnderProcess(response.getCurrentBatch());
+
+				WebLafGSA.showNotification("Batch cancelled","Batch No. "+response.getCurrentBatch().getBatchNumber()+
 						" cancelled",MessageType.WARNING );
 
-				
+
 				break;
-				
+
 			case ID.GlobalScheduler.requestType.changeDueDate:
-				weblafGSAgui.cancelBatchUnderProcess(response.getCurrentJob());
-				WebLafGSA.showNotification("Request","Batch No. "+response.getCurrentJob().getBatchNumber()+
+				weblafGSAgui.cancelBatchUnderProcess(response.getCurrentBatch());
+				WebLafGSA.showNotification("Request","Batch No. "+response.getCurrentBatch().getBatchNumber()+
 						" requested for due date change",MessageType.INFO );
-				
+
 				ZoneDataUpdate dueDateRequest=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.
-						dueDateChangeBatches).value(response.getCurrentJob()).Build();
+						dueDateChangeBatches).value(response.getCurrentBatch()).Build();
 				AgentUtil.sendZoneDataUpdate(blackboard_AID, dueDateRequest, myAgent);
 				break;	
 			}
-			
+
 			step = 3;
 			break;
 		}
@@ -146,11 +143,11 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 	private JobQueryObject getQueryResponse(ACLMessage[] LSAqueryResponse2) {
 
 		JobQueryObject response = null;
-		
+
 		for(int i = 0; i < LSAqueryResponse2.length; i++) {
 			try {
 				JobQueryObject queryResponse = (JobQueryObject) LSAqueryResponse2[i].getContentObject();
-				Batch j = (queryResponse).getCurrentJob();
+				Batch j = (queryResponse).getCurrentBatch();
 				if(j != null) {
 					response = queryResponse;
 					log.info(j.getBatchNumber() + " is at " + queryResponse.getCurrentMachine().getLocalName());
