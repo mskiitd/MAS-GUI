@@ -77,7 +77,7 @@ public class JobQueryReplyFrame extends JFrame{
 			lblDueDate.setText(String.valueOf(theJob.getDueDateByCustomer()));
 			lblPenaltyRate.setText(String.valueOf(theJob.getPenaltyRate()));
 			this.lblOperations.setText(String.valueOf(
-					theJob.getSampleJob().getOperations()));
+					theJob.getFirstJob().getOperations()));
 			
 			String currOps="[";
 			for(int i=0;i<theJob.getCurrentJobNo();i++){

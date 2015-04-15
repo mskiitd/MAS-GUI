@@ -273,7 +273,7 @@ public class GSAproxyGUI extends JFrame{
 				value = j.getDueDateByCustomer();
 				break;
 			case 5:
-				value = j.getSampleJob().getOperations();
+				value = j.getFirstJob().getOperations();
 				break;
 			default:
 				value = "not_found";
@@ -321,7 +321,7 @@ public class GSAproxyGUI extends JFrame{
 				value = j.getDueDateByCustomer();
 				break;
 			case 5:
-				value = j.getSampleJob().getOperations();
+				value = j.getFirstJob().getOperations();
 				break;
 			default:
 				value = "null";

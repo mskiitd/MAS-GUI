@@ -50,8 +50,6 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		log = LogManager.getLogger();
 		bfBase = pInstance.getBeliefBase();
 
-		//		r=new Random();
-
 		this.blackboard = (AID) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
@@ -73,7 +71,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		try{
-			jobToBidFor=setBid(jobToBidFor);
+			jobToBidFor = setBid(jobToBidFor);
 
 			ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.bidForJob)
 			.value(jobToBidFor).setReplyWith(replyWith).Build();
@@ -93,13 +91,12 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
 
-		log.info("batch : " + batchToBidFor.getBatchCount() + " operation : " +
-				batchToBidFor.getSampleJob().getCurrentOperation());
-		
-		OperationItemId id = new OperationItemId(batchToBidFor.getCurrentOperationType(), batchToBidFor.getCustomerId());
-		
-		if( ! operationdb.contains(id) ) {
+		log.info("bidding for batch : " + batchToBidFor.getBatchCount() + " operation : " +
+				batchToBidFor.getFirstJob().getCurrentOperation());
 
+		OperationItemId id = new OperationItemId(batchToBidFor.getCurrentOperationType(), batchToBidFor.getCustomerId());
+
+		if( ! operationdb.contains(id) ) {
 			log.info("Operation " + batchToBidFor.getCurrentOperationType() +
 					" unsupported on machine : " + myAgent.getLocalName());
 			batchToBidFor.setBidByLSA(Double.MAX_VALUE);
@@ -107,8 +104,8 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			return batchToBidFor;
 		} 
 
-		batchToBidFor.setCurrentOperationProcessingTime(operationdb. getOperationInfo(id).getProcessingTime()*
-				batchToBidFor.getBatchCount());
+		// set processing time for current operation in the batch for each of the job
+		batchToBidFor.setCurrentOperationProcessingTime(operationdb. getOperationInfo(id).getProcessingTime());
 
 		ArrayList<Batch> tempQueue = new  ArrayList<Batch>();
 		tempQueue.addAll(batchQueue);
@@ -123,11 +120,10 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		double PenaltyBefore = getPenaltyLocalDD(batchQueue);
 		log.info(myAgent.getLocalName() + " job Q size= " + batchQueue.size());
 
-		//		log.info("PenaltyBefore="+getPenaltyLocalDD(jobQueue));
-		double incremental_penalty=PenaltyAfter - PenaltyBefore;
+		double incremental_penalty = PenaltyAfter - PenaltyBefore;
 		log.info(myAgent.getLocalName() + " incremental penalty = " + incremental_penalty);
 
-		bidNo = /*r.nextInt(10)+*/PenaltyAfter-PenaltyBefore;
+		bidNo = PenaltyAfter - PenaltyBefore;
 		batchToBidFor.setBidByLSA(bidNo);
 		batchToBidFor.setLSABidder(myAgent.getAID());
 
@@ -139,16 +135,17 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		long cumulativeProcessingTime = 0;//sum of processing times of jobs in Q standing ahead 
 		//in milliseconds
 
+		// initialize start times of all batches in the queue
 		sequence = setStartTimes(sequence);
 
 		double cost = 0.0;
-		int l = sequence.size();
+		int sequenceSize = sequence.size();
 
-		for (int i = 0; i < l; i++) {
+		for (int i = 0; i < sequenceSize; i++) {
 
 			finishTime = cumulativeProcessingTime + sequence.get(i).getCurrentOperationProcessingTime() +
 					sequence.get(i).getCurrentOperationStartTime();
-			//			log.info("difference="+(finishTime-sequence.get(i).getStartTime().getTime()));
+
 			cumulativeProcessingTime = cumulativeProcessingTime + sequence.get(i).getCurrentOperationProcessingTime();
 			double tardiness = 0.0;
 
@@ -157,10 +154,8 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 			if (finishTime > sequence.get(i).getCurrentOperationDueDate()) {
 				tardiness = (finishTime - sequence.get(i).getCurrentOperationDueDate())/1000.0;
-				//				log.info(myAgent.getLocalName()+ " tardiness="+tardiness+" L="+l+"
-				//				ft="+new Date(finishTime)+" dd="+sequence.get(i).getDuedate()+" st="+sequence.get(i).getStartTime());
 			}
-			else{
+			else {
 				tardiness = 0.0;
 			}
 			/*log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
@@ -171,15 +166,19 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			 */
 			cost += tardiness * sequence.get(i).getPenaltyRate() ;/*+ sequence.get(i).getCost();*/
 		}
-
-		log.info(myAgent.getLocalName()+" cost="+cost+" with L="+l);
+		log.info(myAgent.getLocalName() + " cost = " + cost + " with L = " + sequenceSize );
 		return cost;
 	}
 
+	/**
+	 * sets start time for all the batches in the queue
+	 * @param sequence
+	 * @return
+	 */
 	private ArrayList<Batch> setStartTimes(ArrayList<Batch> sequence) {
 		long CumulativeWaitingTime = 0;
-		for(int i = 0 ; i < sequence.size(); i++) {
 
+		for(int i = 0 ; i < sequence.size(); i++) {
 			sequence.get(i).setCurrentOperationStartTime(CumulativeWaitingTime +
 					System.currentTimeMillis());
 

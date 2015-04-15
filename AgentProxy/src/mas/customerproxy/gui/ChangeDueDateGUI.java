@@ -89,7 +89,7 @@ public class ChangeDueDateGUI extends JFrame{
 		populatingBatch = passedBatch;
 
 		if(populatingBatch != null) {
-			this.populatingJob = populatingBatch.getSampleJob();
+			this.populatingJob = populatingBatch.getFirstJob();
 		}
 
 		this.scroller = new JScrollPane();

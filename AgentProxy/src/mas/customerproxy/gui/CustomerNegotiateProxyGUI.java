@@ -97,7 +97,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		this.populatingBatch = passedBatch;
 		if(populatingBatch != null) {
-			generatedJob = populatingBatch.getSampleJob();
+			generatedJob = populatingBatch.getFirstJob();
 		}
 
 		this.scroller = new JScrollPane();
@@ -238,7 +238,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			txtCPN.setText(String.valueOf(populatingBatch.getCPN()));
 			txtPenaltyRate.setText(String.valueOf(populatingBatch.getPenaltyRate()));
 
-			txtNumOps.setText(String.valueOf(populatingBatch.getSampleJob().getOperations().size()));
+			txtNumOps.setText(String.valueOf(populatingBatch.getFirstJob().getOperations().size()));
 
 			Calendar c1 = Calendar.getInstance();
 			c1.setTime(populatingBatch.getDueDateByCustomer());
@@ -250,7 +250,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 
-			ArrayList<jobOperation> ops = populatingBatch.getSampleJob().getOperations();
+			ArrayList<jobOperation> ops = populatingBatch.getFirstJob().getOperations();
 			operationPanel.removeAll();
 			for(int i = 0; i < ops.size(); i++ ) {
 				WebHotkeyLabel lblOp = new WebHotkeyLabel(ops.get(i).getJobOperationType());
@@ -425,7 +425,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 			if(operationDataOk) {
 				DefineJobOperationsFrame ops = new 
-						DefineJobOperationsFrame(populatingBatch.getSampleJob(), NumOps, populatingBatch.getSampleJob());
+						DefineJobOperationsFrame(populatingBatch.getFirstJob(), NumOps, populatingBatch.getFirstJob());
 			}
 		}
 	}

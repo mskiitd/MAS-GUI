@@ -13,15 +13,12 @@ import mas.globalSchedulingproxy.database.UnitBatchInfo;
 import mas.globalSchedulingproxy.goal.GetNoOfMachinesGoal;
 import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
-import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
@@ -29,6 +26,12 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/** Queries for waiting time from all Local scheduling agents.
+ *  First it assigns operations to the batch based on its id and customer id from its database
+ *  
+ * @author Anand Prajapati
+ *
+ */
 public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
@@ -85,7 +88,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			if(customerBatchInfo != null) {
 				UnitBatchInfo bInfo = customerBatchInfo.getBatchInfo(comingBatch.getBatchId());
 				comingBatch.setOperations(bInfo.getOperations());
-				log.info("operations for job" + comingBatch.getBatchId()+":" + bInfo);
+				log.info("operations for batch : '" + comingBatch.getBatchId()+"' : " + bInfo);
 			}
 			else {
 				step = 5;
@@ -93,7 +96,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				log.info("Rejecting the batch");
 			}
 		} else {
-			log.debug("Customer database is null");
+			log.debug("Customer database is missing");
 		}
 	}
 
@@ -154,7 +157,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				comingBatch.IncrementOperationNumber();
 
 				if(comingBatch.getCurrentOperationNumber() < 
-						comingBatch.getSampleJob().getOperations().size()) {
+						comingBatch.getFirstJob().getOperations().size()) {
 
 					step = 1;
 				}
@@ -183,7 +186,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 				WebLafGSA.showNotification("Batch Rejected", message, MessageType.INFO);
 			}
 			else{
-				log.info("sending waiting time:" + CumulativeWaitingTime + " ms" + " : " 
+				log.info("sending waiting time: " + CumulativeWaitingTime + " ms" + " : " 
 						+ JobToSend.getCurrentOperationNumber() );
 
 				ZoneDataUpdate NegotiationUpdate = new ZoneDataUpdate.

@@ -27,13 +27,13 @@ import bdi4jade.plan.PlanInstance.EndState;
  *  @author Anand Prajapati
  *	Sends average waiting time for the new job to global scheduling agent
  *  Based on this waiting time global scheduling accepts/negotiates the job 
- *  from customer
+ *  from customer 
  */
 
 public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
-	private static final long LargeLongNegativeValue =-3*((long)Math.pow(10,10));
+	private static final long LargeLongNegativeValue = -3*((long)Math.pow(10,10));
 	//3*((long)Math.pow(10,10)) milliseconds ~ 0.95 years
 	//if we set Long.MIN_VALUE, and addition happens in calculation of waiting in time in GSA,
 	//due to bit limit, Long.MIN_VALUE+Long.MIN_VALUE becomes 0 which is wrong
@@ -100,15 +100,14 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 		for(int i = 0; i < jobQueue.size(); i++) {
 			WaitingTime = WaitingTime + jobQueue.get(i).getCurrentOperationProcessingTime();
 		}
-		log.info(j.getSampleJob().getCurrentOperation());
-		OperationItemId id = new OperationItemId(j.getSampleJob().getCurrentOperation().getJobOperationType(),
-				j.getCustomerId());
 		
+		OperationItemId id = new OperationItemId(j.getFirstJob().getCurrentOperation().getJobOperationType(),
+				j.getCustomerId());
 		
 		if(operationdb.contains(id) ) {
 			j.setWaitingTime(avgWaitingTime ); //WaitingTime+ j.getCurrentOperationProcessTime());
 		} else {
-			log.info(" Operation " + j.getSampleJob().getCurrentOperation().getJobOperationType() +
+			log.info(" Operation " + j.getFirstJob().getCurrentOperation().getJobOperationType() +
 					" customer id : '" + j.getCustomerId() +  
 					"' unsupported on this machine");
 			j.setWaitingTime(LargeLongNegativeValue);

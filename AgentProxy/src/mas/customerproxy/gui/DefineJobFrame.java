@@ -183,7 +183,7 @@ public class DefineJobFrame extends JFrame{
 			txtJobID.setText(populatingBatch.getBatchId() );
 			txtCPN.setText(String.valueOf(populatingBatch.getCPN()) );
 			txtPenalty.setText(String.valueOf(populatingBatch.getPenaltyRate()) );
-			txtNumOps.setText(String.valueOf(populatingBatch.getSampleJob().getOperations().size()) );
+			txtNumOps.setText(String.valueOf(populatingBatch.getFirstJob().getOperations().size()) );
 		}
 	}
 
@@ -359,9 +359,11 @@ public class DefineJobFrame extends JFrame{
 			populatingBatch.clearAllJobs();
 			int bSize = Integer.parseInt(txtBatchSize.getText());
 			ArrayList<job> jobs = new ArrayList<job>();
+			
 			for(int i = 0; i < bSize ; i++ ) {
-				jobs.add(generatedJob);
+				jobs.add(new job(generatedJob));
 			}
+			
 			populatingBatch.setJobsInBatch(jobs);
 		}
 
@@ -376,7 +378,7 @@ public class DefineJobFrame extends JFrame{
 
 			if(operationDataOk) {
 				DefineJobOperationsFrame ops = new 
-						DefineJobOperationsFrame(generatedJob, NumOps, populatingBatch.getSampleJob());
+						DefineJobOperationsFrame(generatedJob, NumOps, populatingBatch.getFirstJob());
 			}
 		}
 	}

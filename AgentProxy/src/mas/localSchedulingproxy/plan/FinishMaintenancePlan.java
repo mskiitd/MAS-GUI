@@ -48,7 +48,7 @@ public class FinishMaintenancePlan extends Behaviour implements PlanBody{
 			if(maintJob.getActivityCode() != null) {
 				step = 1;
 			} else {
-				block(400);
+				block(500);
 			}
 			break;
 		case 1:

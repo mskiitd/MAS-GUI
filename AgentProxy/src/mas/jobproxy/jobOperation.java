@@ -80,12 +80,12 @@ public class jobOperation implements operationInterface,Serializable {
 	}
 
 	@Override
-	public long getDueDate() {
+	public long getFinishTime() {
 		return this.dueDate;
 	}
 
 	@Override
-	public void setDueDate(long localDueDate) {
+	public void setFinishTime(long localDueDate) {
 		this.dueDate = localDueDate;
 	}
 

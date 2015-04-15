@@ -6,11 +6,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.alee.log.Log;
-
 /**
  * Represents a batch of jobs
  * @author Anand Prajapati
@@ -25,9 +20,6 @@ public class Batch implements Serializable {
 			HighRegretMultiplier = 3;
 
 	private ArrayList<job> jobsInBatch;
-//	jobsInBatch contains copies of jobs with same reference
-	//hence if u change any property of any job in jobsInBatch, changes will occur in every job
-	//of jobsInBatch
 	
 	private String customerId = null;
 	private String batchId = null;
@@ -147,7 +139,7 @@ public class Batch implements Serializable {
 	}
 
 	public boolean isBatchComplete() {
-		return getSampleJob().isComplete();
+		return getFirstJob().isComplete();
 //		return isBatchComplete;
 	}
 
@@ -288,7 +280,7 @@ public class Batch implements Serializable {
 		this.jobsInBatch.clear();
 	}
 
-	public job getSampleJob() {
+	public job getFirstJob() {
 
 		if(! jobsInBatch.isEmpty())
 			return jobsInBatch.get(0);
@@ -301,7 +293,7 @@ public class Batch implements Serializable {
 	}
 
 	public String getCurrentOperationType() {
-		return getSampleJob().getCurrentOperation().getJobOperationType();
+		return getFirstJob().getCurrentOperation().getJobOperationType();
 	}
 
 	/**
@@ -320,7 +312,7 @@ public class Batch implements Serializable {
 		 *  if index becomes >= the size of the operations it means all operations are done
 		 *  index for last operation is 'size()-1'
 		 */
-		if(this.currentOperationIndex >= this.getSampleJob().getOperations().size() ) {
+		if(this.currentOperationIndex >= this.getFirstJob().getOperations().size() ) {
 			isBatchComplete = true;
 		} else {
 			this.isBatchComplete = false;
@@ -333,7 +325,7 @@ public class Batch implements Serializable {
 	 * @param startTime
 	 */
 	public void setCurrentOperationStartTime(long startTime) {
-		this.getSampleJob().getOperations().get(currentOperationIndex).setStartTime(startTime);
+		this.getFirstJob().getOperations().get(currentOperationIndex).setStartTime(startTime);
 	}
 
 	/**
@@ -341,7 +333,7 @@ public class Batch implements Serializable {
 	 * get start time of current operation for first job in the batch 
 	 */
 	public long getCurrentOperationStartTime() {
-		return this.getSampleJob().getOperations().get(currentOperationIndex ).getStartTime();
+		return this.getFirstJob().getOperations().get(currentOperationIndex ).getStartTime();
 	}
 
 	/**
@@ -364,13 +356,14 @@ public class Batch implements Serializable {
 	 * @return processing time for current operation of whole batch
 	 */
 	public long getCurrentOperationProcessingTime() {
-		return this.getSampleJob().getCurrentOperationProcessTime() * getBatchCount();
+		return this.getFirstJob().getCurrentOperationProcessTime() * getBatchCount();
 	}
 
 	/**
 	 * set processing time for current operation for each job in the batch.
 	 * processingTime is the time for one job of the corresponding operation
-	 * in the batch and not for the whole batch.
+	 * in the batch and not for the whole batch. Processing time should be passed in 
+	 * milli seconds.
 	 * @param processingTime
 	 */
 	public void setCurrentOperationProcessingTime(long processingTime) {
@@ -381,20 +374,20 @@ public class Batch implements Serializable {
 
 	public void setCurrentOperationDueDate(long dueDate) {
 		this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
-		get(currentOperationIndex).setDueDate(dueDate);
+		get(currentOperationIndex).setFinishTime(dueDate);
 	}
 
 	public long getCurrentOperationDueDate() {
 		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
-				get(currentOperationIndex).getDueDate();
+				get(currentOperationIndex).getFinishTime();
 	}
 	
 	public long getTotalProcessingTime() {
-		return this.getSampleJob().getTotalProcessingTime()*getBatchCount();
+		return this.getFirstJob().getTotalProcessingTime()*getBatchCount();
 	}
 
 	public int getNumOperations() {
-		return getSampleJob().getOperations().size();
+		return getFirstJob().getOperations().size();
 	}
 	
 	public void setOperations(ArrayList<jobOperation> ops) {

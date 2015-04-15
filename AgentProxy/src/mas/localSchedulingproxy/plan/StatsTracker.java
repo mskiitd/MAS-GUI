@@ -43,15 +43,15 @@ public class StatsTracker {
 		}
 		
 		public long getOperationProcessingTime() {
-			return jobDone.getSampleJob().getProcessTime(operationNumber)*jobDone.getBatchCount();
+			return jobDone.getFirstJob().getProcessTime(operationNumber)*jobDone.getBatchCount();
 		}
 		
 		public long getOperationCompletionTime() {
-			return jobDone.getSampleJob().getCompletionTime(operationNumber);
+			return jobDone.getFirstJob().getCompletionTime(operationNumber);
 		}
 		
 		public long getOperationStartTime() {
-			return jobDone.getSampleJob().getStartTime(operationNumber);
+			return jobDone.getFirstJob().getStartTime(operationNumber);
 		}
 	}
 

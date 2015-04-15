@@ -17,7 +17,7 @@ public class job implements Serializable {
 	private String jobID;
 
 	private Date startTime;
-	private Date jobDuedate;
+	private Date jobDuedateByCustomer;
 	private Date completionTime;
 
 	private ArrayList<jobOperation> operations;
@@ -55,9 +55,24 @@ public class job implements Serializable {
 	private job(Builder builder) {
 		jobID = builder.jobID;
 		jobNo = builder.jobNo;
-		jobDuedate = builder.custdDate;
+		jobDuedateByCustomer = builder.custdDate;
 		this.operations = new ArrayList<jobOperation>();
 		operations.addAll(builder.jOperations);
+	}
+	
+	public job(job other) {
+		this.jobID = other.jobID;
+		this.jobNo = other.jobNo;
+		
+		this.startTime = (Date) other.startTime.clone();
+		this.jobDuedateByCustomer = (Date) other.jobDuedateByCustomer.clone();
+		this.completionTime = (Date) other.completionTime.clone();
+		
+		this.operations = new ArrayList<jobOperation>();
+		this.operations.addAll(other.operations);
+		
+		this.currentOperationNumber = other.currentOperationNumber;
+		this.IsComplete = other.IsComplete;
 	}
 
 	@Override
@@ -71,12 +86,12 @@ public class job implements Serializable {
 		return (this.jobNo == j.jobNo) && (this.jobID.equals(j.jobID));
 	}
 
-	public void setCurrentOperationDueDate(long dueDate) {
-		this.operations.get(currentOperationNumber).setDueDate(dueDate);
+	public void setCurrentOperationFinishTime(long dueDate) {
+		this.operations.get(currentOperationNumber).setFinishTime(dueDate);
 	}
 
-	public long getCurrentOperationDueDate() {
-		return this.operations.get(currentOperationNumber).getDueDate();
+	public long getCurrentOperationFinishTime() {
+		return this.operations.get(currentOperationNumber).getFinishTime();
 	}
 
 	public void setCurrentOperationStartTime(long startTime) {
@@ -187,11 +202,11 @@ public class job implements Serializable {
 		return startTime;
 	}
 
-	public void setJobStartTimeByCust(Date startTime) {
+	public void setJobStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
-	public void setJobStartTimeByCust(long startTime) {
+	public void setJobStartTime(long startTime) {
 		this.startTime = new Date(startTime);
 	}
 
@@ -212,18 +227,18 @@ public class job implements Serializable {
 	}
 
 	public Date getJobDuedatebyCust() {
-		return jobDuedate;
+		return jobDuedateByCustomer;
 	}
 
 	public void setJobDuedatebyCust(Date duedate) {
-		this.jobDuedate = duedate;
+		this.jobDuedateByCustomer = duedate;
 	}
 
 	public void setJobDuedatebyCust(long duedate) {
-		if(this.jobDuedate != null) {
-			this.jobDuedate.setTime(duedate);
+		if(this.jobDuedateByCustomer != null) {
+			this.jobDuedateByCustomer.setTime(duedate);
 		}else {
-			this.jobDuedate = new Date(duedate);
+			this.jobDuedateByCustomer = new Date(duedate);
 		}
 	}
 

@@ -3,14 +3,10 @@ package mas.localSchedulingproxy.plan;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.UnreadableException;
-
 import java.util.ArrayList;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.machineproxy.gui.MachineGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;

@@ -45,7 +45,7 @@ public class ChangeDueDate extends OneShotBehaviour implements PlanBody {
 		batchTosend.setGenerationTime(System.currentTimeMillis());
 		batchTosend.setPenaltyRate(batchToChangeDueDate.getPenaltyRate());
 		batchTosend.setProfit(batchToChangeDueDate.getProfit());*/
-		job tempJob=batchToChangeDueDate.getSampleJob();
+		job tempJob=batchToChangeDueDate.getFirstJob();
 		ArrayList<jobOperation> ops=tempJob.getOperations();
 		for(int n=0;n<batchToChangeDueDate.getCurrentOperationNumber();n++){
 			ops.remove(n);
