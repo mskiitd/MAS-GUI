@@ -3,6 +3,7 @@ package mas.localSchedulingproxy.behavior;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 
+import java.awt.TrayIcon.MessageType;
 import java.util.ArrayList;
 
 import mas.jobproxy.Batch;
@@ -88,6 +89,8 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 		if(totalRegret > regretThreshold) {
 
+			MachineGUI.showNotification("Scheduling", "Scheduling of batches starting", MessageType.INFO);
+			
 			reset(100 * LocalSchedulingAgent.schedulingPeriod);
 
 			ScheduleSequence scheduler = new ScheduleSequence(jobQueue);
@@ -100,6 +103,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			log.info("update new queue in the machine gui ");
 			if(gui != null) {
 				gui.updateQueue(newQ);
+				MachineGUI.showNotification("Scheduling", "Scheduling of batches complete", MessageType.INFO);
 			}
 
 			reset(LocalSchedulingAgent.schedulingPeriod);

@@ -353,7 +353,7 @@ public class MachineGUI extends JFrame {
 	public void setBatch(String id) {
 		currentOpPanel.setbatch(id);
 	}
-	
+
 	public void setBatchNo(String bNum) {
 		currentOpPanel.setBatchNo(bNum);
 	}
@@ -642,25 +642,30 @@ public class MachineGUI extends JFrame {
 		});
 	}
 
-	public static void showNotification(String title, String message,TrayIcon.MessageType type){
+	public static void showNotification(final String title, final String message,final TrayIcon.MessageType type){
 
-		switch(type) {
-		case ERROR :
-			customerTrayIcon.displayMessage(title,message, TrayIcon.MessageType.ERROR);
-			break;
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				switch(type) {
+				case ERROR :
+					customerTrayIcon.displayMessage(title,message, TrayIcon.MessageType.ERROR);
+					break;
 
-		case INFO:
-			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.INFO);
-			break;
+				case INFO:
+					customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.INFO);
+					break;
 
-		case WARNING:
-			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.WARNING);
-			break;
+				case WARNING:
+					customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.WARNING);
+					break;
 
-		case NONE:
-			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
-			break;
-		}
+				case NONE:
+					customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
+					break;
+				}
+			}
+		});
 
 		new Thread(new Runnable() {
 

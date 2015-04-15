@@ -62,25 +62,31 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void action() {
 		// since job is done update current job with null value
 		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine, null);
 		
-		ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
+		ArrayList<Batch> BatchToTakeAction = (ArrayList<Batch>)
 				bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
 
-		for(int i=0;i<BatchToTakeAction.size();i++){
+		for(int i = 0 ; i < BatchToTakeAction.size(); i++) {
 			if(BatchToTakeAction.get(i).getBatchNumber()==comingBatch.getBatchNumber()){
 				BatchToTakeAction.remove(i);
 				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
 						, BatchToTakeAction);
-				isJobCancelled=true;
+				isJobCancelled = true;
 				log.info("cancelled batch");
+				
+				if(gui != null) {
+					gui.removeFromQueue(comingBatch);
+				}
 			}
 		}
 		
 		if(!isJobCancelled){
+			
 			comingBatch.IncrementOperationNumber();
 			
 			ZoneDataUpdate CompletedBatchUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedBatch)
