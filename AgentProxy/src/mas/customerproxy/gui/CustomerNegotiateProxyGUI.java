@@ -306,7 +306,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			int bSize = Integer.parseInt(txtBatchSize.getText());
 			ArrayList<job> jobs = new ArrayList<job>();
 			for(int i = 0; i < bSize ; i++ ) {
-				jobs.add(generatedJob);
+				job j = new job(generatedJob);
+				jobs.add(j);
 			}
 			populatingBatch.setJobsInBatch(jobs);
 		}

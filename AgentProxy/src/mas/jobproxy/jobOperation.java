@@ -79,15 +79,4 @@ public class jobOperation implements operationInterface,Serializable {
 				toString();
 	}
 
-	@Override
-	public long getBatchCompletionTime() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setFinishTime(long globalDueDate) {
-		// TODO Auto-generated method stub
-		
-	}
 }

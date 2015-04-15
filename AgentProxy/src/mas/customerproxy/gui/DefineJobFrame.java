@@ -361,7 +361,8 @@ public class DefineJobFrame extends JFrame{
 			ArrayList<job> jobs = new ArrayList<job>();
 			
 			for(int i = 0; i < bSize ; i++ ) {
-				jobs.add(new job(generatedJob));
+				job j = new job(generatedJob);
+				jobs.add(j);
 			}
 			
 			populatingBatch.setJobsInBatch(jobs);

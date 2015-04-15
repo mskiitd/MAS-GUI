@@ -46,7 +46,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 	// The counter of replies from seller agents
 	private int repliesCnt = 0; 
-	private Batch order;
+	private Batch batchOrder;
 	private String dueDateMethod=null;
 
 	public void init(PlanInstance PI) {
@@ -56,11 +56,12 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 		bfBase = PI.getBeliefBase();
 
-		dueDateMethod = (String)bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.DueDateCalcMethod).
+		dueDateMethod = (String)bfBase.
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.DueDateCalcMethod).
 				getValue();
 
 		try {
-			order = (Batch) ((MessageGoal) PI.getGoal()).getMessage()
+			batchOrder = (Batch) ((MessageGoal) PI.getGoal()).getMessage()
 					.getContentObject();
 
 		} catch (UnreadableException e) {
@@ -69,15 +70,14 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		blackboard = (AID) bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
 
-		msgReplyID = Integer.toString(order.getBatchNumber());
+		msgReplyID = Integer.toString(batchOrder.getBatchNumber());
 
 		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(MessageIds.msgbidForJob)
 				, MessageTemplate.MatchReplyWith(msgReplyID));
 
 		if(GlobalSchedulingAgent.weblafgui != null) {
-			order.setStartTimeMillis(System.currentTimeMillis());
-//			GlobalSchedulingAgent.GSAgui.addAcceptedJobToList(order);
-			GlobalSchedulingAgent.weblafgui.addAcceptedJobToList(order);
+			batchOrder.setStartTimeMillis(System.currentTimeMillis());
+			GlobalSchedulingAgent.weblafgui.addAcceptedJobToList(batchOrder);
 		}
 	}
 
@@ -93,20 +93,20 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			if (MachineCount != 0) {
 				//				log.info("due date: "+order.getDuedate());
 
-				order.setStartTimeMillis(System.currentTimeMillis());
-//				log.info("current op no = "+order.getCurrentOperationNumber());
-				order = SetDueDates(order);
-				
-/*				for(int ops=0;ops<order.getNumOperations();ops++){
+				batchOrder.setStartTimeMillis(System.currentTimeMillis());
+				//				log.info("current op no = "+order.getCurrentOperationNumber());
+				batchOrder = SetDueDates(batchOrder);
+
+				/*				for(int ops=0;ops<order.getNumOperations();ops++){
 					log.info(new Date(order.getCurrentOperationDueDate()));
 					order.IncrementOperationNumber();
 				}*/
-//				order.resetCurrentOperationNumber();
-//				log.info("current op no after = "+order.getCurrentOperationNumber());
+				//				order.resetCurrentOperationNumber();
+				//				log.info("current op no after = "+order.getCurrentOperationNumber());
 
 				ZoneDataUpdate zdu = new ZoneDataUpdate.
 						Builder(ID.GlobalScheduler.ZoneData.askBidForJobFromLSA).
-						value(order).
+						value(batchOrder).
 						setReplyWith(msgReplyID).
 						Build();
 
@@ -161,54 +161,46 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		}
 	}
 
-	private Batch SetDueDates(Batch jobForBidWinner) {
-		long totalProcessingTime = jobForBidWinner.getTotalProcessingTime();
-		long totalAvailableTime = jobForBidWinner.getDueDateByCustomer().getTime()
-				-jobForBidWinner.getStartTimeMillis();
+	private Batch SetDueDates(Batch batchForBidWinner) {
+
+		long totalProcessingTime = batchForBidWinner.getTotalProcessingTime();
+		long totalAvailableTime = batchForBidWinner.getDueDateByCustomer().getTime() -
+				batchForBidWinner.getStartTimeMillis();
 
 		long slack = totalAvailableTime - totalProcessingTime;
-		int NoOfOps = jobForBidWinner.getNumOperations();
-		long currTime = jobForBidWinner.getStartTimeMillis();
+		int NoOfOps = batchForBidWinner.getNumOperations();
+		long currTime = batchForBidWinner.getStartTimeMillis();
 
-		//		log.info("due date "+new Date(jobForBidWinner.getJobDuedatebyCust().getTime())+
-		//				" start time "+new Date(jobForBidWinner.getStartTimeByCust().getTime()));
+		//		log.info("due date " + new Date(jobForBidWinner.getJobDuedatebyCust().getTime())+
+		//				" start time " + new Date(jobForBidWinner.getStartTimeByCust().getTime()));
+		log.info("batch : " + batchForBidWinner.getJobsInBatch()   );
 
-		if(dueDateMethod == ID.GlobalScheduler.OtherConst.LocalDueDate){
-			long slack_perOperation=(long)((double)slack)/(NoOfOps);
+		if(dueDateMethod.equals(ID.GlobalScheduler.OtherConst.LocalDueDate)) {
 
-			for(int i = 0 ; i < NoOfOps; i++){
-				jobForBidWinner.setCurrentOperationStartTime(currTime);
-				currTime += jobForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
-				jobForBidWinner.setCurrentOperationCompletionTime(currTime);
-				jobForBidWinner.IncrementOperationNumber();
-//				jobForBidWinner.getOperations().get(i).setStartTimeMillis(currTime);
-//				currTime = currTime + jobForBidWinner.getOperations().get(i).
-//						getProcessingTime() + slack_perOperation;
+			long slack_perOperation = (long)((double)slack)/(NoOfOps);
 
-//				jobForBidWinner.getOperations().get(i).setDueDate(currTime);
+			for(int i = 0 ; i < NoOfOps; i++) {
+				log.info(""+batchForBidWinner.getCurrentOperationNumber());
+				batchForBidWinner.setCurrentOperationStartTime(currTime);
+				currTime += batchForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
+				batchForBidWinner.setCurrentOperationCompletionTime(currTime);
+				batchForBidWinner.IncrementOperationNumber();
 			}
-
-
 		}
-		else if(dueDateMethod == ID.GlobalScheduler.OtherConst.GlobalDueDate) {
-			for(int i=0; i  <NoOfOps; i++) {
-				jobForBidWinner.setCurrentOperationStartTime(currTime);
-				currTime += jobForBidWinner.getCurrentOperationProcessingTime();
-				jobForBidWinner.IncrementOperationNumber();
-//				jobForBidWinner.getOperations().get(i).setStartTimeMillis(currTime);
-//				currTime = currTime + jobForBidWinner.getOperations().get(i).getProcessingTime();
-				if(i == NoOfOps-1){
+		else if(dueDateMethod.equals(ID.GlobalScheduler.OtherConst.GlobalDueDate)) {
+			for(int i = 0 ; i  < NoOfOps; i++) {
+				batchForBidWinner.setCurrentOperationStartTime(currTime);
+				currTime += batchForBidWinner.getCurrentOperationProcessingTime();
+				// shift whole slack to the last operation
+				if(i == NoOfOps-1) {
 					currTime = currTime + slack;
 				}
-				jobForBidWinner.setCurrentOperationCompletionTime(currTime);
-//				jobForBidWinner.getOperations().get(i).setDueDate(currTime);
+				batchForBidWinner.setCurrentOperationCompletionTime(currTime);
+				batchForBidWinner.IncrementOperationNumber();
 			}
 		}
-		//		log.info("Job No "+jobForBidWinner.getJobNo()+" processing times:");
-		
-		jobForBidWinner.resetCurrentOperationNumber();
-		return jobForBidWinner;
-
+		batchForBidWinner.resetCurrentOperationNumber();
+		return batchForBidWinner;
 	}
 
 	private ACLMessage ChooseBid(ACLMessage[] LSA_bids) {
@@ -229,7 +221,6 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 		}
 		return MinBid;
-
 	}
 
 	@Override
@@ -238,11 +229,6 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 	}
 
 	public EndState getEndState() {
-		if (step >= 3) {
-			return EndState.SUCCESSFUL;
-		} else {
-			return null;
-		}
+		return (step >= 3) ? EndState.SUCCESSFUL:null;
 	}
-
 }

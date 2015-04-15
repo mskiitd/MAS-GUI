@@ -33,7 +33,6 @@ public class Batch implements Serializable {
 	private long startTime;
 	private long completionTime;
 	private Date generationTime;
-	private long batchProcessingTime;
 
 	private Date dueDateByCustomer;
 
@@ -132,13 +131,16 @@ public class Batch implements Serializable {
 		this.position = position;
 	}
 
-	public long getBatchProcessingTime() {
-		return batchProcessingTime;
+	/**
+	 * @return total processing time for this batch
+	 */
+	public long getTotalBatchProcessingTime() {
+		return getFirstJob().getTotalProcessingTime() * getBatchCount();
 	}
 
-	public void setBatchProcessingTime(long batchProcessingTime) {
-		this.batchProcessingTime = batchProcessingTime;
-	}
+//	public void setBatchProcessingTime(long batchProcessingTime) {
+//		this.batchProcessingTime = batchProcessingTime;
+//	}
 
 	public boolean isBatchComplete() {
 		return getFirstJob().isComplete();

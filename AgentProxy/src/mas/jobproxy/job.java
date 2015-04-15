@@ -69,9 +69,15 @@ public class job implements Serializable {
 		this.jobID = other.jobID;
 		this.jobNo = other.jobNo;
 
-		this.startTime = (Date) other.startTime.clone();
-		this.jobDuedateByCustomer = (Date) other.jobDuedateByCustomer.clone();
-		this.completionTime = (Date) other.completionTime.clone();
+		if(other.startTime != null) {
+			this.startTime = (Date) other.startTime.clone();
+		}
+		if(other.jobDuedateByCustomer != null) {
+			this.jobDuedateByCustomer = (Date) other.jobDuedateByCustomer.clone();
+		}
+		if(other.completionTime != null) {
+			this.completionTime = (Date) other.completionTime.clone();
+		}
 
 		this.operations = new ArrayList<jobOperation>();
 		this.operations.addAll(other.operations);
