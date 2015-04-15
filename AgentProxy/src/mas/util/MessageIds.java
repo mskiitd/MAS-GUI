@@ -142,6 +142,8 @@ public class MessageIds {
 
 	public static final String msgMaintConfirmationLSA = "LSA_maintConfirmation";
 
+	public static String msgCurrentJobOnMachine = "machine_CurrentJobOnMachineMsg";
+
 	//	// Local scheduling Agent id's here
 	//	public static final String LSJobForMachine = "LSJobForMachine";
 	//	public static final String LSjobFromGS = "LSjobFromGS";

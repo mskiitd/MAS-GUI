@@ -76,7 +76,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 
 			OperationItemId id = new OperationItemId(comingBatch.getCurrentOperationType(), comingBatch.getCustomerId());
 			
-			log.info("operation" + id + "processing time : " + operationdb.getOperationInfo(id).getProcessingTime());
+			log.info("operation " + id + " processing time : " + operationdb.getOperationInfo(id).getProcessingTime());
 			comingBatch.setCurrentOperationProcessingTime(operationdb.getOperationInfo(id).getProcessingTime());
 		
 			jobQueue.add(comingBatch);

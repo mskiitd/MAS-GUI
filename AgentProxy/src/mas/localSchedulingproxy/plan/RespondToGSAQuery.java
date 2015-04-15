@@ -26,7 +26,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 	private BeliefBase beleifBase;
 	private AID machineAID=null;
 	private AID blackboard_AID;
-	private Logger log=LogManager.getLogger();
+	private Logger log;
 	private JobQueryObject requestJobQuery;
 	private MachineGUI gui;
 
@@ -37,6 +37,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 	@Override
 	public void init(PlanInstance PI) {
+		log = LogManager.getLogger();
 		try {
 			requestJobQuery= ( (JobQueryObject)((MessageGoal)PI.getGoal()).
 					getMessage().getContentObject());
@@ -48,9 +49,11 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 		log.info("Batch No " + batchNo + " is queried");
 		beleifBase = PI.getBeliefBase();
+
 		blackboard_AID = (AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
-		machineAID=(AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.machine).
+
+		machineAID = (AID)beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.machine).
 				getValue();
 
 		gui = (MachineGUI) beleifBase.
@@ -67,10 +70,10 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 		ArrayList<Batch> jobQ = (ArrayList<Batch>)beleifBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 				getValue();
-		
+
 		Object currBatchObj = beleifBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
-		
+
 		Batch currentJob = null;
 		if(currBatchObj != null){
 			currentJob = (Batch)(((Belief<Batch>)currBatchObj).getValue());
@@ -90,7 +93,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 					Batch removedBatch = jobQ.remove(i);
 					beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQ);
 
-					ArrayList<Batch> BatchToTakeAction=(ArrayList<Batch>)
+					ArrayList<Batch> BatchToTakeAction = (ArrayList<Batch>)
 							beleifBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
 					BatchToTakeAction.add(response.getCurrentBatch());
 					beleifBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch

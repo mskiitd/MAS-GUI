@@ -5,6 +5,10 @@ import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.Simulator;
+import mas.util.AgentUtil;
+import mas.util.ID;
+import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +51,17 @@ public class TakeJobFromBatchBehavior extends Behaviour {
 					LoadJobBehavior addjob = new LoadJobBehavior(this.jobFromBatch,machineSimulator);
 					addjob.setDataStore(getDataStore());
 					myAgent.addBehaviour(addjob);
+					
+					/**
+					 * update zone-data for current job on machine
+					 */
+					ZoneDataUpdate currentJobUpdate = new ZoneDataUpdate.
+							Builder(ID.Machine.ZoneData.currentJobOnMachine).
+							value(jobFromBatch).
+							Build();
+					
+					AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
+							currentJobUpdate, myAgent);
 
 					step = 1;
 				}

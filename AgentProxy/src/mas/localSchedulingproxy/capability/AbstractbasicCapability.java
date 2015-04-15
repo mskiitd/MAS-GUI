@@ -8,17 +8,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mas.jobproxy.Batch;
+import mas.jobproxy.job;
 import mas.localSchedulingproxy.database.OperationDataBase;
-import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.BatchSchedulingGoal;
+import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.ReceiveMaintenanceJobGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
-import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
 import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
+import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
 import mas.localSchedulingproxy.plan.FinishMaintenancePlan;
+import mas.localSchedulingproxy.plan.GetCurrentJobOnMachinePlan;
+import mas.localSchedulingproxy.plan.LoadOperationDatabasePlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
 import mas.localSchedulingproxy.plan.ReceiveDelayedMaintenanceResponsePlan;
 import mas.localSchedulingproxy.plan.ReceiveMaintenanceJobPlan;
@@ -30,7 +33,6 @@ import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
 import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
 import mas.localSchedulingproxy.plan.StartMaintenancePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
-import mas.localSchedulingproxy.plan.LoadOperationDatabasePlan;
 import mas.machineproxy.gui.MachineGUI;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.util.ID;
@@ -101,6 +103,9 @@ public class AbstractbasicCapability extends Capability {
 
 		Belief<Batch> currentBatch = new TransientBelief<Batch>(
 				ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
+		
+		Belief<job> currentJob = new TransientBelief<job>(
+				ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine);
 
 		Belief<ArrayList<Batch>> actionOnCompletedBatch = new TransientBelief<ArrayList<Batch>>(
 				ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch);
@@ -113,6 +118,7 @@ public class AbstractbasicCapability extends Capability {
 		Belief<PMaintenance> currentMaintJob = new TransientBelief<PMaintenance>(
 				ID.LocalScheduler.BeliefBaseConst.currentMaintJob);
 
+		currentJob.setValue(null);
 		gui.setValue(null);
 		dtrack.setValue(new StatsTracker());
 		doneBatchFromMachine.setValue(null);
@@ -142,6 +148,7 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(gui);
 		beliefs.add(maintJobs);
 		beliefs.add(currentMaintJob);
+		beliefs.add(currentJob);
 
 		return beliefs;
 	}
@@ -185,6 +192,9 @@ public class AbstractbasicCapability extends Capability {
 		
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgmachineStatus),
 				ReceiveDelayedMaintenanceResponsePlan.class));
+		
+		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgCurrentJobOnMachine),
+				GetCurrentJobOnMachinePlan.class));
 
 		return plans;
 	}	

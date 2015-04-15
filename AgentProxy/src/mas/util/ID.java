@@ -82,6 +82,7 @@ public class ID implements Serializable{
 			public static final String gui_machine = "machine_gui";
 			public static final String preventiveJobsQueue = "LSA_prevMaintJobs_Queue";
 			public static final String currentMaintJob = "LSA_Current_MaintJobOnMachine";
+			public static final String currentJobOnMachine =  "LSA_CurrentJobOnMachine";
 		}
 
 		public class ZoneData {
@@ -231,6 +232,8 @@ public class ID implements Serializable{
 			public static final String machineFailures ="machine_machineFailures";
 
 			public static final String prevMaintConfirmation = "machine_prevMaintConfirmation";
+
+			public static final String currentJobOnMachine = "machine_currentJob";
 		}
 	}
 }
