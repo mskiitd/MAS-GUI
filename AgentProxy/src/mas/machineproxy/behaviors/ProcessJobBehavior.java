@@ -54,7 +54,7 @@ public class ProcessJobBehavior extends OneShotBehaviour{
 //		comingJob.setCurrentOperationDimension(jDimensions);
 		comingJob.setCurrentOperationCompletionTime(System.currentTimeMillis());
 		
-		log.info("start time was " + comingJob.getStartTimeByCust() );
+		log.info("start time was " + comingJob.getCurrentOperationStartTime() );
 		log.info("Completion time : " + comingJob.getCurrentOperationFinishTime());
 //		log.info("processed for "+ (comingJob.getCompletionTime().getTime() - comingJob.getStartTimeByCust().getTime()));
 

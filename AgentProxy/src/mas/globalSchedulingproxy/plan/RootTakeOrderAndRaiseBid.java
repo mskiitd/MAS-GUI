@@ -179,7 +179,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			for(int i = 0 ; i < NoOfOps; i++){
 				jobForBidWinner.setCurrentOperationStartTime(currTime);
 				currTime += jobForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
-				jobForBidWinner.setCurrentOperationDueDate(currTime);
+				jobForBidWinner.setCurrentOperationCompletionTime(currTime);
 				jobForBidWinner.IncrementOperationNumber();
 //				jobForBidWinner.getOperations().get(i).setStartTimeMillis(currTime);
 //				currTime = currTime + jobForBidWinner.getOperations().get(i).
@@ -200,7 +200,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				if(i == NoOfOps-1){
 					currTime = currTime + slack;
 				}
-				jobForBidWinner.setCurrentOperationDueDate(currTime);
+				jobForBidWinner.setCurrentOperationCompletionTime(currTime);
 //				jobForBidWinner.getOperations().get(i).setDueDate(currTime);
 			}
 		}

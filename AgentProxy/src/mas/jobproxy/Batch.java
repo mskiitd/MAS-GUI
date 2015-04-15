@@ -48,6 +48,8 @@ public class Batch implements Serializable {
 	private boolean isBatchComplete = false;;
 	private boolean isAllJobsComplete = false;
 
+	// position is used as an index of batch in it's queue.
+	// it is used for scheduling sequence of batches
 	private int position;
 	private double profit;
 	private int currentOperationIndex = 0;
@@ -148,7 +150,7 @@ public class Batch implements Serializable {
 	}
 
 	public void resetJobsComplete() {
-		isAllJobsComplete=false;
+		isAllJobsComplete = false;
 		this.currentJobIndex = 0;
 	}
 
@@ -287,6 +289,14 @@ public class Batch implements Serializable {
 
 		return null;
 	}
+	
+	public job getLastJob() {
+		
+		if(! jobsInBatch.isEmpty())
+			return jobsInBatch.get(jobsInBatch.size() -1);
+		
+		return null;
+	}
 
 	public int getCurrentOperationNumber() {
 		return currentOperationIndex;
@@ -302,12 +312,10 @@ public class Batch implements Serializable {
 
 	public void IncrementOperationNumber() {
 		this.currentOperationIndex ++ ;
-//		for(int i = 0; i < jobsInBatch.size(); i++) {
-			jobsInBatch.get(0).IncrementOperationNumber();
-			//no need to loop through as jobsInBatch contains copies of jobs with same reference
-			//hence if u change any property of any job in jobsInBatch, changes will occur in every job
-			//of jobsInBatch
-//		}
+		
+		for(int i = 0; i < jobsInBatch.size(); i++) {
+			jobsInBatch.get(i).IncrementOperationNumber();
+		}
 		/**
 		 *  if index becomes >= the size of the operations it means all operations are done
 		 *  index for last operation is 'size()-1'
@@ -356,7 +364,7 @@ public class Batch implements Serializable {
 	 * @return processing time for current operation of whole batch
 	 */
 	public long getCurrentOperationProcessingTime() {
-		return this.getFirstJob().getCurrentOperationProcessTime() * getBatchCount();
+		return this.getFirstJob().getCurrentOperationProcessingTime() * getBatchCount();
 	}
 
 	/**
@@ -372,14 +380,9 @@ public class Batch implements Serializable {
 		}
 	}
 
-	public void setCurrentOperationDueDate(long dueDate) {
-		this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
-		get(currentOperationIndex).setFinishTime(dueDate);
-	}
-
 	public long getCurrentOperationDueDate() {
 		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
-				get(currentOperationIndex).getFinishTime();
+				get(currentOperationIndex).getCompletionTime();
 	}
 	
 	public long getTotalProcessingTime() {
@@ -423,6 +426,8 @@ public class Batch implements Serializable {
 		int result = 1;
 		result = prime * result + ((batchId == null) ? 0 : batchId.hashCode());
 		result = prime * result + batchNo;
+		result = prime * result
+				+ ((customerId == null) ? 0 : customerId.hashCode());
 		return result;
 	}
 
@@ -442,7 +447,11 @@ public class Batch implements Serializable {
 			return false;
 		if (batchNo != other.batchNo)
 			return false;
+		if (customerId == null) {
+			if (other.customerId != null)
+				return false;
+		} else if (!customerId.equals(other.customerId))
+			return false;
 		return true;
 	}
-
 }

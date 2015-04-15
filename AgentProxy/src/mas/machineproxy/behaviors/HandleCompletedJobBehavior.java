@@ -54,9 +54,10 @@ public class HandleCompletedJobBehavior extends Behaviour{
 
 				log.info("job no: '"+ completedJob.getJobNo() + 
 						"job ID : " + completedJob.getJobID() + 
-						"'\n--> completion : " + completedJob.getCompletionTime() + 
-						"\nStarting time : " + completedJob.getStartTimeByCust() + 
+						"'\ncompletion : " + completedJob.getJobCompletionTime() + 
+						"\nStarting time : " + completedJob.getJobStartTime() + 
 						"\nDue date : " + completedJob.getJobDuedatebyCust());
+				
 				log.info("sending completed batch to blackboard");
 			} else {
 				Batch cBatch = machineSimulator.getCurrentBatch();

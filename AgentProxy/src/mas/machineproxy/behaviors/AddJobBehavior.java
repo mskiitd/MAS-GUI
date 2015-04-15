@@ -54,7 +54,7 @@ public class AddJobBehavior extends Behaviour {
 				gui.machineProcessing(comingJob.getJobID(),
 						comingJob.getCurrentOperation().getJobOperationType());
 
-				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessTime()/1000.0;
+				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessingTime()/1000.0;
 
 				comingJob.setCurrentOperationStartTime(System.currentTimeMillis());
 				/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
@@ -73,7 +73,7 @@ public class AddJobBehavior extends Behaviour {
 				comingJob.setCurrentOperationProcessingTime((long) newProcessingTime) ; 
 				//ex. 0.1 with be converted into 0
 
-				processingTime = comingJob.getCurrentOperationProcessTime();
+				processingTime = comingJob.getCurrentOperationProcessingTime();
 				passedTime = 0;
 
 				if(processingTime <= 0) {
@@ -83,7 +83,7 @@ public class AddJobBehavior extends Behaviour {
 
 
 				log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
-						"processing time : " + comingJob.getCurrentOperationProcessTime());
+						"processing time : " + comingJob.getCurrentOperationProcessingTime());
 
 				if( processingTime > 0 ) {
 					executor = new ScheduledThreadPoolExecutor(1);
