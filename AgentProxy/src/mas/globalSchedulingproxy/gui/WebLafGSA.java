@@ -266,8 +266,8 @@ public class WebLafGSA {
 //		jobGSADueDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getDueDatebyGSA()));
 		//		jobGSADueDatelbl.setMinimumWidth(150);
 
-		durationTextlbl=new WebLabel("Duration (seconds)");
-		durationlbl=new WebHotkeyLabel(Double.toString(jobToShow.getProcessingTime()));
+//		durationTextlbl=new WebLabel("Duration (seconds)");
+//		durationlbl=new WebHotkeyLabel(Double.toString(jobToShow.getProcessingTime()));
 		//		durationlbl.setMinimumWidth(150);
 
 		priorityTextlbl=new WebLabel("Priority");
@@ -287,7 +287,7 @@ public class WebLafGSA {
 		JobIDlbl.setFont(lblFont);
 		jobCustStartDatelbl.setFont(lblFont);
 		jobCustDueDatelbl.setFont(lblFont);
-		durationlbl.setFont(lblFont);
+//		durationlbl.setFont(lblFont);
 		prioritylbl.setFont(lblFont);
 		customerlbl.setFont(lblFont);
 //		jobGSAStartDatelbl.setFont(lblFont);
@@ -308,8 +308,8 @@ public class WebLafGSA {
 
 //		detailsPanel.add(jobCustDueDatelbl,"wrap, growx");
 
-		detailsPanel.add(durationTextlbl,"growx");
-		detailsPanel.add(durationlbl,"wrap, growx");
+//		detailsPanel.add(durationTextlbl,"growx");
+//		detailsPanel.add(durationlbl,"wrap, growx");
 		
 		detailsPanel.add(priorityTextlbl,"growx");
 		detailsPanel.add(prioritylbl,"wrap, growx");

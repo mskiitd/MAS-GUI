@@ -31,7 +31,7 @@ import mas.localSchedulingproxy.plan.RegisterLSAgentToBlackboardPlan;
 import mas.localSchedulingproxy.plan.RespondToGSAQuery;
 import mas.localSchedulingproxy.plan.SendBidPlan;
 import mas.localSchedulingproxy.plan.SendBatchToMachinePlan;
-import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
+import mas.localSchedulingproxy.plan.SendExpectedDueDatePlan;
 import mas.localSchedulingproxy.plan.StartMaintenancePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
 import mas.machineproxy.gui.MachineGUI;
@@ -164,7 +164,7 @@ public class AbstractbasicCapability extends Capability {
 				SendBidPlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgGetWaitingTime),
-				SendWaitingTimePlan.class));
+				SendExpectedDueDatePlan.class));
 
 		plans.add(new SimplePlan(RegisterLSAgentToBlackboardGoal.class,
 				RegisterLSAgentToBlackboardPlan.class));

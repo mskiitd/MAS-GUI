@@ -16,20 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-
 import mas.globalSchedulingproxy.goal.QueryJobGoal;
 import mas.util.ID;
 import net.miginfocom.swing.MigLayout;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.alee.extended.menu.DynamicMenuType;
 import com.alee.extended.menu.WebDynamicMenu;
 import com.alee.extended.menu.WebDynamicMenuItem;
-import com.alee.log.Log;
 import com.alee.utils.SwingUtils;
-
 
 public class CurrentJobTableRenderer extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
 
@@ -40,7 +35,7 @@ public class CurrentJobTableRenderer extends AbstractCellEditor implements Table
 	private JobTile jobTileInCell;
 	private String PriorityNoText;
 	private final Format formatter = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
-	protected Logger log=LogManager.getLogger();
+	protected Logger log = LogManager.getLogger();
     
 	public CurrentJobTableRenderer(){
 		tile=new JPanel(new MigLayout("",
@@ -129,7 +124,6 @@ public class CurrentJobTableRenderer extends AbstractCellEditor implements Table
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		//returns component in editatble format. So button will get clicked
-		log.info(isSelected);
 		WebLafGSA.unloadCurrentJobInfoPanel();
 		JobTile feed = (JobTile)value;
 		
@@ -167,7 +161,7 @@ public class CurrentJobTableRenderer extends AbstractCellEditor implements Table
 	                	WebLafGSA.unloadCurrentJobInfoPanel();
 	                	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch(),
 	                			ID.GlobalScheduler.requestType.changeDueDate));
-	                	Log.info("added change due date goal");
+	                	log.info("added change due date goal");
 	                }
 	            };
 	            final WebDynamicMenuItem moreIconItem = new WebDynamicMenuItem ( MoreIcon, moreAction );
@@ -183,7 +177,7 @@ public class CurrentJobTableRenderer extends AbstractCellEditor implements Table
 	                	WebLafGSA.unloadCurrentJobInfoPanel();
 	                	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch(),
 	                			ID.GlobalScheduler.requestType.currentStatus));
-	                	Log.info("added query goal");
+	                	log.info("added query goal");
 	                }
 	            };
 	            final WebDynamicMenuItem QueryItem = new WebDynamicMenuItem ( QueryIcon, QueryAction );
@@ -199,7 +193,7 @@ public class CurrentJobTableRenderer extends AbstractCellEditor implements Table
                 	WebLafGSA.unloadCurrentJobInfoPanel();
                 	WebLafGSA.getGSA().addGoal(new QueryJobGoal(jobTileInsideCell.getBatch(),
                 			ID.GlobalScheduler.requestType.cancelBatch));
-                	Log.info("added cancel batch goal");
+                	log.info("added cancel batch goal");
                 }
             };
             final WebDynamicMenuItem cancelJobItem = new WebDynamicMenuItem ( CancelJobIcon, CancelJobAction );

@@ -30,7 +30,7 @@ import bdi4jade.plan.PlanInstance.EndState;
  *  from customer 
  */
 
-public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
+public class SendExpectedDueDatePlan extends OneShotBehaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
 	private static final long LargeLongNegativeValue = -3*((long)Math.pow(10,10));
@@ -98,19 +98,19 @@ public class SendWaitingTimePlan extends OneShotBehaviour implements PlanBody{
 //		for(int i = 0; i < batchQueue.size(); i++) {
 //			WaitingTime = WaitingTime + batchQueue.get(i).getCurrentOperationProcessingTime();
 //		}
-		
 		OperationItemId id = new OperationItemId(batch.getFirstJob().getCurrentOperation().getJobOperationType(),
 				batch.getCustomerId());
 		
 		if(operationdb.contains(id) ) {
-			batch.setWaitingTime(avgWaitingTime + batch.getCurrentOperationProcessingTime());
+			batch.setCurrentOperationProcessingTime(operationdb.getOperationInfo(id).getProcessingTime());
+			batch.setExpectedDueDate(avgWaitingTime + batch.getCurrentOperationProcessingTime());
+			log.info("waiting time : " + avgWaitingTime + " : " + batch.getExpectedDueDate());
 		} else {
 			log.info(" Operation " + batch.getFirstJob().getCurrentOperation().getJobOperationType() +
 					" customer id : '" + batch.getCustomerId() +  
 					"' unsupported on " + myAgent.getLocalName());
-			batch.setWaitingTime(LargeLongNegativeValue);
+			batch.setExpectedDueDate(LargeLongNegativeValue);
 		}
-		//		log.info("waiting time is : " + j.getWaitingTime()+ "due date is "+ j.getDuedate());
 		ZoneDataUpdate waitingTimeUpdate = new ZoneDataUpdate.
 				Builder(ID.LocalScheduler.ZoneData.WaitingTime).
 				value(this.batch).

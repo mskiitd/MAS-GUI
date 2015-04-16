@@ -123,7 +123,11 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		double incremental_penalty = PenaltyAfter - PenaltyBefore;
 		log.info(myAgent.getLocalName() + " incremental penalty = " + incremental_penalty);
 
-		bidNo = PenaltyAfter - PenaltyBefore;
+		double processingCost = (batchToBidFor.getCurrentOperationProcessingTime()/1000)*
+				operationdb.getOperationInfo(id).getProcessingCost();
+
+		bidNo = PenaltyAfter - PenaltyBefore + processingCost;
+		
 		batchToBidFor.setBidByLSA(bidNo);
 		batchToBidFor.setLSABidder(myAgent.getAID());
 

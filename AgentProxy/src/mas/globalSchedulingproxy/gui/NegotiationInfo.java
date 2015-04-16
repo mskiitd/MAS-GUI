@@ -1,8 +1,6 @@
 package mas.globalSchedulingproxy.gui;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -10,9 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
-
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,28 +17,22 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
-
-import mas.customerproxy.gui.CustomerNegotiateProxyGUI;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.jobproxy.jobOperation;
 import mas.util.DateLabelFormatter;
-import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
 import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-
 import uiconstants.Labels;
-
 import com.alee.extended.label.WebHotkeyLabel;
 import com.alee.laf.panel.WebPanel;
 
@@ -50,9 +40,7 @@ public class NegotiationInfo {
 
 	private static final long serialVersionUID = 1L;
 	private GlobalSchedulingAgent gAgent;
-	private BufferedImage plusButtonIcon;
 
-	private JScrollPane scroller;
 	private WebPanel myPanel;
 	private JPanel operationPanel;
 	private JPanel btnPanel;
@@ -63,8 +51,6 @@ public class NegotiationInfo {
 	private JDatePanelImpl datePanel ;
 	private JDatePickerImpl datePicker;
 	private JSpinner timeSpinner;
-
-	private int NumOps;
 
 	private JLabel lblHeading;
 	private JLabel lblJobID;
@@ -101,7 +87,6 @@ public class NegotiationInfo {
 			generatedJob = populatingBatch.getFirstJob();
 		}
 
-		this.scroller = new JScrollPane();
 		this.myPanel = new WebPanel(new MigLayout());
 		btnPanel = new JPanel(new FlowLayout());
 		operationPanel = new JPanel(new MigLayout());
@@ -232,7 +217,7 @@ public class NegotiationInfo {
 			//			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
 			//			txtJobNo.setEnabled(false);
 
-			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getWaitingTime())) ) ;
+			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getExpectedDueDate())) ) ;
 			txtWaitingTime.setEnabled(false);
 
 			txtCPN.setText(String.valueOf(populatingBatch.getCPN()));

@@ -213,11 +213,11 @@ public class Batch implements Serializable {
 		this.dueDateByCustomer = new Date(dueDateByCustomer);
 	}
 
-	public long getWaitingTime() {
+	public long getExpectedDueDate() {
 		return waitingTime;
 	}
 
-	public void setWaitingTime(long waitingTime) {
+	public void setExpectedDueDate(long waitingTime) {
 		this.waitingTime = waitingTime;
 	}
 

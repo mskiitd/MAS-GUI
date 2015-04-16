@@ -75,7 +75,7 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 		long myDate = (long) (j.getDueDateByCustomer().getTime() ); 
 		double newprofit = 0.9 * j.getProfit();
 
-		long newDate = j.getWaitingTime();
+		long newDate = j.getExpectedDueDate();
 
 		if(myDate >=  newDate ) {
 			ZoneDataUpdate negotiationJobDataUpdate = new ZoneDataUpdate.Builder(

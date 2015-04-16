@@ -51,7 +51,7 @@ public class HandleCompletedJobBehavior extends Behaviour{
 				AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent ,
 						completedJobUpdate, myAgent);
 				
-				myAgent.addBehaviour(new GiveMeJobBehavior());
+				myAgent.addBehaviour(new GiveMeJobBehavior(machineSimulator));
 				machineSimulator.setCurrentBatch(null);
 
 				log.info("batch no: '"+ cBatch.getBatchNumber() + 

@@ -71,7 +71,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		if(comingBatch.getWinnerLSA().equals(myAgent.getAID())) {
-			log.info("Adding the batch" + comingBatch.getBatchId()+  " to queue of agent, " +
+			log.info("Adding the batch" + comingBatch.getBatchId() +  " to queue of agent, " +
 					myAgent.getLocalName());
 
 			OperationItemId id = new OperationItemId(comingBatch.getCurrentOperationType(), comingBatch.getCustomerId());

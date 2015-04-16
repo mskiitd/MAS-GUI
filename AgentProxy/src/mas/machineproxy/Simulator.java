@@ -21,6 +21,7 @@ import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.machineproxy.behaviors.AcceptBatchBehavior;
+import mas.machineproxy.behaviors.GiveMeJobBehavior;
 import mas.machineproxy.behaviors.TakeJobFromBatchBehavior;
 import mas.machineproxy.behaviors.GetRootCauseDataBehavior;
 import mas.machineproxy.behaviors.HandleSimulatorFailedBehavior;
@@ -208,6 +209,9 @@ public class Simulator extends Agent implements IMachine,Serializable {
 		//		functionality.addSubBehaviour(machineParameterShifter);
 		addBehaviour(tbf.wrap(functionality));
 		addBehaviour(tbf.wrap(acceptIncomingBatch));
+		
+		// Add givemeJobBehavior to agent
+		addBehaviour(tbf.wrap(new GiveMeJobBehavior(Simulator.this)));
 		/**
 		 *  Adding a listener to the change in value of the status of simulator 
 		 */

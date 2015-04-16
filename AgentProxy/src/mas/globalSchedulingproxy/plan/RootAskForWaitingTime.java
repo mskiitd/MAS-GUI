@@ -163,7 +163,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			try {
 				ACLMessage max = getWorstWaitingTime(WaitingTime);
 				CumulativeWaitingTime = CumulativeWaitingTime +
-						((Batch)max.getContentObject()).getWaitingTime();
+						((Batch)max.getContentObject()).getExpectedDueDate();
 
 				JobToSend = (Batch)(max.getContentObject());
 				comingBatch.IncrementOperationNumber();
@@ -184,7 +184,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 		case 4:
 			JobToSend.resetCurrentOperationNumber();
-			JobToSend.setWaitingTime(CumulativeWaitingTime + System.currentTimeMillis());
+			JobToSend.setExpectedDueDate(CumulativeWaitingTime + System.currentTimeMillis());
 
 			if(CumulativeWaitingTime < 0) {
 				log.info("cannot process Batch no " + JobToSend.getBatchNumber());
@@ -224,8 +224,8 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 
 			try {
 				if(((Batch)(WaitingTime[i].getContentObject())).
-						getWaitingTime() > ((Batch)(MaxwaitingTimeMsg.
-								getContentObject())).getWaitingTime()){
+						getExpectedDueDate() > ((Batch)(MaxwaitingTimeMsg.
+								getContentObject())).getExpectedDueDate()){
 					MaxwaitingTimeMsg = WaitingTime[i];
 				}
 			} catch (UnreadableException e) {

@@ -231,7 +231,7 @@ public class ChangeDueDateGUI extends JFrame{
 			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
 			txtJobNo.setEnabled(false);
 
-			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getWaitingTime())) ) ;
+			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getExpectedDueDate())) ) ;
 			txtWaitingTime.setEnabled(false);
 
 			txtCPN.setText(String.valueOf(populatingBatch.getCPN()));

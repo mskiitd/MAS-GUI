@@ -2,7 +2,7 @@ package mas.localSchedulingproxy.goal;
 
 import bdi4jade.goal.Goal;
 
-public class SendWaitingTimeGoal implements Goal{
+public class SendExpectedDueDateGoal implements Goal{
 
 	/**
 	 * 

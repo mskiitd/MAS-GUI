@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.alee.log.Log;
-
 /** Represents a manufacturing shop floor job
  * 
  *  There is no need to explicitly set start time of job.
@@ -182,7 +180,6 @@ public class job implements Serializable {
 		this.currentOperationIndex++ ;
 		if(this.currentOperationIndex > this.operations.size()-1){
 			IsComplete = true;
-			Log.info("all operations of job " + jobID +" done - flag : ", IsComplete);
 		}
 	}
 

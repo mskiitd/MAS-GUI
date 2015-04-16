@@ -117,7 +117,5 @@ public class RegisterMachine2BlackBoardBehvaior extends OneShotBehaviour{
 
 		AgentUtil.subscribeToParam(myAgent, bb_aid, lMaintenanceSubForm);
 		
-		// Add givemeJobBehavior to agent
-		myAgent.addBehaviour(new GiveMeJobBehavior());
 	}
 }
