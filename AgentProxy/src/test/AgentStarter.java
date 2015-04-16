@@ -136,13 +136,11 @@ public class AgentStarter {
 			List<String> params = new ArrayList<String>();
 			params.add("-gui");
 			bootProfile = new BootProfileImpl(params.toArray(new String[0]));
-			bootProfile.setParameter(Profile.MAIN_HOST, "MSK");
-//			bootProfile.setParameter(Profile.MAIN_PORT, "1020");
 			controller = runtime.createMainContainer(bootProfile);
 		}else {
-			bootProfile = new ProfileImpl(ipAddress, JadePort, null, false);
-			bootProfile.setParameter("hostID", ipAddress + ":" + JadePort + "/JADE");
-			bootProfile.setParameter(Profile.CONTAINER_NAME, ipAddress + ":" + JadePort + "/JADE");
+			bootProfile = new ProfileImpl(false);
+			bootProfile.setParameter(Profile.MAIN_HOST, ipAddress);
+			bootProfile.setParameter(Profile.MAIN_PORT,String.valueOf(JadePort));
 			controller = runtime.createAgentContainer(bootProfile);
 		}
 

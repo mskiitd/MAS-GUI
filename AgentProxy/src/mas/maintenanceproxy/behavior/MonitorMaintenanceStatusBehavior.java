@@ -40,6 +40,7 @@ public class MonitorMaintenanceStatusBehavior extends Behaviour{
 	private int interval = 1000;
 	private BeliefBase bfBase;
 	private AID blackboard;
+	private long warningPeriod;
 	private Logger log;
 
 	public MonitorMaintenanceStatusBehavior(PMaintenance maintenance, BeliefBase bbase) {
@@ -53,6 +54,10 @@ public class MonitorMaintenanceStatusBehavior extends Behaviour{
 
 		this.blackboard = (AID) bfBase.
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
+				getValue();
+		
+		this.warningPeriod = (long) bfBase.
+				getBelief(ID.Maintenance.BeliefBaseConst.maintWarningPeriod).
 				getValue();
 
 		this.pmConfirmation = MessageTemplate.and(
@@ -68,7 +73,7 @@ public class MonitorMaintenanceStatusBehavior extends Behaviour{
 	TimerTask counter = new TimerTask() {
 		@Override
 		public void run() {
-			if(timeStopWatch.getTime() > LocalMaintenanceAgent.warningPeriod) {
+			if(timeStopWatch.getTime() > warningPeriod) {
 
 				ticks ++;
 				if(gui != null) {

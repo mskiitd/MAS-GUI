@@ -4,8 +4,10 @@ import jade.core.AID;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import mas.machineproxy.SimulatorInternals;
 import mas.maintenanceproxy.classes.PMaintenance;
+import mas.maintenanceproxy.goal.LoadConfigMaintGoal;
 import mas.maintenanceproxy.goal.ManualMachineRepairGoal;
 import mas.maintenanceproxy.goal.MaintenanceStartSendInfoGoal;
 import mas.maintenanceproxy.goal.PeriodicPreventiveMaintenanceGoal;
@@ -14,6 +16,7 @@ import mas.maintenanceproxy.goal.RegisterMaintenanceAgentToBlackboardGoal;
 import mas.maintenanceproxy.goal.SendCorrectiveRepairDataGoal;
 import mas.maintenanceproxy.goal.machineHealthCheckGoal;
 import mas.maintenanceproxy.gui.MaintenanceGUI;
+import mas.maintenanceproxy.plan.LoadConfigMaintPlan;
 import mas.maintenanceproxy.plan.MaintenanceStartSendInfoPlan;
 import mas.maintenanceproxy.plan.ManualMachineRepairPlan;
 import mas.maintenanceproxy.plan.PeriodicPreventiveMaintenancePlan;
@@ -62,9 +65,16 @@ public class RootMaintenanceBasicCapability extends Capability{
 		Belief<PMaintenance> pmStatus = new TransientBelief<PMaintenance>(
 				ID.Maintenance.BeliefBaseConst.prevMaintFromMachine);
 		
-		gui.setValue(null);
-		CorrectiveRepair.setValue(null);
+		Belief<Long> maintPeriod = new TransientBelief<Long>(
+				ID.Maintenance.BeliefBaseConst.maintenancePeriod);
 		
+		Belief<Long> warningPeriod = new TransientBelief<Long>(
+				ID.Maintenance.BeliefBaseConst.maintWarningPeriod);
+		
+		gui.setValue(null);
+		warningPeriod.setValue(null);
+		CorrectiveRepair.setValue(null);
+		maintPeriod.setValue(null);
 		myMachine.setValue(new SimulatorInternals());
 
 		beliefs.add(bboard);
@@ -74,6 +84,8 @@ public class RootMaintenanceBasicCapability extends Capability{
 		beliefs.add(CorrectiveRepair);
 		beliefs.add(gui);
 		beliefs.add(pmStatus);
+		beliefs.add(maintPeriod);
+		beliefs.add(warningPeriod);
 
 		return beliefs;
 	}
@@ -102,6 +114,8 @@ public class RootMaintenanceBasicCapability extends Capability{
 		plans.add(new SimplePlan(PeriodicPreventiveMaintenanceGoal.class,
 				PeriodicPreventiveMaintenancePlan.class));
 		
+		plans.add(new SimplePlan(LoadConfigMaintGoal.class, LoadConfigMaintPlan.class));
+		
 		return plans;
 	}	
 
@@ -109,8 +123,8 @@ public class RootMaintenanceBasicCapability extends Capability{
 	protected void setup() {
 		myAgent.addGoal(new RegisterMaintenanceAgentServiceGoal());
 		myAgent.addGoal(new RegisterMaintenanceAgentToBlackboardGoal());
+		myAgent.addGoal(new LoadConfigMaintGoal());
 		myAgent.addGoal(new machineHealthCheckGoal());
 		myAgent.addGoal(new ManualMachineRepairGoal());
-		myAgent.addGoal(new PeriodicPreventiveMaintenanceGoal());
 	}
 }

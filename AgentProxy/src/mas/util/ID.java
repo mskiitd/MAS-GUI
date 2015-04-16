@@ -205,6 +205,8 @@ public class ID implements Serializable{
 			public static final String correctiveRepairData = "Maintenance_Corrective_Repair_Data" ;
 			public static final String gui_maintenance = "gui_maintenance";
 			public static final String prevMaintFromMachine = "prevMaint_Status_From_Machine";
+			public static final String maintenancePeriod = "Maintenance_maintPeriod";
+			public static final String maintWarningPeriod = "Maintenance_maintWarningPeriod";
 		}
 	}
 

@@ -28,6 +28,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 	private Logger log;
 	private SimulatorInternals myMachine;
 	private MaintenanceGUI  gui;
+	private long maintPeriod;
 
 	public PeriodicMaintenanceTickerBehavior(Agent a, long period) {
 		super(a, period);
@@ -37,9 +38,13 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 			BeliefBase bfBase) {
 
 		super(a, period);
-		reset(LocalMaintenanceAgent.prevMaintPeriod);
+		log = LogManager.getLogger();
 		this.bfBase = bfBase;
 
+		this.maintPeriod = (long) bfBase.
+				getBelief(ID.Maintenance.BeliefBaseConst.maintenancePeriod).
+				getValue();
+		
 		this.bbAgent = (AID) bfBase.
 				getBelief(ID.Maintenance.BeliefBaseConst.blackboardAgentAID).
 				getValue();
@@ -48,7 +53,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 				getBelief(ID.Maintenance.BeliefBaseConst.gui_maintenance).
 				getValue();
 
-		log = LogManager.getLogger();
+		reset(maintPeriod);
 	}
 
 	@Override
@@ -70,7 +75,7 @@ public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 			AgentUtil.sendZoneDataUpdate(this.bbAgent ,maintenanceJob, myAgent);
 
 			myAgent.addBehaviour(new MonitorMaintenanceStatusBehavior(maintJob, bfBase));
-			gui.setNextMaintTime(LocalMaintenanceAgent.prevMaintPeriod);
+			gui.setNextMaintTime(maintPeriod);
 			bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.preventiveMaintJob, maintJob);
 
 		} else {
