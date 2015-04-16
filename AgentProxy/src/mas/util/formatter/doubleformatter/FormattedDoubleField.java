@@ -22,7 +22,7 @@ public class FormattedDoubleField extends JFormattedTextField implements Seriali
 	public static final String PROP_MAXVALUE_PROPERTY = "maximum value";
 	public static final String PROP_DECIMALPLACES_PROPERTY = "decimal places";
 
-	public static final String displayFormat = "#,###,##0.000000000000000";
+	public static final String displayFormat = "######0.000000000000000";
 	public static final String editFormat = "#.###############";
 
 

@@ -18,7 +18,7 @@ public class StringFormatter extends DefaultFormatter implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	/** pattern used for verifying email addresses */
-	private static final String IDPATTERN = "[\\dA-Z]+";
+	private static final String IDPATTERN = "[A-Za-z0-9_#+-]*+";
 	
 	/** precompiled version of the pattern */
 	private static Pattern pattern = Pattern.compile(IDPATTERN,Pattern.CASE_INSENSITIVE);

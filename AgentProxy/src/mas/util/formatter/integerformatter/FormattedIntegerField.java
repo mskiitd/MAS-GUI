@@ -56,9 +56,9 @@ public class FormattedIntegerField extends JFormattedTextField implements Serial
 		setValue(new Integer(value));
 		NumberFormatter def = new NumberFormatter();
 		def.setValueClass(Integer.class);
-		NumberFormatter disp = new NumberFormatter((new DecimalFormat("#,###,##0")));
+		NumberFormatter disp = new NumberFormatter((new DecimalFormat("######0")));
 		disp.setValueClass(Integer.class);
-		NumberFormatter ed =  new NumberFormatter((new DecimalFormat("#,###,##0")));
+		NumberFormatter ed =  new NumberFormatter((new DecimalFormat("######0")));
 		ed.setValueClass(Integer.class);
 		dff = new DefaultFormatterFactory(def,disp,ed);
 		setFormatterFactory(dff);
