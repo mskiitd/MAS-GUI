@@ -48,7 +48,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 	private int repliesCnt = 0; 
 	private Batch batchOrder;
 	private String dueDateMethod=null;
-	private int batchNumber = -1;
+	private int batchNumber;
 
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
@@ -100,8 +100,10 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				batchOrder.setStartTimeMillis(System.currentTimeMillis());
 				//				log.info("current op no = "+order.getCurrentOperationNumber());
 				batchOrder = SetDueDates(batchOrder);
-				batchOrder.setBatchNumber(batchNumber ++);
+				batchOrder.setBatchNumber(++ batchNumber);
+				log.info("batch no: " + batchNumber);
 				bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.batchCount, batchNumber);
+				
 				/*				for(int ops=0;ops<order.getNumOperations();ops++){
 					log.info(new Date(order.getCurrentOperationDueDate()));
 					order.IncrementOperationNumber();

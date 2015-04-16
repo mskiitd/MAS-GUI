@@ -106,7 +106,7 @@ public class SendBatchToMachinePlan extends CyclicBehaviour implements PlanBody 
 				jobQueue = (ArrayList<Batch>) bfBase.
 						getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 						getValue();
-				block(SleepTime);
+//				block(SleepTime);
 			}
 			break;
 		}

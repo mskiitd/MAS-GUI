@@ -166,8 +166,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.txtJobID = new FormattedStringField();
 		txtJobID.setColumns(Labels.defaultJTextSize);
 
-		this.txtJobNo = new FormattedIntegerField();
-		txtJobNo.setColumns(Labels.defaultJTextSize);
+//		this.txtJobNo = new FormattedIntegerField();
+//		txtJobNo.setColumns(Labels.defaultJTextSize);
 
 		this.txtNumOps = new FormattedIntegerField();
 		txtNumOps.setColumns(Labels.defaultJTextSize/2);
@@ -187,8 +187,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		myPanel.add(lblJobID);
 		myPanel.add(txtJobID,"wrap");
 
-		myPanel.add(lblJobNo);
-		myPanel.add(txtJobNo,"wrap");
+//		myPanel.add(lblJobNo);
+//		myPanel.add(txtJobNo,"wrap");
 
 		myPanel.add(lblCPN);
 		myPanel.add(txtCPN,"wrap");
@@ -237,8 +237,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			txtJobID.setText(populatingBatch.getBatchId());
 			txtJobID.setEnabled(false);
 
-			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
-			txtJobNo.setEnabled(false);
+//			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
+//			txtJobNo.setEnabled(false);
 
 			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getWaitingTime())) ) ;
 			txtWaitingTime.setEnabled(false);
