@@ -243,14 +243,14 @@ public class WebLafGSA {
 //		JobNamelbl=new WebHotkeyLabel(jobToShow.getJobName());
 		//		JobNamelbl.setMinimumWidth(200);
 
-		JobIDTxtlbl=new WebLabel("Job ID");
+		JobIDTxtlbl=new WebLabel("Batch ID");
 		JobIDlbl=new WebHotkeyLabel(jobToShow.getBatchID().toString());
 		//		JobIDlbl.setMinimumWidth(150);
 
-		customerTxtlbl=new WebLabel("Customer");
+		customerTxtlbl=new WebLabel("Customer ID");
 		customerlbl=new WebHotkeyLabel(jobToShow.getCustomerName());
 		
-		jobCustStartDateTxtlbl=new WebLabel("Start Date by customer");
+		jobCustStartDateTxtlbl=new WebLabel("Batch Generation Date");
 		jobCustStartDatelbl=new WebHotkeyLabel(formatter.format(jobToShow.getCustStartDate()));
 		//		jobCustStartDatelbl.setMinimumWidth(150);
 
@@ -270,7 +270,7 @@ public class WebLafGSA {
 //		durationlbl=new WebHotkeyLabel(Double.toString(jobToShow.getProcessingTime()));
 		//		durationlbl.setMinimumWidth(150);
 
-		priorityTextlbl=new WebLabel("Priority");
+		priorityTextlbl=new WebLabel("Customer Priority");
 		prioritylbl=new WebHotkeyLabel(Integer.toString(jobToShow.getPriority()));
 		//		prioritylbl.setMinimumWidth(150);
 

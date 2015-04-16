@@ -461,7 +461,7 @@ public class CustomerProxyGUI extends JFrame{
 				value = j.getBatchCount();
 				break;
 			case 4:
-				value = j.getCompletionTime();
+				value = j.getDueDateByCustomer();
 				break;
 			default:
 				value = "not_found";
