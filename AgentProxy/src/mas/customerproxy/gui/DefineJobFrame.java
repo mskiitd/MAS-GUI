@@ -425,6 +425,7 @@ public class DefineJobFrame extends JFrame{
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
+						populatingBatch.setBatchNumber(-1);
 						cAgent.sendGeneratedBatch(populatingBatch);
 						CustomerProxyGUI.countBatch ++ ;
 					}

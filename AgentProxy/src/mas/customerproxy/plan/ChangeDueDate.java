@@ -33,43 +33,45 @@ public class ChangeDueDate extends OneShotBehaviour implements PlanBody {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void action() {
-		
-		Batch batchTosend=batchToChangeDueDate;
-		batchTosend.setBatchNumber(-1);
-		
-		/*batchTosend.setCost(batchToChangeDueDate.getCost());
+
+		Batch batchTosend = batchToChangeDueDate;
+
+		if(batchTosend.getCustomerId().equals(myAgent.getLocalName())) {
+			// why is it being set to -1 !!?
+			//		batchTosend.setBatchNumber(-1);
+
+			/*batchTosend.setCost(batchToChangeDueDate.getCost());
 		batchTosend.setCPN(batchToChangeDueDate.getCPN());
 		batchTosend.setGenerationTime(System.currentTimeMillis());
 		batchTosend.setPenaltyRate(batchToChangeDueDate.getPenaltyRate());
 		batchTosend.setProfit(batchToChangeDueDate.getProfit());*/
-		job tempJob=batchToChangeDueDate.getFirstJob();
-		ArrayList<jobOperation> ops=tempJob.getOperations();
-		for(int n=0;n<batchToChangeDueDate.getCurrentOperationNumber();n++){
-			ops.remove(n);
-		}
-		
-		tempJob.setOperations(ops);
-		tempJob.resetOpnNoToZero();
+			job tempJob = batchToChangeDueDate.getFirstJob();
 
-		ArrayList<job> jobArray=new ArrayList<job>();
-		for(int count=0;count<batchTosend.getBatchCount();count++){
-			jobArray.add(tempJob);
+			ArrayList<jobOperation> ops = tempJob.getOperations();
+			for(int n = 0; n < batchToChangeDueDate.getCurrentOperationNumber(); n++) {
+				ops.remove(n);
+			}
+
+			tempJob.setOperations(ops);
+			tempJob.resetOpnNoToZero();
+
+			ArrayList<job> jobArray = new ArrayList<job>();
+			for(int count = 0; count < batchTosend.getBatchCount(); count++){
+				jobArray.add(new job(tempJob));
+			}
+			batchTosend.setJobsInBatch(jobArray);
+
+			ChangeDueDateGUI gui = new ChangeDueDateGUI((CustomerAgent)myAgent, batchTosend);
 		}
-		batchTosend.setJobsInBatch(jobArray);
-		if(batchTosend.getCustomerId().equals(myAgent.getLocalName())){
-			ChangeDueDateGUI gui = new ChangeDueDateGUI
-					((CustomerAgent)myAgent, batchTosend);
-		}
-		
+
 	}
 
 	@Override
 	public EndState getEndState() {
-		// TODO Auto-generated method stub
-		return null;
+		return EndState.SUCCESSFUL;
 	}
 
 

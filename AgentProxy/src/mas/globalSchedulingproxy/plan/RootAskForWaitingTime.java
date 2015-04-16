@@ -51,6 +51,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	private Batch JobToSend;
 	private long CumulativeWaitingTime = 0;
 	private BeliefBase bfBase;
+	private int batchNumber;
 
 	private WebLafGSA WeblafGSAgui;
 	private CustomerBatches customerBatchInfo;
@@ -58,14 +59,25 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	@Override
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
+		bfBase = PI.getBeliefBase();
+
+		batchNumber = (int) bfBase.
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.batchCount).
+				getValue();
 		try {
 			comingBatch = (Batch)((MessageGoal)PI.getGoal()).getMessage().getContentObject();
+			
+			if(comingBatch.getBatchNumber() == -1) {
+				comingBatch.setBatchNumber(++ batchNumber);
+				bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.batchCount, batchNumber);
+			}
+			
+			log.info("batch no: " + batchNumber);
 			msgReplyID = Integer.toString(comingBatch.getBatchNumber());
 
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
-		bfBase = PI.getBeliefBase();
 		blackboard = (AID) bfBase.
 				getBelief(ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
@@ -104,7 +116,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 	public void action() {
 		switch (step) {
 		case 0:
-			
+
 			this.MachineCount = (int) bfBase.
 			getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).
 			getValue();
@@ -196,7 +208,7 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 						Build();
 
 				AgentUtil.sendZoneDataUpdate(blackboard, NegotiationUpdate, myAgent);
-				
+
 				WeblafGSAgui.showNotification("Order", JobToSend.getCustomerId()+
 						" placed order for batch ID "+JobToSend.getBatchId(), MessageType.INFO);
 

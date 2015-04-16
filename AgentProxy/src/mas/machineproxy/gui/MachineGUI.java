@@ -354,6 +354,10 @@ public class MachineGUI extends JFrame {
 	public void setBatchNo(String bNum) {
 		currentOpPanel.setBatchNo(bNum);
 	}
+	
+	public void setJobNumber(String jobNum) {
+		currentOpPanel.setJobNo(jobNum);
+	}
 
 	/**
 	 * Runs on EDT

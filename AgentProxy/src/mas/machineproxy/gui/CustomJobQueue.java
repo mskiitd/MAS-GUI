@@ -4,20 +4,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JPanel;
-
 import mas.jobproxy.Batch;
 import mas.util.TableUtil;
 
@@ -106,7 +99,7 @@ public class CustomJobQueue extends JPanel {
 				Batch b = jQueue.get(i*componentsInOneLine + c);
 
 				String s = "ID : " + b.getBatchId()  + "\n" +
-						"Count : " + b.getBatchCount() + "\n" +
+						"Size : " + b.getBatchCount() + "\n" +
 						"No : " + b.getBatchNumber();
 
 				int textwidth = (int)(font.getStringBounds(s, frc).getWidth());
@@ -143,7 +136,7 @@ public class CustomJobQueue extends JPanel {
 			Batch b = jQueue.get(i*componentsInOneLine + j);
 
 			String s = "ID : " + b.getBatchId()  + "\n" +
-					"Count : " + b.getBatchCount() + "\n" +
+					"Size : " + b.getBatchCount() + "\n" +
 					"No : " + b.getBatchNumber();
 
 			int textwidth = (int)(font.getStringBounds(s, frc).getWidth());

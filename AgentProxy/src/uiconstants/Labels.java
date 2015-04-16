@@ -14,7 +14,7 @@ public class Labels {
 		public static final String jobDimension = "Dimensions :";
 		public static final String jobOperationHeading = "Job-Operations :";
 		public static final String jobOpeationsDoneButton = "Done";
-		public static final String jobNo = "Job Number : ";
+		public static final String batchNo = "Batch No : ";
 		public static final String batchSize = "Batch Size : ";
 		
 	}

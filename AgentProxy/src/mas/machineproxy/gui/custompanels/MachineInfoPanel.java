@@ -15,9 +15,9 @@ public class MachineInfoPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private JLabel lblPref3, lblPref2, lblPref4, lblPref1, lblPref5;
-	private WebHotkeyLabel valPref1, valPref2, valPref3, valPref4, valPref5;
-	
+	private JLabel lblPref3, lblPref2, lblPref4, lblPref1, lblPref5, lblPref6;
+	private WebHotkeyLabel valPref1, valPref2, valPref3, valPref4, valPref5, valPref6;
+
 	public MachineInfoPanel() {
 
 		setLayout(new MigLayout("",
@@ -30,28 +30,33 @@ public class MachineInfoPanel extends JPanel {
 		lblPref4 = new JLabel("Batch Id : ");
 		lblPref1 = new JLabel("Customer Id : ");
 		lblPref5 = new JLabel("Batch No : ");
-		
+		lblPref6 = new JLabel("Current Job No : ");
+
 		valPref1 = new WebHotkeyLabel();
 		valPref2 = new WebHotkeyLabel();
 		valPref3 = new WebHotkeyLabel();
 		valPref4 = new WebHotkeyLabel();
 		valPref5 = new WebHotkeyLabel();
+		valPref6 = new WebHotkeyLabel();
 
 		add(lblPref1);
 		add(valPref1, "wrap");
-		
+
 		add(lblPref4);
 		add(valPref4,"wrap");
-		
+
 		add(lblPref5);
 		add(valPref5,"wrap");
-		
+
 		add(lblPref2);
 		add(valPref2,"wrap");
-		
+
 		add(lblPref3);
 		add(valPref3,"wrap");
-		
+
+		add(lblPref6);
+		add(valPref6,"wrap");
+
 		setBackground(Color.WHITE);
 		Component[] comps = getComponents();
 		for(int i = 0; i < comps.length; i++) {
@@ -85,7 +90,7 @@ public class MachineInfoPanel extends JPanel {
 			}
 		});
 	}
-	
+
 	public void setBatchNo(final String batchNo) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -122,6 +127,15 @@ public class MachineInfoPanel extends JPanel {
 		});
 	}
 
+	public void setJobNo(String jobNum) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				valPref6.setText(jobNum);
+			}
+		});
+	}
+
 	/**
 	 * Runs on EDT
 	 */
@@ -134,6 +148,7 @@ public class MachineInfoPanel extends JPanel {
 				valPref3.setText("");
 				valPref1.setText("");
 				valPref5.setText("");
+				valPref6.setText("");
 			}
 		});
 	}

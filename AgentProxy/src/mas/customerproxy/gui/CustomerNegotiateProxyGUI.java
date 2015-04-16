@@ -150,7 +150,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.lblCPN = new JLabel(Labels.CustomerLabels.jobPriority);
 		this.lblDueDate = new JLabel(Labels.CustomerLabels.jobDueDate);
 		this.lblJobID = new JLabel(Labels.CustomerLabels.BatchID);
-		this.lblJobNo = new JLabel(Labels.CustomerLabels.jobNo);
+		this.lblJobNo = new JLabel(Labels.CustomerLabels.batchNo);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
 		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
@@ -166,8 +166,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		this.txtJobID = new FormattedStringField();
 		txtJobID.setColumns(Labels.defaultJTextSize);
 
-//		this.txtJobNo = new FormattedIntegerField();
-//		txtJobNo.setColumns(Labels.defaultJTextSize);
+		this.txtJobNo = new FormattedIntegerField();
+		txtJobNo.setColumns(Labels.defaultJTextSize);
 
 		this.txtNumOps = new FormattedIntegerField();
 		txtNumOps.setColumns(Labels.defaultJTextSize/2);
@@ -187,8 +187,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		myPanel.add(lblJobID);
 		myPanel.add(txtJobID,"wrap");
 
-//		myPanel.add(lblJobNo);
-//		myPanel.add(txtJobNo,"wrap");
+		myPanel.add(lblJobNo);
+		myPanel.add(txtJobNo,"wrap");
 
 		myPanel.add(lblCPN);
 		myPanel.add(txtCPN,"wrap");
@@ -206,9 +206,6 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
 
-		//		operationPanel.add(txtNumOps);
-		//		operationPanel.add(btnOperationPlus,"wrap");
-		//		btnOperationPlus.addActionListener(new AddOperationListener());
 		myPanel.add(lblOpsHeading,"wrap");
 		myPanel.add(operationPanel,"wrap");
 
@@ -237,8 +234,8 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 			txtJobID.setText(populatingBatch.getBatchId());
 			txtJobID.setEnabled(false);
 
-//			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
-//			txtJobNo.setEnabled(false);
+			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
+			txtJobNo.setEnabled(false);
 
 			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getWaitingTime())) ) ;
 			txtWaitingTime.setEnabled(false);

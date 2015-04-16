@@ -1,18 +1,16 @@
 package mas.customerproxy.gui;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,9 +25,13 @@ import javax.swing.SwingUtilities;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
+import mas.jobproxy.jobOperation;
 import mas.util.DateLabelFormatter;
+import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
+import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
+import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,17 +42,20 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import uiconstants.Labels;
 
+import com.alee.extended.label.WebHotkeyLabel;
+
 public class ChangeDueDateGUI extends JFrame{
 
 	private static final long serialVersionUID = 1L;
-	private CustomerAgent custAgent;
-	private BufferedImage plusButtonIcon;
+	private CustomerAgent cAgent;
 
 	private JScrollPane scroller;
 	private JPanel myPanel;
 	private JPanel operationPanel;
-	private JButton changeDueDateJob;
-	private JButton cancel;
+	private JPanel btnPanel;
+	private JButton confirmJob;
+	private JButton negotiateJob;
+	private JButton btnCancelNegotiation;
 	public UtilDateModel dateModel;
 	public Properties dateProperties;
 	private JDatePanelImpl datePanel ;
@@ -66,38 +71,42 @@ public class ChangeDueDateGUI extends JFrame{
 	private JLabel lblDueDate;
 	private JLabel lblOpsHeading;
 	private JLabel lblPenalty;
+	private JLabel lblWaitingTimeHeading;
 	private JLabel lblBatchSize;
-	private JButton btnOperationPlus;
+	private JLabel lblCustomerIdHeading;
 
-	private JTextField txtJobID;
-	private JTextField txtJobNo;
-	private JTextField txtCPN;
-	private JTextField txtNumOps;
+	private WebHotkeyLabel lblCustomerId;
+	private FormattedStringField txtJobID;
+	private FormattedIntegerField txtJobNo;
+	private FormattedDoubleField txtCPN;
+	private JTextField txtWaitingTime;
 	private FormattedIntegerField txtBatchSize;
-	private JTextField txtPenaltyRate;
+	private FormattedDoubleField txtPenaltyRate;
 
 	private Batch populatingBatch;
-	private job populatingJob;
 	private boolean dataOk = true;
 	private boolean operationDataOk = false;
 
 	private Logger log;
+	private job generatedJob;
 
 	public ChangeDueDateGUI(CustomerAgent cAgent, Batch passedBatch) {
 
 		log = LogManager.getLogger();
-		populatingBatch = passedBatch;
 
+		this.populatingBatch = passedBatch;
 		if(populatingBatch != null) {
-			this.populatingJob = populatingBatch.getFirstJob();
+			generatedJob = populatingBatch.getFirstJob();
 		}
 
 		this.scroller = new JScrollPane();
 		this.myPanel = new JPanel(new MigLayout());
+		btnPanel = new JPanel(new FlowLayout());
 		operationPanel = new JPanel(new MigLayout());
-		this.custAgent = cAgent;
-		this.changeDueDateJob = new JButton("Send");
-		this.cancel = new JButton("Cancel");
+		this.cAgent = cAgent;
+		this.confirmJob = new JButton("Confirm");
+		this.negotiateJob = new JButton("Send For Negotiation");
+		this.btnCancelNegotiation = new JButton("Reject Negotiation");
 
 		dateModel = new UtilDateModel();
 
@@ -106,7 +115,7 @@ public class ChangeDueDateGUI extends JFrame{
 		dateProperties.put("text.month", "Month");
 		dateProperties.put("text.year", "Year");
 
-		if(populatingJob != null) {
+		if(populatingBatch != null) {
 			Calendar dudate = Calendar.getInstance();
 			dudate.setTime(populatingBatch.getDueDateByCustomer());
 
@@ -127,40 +136,47 @@ public class ChangeDueDateGUI extends JFrame{
 		timeSpinner.setEditor(timeEditor);
 		timeSpinner.setValue(new Date());
 
-		try {
-			plusButtonIcon = ImageIO.read(new File("resources/plusbutton.png"));
-			btnOperationPlus = new JButton(new ImageIcon(plusButtonIcon));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//		try {
+		//			plusButtonIcon = ImageIO.read(new File("resources/plusbutton.png"));
+		//			btnOperationPlus = new JButton(new ImageIcon(plusButtonIcon));
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
 
 		this.lblHeading = new JLabel(Labels.CustomerLabels.jobGenerateHeading);
 		this.lblCPN = new JLabel(Labels.CustomerLabels.jobPriority);
 		this.lblDueDate = new JLabel(Labels.CustomerLabels.jobDueDate);
 		this.lblJobID = new JLabel(Labels.CustomerLabels.BatchID);
-		this.lblJobNo = new JLabel(Labels.CustomerLabels.jobNo);
+		this.lblJobNo = new JLabel(Labels.CustomerLabels.batchNo);
 		this.lblOpsHeading = new JLabel(Labels.CustomerLabels.jobOperationHeading);
 		this.lblPenalty = new JLabel(Labels.CustomerLabels.jobPenalty);
 		this.lblBatchSize = new JLabel(Labels.CustomerLabels.batchSize);
+		this.lblCustomerIdHeading = new JLabel("Customer Id : ");
+		this.lblCustomerId = new WebHotkeyLabel();
 
-		this.txtCPN = new JTextField(Labels.defaultJTextSize);
-		this.txtJobID = new JTextField(Labels.defaultJTextSize);
-		this.txtJobNo = new JTextField(Labels.defaultJTextSize);
-		this.txtNumOps = new JTextField(Labels.defaultJTextSize/2);
-		this.txtPenaltyRate = new JTextField(Labels.defaultJTextSize);
+		this.lblWaitingTimeHeading = new JLabel("Expected Time by GSA : ");
+		this.txtWaitingTime = new JTextField(Labels.defaultJTextSize*2);
 
-		this.txtCPN.setEnabled(false);
-		this.txtJobID.setEnabled(false);
-		this.txtJobNo.setEnabled(false);
-		this.txtNumOps.setEnabled(false);
-		this.txtPenaltyRate.setEditable(false);
+		this.txtCPN = new FormattedDoubleField();
+		txtCPN.setColumns(Labels.defaultJTextSize);
+
+		this.txtJobID = new FormattedStringField();
+		txtJobID.setColumns(Labels.defaultJTextSize);
+
+		this.txtJobNo = new FormattedIntegerField();
+		txtJobNo.setColumns(Labels.defaultJTextSize);
+
+		this.txtPenaltyRate = new FormattedDoubleField();
+		txtPenaltyRate.setColumns(Labels.defaultJTextSize);
 
 		this.txtBatchSize = new FormattedIntegerField();
 		txtBatchSize.setColumns(Labels.defaultJTextSize/2);
-		this.txtBatchSize.setEnabled(false);
 
 		this.lblHeading.setFont(TableUtil.headings);
 		myPanel.add(lblHeading,"wrap");
+
+		myPanel.add(lblCustomerIdHeading);
+		myPanel.add(lblCustomerId,"wrap");
 
 		myPanel.add(lblJobID);
 		myPanel.add(txtJobID,"wrap");
@@ -177,47 +193,52 @@ public class ChangeDueDateGUI extends JFrame{
 		myPanel.add(lblBatchSize);
 		myPanel.add(txtBatchSize,"wrap");
 
+		myPanel.add(lblWaitingTimeHeading);
+		myPanel.add(txtWaitingTime,"wrap");
+
 		myPanel.add(lblDueDate);
 		myPanel.add(datePicker);
 		myPanel.add(timeSpinner,"wrap");
 
-		operationPanel.add(lblOpsHeading);
-		operationPanel.add(txtNumOps);
-		operationPanel.add(btnOperationPlus,"wrap");
-
-		btnOperationPlus.addActionListener(new AddOperationListener());
-
+		myPanel.add(lblOpsHeading,"wrap");
 		myPanel.add(operationPanel,"wrap");
 
-		myPanel.add(changeDueDateJob);
+		btnPanel.add(confirmJob);
+		btnPanel.add(negotiateJob);
+		btnPanel.add(btnCancelNegotiation);
+
+		myPanel.add(btnPanel);
 
 		this.scroller = new JScrollPane(myPanel);
 		add(scroller);
 
 		buttonListener clickListener = new buttonListener();
-		changeDueDateJob.addActionListener(clickListener);
+		confirmJob.addActionListener(clickListener);
+		negotiateJob.addActionListener(clickListener);
+		btnCancelNegotiation.addActionListener(clickListener);
 
 		_populate();
-
 		showGui();
 	}
 
 	private void _populate() {
-		if(populatingJob != null) {
+		if(populatingBatch != null) {
+			lblCustomerId.setText(populatingBatch.getCustomerId());
+
 			txtJobID.setText(populatingBatch.getBatchId());
 			txtJobID.setEnabled(false);
 
 			txtJobNo.setText(String.valueOf(populatingBatch.getBatchNumber()));
 			txtJobNo.setEnabled(false);
 
+			txtWaitingTime.setText(String.valueOf(new Date(populatingBatch.getWaitingTime())) ) ;
+			txtWaitingTime.setEnabled(false);
+
 			txtCPN.setText(String.valueOf(populatingBatch.getCPN()));
 			txtCPN.setEnabled(false);
-
+			
 			txtPenaltyRate.setText(String.valueOf(populatingBatch.getPenaltyRate()));
 			txtPenaltyRate.setEnabled(false);
-
-			txtNumOps.setText(String.valueOf(populatingJob.getOperations().size()));
-			txtNumOps.setEnabled(false);
 
 			Calendar c1 = Calendar.getInstance();
 			c1.setTime(populatingBatch.getDueDateByCustomer());
@@ -229,59 +250,60 @@ public class ChangeDueDateGUI extends JFrame{
 
 			txtBatchSize.setText(String.valueOf(populatingBatch.getBatchCount()));
 			txtBatchSize.setEnabled(false);
+
+			ArrayList<jobOperation> ops = populatingBatch.getFirstJob().getOperations();
+			operationPanel.removeAll();
+			for(int i = 0; i < ops.size(); i++ ) {
+				WebHotkeyLabel lblOp = new WebHotkeyLabel(ops.get(i).getJobOperationType());
+				operationPanel.add(lblOp,"span " + ops.size());
+			}
 		}
 	}
 
 	private void createJobFromParams() {
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				boolean x2 = true,x3 = true,x4 = true,x5 = true;
+		boolean x2 = true, x3 = true,x4 = true,x5 = true;
 
-				x2 = checkPenaltyRate();
-				if(x2) {
-					x3 = checkCPN();
-				}
-				if(x2 & x3) {
-					x4 = checkDueDate();
+		x2 = checkPenaltyRate();
+		if(x2) {
+			x3 = checkCPN();
+		}
+		if(x2 & x3) {
+			x4 = checkDueDate();
 
-					if(x4) {
-						x5 = checkJobOperations();
-					}
-				}
+		}
+		dataOk = x2&x3&x4&x5;
 
-				dataOk = x2 & x3 &x4 & x5;
-			}
-		}).start();
+		if(dataOk) {
+			dataOk = dataOk & checkBatchSize();
+		}
 	}
 
-	private boolean checkJobOperations() {
+	private boolean checkBatchSize() {
 		boolean status = true;
-		if(populatingJob.getOperations() == null ) {
+		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
-							"Please Give job Operation Details !!", "Error" , JOptionPane.ERROR_MESSAGE );					
+							"Invalid input for batch size.",  "Error" , JOptionPane.ERROR_MESSAGE );
 				}
 			});
+
 			status = false;
-
 		}else {
-			if(populatingJob.getOperations().isEmpty()) {
-
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
-								"Please Give job Operation Details !!","Error" , JOptionPane.ERROR_MESSAGE );
-					}
-				});
-				status = false;
+			populatingBatch.setBatchId(populatingBatch.getBatchId());
+			populatingBatch.clearAllJobs();
+			int bSize = Integer.parseInt(txtBatchSize.getText());
+			ArrayList<job> jobs = new ArrayList<job>();
+			for(int i = 0; i < bSize ; i++ ) {
+				job j = new job(generatedJob);
+				jobs.add(j);
 			}
+			populatingBatch.setJobsInBatch(jobs);
 		}
+
 		return status;
 	}
 
@@ -293,7 +315,6 @@ public class ChangeDueDateGUI extends JFrame{
 		if(time == null || jobDueDate == null) {
 
 			SwingUtilities.invokeLater(new Runnable() {
-
 				@Override
 				public void run() {
 					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
@@ -320,13 +341,13 @@ public class ChangeDueDateGUI extends JFrame{
 					@Override
 					public void run() {
 						JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
-								"Please enter a due date after current Date !!", "Error", JOptionPane.ERROR_MESSAGE );						
+								"Please enter a due date after current Date.", "Error" , JOptionPane.ERROR_MESSAGE );
 					}
 				});
 
 				status = false;
 			}else {
-				populatingJob.setJobDuedatebyCust(calTime.getTime());
+				populatingBatch.setDueDateByCustomer(calTime.getTime());
 			}
 		}
 		return status;
@@ -337,11 +358,10 @@ public class ChangeDueDateGUI extends JFrame{
 		if(! txtPenaltyRate.getText().matches("-?\\d+(\\.\\d+)?") ) {
 
 			SwingUtilities.invokeLater(new Runnable() {
-
 				@Override
 				public void run() {
 					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
-							"Invalid input for penalty rate !!", "Error", JOptionPane.ERROR_MESSAGE );					
+							"Invalid input for penalty rate !!", "Error", JOptionPane.ERROR_MESSAGE );
 				}
 			});
 
@@ -356,16 +376,15 @@ public class ChangeDueDateGUI extends JFrame{
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
-			
+
 			SwingUtilities.invokeLater(new Runnable() {
-				
 				@Override
 				public void run() {
 					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
-							"Invalid input for CPN !!", "Error", JOptionPane.ERROR_MESSAGE );
+							"Invalid input for CPN !!", "Error" , JOptionPane.ERROR_MESSAGE );
 				}
 			});
-			
+
 			status = false;
 		}else {
 			populatingBatch.setCPN(Double.parseDouble(
@@ -374,44 +393,10 @@ public class ChangeDueDateGUI extends JFrame{
 		return status;
 	}
 
-	class AddOperationListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			checkOperations();
-
-			if(operationDataOk) {
-				DisplayOperationFrame ops = new 
-						DisplayOperationFrame(populatingJob, NumOps, populatingJob);
-			}
-		}
-	}
-
-	private void checkOperations() {
-		boolean  x2 = true;
-
-		if(! txtNumOps.getText().matches("-?\\d+?")) {
-			
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(ChangeDueDateGUI.this,
-							"Invalid input for number of operations !!", "Error", JOptionPane.ERROR_MESSAGE );
-				}
-			});
-			x2 = false;
-			
-		} else {
-			NumOps = Integer.parseInt(txtNumOps.getText());
-		}
-		operationDataOk = x2;
-	}
-
 	private void showGui() {
-		setTitle("Customer Agent - Change Due Date");
+		setTitle("Customer - Change Due Date");
 		//		setPreferredSize(new Dimension(600,500));
-
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;
@@ -425,23 +410,48 @@ public class ChangeDueDateGUI extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// handle create job button pressed event
-			if(e.getSource().equals(changeDueDateJob)) {
+			if(e.getSource().equals(confirmJob)) {
 
 				createJobFromParams();
+				log.info("data format : " + dataOk);
 				if(dataOk) {
-					dispose();
+					log.info("Confirming the job : " + generatedJob);
+
 					new Thread(new Runnable() {
-						
 						@Override
 						public void run() {
-							custAgent.sendGeneratedBatch(populatingBatch);
+							cAgent.confirmJob(populatingBatch);
 						}
 					}).start();
-					//					custAgent.(populatingBatch);
-				}
-			}
 
-			else if(e.getSource().equals(cancel)){
+					dispose();
+				}
+
+			} else if(e.getSource().equals(negotiateJob)) {
+
+				createJobFromParams();
+				log.info("Negotiation data format : " + dataOk);
+				if(dataOk) {
+					log.info("Negotiating the job : " + populatingBatch);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							cAgent.negotiateJob(populatingBatch);
+						}
+					}).start();
+
+					dispose();
+				}
+			} else if(e.getSource().equals(btnCancelNegotiation)) {
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						cAgent.rejectNegotiation();
+					}
+				}).start();
+
 				dispose();
 			}
 		}
