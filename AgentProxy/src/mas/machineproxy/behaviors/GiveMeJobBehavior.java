@@ -20,13 +20,14 @@ public class GiveMeJobBehavior extends OneShotBehaviour{
 
 	@Override
 	public void action() {
-		
+
 		log = LogManager.getLogger();
 		log.info("asking for job from LSA : ");
-		
-		ZoneDataUpdate giveJobIndicator = new ZoneDataUpdate.Builder(ID.Machine.ZoneData.askJobFromLSA)
-			.value("1").Build();
-		
+
+		ZoneDataUpdate giveJobIndicator = new ZoneDataUpdate.
+				Builder(ID.Machine.ZoneData.askJobFromLSA).
+				value("1").Build();
+
 		AgentUtil.sendZoneDataUpdate(Simulator.blackboardAgent,
 				giveJobIndicator, myAgent);
 	}

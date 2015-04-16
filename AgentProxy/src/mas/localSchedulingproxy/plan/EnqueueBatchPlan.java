@@ -65,11 +65,11 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 				getValue();
 
 		log = LogManager.getLogger();
+//		log.info("winner : " +  comingBatch.getWinnerLSA());
 	}
 
 	@Override
 	public void action() {
-		//		log.info(comingJob.getBidWinnerLSA());
 		if(comingBatch.getWinnerLSA().equals(myAgent.getAID())) {
 			log.info("Adding the batch" + comingBatch.getBatchId()+  " to queue of agent, " +
 					myAgent.getLocalName());
@@ -83,6 +83,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 			/**
 			 * update the belief base
 			 */
+//			log.info(jobQueue);
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQueue);	
 
 			if(gui != null) {

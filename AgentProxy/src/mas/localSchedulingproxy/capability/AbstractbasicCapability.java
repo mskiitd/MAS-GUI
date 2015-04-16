@@ -15,6 +15,7 @@ import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
 import mas.localSchedulingproxy.goal.ReceiveMaintenanceJobGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
+import mas.localSchedulingproxy.goal.SendBatchToMachineGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
 import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
 import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
@@ -29,7 +30,7 @@ import mas.localSchedulingproxy.plan.RegisterLSAgentServicePlan;
 import mas.localSchedulingproxy.plan.RegisterLSAgentToBlackboardPlan;
 import mas.localSchedulingproxy.plan.RespondToGSAQuery;
 import mas.localSchedulingproxy.plan.SendBidPlan;
-import mas.localSchedulingproxy.plan.SendJobToMachinePlan;
+import mas.localSchedulingproxy.plan.SendBatchToMachinePlan;
 import mas.localSchedulingproxy.plan.SendWaitingTimePlan;
 import mas.localSchedulingproxy.plan.StartMaintenancePlan;
 import mas.localSchedulingproxy.plan.StatsTracker;
@@ -103,7 +104,7 @@ public class AbstractbasicCapability extends Capability {
 
 		Belief<Batch> currentBatch = new TransientBelief<Batch>(
 				ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
-		
+
 		Belief<job> currentJob = new TransientBelief<job>(
 				ID.LocalScheduler.BeliefBaseConst.currentJobOnMachine);
 
@@ -174,8 +175,7 @@ public class AbstractbasicCapability extends Capability {
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgjobForLSA),
 				EnqueueBatchPlan.class));
 
-		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgaskJobFromLSA),
-				SendJobToMachinePlan.class));
+		plans.add(new SimplePlan(SendBatchToMachineGoal.class, SendBatchToMachinePlan.class));
 
 		plans.add(new SimplePlan(BatchSchedulingGoal.class,BatchSchedulingPlan.class));
 
@@ -185,14 +185,14 @@ public class AbstractbasicCapability extends Capability {
 				,RespondToGSAQuery.class));
 
 		plans.add(new SimplePlan(StartMaintenanceGoal.class, StartMaintenancePlan.class));
-		
+
 		plans.add(new SimplePlan(ReceiveMaintenanceJobGoal.class,ReceiveMaintenanceJobPlan.class));
-		
+
 		plans.add(new SimplePlan(FinishMaintenanceGoal.class,FinishMaintenancePlan.class));
-		
+
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgmachineStatus),
 				ReceiveDelayedMaintenanceResponsePlan.class));
-		
+
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgCurrentJobOnMachine),
 				GetCurrentJobOnMachinePlan.class));
 
@@ -206,7 +206,7 @@ public class AbstractbasicCapability extends Capability {
 		myAgent.addGoal(new BatchSchedulingGoal());
 		myAgent.addGoal(new UpdateOperationDatabaseGoal());
 		myAgent.addGoal(new ReceiveMaintenanceJobGoal());
-		
+		myAgent.addGoal(new SendBatchToMachineGoal());
 		/*	myAgent.addGoal(new SendBidGoal());
 		myAgent.addGoal(new SendWaitingTimeGoal());
 		myAgent.addGoal(new EnqueueJobGoal());
