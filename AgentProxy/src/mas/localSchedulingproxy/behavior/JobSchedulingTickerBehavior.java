@@ -34,6 +34,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 	public JobSchedulingTickerBehavior(Agent myAgent, long schedulingPeriod,
 			BeliefBase bfBase) {
+		
 		super(myAgent, schedulingPeriod);
 		this.bfBase = bfBase;
 		gui = (MachineGUI) bfBase.

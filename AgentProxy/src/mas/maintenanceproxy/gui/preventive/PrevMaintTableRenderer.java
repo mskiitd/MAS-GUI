@@ -39,7 +39,7 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 	private void updateData(PMaintenance feed, boolean isSelected, JTable table) {
 		this.pMaintTileCell = feed;
 
-		lblActualStartDate.setText("Start Time : " + pMaintTileCell.getActualStartTime());
+		lblActualStartDate.setText("Start Time : " + formatter.format(pMaintTileCell.getActualStartTime()));
 		lblActualFinishDate.setText("Completion Time : " + formatter.format(pMaintTileCell.getActualFinishTime()));
 		lblActivityCode.setText("Activity Code : " + pMaintTileCell.getActivityCode());
 

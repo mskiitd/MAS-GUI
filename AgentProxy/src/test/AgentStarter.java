@@ -129,12 +129,15 @@ public class AgentStarter {
 
 	public AgentStarter() {
 		log = LogManager.getLogger();
-		List<String> params = new ArrayList<String>();
-		params.add("-gui");
 
 		this.runtime = jade.core.Runtime.instance();
 		if(container == MainContainer.local) {
+			
+			List<String> params = new ArrayList<String>();
+			params.add("-gui");
 			bootProfile = new BootProfileImpl(params.toArray(new String[0]));
+			bootProfile.setParameter(Profile.MAIN_HOST, "MSK");
+//			bootProfile.setParameter(Profile.MAIN_PORT, "1020");
 			controller = runtime.createMainContainer(bootProfile);
 		}else {
 			bootProfile = new ProfileImpl(ipAddress, JadePort, null, false);
