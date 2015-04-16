@@ -216,7 +216,7 @@ public class DefineJobFrame extends JFrame{
 					x3 = checkCPN();
 				}
 				populatingBatch.setGenerationTime(new Date());
-				populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
+//				populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
 				if(x2 & x3) {
 					x4 = checkDueDate();
 				}
@@ -237,7 +237,7 @@ public class DefineJobFrame extends JFrame{
 				x3 = checkCPN();
 			}
 			populatingBatch.setGenerationTime(new Date());
-			populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
+//			populatingBatch.setBatchNumber(CustomerProxyGUI.countBatch);
 			if(x2 & x3) {
 				x4 = checkDueDate();
 			}

@@ -35,7 +35,7 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 
 	@Override
 	public EndState getEndState() {
-		return (step > 0 ? EndState.SUCCESSFUL : null);
+		return (step >= 1 ? EndState.SUCCESSFUL : null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -59,6 +59,7 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 				getValue();
 
 		replyWith= msg.getReplyWith();
+		log.info("sending job to machine : " + jobQueue );
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 
 			if(jobQueue.size() > 0) {
 				Batch batchToSend = jobQueue.get(0);
-				batchToSend.resetJobsComplete(); //
+				batchToSend.resetJobsComplete(); 
 				jobQueue.remove(0);
 								
 				log.info("Sending job to agent " + myAgent.getLocalName() + ", " + batchToSend.getBatchNumber() );
@@ -90,6 +91,6 @@ public class SendJobToMachinePlan extends Behaviour implements PlanBody {
 
 	@Override
 	public boolean done() {
-		return step > 0;
+		return step >= 1;
 	}
 }

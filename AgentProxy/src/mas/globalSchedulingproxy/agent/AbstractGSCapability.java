@@ -73,11 +73,15 @@ public abstract class AbstractGSCapability  extends Capability {
 
 		Belief<BatchDataBase> dBase = new TransientBelief<BatchDataBase>(
 				ID.GlobalScheduler.BeliefBaseConst.batchDatabase);
+		
+		Belief<Integer> batchCount = new TransientBelief<Integer>(
+				ID.GlobalScheduler.BeliefBaseConst.batchCount);
 
 		dBase.setValue(null);
 		DueDateCalcMethod.setValue(ID.GlobalScheduler.OtherConst.LocalDueDate);
 		underNegotiation.setValue(null);
 		NoOfMachines.setValue(0);
+		batchCount.setValue(0);
 		
 		beliefs.add(BB_AID);
 		beliefs.add(NoOfMachines);
@@ -86,6 +90,7 @@ public abstract class AbstractGSCapability  extends Capability {
 		beliefs.add(underNegotiation);
 		beliefs.add(GSA_gui);
 		beliefs.add(dBase);
+		beliefs.add(batchCount);
 
 		return beliefs;
 	}

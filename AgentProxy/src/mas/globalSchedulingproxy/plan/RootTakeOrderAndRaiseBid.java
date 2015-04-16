@@ -48,6 +48,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 	private int repliesCnt = 0; 
 	private Batch batchOrder;
 	private String dueDateMethod=null;
+	private int batchNumber = -1;
 
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
@@ -71,6 +72,10 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 				getValue();
 
 		msgReplyID = Integer.toString(batchOrder.getBatchNumber());
+		
+		batchNumber = (int) bfBase.
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.batchCount).
+				getValue();
 
 		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(MessageIds.msgbidForJob)
 				, MessageTemplate.MatchReplyWith(msgReplyID));
@@ -92,11 +97,11 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 			if (MachineCount != 0) {
 				//				log.info("due date: "+order.getDuedate());
-
 				batchOrder.setStartTimeMillis(System.currentTimeMillis());
 				//				log.info("current op no = "+order.getCurrentOperationNumber());
 				batchOrder = SetDueDates(batchOrder);
-
+				batchOrder.setBatchNumber(batchNumber ++);
+				bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.batchCount, batchNumber);
 				/*				for(int ops=0;ops<order.getNumOperations();ops++){
 					log.info(new Date(order.getCurrentOperationDueDate()));
 					order.IncrementOperationNumber();

@@ -37,7 +37,6 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 
 		batchMsgTemplate = MessageTemplate.
 				MatchConversationId(MessageIds.msgbatchForMachine);
-		log.info("running...");
 	}
 
 	@Override
@@ -48,9 +47,8 @@ public class AcceptBatchBehavior extends CyclicBehaviour {
 
 			switch(step) {
 			case 0:
-				log.info("receiveing msg");
 				ACLMessage msg = myAgent.receive(batchMsgTemplate);
-
+				log.info("receiveing msg : " + msg);
 				if (msg != null) {
 					//					machineSimulator.setUnloadFlag(false);
 					try {

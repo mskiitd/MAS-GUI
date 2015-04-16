@@ -45,7 +45,6 @@ public class AskForBidPlan extends Behaviour implements PlanBody{
 		case 0:
 			/*		numLSA = (Integer) bfBase.getBelief(AbstractGSCapability
 								.MACHINES).getValue();*/
-
 			bids = new ACLMessage[numLSA];
 			step = 1;
 			break;

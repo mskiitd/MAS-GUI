@@ -24,14 +24,14 @@ import jade.lang.acl.MessageTemplate;
 public class GetNoOfMachinesPlan extends OneShotBehaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
-	
+
 	ArrayList list_machines =  new ArrayList();
 	boolean register = true;
-	
+
 	//how many seconds u want to run this Behavior
 	private BeliefBase bfBase;
 	private Logger log=LogManager.getLogger();
-	
+
 	@Override
 	public EndState getEndState() {
 		return EndState.SUCCESSFUL;
@@ -39,12 +39,13 @@ public class GetNoOfMachinesPlan extends OneShotBehaviour implements PlanBody{
 
 	@Override
 	public void init(PlanInstance pInstance) {
-		
+
 		bfBase = pInstance.getBeliefBase();	
 		log = LogManager.getLogger();
-		
+
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void action() {
 
@@ -54,48 +55,41 @@ public class GetNoOfMachinesPlan extends OneShotBehaviour implements PlanBody{
 		dfd.addServices(sd);
 
 		try {
+			DFAgentDescription[] result = DFService.search(myAgent,dfd);
+			Integer NoOfMachines= result.length;
+			log.info("NoOfMachines="+NoOfMachines);
 
-			  DFAgentDescription[] result = DFService.search(myAgent,dfd);
-			  Integer NoOfMachines= result.length;
-         	 log.info("NoOfMachines="+NoOfMachines);
-			  
-			  ((Belief<Integer>) bfBase.getBelief(ID.GlobalScheduler.
-					  BeliefBaseConst.NoOfMachines)).setValue(NoOfMachines);
-	          
-		
-			  } catch (Exception fe) {
-			      fe.printStackTrace();
-			      System.out.println(fe);
-			  }
+			((Belief<Integer>) bfBase.getBelief(ID.GlobalScheduler.
+					BeliefBaseConst.NoOfMachines)).setValue(NoOfMachines);
 
-		
-        ACLMessage msg = myAgent.receive(MessageTemplate.MatchSender(myAgent.getDefaultDF()));
-        
-            if (msg != null)
-            {
-              try {
-                 DFAgentDescription[] dfds =    
-                      DFService.decodeNotification(msg.getContent());
-                 log.info(dfds.toString());
-                 if (dfds.length > 0) {              	   
-                	 Integer NoOfMachines= (Integer)((BDIAgent)myAgent).getRootCapability()
-                			 .getBeliefBase().getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).getValue();
-                	 NoOfMachines++;
+		} catch (Exception fe) {
+			fe.printStackTrace();
+		}
+
+		ACLMessage msg = myAgent.receive(MessageTemplate.MatchSender(myAgent.getDefaultDF()));
+
+		if (msg != null)
+		{
+			try {
+				DFAgentDescription[] dfds =    
+						DFService.decodeNotification(msg.getContent());
+				log.info(dfds.toString());
+				if (dfds.length > 0) {              	   
+					Integer NoOfMachines= (Integer)((BDIAgent)myAgent).getRootCapability()
+							.getBeliefBase().getBelief(ID.GlobalScheduler.BeliefBaseConst.NoOfMachines).getValue();
+					NoOfMachines++;
 					Belief<Integer> new_belief=new TransientBelief<Integer>(
 							ID.GlobalScheduler.BeliefBaseConst.NoOfMachines, NoOfMachines);
-                	 bfBase.addOrUpdateBelief(new_belief); //update belief base
-                	 
-                	 log.info(NoOfMachines);
-                 }
-               }
-               catch (Exception ex) {
-            	   
-               }
-            }
-            block();
-		
+					bfBase.addOrUpdateBelief(new_belief); //update belief base
+
+					log.info(NoOfMachines);
+				}
+			}
+			catch (Exception ex) {
+
+			}
+		}
+		block();
 	}
-
-
 
 }

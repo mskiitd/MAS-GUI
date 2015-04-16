@@ -164,10 +164,10 @@ public class WebLafGSA {
 	}
 
 	protected static void initCurrentJobListPanel() {
-		CurrentJobTileRenderer currJobTileRenderer= new CurrentJobTileRenderer();
+		CurrentJobTableModel currJobTileRenderer= new CurrentJobTableModel();
 		currentJobListTable=new JTable(currJobTileRenderer);
-		currentJobListTable.setDefaultRenderer(JobTile.class, new CurrentJobTileCell());
-		currentJobListTable.setDefaultEditor(JobTile.class, new CurrentJobTileCell());
+		currentJobListTable.setDefaultRenderer(JobTile.class, new CurrentJobTableRenderer());
+		currentJobListTable.setDefaultEditor(JobTile.class, new CurrentJobTableRenderer());
 		currentJobListTable.setRowHeight(80);
 
 		currentJobList=new WebScrollPane(currentJobListTable);
@@ -645,8 +645,8 @@ public class WebLafGSA {
 
 
 	public void addCompletedJob(Batch b) {
-		CurrentJobTileRenderer CurrjobListRenderer=
-				(CurrentJobTileRenderer)currentJobListTable.getModel();
+		CurrentJobTableModel CurrjobListRenderer=
+				(CurrentJobTableModel)currentJobListTable.getModel();
 		
 		if(currentJobListTable.getCellEditor() != null ) {
 			currentJobListTable.getCellEditor().stopCellEditing(); 
@@ -674,7 +674,7 @@ public class WebLafGSA {
 	}
 
 	public void addAcceptedJobToList(Batch order) {
-		CurrentJobTileRenderer CurrJobListRenderer=(CurrentJobTileRenderer)currentJobListTable.getModel();
+		CurrentJobTableModel CurrJobListRenderer=(CurrentJobTableModel)currentJobListTable.getModel();
 		
 		if(currentJobListTable.getCellEditor() != null ) {
 			currentJobListTable.getCellEditor().stopCellEditing();
@@ -705,8 +705,8 @@ public class WebLafGSA {
 	}
 
 	public void cancelBatchUnderProcess(Batch batch){
-		CurrentJobTileRenderer CurrjobListRenderer=
-				(CurrentJobTileRenderer)currentJobListTable.getModel();
+		CurrentJobTableModel CurrjobListRenderer=
+				(CurrentJobTableModel)currentJobListTable.getModel();
 		CurrjobListRenderer.removeJob(batch);
 		if(currentJobListTable.getCellEditor()!=null){
 			currentJobListTable.getCellEditor().stopCellEditing();

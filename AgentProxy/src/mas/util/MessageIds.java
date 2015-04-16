@@ -93,7 +93,7 @@ public class MessageIds {
 	// machine simulator message ids here
 
 	//update new job for the machine
-	public static final String msgaskJobFromLSA = "_askJobFromLSA";
+	public static final String msgaskJobFromLSA = "Machine_askJobFromLsaMsg";
 	
 	// update machine's health  here
 	public static final String msgmyHealth ="machine_health";

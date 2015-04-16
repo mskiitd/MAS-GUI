@@ -31,7 +31,7 @@ import com.alee.log.Log;
 import com.alee.utils.SwingUtils;
 
 
-public class CurrentJobTileCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
+public class CurrentJobTableRenderer extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
 
 	private static final long serialVersionUID = 1L;
 	private JLabel batchID,dueDate,/*startDate,*/priorityText,batchNo;
@@ -42,7 +42,7 @@ public class CurrentJobTileCell extends AbstractCellEditor implements TableCellE
 	private final Format formatter = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
 	protected Logger log=LogManager.getLogger();
     
-	public CurrentJobTileCell(){
+	public CurrentJobTableRenderer(){
 		tile=new JPanel(new MigLayout("",
 				"[]10",
 				""
