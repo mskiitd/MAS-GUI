@@ -64,7 +64,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void action() {
-		JobQueryObject response = new JobQueryObject.Builder().currentJob(null)
+		JobQueryObject response = new JobQueryObject.Builder().currentBatch(null).underProcess(null)
 				.currentMachine(null).build();
 
 		ArrayList<Batch> jobQ = (ArrayList<Batch>)beleifBase.
@@ -81,7 +81,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 		for(int i = 0 ; i < jobQ.size(); i++) {
 			if(batchNo == jobQ.get(i).getBatchNumber() ){
-				response = new JobQueryObject.Builder().currentJob(jobQ.get(i))
+				response = new JobQueryObject.Builder().currentBatch(jobQ.get(i))
 						.requestType(requestJobQuery.getType())//notes down for what req type this reply was
 						.underProcess(false)
 						.currentMachine(machineAID).build();
@@ -107,8 +107,8 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 			}
 		}
 
-		if(currentJob!=null && currentJob.getBatchNumber() ==batchNo){
-			response=new JobQueryObject.Builder().currentJob(currentJob).currentMachine(machineAID)
+		if(currentJob!=null && currentJob.getBatchNumber() == batchNo){
+			response=new JobQueryObject.Builder().currentBatch(currentJob).currentMachine(machineAID)
 					.requestType(requestJobQuery.getType())
 					.underProcess(true)
 					.build();
@@ -125,6 +125,9 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 		}
 
+		if(response.getCurrentBatch()==null){
+			log.info("did not find batch no. "+batchNo);
+		}
 		ZoneDataUpdate queryUpdate=new ZoneDataUpdate.
 				Builder(ID.LocalScheduler.ZoneData.QueryResponse).
 				value(response).Build();

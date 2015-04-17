@@ -83,7 +83,10 @@ public class SendBatchToMachinePlan extends CyclicBehaviour implements PlanBody 
 			break;
 		case 1:
 			//				if("1".equals(status)) {
-			if(jobQueue.size() > 0) {
+			Batch currentBatchOnMachine=(Batch) bfBase.getBelief(ID.LocalScheduler.
+					BeliefBaseConst.currentBatchOnMachine).getValue();
+			
+			if(jobQueue.size() > 0 && currentBatchOnMachine==null) {
 				Batch batchToSend = jobQueue.get(0);
 				batchToSend.resetJobsComplete(); 
 				jobQueue.remove(0);
@@ -103,10 +106,12 @@ public class SendBatchToMachinePlan extends CyclicBehaviour implements PlanBody 
 
 				step = 0;
 			} else {
+//				log.info("currentBatchOnMachine = "+currentBatchOnMachine+"jobQueue.size() ="+jobQueue.size());
 				jobQueue = (ArrayList<Batch>) bfBase.
 						getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
 						getValue();
-//				block(SleepTime);
+//				log.info("getting jobQueue "+jobQueue.size());
+				block(100);
 			}
 			break;
 		}
