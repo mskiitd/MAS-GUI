@@ -74,9 +74,9 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 		Object currBatchObj = beleifBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine);
 
-		Batch currentJob = null;
+		Batch currentBatch = null;
 		if(currBatchObj != null){
-			currentJob = (Batch)(((Belief<Batch>)currBatchObj).getValue());
+			currentBatch = (Batch)(((Belief<Batch>)currBatchObj).getValue());
 		}
 
 		for(int i = 0 ; i < jobQ.size(); i++) {
@@ -107,8 +107,16 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 			}
 		}
 
-		if(currentJob!=null && currentJob.getBatchNumber() == batchNo){
-			response=new JobQueryObject.Builder().currentBatch(currentJob).currentMachine(machineAID)
+		if(currentBatch!=null && currentBatch.getBatchNumber() == batchNo){
+			
+			if(requestJobQuery.getType().equals(ID.GlobalScheduler.requestType.changeDueDate)){
+				currentBatch.IncrementOperationNumber();
+			}
+			//if batch is loaded on machine, current operation will be completed and then
+			//only new due date is alloted. So, wheen new due date is generated, u should 'assume'
+			//that current operation is completed and then only send that copy to customer for due date change
+			
+			response=new JobQueryObject.Builder().currentBatch(currentBatch).currentMachine(machineAID)
 					.requestType(requestJobQuery.getType())
 					.underProcess(true)
 					.build();
@@ -126,7 +134,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 		}
 
 		if(response.getCurrentBatch()==null){
-			log.info("did not find batch no. "+batchNo);
+			log.info("did not find batch no. "+batchNo+" on "+myAgent.getLocalName());
 		}
 		ZoneDataUpdate queryUpdate=new ZoneDataUpdate.
 				Builder(ID.LocalScheduler.ZoneData.QueryResponse).
