@@ -72,7 +72,7 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 			if (MachineCount != 0) {
 
 				JobQueryObject queryForm = new JobQueryObject.Builder().
-						currentJob(this.queryJob).requestType(requestType).build();
+						currentBatch(this.queryJob).requestType(requestType).build();
 
 				LSAqueryResponse=new ACLMessage[MachineCount];
 				ZoneDataUpdate QueryRequest = new ZoneDataUpdate.
@@ -109,32 +109,36 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 			JobQueryObject response = getQueryResponse(LSAqueryResponse);
 			log.info(response);
 			
-			switch(response.getType()) {
-			
-			case ID.GlobalScheduler.requestType.currentStatus:
-				GSAproxyGUI.showQueryResult(response);
-				break;
-
-			case ID.GlobalScheduler.requestType.cancelBatch:
-				weblafGSAgui.cancelBatchUnderProcess(response.getCurrentBatch());
-
-				WebLafGSA.showNotification("Batch cancelled","Batch No. "+response.getCurrentBatch().getBatchNumber()+
-						" cancelled",MessageType.WARNING );
-
-
-				break;
-
-			case ID.GlobalScheduler.requestType.changeDueDate:
-				weblafGSAgui.cancelBatchUnderProcess(response.getCurrentBatch());
-				WebLafGSA.showNotification("Request","Batch No. "+response.getCurrentBatch().getBatchNumber()+
-						" requested for due date change",MessageType.INFO );
-
-				ZoneDataUpdate dueDateRequest=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.
-						dueDateChangeBatches).value(response.getCurrentBatch()).Build();
-				AgentUtil.sendZoneDataUpdate(blackboard_AID, dueDateRequest, myAgent);
-				break;	
+			if(response!=null){
+				switch(response.getType()) {
+				
+				case ID.GlobalScheduler.requestType.currentStatus:
+					GSAproxyGUI.showQueryResult(response);
+					break;
+	
+				case ID.GlobalScheduler.requestType.cancelBatch:
+					weblafGSAgui.cancelBatchUnderProcess(response.getCurrentBatch());
+	
+					WebLafGSA.showNotification("Batch cancelled","Batch No. "+response.getCurrentBatch().getBatchNumber()+
+							" cancelled",MessageType.WARNING );
+	
+	
+					break;
+	
+				case ID.GlobalScheduler.requestType.changeDueDate:
+					weblafGSAgui.cancelBatchUnderProcess(response.getCurrentBatch());
+					WebLafGSA.showNotification("Request","Batch No. "+response.getCurrentBatch().getBatchNumber()+
+							" requested for due date change",MessageType.INFO );
+	
+					ZoneDataUpdate dueDateRequest=new ZoneDataUpdate.Builder(ID.GlobalScheduler.ZoneData.
+							dueDateChangeBatches).value(response.getCurrentBatch()).Build();
+					AgentUtil.sendZoneDataUpdate(blackboard_AID, dueDateRequest, myAgent);
+					break;	
+				}
 			}
-
+			else{
+				log.info("ERROR : No machine had queried job");
+			}
 			step = 3;
 			break;
 		}
@@ -150,9 +154,12 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 				Batch j = (queryResponse).getCurrentBatch();
 				if(j != null) {
 					response = queryResponse;
-					log.info(j.getBatchNumber() + " is at " + queryResponse.getCurrentMachine().getLocalName());
 					if(queryResponse.isOnMachine()) {
 						log.info(j.getBatchNumber() + " is currently under process at " +
+								queryResponse.getCurrentMachine().getLocalName());
+					}
+					else{
+						log.info(j.getBatchNumber() + " is currently in queue of machine " +
 								queryResponse.getCurrentMachine().getLocalName());
 					}
 				}

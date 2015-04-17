@@ -77,7 +77,7 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
 						, BatchToTakeAction);
 				isJobCancelled = true;
-				log.info("cancelled batch");
+				log.info("cancelled batch No. "+comingBatch.getBatchNumber());
 				
 				if(gui != null) {
 					gui.removeFromQueue(comingBatch);

@@ -3,28 +3,33 @@ package mas.util;
 import jade.core.AID;
 import jade.util.leap.Serializable;
 import mas.jobproxy.Batch;
+import mas.util.JobQueryObject.Builder;
 
 public class JobQueryObject implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Batch currentBatch;
 	private AID currentMachine;
-	private boolean isJobOnMachine;
+	private Boolean isJobOnMachine;
 	//must be take from ID.GlobalScheduler.requestType
 	private String type; 
 
 	public static class Builder {
-		Batch currJob;
+		Batch currBatch;
 		AID currMachine;
-		private boolean isUnderProcess;
+		private Boolean isUnderProcess=null;
+		//boolean is not used because it has false as default value
+		//which indicates that batch is not on machine
+		//but when JobQueryObject is initialized, isUnderProcess 
+		//has no meaning unless assigned true/false value
 		String requestType;
 
 		public Builder() {
 
 		}
 
-		public Builder currentJob(Batch j) {
-			currJob  =j;
+		public Builder currentBatch(Batch j) {
+			currBatch  =j;
 			return this;
 		}
 
@@ -33,7 +38,7 @@ public class JobQueryObject implements Serializable {
 			return this;
 		}
 
-		public Builder underProcess(boolean value) {
+		public Builder underProcess(Boolean value) {
 			isUnderProcess=value;
 			return this;
 
@@ -47,10 +52,12 @@ public class JobQueryObject implements Serializable {
 		public JobQueryObject build() {
 			return new JobQueryObject(this);
 		}
+
+
 	}
 
 	private JobQueryObject(Builder builder) {
-		currentBatch = builder.currJob;
+		currentBatch = builder.currBatch;
 		currentMachine = builder.currMachine;
 		isJobOnMachine = builder.isUnderProcess;
 		type = builder.requestType;
@@ -64,7 +71,7 @@ public class JobQueryObject implements Serializable {
 		return currentBatch;
 	}
 
-	public boolean isOnMachine(){
+	public Boolean isOnMachine(){
 		return isJobOnMachine;
 	}
 
