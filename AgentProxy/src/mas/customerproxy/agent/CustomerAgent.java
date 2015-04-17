@@ -6,7 +6,6 @@ import jade.domain.DFService;
 import javax.swing.SwingUtilities;
 
 import mas.customerproxy.goal.CancelOrderGoal;
-import mas.customerproxy.goal.ChangeDueDateGoal;
 import mas.customerproxy.goal.CustomerSendNegotiationJobGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
@@ -44,12 +43,12 @@ public class CustomerAgent extends AbstractCustomerAgent {
 		addGoal(new CancelOrderGoal());
 	}
 
-	public void changeDueDate(Batch j) {
+/*	public void changeDueDate(Batch j) {
 		log.info("Change due date for order : " + j + " adding belief base");
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CHANGE_DUEDATE_JOB, j);
 
 		addGoal(new ChangeDueDateGoal());
-	}
+	}*/
 
 	public void confirmJob(Batch j) {
 		log.info("Adding Confirmed job " + j + " to belief base");

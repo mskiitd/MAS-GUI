@@ -7,13 +7,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mas.customerproxy.goal.CancelOrderGoal;
-import mas.customerproxy.goal.ChangeDueDateGoal;
 import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.dispatchJobGoal;
 import mas.customerproxy.plan.CancelOrderPlan;
 import mas.customerproxy.plan.ChangeDueDate;
-import mas.customerproxy.plan.ChangeDueDatePlan;
 import mas.customerproxy.plan.DispatchJobPlan;
 import mas.customerproxy.plan.HandleRejectedOrder;
 import mas.customerproxy.plan.ReceiveCompletedBatchPlan;
@@ -89,7 +87,7 @@ public class parentBasicCapability extends Capability {
 		plans.add(new SimplePlan(dispatchJobGoal.class,DispatchJobPlan.class));
 		plans.add(new SimplePlan(SendConfirmedOrderGoal.class,SendConfirmedOrderPlan.class));
 		plans.add(new SimplePlan(CancelOrderGoal.class,CancelOrderPlan.class) );
-		plans.add(new SimplePlan(ChangeDueDateGoal.class,ChangeDueDatePlan.class));
+//		plans.add(new SimplePlan(ChangeDueDateGoal.class,ChangeDueDatePlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgJobCompletion),
 				ReceiveCompletedBatchPlan.class ));

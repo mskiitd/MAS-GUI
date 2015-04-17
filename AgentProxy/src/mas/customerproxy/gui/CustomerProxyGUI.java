@@ -367,7 +367,7 @@ public class CustomerProxyGUI extends JFrame{
 
 			} else if (menu == menuItemChangeDueDate) {
 				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
-				cAgent.changeDueDate((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
+//				cAgent.changeDueDate((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
 			} 
 		}
 	}
