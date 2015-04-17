@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import configuration.AgentToStart;
 import configuration.ConfigFrame;
 import configuration.MainContainer;
+import configuration.Utils;
 
 public class AgentStarter {
 
@@ -133,10 +134,12 @@ public class AgentStarter {
 		this.runtime = jade.core.Runtime.instance();
 		if(container == MainContainer.local) {
 			
-			List<String> params = new ArrayList<String>();
-			params.add("-gui");
-			bootProfile = new BootProfileImpl(params.toArray(new String[0]));
+			bootProfile = new ProfileImpl(true);
+			bootProfile.setParameter(Profile.GUI,String.valueOf(true) );
+			bootProfile.setParameter(Profile.LOCAL_HOST, "10.204.153.24");
+			bootProfile.setParameter(Profile.LOCAL_PORT, String.valueOf(1090) );
 			controller = runtime.createMainContainer(bootProfile);
+			log.info("Host IP address of the system is : " + Utils.getMyIp());
 		}else {
 			bootProfile = new ProfileImpl(false);
 			bootProfile.setParameter(Profile.MAIN_HOST, ipAddress);
