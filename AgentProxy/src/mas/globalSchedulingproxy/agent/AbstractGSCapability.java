@@ -55,8 +55,6 @@ public abstract class AbstractGSCapability  extends Capability {
 		Belief<AID> BB_AID = new TransientBelief<AID>(
 				ID.GlobalScheduler.BeliefBaseConst.blackboardAgent);		
 
-		Belief<String> DueDateCalcMethod = new TransientBelief<String>(ID.GlobalScheduler.
-				BeliefBaseConst.DueDateCalcMethod);
 
 		//no of machines = no. of LSA		
 		Belief<Integer> NoOfMachines = new TransientBelief<Integer>(ID.GlobalScheduler.
@@ -78,14 +76,14 @@ public abstract class AbstractGSCapability  extends Capability {
 				ID.GlobalScheduler.BeliefBaseConst.batchCount);
 
 		dBase.setValue(null);
-		DueDateCalcMethod.setValue(ID.GlobalScheduler.OtherConst.LocalDueDate);
+		
 		underNegotiation.setValue(null);
 		NoOfMachines.setValue(0);
 		batchCount.setValue(0);
 		
 		beliefs.add(BB_AID);
 		beliefs.add(NoOfMachines);
-		beliefs.add(DueDateCalcMethod);
+		
 		beliefs.add(query);
 		beliefs.add(underNegotiation);
 		beliefs.add(GSA_gui);

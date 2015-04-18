@@ -68,6 +68,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	/**
 	 * Schedules the sequence of batches based on processing time of current operation
 	 */
+	
 	private void calculateRegretAndSchedule() {
 		int qSize = jobQueue.size();
 
@@ -80,6 +81,9 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 					jobQueue.get(i).getCurrentOperationDueDate() +
 					jobQueue.get(i).getCurrentOperationProcessingTime();
 			
+			
+			//variable name should be batchEarliness maybe??
+			
 			log.info("latesness : "+ batchLateness);
 			log.info("start time " + new Date(jobQueue.get(i).getCurrentOperationStartTime()) );
 			log.info("proc time " + jobQueue.get(i).getCurrentOperationProcessingTime() );
@@ -87,9 +91,15 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 			if(batchLateness < 0)
 				batchLateness = 0;
-
-			jobQueue.get(i).setRegret(batchLateness/jobQueue.get(i).getSlack());
+			if(jobQueue.get(i).getSlack()>0){
+				jobQueue.get(i).setRegret(batchLateness/jobQueue.get(i).getSlack());
+			}
+			else{
+				jobQueue.get(i).setRegret(Double.MAX_VALUE/100.0);
+				// divide by 100 to avoid overflow in totallRegret
+			}
 			totalRegret += jobQueue.get(i).getRegret();
+			log.info("regret for "+jobQueue.get(i).getBatchNumber()+" = "+jobQueue.get(i).getRegret());
 			//			lateness += batchLateness;
 		}
 		log.info("total regret : " + totalRegret);

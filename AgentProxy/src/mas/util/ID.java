@@ -83,6 +83,7 @@ public class ID implements Serializable{
 			public static final String preventiveJobsQueue = "LSA_prevMaintJobs_Queue";
 			public static final String currentMaintJob = "LSA_Current_MaintJobOnMachine";
 			public static final String currentJobOnMachine =  "LSA_CurrentJobOnMachine";
+			public static final String DueDateCalcMethod = "DueDateCalculationMethod";
 		}
 
 		public class ZoneData {
@@ -107,6 +108,11 @@ public class ID implements Serializable{
 			public static final String maintenanceJobForMachine = "LSA_MaintJobForMachine";
 
 			public static final String MaintConfirmationLSA = "LSA_maintCOnfirmation";
+		}
+		
+		public class OtherConst{
+			public static final String LocalDueDate="Local";
+			public static final String GlobalDueDate = "Global";
 		}
 	}
 
@@ -147,7 +153,7 @@ public class ID implements Serializable{
 		public class BeliefBaseConst {
 			public static final String blackboardAgent = "GSA_blackboard-agent";
 			public static final String NoOfMachines = "NoOfMachines";
-			public static final String DueDateCalcMethod = "DueDateCalc";
+//			public static final String DueDateCalcMethod = "DueDateCalc";
 			public static final String Current_Negotiation_Job = "GSA_negotiatin_job";
 			public static final String GSAqueryJob = "GSA_query_job";
 			public static final String GSA_GUI_instance = "GUIinstanceOfGSA";
@@ -155,10 +161,7 @@ public class ID implements Serializable{
 			public static final String batchCount = "GSA_batchCount";
 		}
 		
-		public class OtherConst{
-			public static final String LocalDueDate="Local";
-			public static final String GlobalDueDate = "Global";
-		}
+		
 
 		public class requestType {
 			//enum is most suitable (http://docs.oracle.com/javase/1.5.0/docs/guide/language/enums.html)

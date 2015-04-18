@@ -4,7 +4,10 @@ import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
 import java.util.ArrayList;
+import java.util.Date;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.algorithm.ScheduleSequence;
 import mas.localSchedulingproxy.database.OperationDataBase;
@@ -12,8 +15,10 @@ import mas.localSchedulingproxy.database.OperationItemId;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -39,6 +44,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	private double bidNo;
 	private String replyWith;
 	private OperationDataBase operationdb;
+	private String dueDateMethod=null;
 
 	@Override
 	public EndState getEndState() {
@@ -49,7 +55,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	public void init(PlanInstance pInstance) {
 		log = LogManager.getLogger();
 		bfBase = pInstance.getBeliefBase();
-
+		
 		this.blackboard = (AID) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
@@ -71,6 +77,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		try{
+			
 			jobToBidFor = setBid(jobToBidFor);
 
 			ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.bidForJob)
@@ -191,4 +198,6 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		}
 		return sequence;
 	}
+	
+	
 }	

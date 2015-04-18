@@ -11,7 +11,7 @@ public class jobOperation implements operationInterface,Serializable {
 	private long CompletionTime;
 
 	private String machineOperated;
-	private long dueDate;
+	private long GorLdueDate;//Global or Local dueDatewill be set during global/local due date calculation
 
 	private String jobOperationType;
 	private ArrayList<jobDimension> jDims;
@@ -38,6 +38,14 @@ public class jobOperation implements operationInterface,Serializable {
 
 	public void setCompletionTime(long completionTime) {
 		CompletionTime = completionTime;
+	}
+
+	public long getGorLdueDate() {
+		return GorLdueDate;
+	}
+
+	public void setGorLdueDate(long gorLdueDate) {
+		GorLdueDate = gorLdueDate;
 	}
 
 	@Override

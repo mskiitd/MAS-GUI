@@ -5,6 +5,8 @@ package mas.globalSchedulingproxy.plan;
  * this plan triggers plan of asking waiting plans from Local Scheduling agent
  **/
 
+import java.util.Date;
+
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
@@ -16,8 +18,10 @@ import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -41,7 +45,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 	// The counter of replies from seller agents
 	private int repliesCnt = 0; 
 	private Batch batchOrder;
-	private String dueDateMethod=null;
+//	private String dueDateMethod=null;
 
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
@@ -49,10 +53,10 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		log.info("triggered by " + ((MessageGoal) PI.getGoal()).getMessage().getSender().getLocalName());
 
 		bfBase = PI.getBeliefBase();
-
-		dueDateMethod = (String)bfBase.
-				getBelief(ID.GlobalScheduler.BeliefBaseConst.DueDateCalcMethod).
-				getValue();
+//
+//		dueDateMethod = (String)bfBase.
+//				getBelief(ID.GlobalScheduler.BeliefBaseConst.DueDateCalcMethod).
+//				getValue();
 
 		try {
 			batchOrder = (Batch) ((MessageGoal) PI.getGoal()).getMessage()
@@ -87,8 +91,9 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 			if (MachineCount != 0) {
 				//				log.info("due date: "+order.getDuedate());
 				batchOrder.setStartTimeMillis(System.currentTimeMillis());
+				
 				//				log.info("current op no = "+order.getCurrentOperationNumber());
-				batchOrder = SetDueDates(batchOrder);
+//				batchOrder = SetDueDates(batchOrder);
 				/*				for(int ops=0;ops<order.getNumOperations();ops++){
 					log.info(new Date(order.getCurrentOperationDueDate()));
 					order.IncrementOperationNumber();
@@ -153,7 +158,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		}
 	}
 
-	private Batch SetDueDates(Batch batchForBidWinner) {
+	/*private Batch SetDueDates(Batch batchForBidWinner) {
 
 		long totalProcessingTime = batchForBidWinner.getTotalProcessingTime();
 		long totalAvailableTime = batchForBidWinner.getDueDateByCustomer().getTime() -
@@ -165,18 +170,22 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 
 		//		log.info("due date " + new Date(jobForBidWinner.getJobDuedatebyCust().getTime())+
 		//				" start time " + new Date(jobForBidWinner.getStartTimeByCust().getTime()));
-		log.info("batch : " + batchForBidWinner.getJobsInBatch()   );
+//		log.info("batch : " + batchForBidWinner.getJobsInBatch()   );
 
 		if(dueDateMethod.equals(ID.GlobalScheduler.OtherConst.LocalDueDate)) {
 
 			long slack_perOperation = (long)((double)slack)/(NoOfOps);
 
 			for(int i = 0 ; i < NoOfOps; i++) {
-				log.info(""+batchForBidWinner.getCurrentOperationNumber());
+				
 				batchForBidWinner.setCurrentOperationStartTime(currTime);
 				currTime += batchForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
 				batchForBidWinner.setCurrentOperationCompletionTime(currTime);
+				log.info("currTime="+new Date(currTime)+"set time = "+new
+						Date(batchForBidWinner.getCurrentOperationCompletionTime()));
 				batchForBidWinner.IncrementOperationNumber();
+				
+				
 			}
 		}
 		else if(dueDateMethod.equals(ID.GlobalScheduler.OtherConst.GlobalDueDate)) {
@@ -193,7 +202,7 @@ public class RootTakeOrderAndRaiseBid extends Behaviour implements PlanBody {
 		}
 		batchForBidWinner.resetCurrentOperationNumber();
 		return batchForBidWinner;
-	}
+	}*/
 
 	private ACLMessage ChooseBid(ACLMessage[] LSA_bids) {
 

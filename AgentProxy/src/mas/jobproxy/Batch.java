@@ -384,7 +384,12 @@ public class Batch implements Serializable {
 
 	public long getCurrentOperationDueDate() {
 		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
-				get(currentOperationIndex).getCompletionTime();
+				get(currentOperationIndex).getGorLdueDate();
+	}
+	
+	public void setCurrentOperationDueDate(long dueDate) {
+		this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
+				get(currentOperationIndex).setGorLdueDate(dueDate);
 	}
 	
 	public long getTotalProcessingTime() {

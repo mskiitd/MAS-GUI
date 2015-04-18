@@ -119,6 +119,10 @@ public class AbstractbasicCapability extends Capability {
 		Belief<PMaintenance> currentMaintJob = new TransientBelief<PMaintenance>(
 				ID.LocalScheduler.BeliefBaseConst.currentMaintJob);
 
+
+		Belief<String> DueDateCalcMethod = new TransientBelief<String>(ID.LocalScheduler.
+				BeliefBaseConst.DueDateCalcMethod);
+		
 		currentJob.setValue(null);
 		gui.setValue(null);
 		dtrack.setValue(new StatsTracker());
@@ -129,6 +133,7 @@ public class AbstractbasicCapability extends Capability {
 		currentMaintJob.setValue(null);
 		jobSet.setValue(new ArrayList<Batch>());
 		operationDB.setValue(new OperationDataBase());
+		DueDateCalcMethod.setValue(ID.LocalScheduler.OtherConst.LocalDueDate);
 
 		double threshVal = 0;
 		regretThreshold.setValue(threshVal);
@@ -150,6 +155,7 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(maintJobs);
 		beliefs.add(currentMaintJob);
 		beliefs.add(currentJob);
+		beliefs.add(DueDateCalcMethod);
 
 		return beliefs;
 	}
