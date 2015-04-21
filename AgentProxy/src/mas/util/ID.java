@@ -2,6 +2,10 @@ package mas.util;
 
 import jade.util.leap.Serializable;
 
+/**
+ * ID class for all ID-constants used while defining beliefs or messageIds or zonedata 
+ */
+
 public class ID implements Serializable{
 
 	private static final long serialVersionUID = 1L;

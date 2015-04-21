@@ -16,7 +16,7 @@ public class ValidStringVerifier extends InputVerifier {
 
 	}
 	/**
-	 * Check the contents to see if it is a valid email address
+	 * Check the contents
 	 * @param jc the component to be checked
 	 * @return true if valid, false if not
 	 */

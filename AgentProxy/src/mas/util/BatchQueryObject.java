@@ -3,21 +3,25 @@ package mas.util;
 import jade.core.AID;
 import jade.util.leap.Serializable;
 import mas.jobproxy.Batch;
-import mas.util.JobQueryObject.Builder;
 
-public class JobQueryObject implements Serializable {
+/**
+ * Query object for a batch
+ */
+
+public class BatchQueryObject implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Batch currentBatch;
 	private AID currentMachine;
 	private Boolean isJobOnMachine;
+	
 	//must be take from ID.GlobalScheduler.requestType
 	private String type; 
 
 	public static class Builder {
 		Batch currBatch;
 		AID currMachine;
-		private Boolean isUnderProcess=null;
+		private Boolean isUnderProcess = null;
 		//boolean is not used because it has false as default value
 		//which indicates that batch is not on machine
 		//but when JobQueryObject is initialized, isUnderProcess 
@@ -41,7 +45,6 @@ public class JobQueryObject implements Serializable {
 		public Builder underProcess(Boolean value) {
 			isUnderProcess=value;
 			return this;
-
 		}
 
 		public Builder requestType(String reqType){
@@ -49,32 +52,42 @@ public class JobQueryObject implements Serializable {
 			return this;
 		}
 
-		public JobQueryObject build() {
-			return new JobQueryObject(this);
+		public BatchQueryObject build() {
+			return new BatchQueryObject(this);
 		}
-
-
 	}
 
-	private JobQueryObject(Builder builder) {
+	private BatchQueryObject(Builder builder) {
 		currentBatch = builder.currBatch;
 		currentMachine = builder.currMachine;
 		isJobOnMachine = builder.isUnderProcess;
 		type = builder.requestType;
 	}
 
+	/**
+	 * @return machine where this batch is getting processed or is in the waiting queue
+	 */
 	public AID getCurrentMachine() {
 		return currentMachine;
 	}
 
+	/**
+	 * @return the batch for which this query is created
+	 */
 	public Batch getCurrentBatch() {
 		return currentBatch;
 	}
 
+	/**
+	 * @return true if the queried batch is loaded on the machine
+	 */
 	public Boolean isOnMachine(){
 		return isJobOnMachine;
 	}
 
+	/**
+	 * @return type of the query made as in cancel/get current status/ change due date etc.
+	 */
 	public String getType() {
 		return type;
 	}

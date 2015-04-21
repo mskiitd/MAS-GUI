@@ -7,21 +7,12 @@ import java.awt.Toolkit;
 import javax.swing.*;
 import javax.swing.text.*;
 
-/**
- *
- * @author Mark Pendergast
- * Copyright Mark Pendergast
- */
-
 public class IntegerVerifier extends InputVerifier {
 	private int minValue = 1;
 	private int maxValue = Integer.MAX_VALUE;
 	private static final Color INVALID_COLOR = Color.red;
 	private static final Color VALID_COLOR = Color.black;
 
-	/**
-	 * Creates an Verifier object that makes sure the text can be parsed into an interger between MIN_VALUE and MAX_VALUE
-	 */      
 	public IntegerVerifier() {          
 	}
 	/**
@@ -37,16 +28,9 @@ public class IntegerVerifier extends InputVerifier {
 
 		minValue = min;
 		maxValue = max;
-
 	}
 
-	/**
-	 * verifies the value in the component can be parsed to an integer between minValue and maxValue
-	 * @param jc a JTextComponent
-	 * @return returns false if the value is not valid
-	 */  
-	public boolean verify(javax.swing.JComponent jc)
-	{
+	public boolean verify(JComponent jc) {
 		try{
 			String text = ((JTextComponent)jc).getText();
 			int val = Integer.parseInt(text);

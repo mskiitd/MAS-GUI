@@ -13,7 +13,7 @@ import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
-import mas.util.JobQueryObject;
+import mas.util.BatchQueryObject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,7 +84,7 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 		}
 	}
 
-	public static void showQueryResponse(JobQueryObject response) {
+	public static void showQueryResponse(BatchQueryObject response) {
 		
 	}
 

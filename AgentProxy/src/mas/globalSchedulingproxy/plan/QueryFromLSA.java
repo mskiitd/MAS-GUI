@@ -13,7 +13,7 @@ import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.jobproxy.Batch;
 import mas.util.AgentUtil;
 import mas.util.ID;
-import mas.util.JobQueryObject;
+import mas.util.BatchQueryObject;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
 import org.apache.logging.log4j.LogManager;
@@ -71,7 +71,7 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 
 			if (MachineCount != 0) {
 
-				JobQueryObject queryForm = new JobQueryObject.Builder().
+				BatchQueryObject queryForm = new BatchQueryObject.Builder().
 						currentBatch(this.queryJob).requestType(requestType).build();
 
 				LSAqueryResponse=new ACLMessage[MachineCount];
@@ -106,7 +106,7 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 			break;
 
 		case 2:
-			JobQueryObject response = getQueryResponse(LSAqueryResponse);
+			BatchQueryObject response = getQueryResponse(LSAqueryResponse);
 			log.info(response);
 			
 			if(response!=null){
@@ -144,13 +144,13 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 		}
 	}
 
-	private JobQueryObject getQueryResponse(ACLMessage[] LSAqueryResponse2) {
+	private BatchQueryObject getQueryResponse(ACLMessage[] LSAqueryResponse2) {
 
-		JobQueryObject response = null;
+		BatchQueryObject response = null;
 
 		for(int i = 0; i < LSAqueryResponse2.length; i++) {
 			try {
-				JobQueryObject queryResponse = (JobQueryObject) LSAqueryResponse2[i].getContentObject();
+				BatchQueryObject queryResponse = (BatchQueryObject) LSAqueryResponse2[i].getContentObject();
 				Batch j = (queryResponse).getCurrentBatch();
 				if(j != null) {
 					response = queryResponse;

@@ -22,6 +22,9 @@ import org.apache.logging.log4j.Logger;
 import test.AgentStarter;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * For input about IP address of MAS remote container
+ */
 public class ShowIPFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;

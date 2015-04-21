@@ -8,6 +8,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Utility class for configuration
+ */
+
 public class Utils {
 
 	public static String getLocalIp() {

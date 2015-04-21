@@ -10,7 +10,7 @@ import mas.jobproxy.Batch;
 import mas.machineproxy.gui.MachineGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
-import mas.util.JobQueryObject;
+import mas.util.BatchQueryObject;
 import mas.util.ZoneDataUpdate;
 import bdi4jade.belief.Belief;
 import bdi4jade.core.BeliefBase;
@@ -27,7 +27,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 	private AID machineAID=null;
 	private AID blackboard_AID;
 	private Logger log;
-	private JobQueryObject requestJobQuery;
+	private BatchQueryObject requestJobQuery;
 	private MachineGUI gui;
 
 	@Override
@@ -39,9 +39,9 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 	public void init(PlanInstance PI) {
 		log = LogManager.getLogger();
 		try {
-			requestJobQuery= ( (JobQueryObject)((MessageGoal)PI.getGoal()).
+			requestJobQuery= ( (BatchQueryObject)((MessageGoal)PI.getGoal()).
 					getMessage().getContentObject());
-			batchNo = ( (JobQueryObject)((MessageGoal)PI.getGoal()).getMessage().getContentObject()).
+			batchNo = ( (BatchQueryObject)((MessageGoal)PI.getGoal()).getMessage().getContentObject()).
 					getCurrentBatch().getBatchNumber();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void action() {
-		JobQueryObject response = new JobQueryObject.Builder().currentBatch(null).underProcess(null)
+		BatchQueryObject response = new BatchQueryObject.Builder().currentBatch(null).underProcess(null)
 				.currentMachine(null).build();
 
 		ArrayList<Batch> jobQ = (ArrayList<Batch>)beleifBase.
@@ -81,7 +81,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 		for(int i = 0 ; i < jobQ.size(); i++) {
 			if(batchNo == jobQ.get(i).getBatchNumber() ){
-				response = new JobQueryObject.Builder().currentBatch(jobQ.get(i))
+				response = new BatchQueryObject.Builder().currentBatch(jobQ.get(i))
 						.requestType(requestJobQuery.getType())//notes down for what req type this reply was
 						.underProcess(false)
 						.currentMachine(machineAID).build();
@@ -116,7 +116,7 @@ public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 			//only new due date is alloted. So, wheen new due date is generated, u should 'assume'
 			//that current operation is completed and then only send that copy to customer for due date change
 			
-			response=new JobQueryObject.Builder().currentBatch(currentBatch).currentMachine(machineAID)
+			response=new BatchQueryObject.Builder().currentBatch(currentBatch).currentMachine(machineAID)
 					.requestType(requestJobQuery.getType())
 					.underProcess(true)
 					.build();

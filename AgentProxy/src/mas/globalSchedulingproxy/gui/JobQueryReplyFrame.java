@@ -11,7 +11,7 @@ import javax.swing.JScrollPane;
 import com.alee.extended.label.WebHotkeyLabel;
 
 import mas.jobproxy.Batch;
-import mas.util.JobQueryObject;
+import mas.util.BatchQueryObject;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
@@ -47,7 +47,7 @@ public class JobQueryReplyFrame extends JFrame{
 	private JLabel lblCurrentMachineHeading;
 	private WebHotkeyLabel lblCurrentMachine;
 	
-	public JobQueryReplyFrame( JobQueryObject response) {
+	public JobQueryReplyFrame( BatchQueryObject response) {
 
 		this.scroller = new JScrollPane();
 		this.mainInfoPanel = new JPanel(new MigLayout("","","10"));

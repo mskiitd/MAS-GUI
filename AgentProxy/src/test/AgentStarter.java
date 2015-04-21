@@ -1,6 +1,5 @@
 package test;
 
-import jade.BootProfileImpl;
 import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -8,13 +7,10 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.PlatformController;
 import jade.wrapper.StaleProxyException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.SwingUtilities;
-
 import mas.blackboard.blackboard;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
@@ -23,15 +19,16 @@ import mas.machineproxy.Simulator;
 import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.util.ID;
 import mas.util.TableUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import configuration.AgentToStart;
 import configuration.ConfigFrame;
 import configuration.MainContainer;
 import configuration.Utils;
 
+/**
+ * Main class for starting agents 
+ */
 public class AgentStarter {
 
 	private static Map<String, Agent> agents;

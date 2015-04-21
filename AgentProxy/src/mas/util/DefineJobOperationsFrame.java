@@ -16,6 +16,11 @@ import mas.jobproxy.jobOperation;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
+/**
+ * @author Anand Prajapati
+ * to define operation within a job
+ *
+ */
 @SuppressWarnings("serial")
 public class DefineJobOperationsFrame extends JFrame{
 	private job passedJob;

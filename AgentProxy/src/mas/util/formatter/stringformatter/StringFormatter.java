@@ -9,7 +9,6 @@ import javax.swing.text.DefaultFormatter;
 
 /**
  * This class provides basic formatter services for operation id of job
- * 
  * @author Anand Prajapati
  */
 
@@ -17,16 +16,12 @@ public class StringFormatter extends DefaultFormatter implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	/** pattern used for verifying email addresses */
 	private static final String IDPATTERN = "[A-Za-z0-9_#+-]*+";
 	
 	/** precompiled version of the pattern */
 	private static Pattern pattern = Pattern.compile(IDPATTERN,Pattern.CASE_INSENSITIVE);
-	/**
-	 *  Default constructor
-	 */
+	
 	public StringFormatter() {
-
 	}
 	/**
 	 * Converts the value object to a string
@@ -36,6 +31,7 @@ public class StringFormatter extends DefaultFormatter implements Serializable {
 	public String valueToString(Object value ) {
 		return value.toString();
 	}
+	
 	/**
 	 * Converts the String to an object, verifying its contents. Throws a ParseException
 	 * if the string is not in valid id format.

@@ -24,7 +24,7 @@ import javax.swing.table.AbstractTableModel;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
-import mas.util.JobQueryObject;
+import mas.util.BatchQueryObject;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
 
@@ -120,7 +120,7 @@ public class GSAproxyGUI extends JFrame{
 	/**
 	 * shows the result of the query for the job from table
 	 */
-	public static void showQueryResult(JobQueryObject response) {
+	public static void showQueryResult(BatchQueryObject response) {
 		JobQueryReplyFrame reply = new JobQueryReplyFrame(response);
 	}
 
