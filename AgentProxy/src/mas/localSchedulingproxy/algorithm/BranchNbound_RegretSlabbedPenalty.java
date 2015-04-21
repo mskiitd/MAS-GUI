@@ -29,20 +29,22 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 	private Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
 	public Node rootNode;
 	public Batch fixedBatch;
+	private ArrayList<Batch> copiedList;
 	private Logger log;
 
 	public BranchNbound_RegretSlabbedPenalty(ArrayList<Batch> s) {
-		fixedBatch = s.get(0);
-		s.remove(0);
+		this.copiedList = new ArrayList<Batch>(s);
+		fixedBatch = copiedList.get(0);
+		copiedList.remove(0);
 		this.log = LogManager.getLogger();
 		/**
 		 * Store the position of all the jobs in the initial sequence so that 
 		 * we can compare regret factor of jobs after sequencing
 		 */
-		for(int i= 0; i < s.size() ;i++) {
-			s.get(i).setPosition(i);
+		for(int i= 0; i < copiedList.size() ;i++) {
+			copiedList.get(i).setPosition(i);
 		}
-		this.rootNode = new Node(s);
+		this.rootNode = new Node(copiedList);
 	}
 
 	public class Node {
@@ -52,10 +54,10 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 		int depth;					// depth of node in tree
 		double penalty;				// penalty of node
 
-		public Node(ArrayList<Batch> s) {
+		public Node(ArrayList<Batch> seq) {
 			depth = 0;		
 			penalty = 0;
-			this.sequence = new ArrayList<Batch>(s);
+			this.sequence = new ArrayList<Batch>(seq);
 			int n = sequence.size();
 			// i'th child will be equal to that of its parent and one job kept at last
 			child = new Node [n];		
@@ -176,6 +178,7 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 			RecursiveSolver(tempRootNode);
 		}
 		this.best.add(0,fixedBatch);
+		log.info("Penalty is : " + this.getLowBound());
 		return this.best;
 	}
 

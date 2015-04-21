@@ -34,7 +34,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 	public JobSchedulingTickerBehavior(Agent myAgent, long schedulingPeriod,
 			BeliefBase bfBase) {
-		
+
 		super(myAgent, schedulingPeriod);
 		this.bfBase = bfBase;
 		gui = (MachineGUI) bfBase.
@@ -68,7 +68,8 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	/**
 	 * Schedules the sequence of batches based on processing time of current operation
 	 */
-	
+
+	@SuppressWarnings("unchecked")
 	private void calculateRegretAndSchedule() {
 		int qSize = jobQueue.size();
 
@@ -80,18 +81,18 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 			batchLateness =	jobQueue.get(i).getCurrentOperationStartTime()-
 					jobQueue.get(i).getCurrentOperationDueDate() +
 					jobQueue.get(i).getCurrentOperationProcessingTime();
-			
+
 			// convert lateness into seconds
 			batchLateness = batchLateness/1000;
-			
-			log.info("latesness : "+ batchLateness + " ms");
+
+			log.info("latesness : "+ batchLateness + " s, " + "No : " + jobQueue.get(i).getBatchNumber());
 			log.info("start time " + new Date(jobQueue.get(i).getCurrentOperationStartTime()) );
-			log.info("proc time " + jobQueue.get(i).getCurrentOperationProcessingTime() );
-			log.info("finish time " + new Date(jobQueue.get(i).getCurrentOperationDueDate()) );
+			log.info("proc time " + jobQueue.get(i).getCurrentOperationProcessingTime()/1000 + " sec" );
+			log.info("Due date " + new Date(jobQueue.get(i).getCurrentOperationDueDate()) );
 
 			if(batchLateness < 0)
 				batchLateness = 0;
-			
+
 			if(jobQueue.get(i).getSlack() > 0) {
 				jobQueue.get(i).setRegret(batchLateness/jobQueue.get(i).getSlack());
 			}
@@ -111,12 +112,34 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 				gui.showNotification("Scheduling", "Scheduling of batches starting", MessageType.INFO);
 			}
 
-			reset(100 * LocalSchedulingAgent.schedulingPeriod);
+			reset(10 * LocalSchedulingAgent.schedulingPeriod);
 			log.info("old queue : " + jobQueue);
 			ScheduleSequence scheduler = new ScheduleSequence(jobQueue);
 			ArrayList<Batch> newQ = scheduler.getSolution();
 
-			log.info("updating belief base with the new schedule");
+			ArrayList<Batch> currQ = (ArrayList<Batch>) bfBase.
+					getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
+					getValue();
+
+			log.info("current Q " + currQ);
+			log.info("new Q "  + newQ);
+			
+			// merge the current queue with the queue obtained from rescheduling
+			for(int i = 0; i < currQ.size(); i++ ) {
+				// if batch from current Q isn't in the new Q that means that batch would have arrived while rescheduling
+				if(! newQ.contains(currQ.get(i))) {
+					newQ.add(currQ.get(i));
+				}
+			}
+			
+			// if an element of newQ isn't there in the current Queue that means that that
+			// batch was processed while rescheduling was going on
+			for(int i = 0 ; i < newQ.size(); i++) {
+				if(! currQ.contains(newQ.get(i))) {
+					newQ.remove(i);
+				}
+			}
+			
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue,
 					newQ);
 

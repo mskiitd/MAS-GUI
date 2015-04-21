@@ -461,4 +461,10 @@ public class Batch implements Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Batch [batchNo=" + batchNo + "]";
+	}
+	
 }

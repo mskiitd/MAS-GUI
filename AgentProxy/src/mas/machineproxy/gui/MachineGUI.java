@@ -522,6 +522,8 @@ public class MachineGUI extends JFrame {
 	 */
 	public void updateQueue(ArrayList<Batch> newQueue) {
 		Batch first = jobQ.get(0);
+		
+//		log.info("first job is " + first);
 		if(!newQueue.contains(first)) {
 			jobQ.clear();
 			jobQ.add(first);
