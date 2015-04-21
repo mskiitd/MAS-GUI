@@ -233,6 +233,11 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 				log.info("curr op due date = "+new
 						Date(batchForBidWinner.getCurrentOperationDueDate()));
 //				batchForBidWinner.IncrementOperationNumber();
+				
+				if(slack_perOperation<0){
+					slack_perOperation=0;
+				}
+
 				batchForBidWinner.setSlack(slack_perOperation);
 				
 				
