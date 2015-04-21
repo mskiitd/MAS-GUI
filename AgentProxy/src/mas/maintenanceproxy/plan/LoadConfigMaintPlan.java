@@ -23,7 +23,6 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 import jade.core.behaviours.OneShotBehaviour;
-import jdk.nashorn.internal.runtime.regexp.joni.Warnings;
 
 public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody{
 

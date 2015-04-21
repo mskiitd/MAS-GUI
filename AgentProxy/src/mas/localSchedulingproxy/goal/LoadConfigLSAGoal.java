@@ -2,7 +2,7 @@ package mas.localSchedulingproxy.goal;
 
 import bdi4jade.goal.Goal;
 
-public class UpdateOperationDatabaseGoal implements Goal{
+public class LoadConfigLSAGoal implements Goal{
 
 	private static final long serialVersionUID = 1L;
 

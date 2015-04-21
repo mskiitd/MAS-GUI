@@ -84,6 +84,7 @@ public class ID implements Serializable{
 			public static final String currentMaintJob = "LSA_Current_MaintJobOnMachine";
 			public static final String currentJobOnMachine =  "LSA_CurrentJobOnMachine";
 			public static final String DueDateCalcMethod = "DueDateCalculationMethod";
+			public static final String schedulingInterval = "LSA_schedulingInterval";
 		}
 
 		public class ZoneData {

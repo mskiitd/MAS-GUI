@@ -29,7 +29,7 @@ public class ShowIPFrame extends JFrame {
 	private JTextArea ipJtext,portJText;
 	private Logger log=LogManager.getLogger();
 	private FileOutputStream outputStream;
-	private Properties prop = new Properties();;
+	private Properties prop = new Properties();
 	
 	public ShowIPFrame(AgentToStart a) {
 		
