@@ -63,6 +63,10 @@ public class job implements Serializable {
 		operations.addAll(builder.jOperations);
 	}
 
+	/**
+	 * Copy constructor
+	 * @param other
+	 */
 	public job(job other) {
 		this.jobID = other.jobID;
 		this.jobNo = other.jobNo;
@@ -110,14 +114,24 @@ public class job implements Serializable {
 		}
 	}
 
+	/**
+	 * @return Starting time (in milliseconds UCT) for the current operation of this job
+	 */
 	public long getCurrentOperationStartTime() {
 		return this.operations.get(currentOperationIndex).getStartTime();
 	}
 
+	/**
+	 * @return List of dimensions for the current operation of this job
+	 */
 	public ArrayList<jobDimension> getCurrentOperationDimensions() {
 		return this.operations.get(this.currentOperationIndex).getjDims();
 	}
 
+	/**
+	 * Sets list of dimensions for the current operation of this job
+	 * @param jDim
+	 */
 	public void setCurrentOperationDimension(ArrayList<jobDimension> jDim) {
 		this.operations.get(currentOperationIndex).setjDims(jDim);
 	}
@@ -133,28 +147,47 @@ public class job implements Serializable {
 		}
 	}
 
+	/**
+	 * @return Completion time for the current operation of this job
+	 */
 	public long getCurrentOperationCompletionTime() {
 		return this.operations.get(currentOperationIndex).getCompletionTime();
 	}
 
+	/**
+	 * @return List of operations to be done on this job 
+	 */
 	public ArrayList<jobOperation> getOperations() {
 		return operations;
 	}
 
+	/**
+	 * @return Current operation to be done on this job
+	 */
 	public jobOperation getCurrentOperation() {
 		if(this.currentOperationIndex < operations.size())
 			return operations.get(this.currentOperationIndex);
 		return null;
 	}
 
+	/**
+	 * @return Index of the current operation to be done on this job
+	 */
 	public int getCurrentOperationNumber() {
 		return currentOperationIndex;
 	}
 
+	/**
+	 * Sets current operation number for this job
+	 * @param currentOperationNumber
+	 */
 	private void setCurrentOperationNumber(int currentOperationNumber) {
 		this.currentOperationIndex = currentOperationNumber;
 	}
 
+	/**
+	 * @return processing time for current operation of this job
+	 */
 	public long getCurrentOperationProcessingTime() {
 		return operations.get(this.currentOperationIndex).getProcessingTime();
 	}
@@ -176,6 +209,9 @@ public class job implements Serializable {
 		operations.get(currentOperationIndex).setProcessingTime(processingTime);
 	}
 
+	/**
+	 * Increment operation number by <code> 1 </code> for this job
+	 */
 	public void IncrementOperationNumber() {
 		this.currentOperationIndex++ ;
 		if(this.currentOperationIndex > this.operations.size()-1){
@@ -191,6 +227,9 @@ public class job implements Serializable {
 		this.setCurrentOperationNumber(0);
 	}
 
+	/**
+	 * @return true if this job is complete
+	 */
 	public boolean isComplete() {
 		return this.IsComplete;
 	}
@@ -207,18 +246,32 @@ public class job implements Serializable {
 		return total;
 	}
 
+	/**
+	 * Sets list of operations for this job
+	 * @param operations
+	 */
 	public void setOperations(ArrayList<jobOperation> operations) {
 		this.operations = operations;
 	}
 
+	/**
+	 * @return ID of this job
+	 */
 	public String getJobID(){
 		return this.jobID;
 	}
 
+	/**
+	 * @return Job number 
+	 */
 	public int getJobNo() {
 		return jobNo;
 	}
 
+	/**
+	 * Sets job Number
+	 * @param jobNo
+	 */
 	public void setJobNo(int jobNo) {
 		this.jobNo = jobNo;
 	}
@@ -292,5 +345,11 @@ public class job implements Serializable {
 			this.jobDuedateByCustomer = new Date(duedate);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "job [jobNo=" + jobNo + "]";
+	}
+	
 }
 

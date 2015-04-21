@@ -209,7 +209,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	
 	private Batch SetDueDates(Batch batchForBidWinner) {
 
-		long totalProcessingTime = batchForBidWinner.getTotalProcessingTime();
+		long totalProcessingTime = batchForBidWinner.getTotalBatchProcessingTime();
 		long totalAvailableTime = batchForBidWinner.getDueDateByCustomer().getTime() -
 				batchForBidWinner.getStartTimeMillis();
 

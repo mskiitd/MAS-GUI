@@ -76,11 +76,11 @@ public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody{
 
 			switch(rowCount) {
 			case 0:
-				maintPeriod = (long)cell.getNumericCellValue()*timeConversion;
+				maintPeriod = (long)cell.getNumericCellValue() * timeConversion;
 				bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.maintenancePeriod, maintPeriod);
 				break;
 			case 1:
-				maintWarningPeriod = (long)cell.getNumericCellValue()*timeConversion;
+				maintWarningPeriod = (long)cell.getNumericCellValue() * timeConversion;
 				bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.maintWarningPeriod, maintWarningPeriod);
 				break;
 			}

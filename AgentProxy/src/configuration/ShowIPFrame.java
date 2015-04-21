@@ -56,7 +56,6 @@ public class ShowIPFrame extends JFrame {
 						try {
 							outputStream= new FileOutputStream("resources/mas.properties");
 						} catch (FileNotFoundException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						
@@ -67,13 +66,11 @@ public class ShowIPFrame extends JFrame {
 						try {
 							prop.store(outputStream, "Comment");
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						try {
 							outputStream.close();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						

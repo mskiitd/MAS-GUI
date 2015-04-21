@@ -120,6 +120,7 @@ public class CustomJobQueue extends JPanel {
 		// draw remaining components
 		graphics.translate(padding, (i+1)*padding);
 		graphics.setColor(boxColor);
+		
 		for ( int j = 0; j < remainderComps; j++ ) {
 
 			if(j == 0 && numLines == 0 ) {
