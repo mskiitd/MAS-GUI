@@ -2,8 +2,10 @@ package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import mas.jobproxy.Batch;
 
 public class BranchNboundSimple implements ScheduleSequenceIFace {
@@ -149,7 +151,7 @@ public class BranchNboundSimple implements ScheduleSequenceIFace {
 	 * in the final sequence of jobs.
 	 * Solves and returns the optimal sequence.
 	 */
-
+	@Override
 	public ArrayList<Batch> solve() {
 		if(this.rootNode.sequence.size() == 0) {
 			this.best.add(fixedBatch);

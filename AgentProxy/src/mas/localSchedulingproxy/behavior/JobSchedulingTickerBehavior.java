@@ -48,17 +48,13 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	@Override
 	protected void onTick() {
 
-		if(jobQueue == null) {
-			jobQueue = (ArrayList<Batch>) bfBase.
-					getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
-					getValue();
-		}
+		jobQueue = (ArrayList<Batch>) bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
+				getValue();
 
-		if(regretThreshold == -1) {
-			regretThreshold = (double) bfBase.
-					getBelief(ID.LocalScheduler.BeliefBaseConst.regretThreshold).
-					getValue();
-		}
+		regretThreshold = (double) bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.regretThreshold).
+				getValue();
 
 		if(jobQueue != null) {
 			calculateRegretAndSchedule();
@@ -123,7 +119,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 			log.info("current Q " + currQ);
 			log.info("new Q "  + newQ);
-			
+
 			// merge the current queue with the queue obtained from rescheduling
 			for(int i = 0; i < currQ.size(); i++ ) {
 				// if batch from current Q isn't in the new Q that means that batch would have arrived while rescheduling
@@ -131,7 +127,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 					newQ.add(currQ.get(i));
 				}
 			}
-			
+
 			// if an element of newQ isn't there in the current Queue that means that that
 			// batch was processed while rescheduling was going on
 			for(int i = 0 ; i < newQ.size(); i++) {
@@ -139,7 +135,7 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 					newQ.remove(i);
 				}
 			}
-			
+
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue,
 					newQ);
 

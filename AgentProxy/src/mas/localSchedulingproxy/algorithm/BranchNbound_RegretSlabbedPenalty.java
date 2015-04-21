@@ -33,10 +33,16 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 	private Logger log;
 
 	public BranchNbound_RegretSlabbedPenalty(ArrayList<Batch> s) {
+		this.log = LogManager.getLogger();
+
 		this.copiedList = new ArrayList<Batch>(s);
 		fixedBatch = copiedList.get(0);
 		copiedList.remove(0);
-		this.log = LogManager.getLogger();
+		
+		log.info("\n\n----------------------------------Scheduling beginning----------------------------\n\n");
+		log.info("Queue is  : " + s );
+		log.info("Fixed Batch : " + fixedBatch);
+
 		/**
 		 * Store the position of all the jobs in the initial sequence so that 
 		 * we can compare regret factor of jobs after sequencing
@@ -157,7 +163,7 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 	 * in the final sequence of jobs.
 	 * Solves and returns the optimal sequence.
 	 */
-
+	@Override
 	public ArrayList<Batch> solve() {
 		if(this.rootNode.sequence.size() == 0) {
 			this.best.add(fixedBatch);
@@ -173,12 +179,13 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 		for ( int i = 0; i < end ; i++) {
 			Node tempRootNode = new Node(rootNode.sequence);
 			Collections.swap(tempRootNode.sequence, i, tempRootNode.sequence.size() - 1);
-//			log.info(tempRootNode.sequence);
+			//			log.info(tempRootNode.sequence);
 			tempRootNode.updatePenaltyValue();
 			RecursiveSolver(tempRootNode);
 		}
 		this.best.add(0,fixedBatch);
-		log.info("Penalty is : " + this.getLowBound());
+		log.info("-----------------------------Scheduling finished-------------------------------------");
+		log.info("-----------------lowest Penalty is : " + this.getLowBound() + "---------------------------");
 		return this.best;
 	}
 
@@ -198,8 +205,8 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 					best.add(parent.sequence.get(parent.sequence.size() -1 ));
 					parent = parent.getParent();
 				}
-//				log.info("last : " + node.sequence);
-//				log.info("best :  " + best);
+				//				log.info("last : " + node.sequence);
+				//				log.info("best :  " + best);
 				setLowBound(val);
 			}
 			return ;
@@ -214,7 +221,7 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 		int end = node.sequence.size() - 1;
 		for ( int i = 0; i < end ; i++) {
 			Node child = node.getChildNode(i);
-//			log.info(" child : " + child.sequence + " parent "+ child.getParent().sequence.get(child.getParent().sequence.size()-1));
+			//			log.info(" child : " + child.sequence + " parent "+ child.getParent().sequence.get(child.getParent().sequence.size()-1));
 
 			child.updatePenaltyValue();
 			RecursiveSolver(child);
