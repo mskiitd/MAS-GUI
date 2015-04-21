@@ -81,25 +81,27 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 					jobQueue.get(i).getCurrentOperationDueDate() +
 					jobQueue.get(i).getCurrentOperationProcessingTime();
 			
+			// convert lateness into seconds
+			batchLateness = batchLateness/1000;
 			
-			//variable name should be batchEarliness maybe??
-			
-			log.info("latesness : "+ batchLateness);
+			log.info("latesness : "+ batchLateness + " ms");
 			log.info("start time " + new Date(jobQueue.get(i).getCurrentOperationStartTime()) );
 			log.info("proc time " + jobQueue.get(i).getCurrentOperationProcessingTime() );
 			log.info("finish time " + new Date(jobQueue.get(i).getCurrentOperationDueDate()) );
 
 			if(batchLateness < 0)
 				batchLateness = 0;
-			if(jobQueue.get(i).getSlack()>0){
+			
+			if(jobQueue.get(i).getSlack() > 0) {
 				jobQueue.get(i).setRegret(batchLateness/jobQueue.get(i).getSlack());
 			}
-			else{
+			else {
+				//set to some high value as the job doesn't have any slack at all 
 				jobQueue.get(i).setRegret(Double.MAX_VALUE/100.0);
 				// divide by 100 to avoid overflow in totallRegret
 			}
 			totalRegret += jobQueue.get(i).getRegret();
-			log.info("regret for "+jobQueue.get(i).getBatchNumber()+" = "+jobQueue.get(i).getRegret());
+			log.info("regret for batch no "+jobQueue.get(i).getBatchNumber()+" = "+jobQueue.get(i).getRegret());
 			//			lateness += batchLateness;
 		}
 		log.info("total regret : " + totalRegret);
