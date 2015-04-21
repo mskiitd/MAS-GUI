@@ -72,6 +72,10 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		this.operationdb = (OperationDataBase) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.operationDatabase).
 				getValue();
+		
+		dueDateMethod = (String)bfBase.
+				getBelief(ID.LocalScheduler.BeliefBaseConst.DueDateCalcMethod).
+				getValue();
 	}
 
 	@Override
@@ -100,6 +104,8 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 		log.info("bidding for batch : " + batchToBidFor.getBatchCount() + " operation : " +
 				batchToBidFor.getFirstJob().getCurrentOperation());
+		
+		batchToBidFor=SetDueDates(batchToBidFor);
 
 		OperationItemId id = new OperationItemId(batchToBidFor.getCurrentOperationType(), batchToBidFor.getCustomerId());
 
@@ -171,12 +177,12 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			else {
 				tardiness = 0.0;
 			}
-			/*log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
+			log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
 								"finishTime="+new Date(finishTime)+"CurrentOperationDueDate="+
 								new Date(sequence.get(i).getCurrentOperationDueDate())+
 								"CurrentOperationStartTime="+new Date(sequence.get(i).getCurrentOperationStartTime())
 						+"cumulativeProcessingTime="+cumulativeProcessingTime);
-			 */
+			 
 			cost += tardiness * sequence.get(i).getPenaltyRate() ;/*+ sequence.get(i).getCost();*/
 		}
 		log.info(myAgent.getLocalName() + " cost = " + cost + " with L = " + sequenceSize );
@@ -201,5 +207,50 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		return sequence;
 	}
 	
-	
+	private Batch SetDueDates(Batch batchForBidWinner) {
+
+		long totalProcessingTime = batchForBidWinner.getTotalProcessingTime();
+		long totalAvailableTime = batchForBidWinner.getDueDateByCustomer().getTime() -
+				batchForBidWinner.getStartTimeMillis();
+
+		long slack = totalAvailableTime - totalProcessingTime;
+		int NoOfOps = batchForBidWinner.getNumOperations();
+		long currTime = batchForBidWinner.getStartTimeMillis();
+
+		//		log.info("due date " + new Date(jobForBidWinner.getJobDuedatebyCust().getTime())+
+		//				" start time " + new Date(jobForBidWinner.getStartTimeByCust().getTime()));
+//		log.info("batch : " + batchForBidWinner.getJobsInBatch()   );
+
+		if(dueDateMethod.equals(ID.LocalScheduler.OtherConst.LocalDueDate)) {
+
+			long slack_perOperation = (long)((double)slack)/(NoOfOps);
+
+//			for(int i = 0 ; i < NoOfOps; i++) {
+				
+				batchForBidWinner.setCurrentOperationStartTime(currTime);
+				currTime += batchForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
+				batchForBidWinner.setCurrentOperationDueDate(currTime);
+				log.info("curr op due date = "+new
+						Date(batchForBidWinner.getCurrentOperationDueDate()));
+//				batchForBidWinner.IncrementOperationNumber();
+				batchForBidWinner.setSlack(slack_perOperation);
+				
+				
+//			}
+		}
+		else if(dueDateMethod.equals(ID.LocalScheduler.OtherConst.GlobalDueDate)) {
+//			for(int i = 0 ; i  < NoOfOps; i++) {
+				batchForBidWinner.setCurrentOperationStartTime(currTime);
+				currTime += batchForBidWinner.getCurrentOperationProcessingTime();
+				// shift whole slack to the last operation
+				if(batchForBidWinner.getCurrentOperationNumber() == NoOfOps-1) {
+					currTime = currTime + slack;
+				}
+				batchForBidWinner.setCurrentOperationDueDate(currTime);
+//				batchForBidWinner.IncrementOperationNumber();
+//			}
+		}
+		return batchForBidWinner;
+	}
+
 }	

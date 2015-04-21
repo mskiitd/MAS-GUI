@@ -37,7 +37,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 	private Batch comingBatch;
 	private OperationDataBase operationdb;
 	private MachineGUI gui;
-	private String dueDateMethod=null;
+//	private String dueDateMethod=null;
 
 	@Override
 	public EndState getEndState() {
@@ -58,9 +58,9 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 			e.printStackTrace();
 		}
 
-		dueDateMethod = (String)bfBase.
-				getBelief(ID.LocalScheduler.BeliefBaseConst.DueDateCalcMethod).
-				getValue();
+//		dueDateMethod = (String)bfBase.
+//				getBelief(ID.LocalScheduler.BeliefBaseConst.DueDateCalcMethod).
+//				getValue();
 		
 		jobQueue = (ArrayList<Batch>) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue).
@@ -82,7 +82,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 	public void action() {
 		if(comingBatch.getWinnerLSA().equals(myAgent.getAID())) {
 			
-			comingBatch=SetDueDates(comingBatch);
+//			comingBatch=SetDueDates(comingBatch);
 			log.info("Adding the batch" + comingBatch.getBatchId() +  " to queue of agent, " +
 					myAgent.getLocalName());
 
@@ -104,7 +104,7 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 		}
 	}
 	
-	private Batch SetDueDates(Batch batchForBidWinner) {
+	/*private Batch SetDueDates(Batch batchForBidWinner) {
 
 		long totalProcessingTime = batchForBidWinner.getTotalProcessingTime();
 		long totalAvailableTime = batchForBidWinner.getDueDateByCustomer().getTime() -
@@ -149,5 +149,5 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 		}
 		return batchForBidWinner;
 	}
-
+*/
 }
