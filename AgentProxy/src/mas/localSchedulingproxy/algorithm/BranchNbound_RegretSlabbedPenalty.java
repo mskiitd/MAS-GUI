@@ -2,6 +2,8 @@ package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import mas.jobproxy.Batch;
 
 public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace {
@@ -9,6 +11,12 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 	 *  To use it, create a node with state equal to ArrayList of a sequence of jobs
 	 *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
 	 *  Minimum penalty will be given by the variables "lowBound".
+	 *  
+	 *  This takes into account the regret of a particular batch also. Each batch has a regret multiplier which 
+	 *  depends upon the regret of the batch. This multiplier is used while calculating lateness penalty of the batch.
+	 *  Penalty of the batch is now also multiplied with this regret multiplier.
+	 *  Thus job having higher regret shall have higher penalty for being late.
+	 *  
 	 *  @author Anand Prajapati 
 	 *  @Email  anandprajapati389@gmail.com
 	 */ 
@@ -18,13 +26,15 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 	 * Level of tree with depth of 0 is ignored
 	 */
 	ArrayList<Batch> best = new ArrayList<Batch>();		// best solution stored in this ArrayList when algo runs
-	Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
+	private Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
 	public Node rootNode;
 	public Batch fixedBatch;
+	private Logger log;
 
 	public BranchNbound_RegretSlabbedPenalty(ArrayList<Batch> s) {
 		fixedBatch = s.get(0);
 		s.remove(0);
+		this.log = LogManager.getLogger();
 		/**
 		 * Store the position of all the jobs in the initial sequence so that 
 		 * we can compare regret factor of jobs after sequencing
@@ -38,14 +48,12 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 	public class Node {
 		ArrayList<Batch> sequence;		//sequence of batch
 		Node[] child;				//  child nodes at any point
-		Node parent;				// parent node
+		private Node parent;				// parent node
 		int depth;					// depth of node in tree
-		int rank;					// to differentiate between different children at same level 
 		double penalty;				// penalty of node
 
 		public Node(ArrayList<Batch> s) {
 			depth = 0;		
-			rank = -1;
 			penalty = 0;
 			this.sequence = new ArrayList<Batch>(s);
 			int n = sequence.size();
@@ -66,70 +74,76 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 			if (child[index] == null)
 				child[index] = new Node(this.sequence);
 
-			child[index].sequence = new ArrayList<Batch>(this.sequence);
+			child[index].sequence = new ArrayList<Batch>();
 			// rank is equal to node's position from left in the subtree
-			child[index].rank = index;				
 			child[index].depth = this.depth + 1;
 			child[index].parent = this;
 
-			// job at rank's position is kept fixed (with suitable offset in this case)
-			Collections.swap(child[index].sequence,				
-					child[index].depth-1,
-					child[index].depth + index -1);
+			for(int i = 0 ; i < (this.sequence.size() - 1); i++) {
+				child[index].sequence.add(this.sequence.get(i));
+			}
+			// swap first element by last one because in this node
+			// we keep the last batch last in the sequence
+			Collections.swap(child[index].sequence,	index, child[index].sequence.size() - 1 );
 
 			return child[index];
 		}
 
-		/**Penalty of a child is calculated by adding its individual penalty to parent's penalty
+		public Node getParent() {
+			return parent;
+		}
+
+		public void setParent(Node parent) {
+			this.parent = parent;
+		}
+		/**
+		 * Penalty of a node is calculated by adding its individual penalty to parent's penalty
+		 * 
+		 * Calculate penalty of job by putting all jobs up to index 'depth - 1'
+		 * before it fixed and based on lateness and regret multiplier
+		 * find its penalty.
+		 * 
+		 * update start time of all jobs.
+		 * update regret of all jobs.
+		 * 
+		 * Penalty will be calculated by using a multiplier which in turn depends on regret factor.
+		 * First update start and processing times of the job and then the regret factor.
+		 * 
 		 * @return Penalty of this node
 		 * 
 		 */
-		public double getValue() {
+		public double updatePenaltyValue() {
 			int n = this.sequence.size();
-			long makeSpan = 0;
+			long relativeMakeSpan = 0;
 			long startingTime = 0;
-			/**
-			 * Calculate penalty of job by putting all jobs up to index 'depth - 1'
-			 * before it fixed and based on lateness and regret multiplier
-			 * find its penalty
-			 */
 
-			for (int i = this.depth - 1; i < n ; i++) {
-				makeSpan += this.sequence.get(i).getCurrentOperationProcessingTime();
+			for (int i = 0; i < n ; i++) {
+				relativeMakeSpan += this.sequence.get(i).getCurrentOperationProcessingTime();
 			}
 
-			/**
-			 * update start time of all jobs.
-			 * update regret of all jobs
-			 */
-
-			/**
-			 * Penalty will be calculated by using a multiplier which in turn depends on regret factor.
-			 * First update start and processing times of the job and then the regret factor.
-			 */
-			startingTime = makeSpan - this.sequence.get(this.depth - 1).getCurrentOperationProcessingTime() +
+			startingTime = relativeMakeSpan - this.sequence.get(n-1).getCurrentOperationProcessingTime() +
 					System.currentTimeMillis();
 
-			int elements = this.depth;
-			this.sequence.get(elements - 1).setCurrentOperationProcessingTime(startingTime);
+			this.sequence.get(n - 1).setCurrentOperationStartTime(startingTime);
 
-			for (int k = elements - 2 ; k >= 0; k--) {
+			for (int k = n - 2 ; k >= 0; k--) {
 				this.sequence.get(k).setCurrentOperationStartTime(this.sequence.get(k+1).getCurrentOperationStartTime()	+ 
 						this.sequence.get(k+1).getCurrentOperationProcessingTime());
 			}
-
 			updateRegret(this);
 			//-------------------------------------------------------
-
-			Batch j = this.sequence.get(depth-1);
-			double latenessPenalty = (makeSpan - j.getCurrentOperationDueDate())*j.getCPN()*j.getRegretMultiplier();
+			Batch lastBatchInThisNode = this.sequence.get(n-1);
+			double latenessPenalty =
+					( (System.currentTimeMillis() + relativeMakeSpan) - lastBatchInThisNode.getCurrentOperationDueDate() )/1000
+					*lastBatchInThisNode.getCPN() * lastBatchInThisNode.getPenaltyRate() * lastBatchInThisNode.getRegretMultiplier();
 
 			if(latenessPenalty < 0) {
-				//				System.out.println("negative " + lateness + "with "+parent.penalty);
 				latenessPenalty = 0;
 			}
-			if( this.parent != null)
+			//			log.info("last node : " + this.sequence.get(n-1) + "penalty : " + latenessPenalty + " size : " + n);
+			if( this.parent != null) {
 				latenessPenalty += this.parent.penalty;
+			}
 
 			this.penalty = latenessPenalty;
 			return latenessPenalty;
@@ -138,8 +152,8 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 
 	/**
 	 * Don't forget to add the first job which is fixed throughout
-	 * in the final sequence of jobs
-	 * Solves and returns the optimal sequence
+	 * in the final sequence of jobs.
+	 * Solves and returns the optimal sequence.
 	 */
 
 	public ArrayList<Batch> solve() {
@@ -152,11 +166,15 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 			this.best.add(this.rootNode.sequence.get(0));
 			return this.best;
 		}
-		RecursiveSolver(this.rootNode);
-		/** reverse the sequence as the correct schedule in the tree goes from
-		 * bottom to top
-		 */
-		Collections.reverse(this.best);
+
+		int end = rootNode.sequence.size();
+		for ( int i = 0; i < end ; i++) {
+			Node tempRootNode = new Node(rootNode.sequence);
+			Collections.swap(tempRootNode.sequence, i, tempRootNode.sequence.size() - 1);
+//			log.info(tempRootNode.sequence);
+			tempRootNode.updatePenaltyValue();
+			RecursiveSolver(tempRootNode);
+		}
 		this.best.add(0,fixedBatch);
 		return this.best;
 	}
@@ -164,36 +182,46 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 	private void RecursiveSolver(Node node) {
 		int size = node.sequence.size();
 		// Base case when we hit the leaf
-		if( node.depth == size) {
+		if( size == 1) {
 			// check if this node is the best node
 			double val = node.penalty;
-			//			System.out.println("Hit " + val + "d " + node.depth);
-			if(val < this.lowBound) {
-				best = node.sequence;
-				lowBound = node.getValue();
+			if(val < this.getLowBound()) {
+				// get the best solution by traversing all the way up to the root
+				best.clear();
+				best.add(node.sequence.get(node.sequence.size() -1 ) );
+				Node parent = node.getParent();
+
+				while(parent != null) {
+					best.add(parent.sequence.get(parent.sequence.size() -1 ));
+					parent = parent.getParent();
+				}
+//				log.info("last : " + node.sequence);
+//				log.info("best :  " + best);
+				setLowBound(val);
 			}
 			return ;
 		}
 
 		// if penalty of node exceeds lower bound, don't expand this node
-		if(node.penalty > lowBound)
+		if(node.penalty > getLowBound()) {
 			return;
+		}
 
 		// end is the number of children that any particular node will have in the tree
-		int end = node.sequence.size() - node.depth ;
-		//		System.out.println("Childs are " + end + "wt depth " + node.depth);
+		int end = node.sequence.size() - 1;
 		for ( int i = 0; i < end ; i++) {
 			Node child = node.getChildNode(i);
-			child.getValue();
+//			log.info(" child : " + child.sequence + " parent "+ child.getParent().sequence.get(child.getParent().sequence.size()-1));
 
+			child.updatePenaltyValue();
 			RecursiveSolver(child);
 		}
 	}
 
 	public void updateRegret(Node node) {
-		int elements = node.depth;
+		int elements = node.sequence.size();
 		double lateness;					
-		for ( int i = 0; i < elements ; i++){
+		for ( int i = 0; i < elements ; i++) {
 			lateness =	node.sequence.get(i).getCurrentOperationStartTime() +
 					node.sequence.get(i).getCurrentOperationProcessingTime() -
 					node.sequence.get(i).getCurrentOperationDueDate();
@@ -203,5 +231,13 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 
 			node.sequence.get(i).setRegret(lateness/node.sequence.get(i).getSlack());
 		}
+	}
+
+	public Double getLowBound() {
+		return lowBound;
+	}
+
+	public void setLowBound(Double lowBound) {
+		this.lowBound = lowBound;
 	}
 }

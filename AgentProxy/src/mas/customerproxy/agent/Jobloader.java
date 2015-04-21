@@ -39,7 +39,7 @@ public class Jobloader {
 		this.jobFilePath = "resources/customer/";
 	}
 
-	public Vector<Batch> getjobVector() {
+	public Vector<Batch> getBatchVector() {
 		Vector<Batch> jobs = new Vector<Batch>();
 
 		for(int index = 0 ; index < jobIdList.size() ; index ++) {

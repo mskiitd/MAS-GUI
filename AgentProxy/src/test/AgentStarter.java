@@ -11,7 +11,6 @@ import jade.wrapper.StaleProxyException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.SwingUtilities;
@@ -53,9 +52,11 @@ public class AgentStarter {
 		switch(agentNameToStart) {
 
 		case GSA:
+			
 			agents.put(ID.Blackboard.LocalName, new blackboard());
 			agents.put(ID.GlobalScheduler.LocalName, new GlobalSchedulingAgent());
 			container = MainContainer.local;
+			
 			break;
 
 		case Machine:
@@ -64,16 +65,17 @@ public class AgentStarter {
 			agents.put(ID.LocalScheduler.LocalName + "#1", lagent1);
 			agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
 			container = MainContainer.remote;
+
+			//			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
+			//			lAgents.add(lagent2);
+			//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
+			//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
 			
-//			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
-//			lAgents.add(lagent2);
-//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
-//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
 			break;
 
 		case customer:
 			agents.put(ID.Customer.LocalName+"#1", new CustomerAgent());
-//			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
+			//			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
 			container = MainContainer.remote;
 			break;
 
@@ -89,12 +91,13 @@ public class AgentStarter {
 			agents.put(ID.LocalScheduler.LocalName + "#1", lagent_1);
 			agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
 
-//			LocalSchedulingAgent lagent_2 = new LocalSchedulingAgent();
-//			lAgents.add(lagent_2);
-//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent_2);
-//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
-			agents.put(ID.Customer.LocalName+"#1", new CustomerAgent());	
-//			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
+			//			LocalSchedulingAgent lagent_2 = new LocalSchedulingAgent();
+			//			lAgents.add(lagent_2);
+			//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent_2);
+			//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
+			
+			agents.put(ID.Customer.LocalName + "#1", new CustomerAgent());	
+			//			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
 			container = MainContainer.local;
 			break;
 		}
@@ -117,8 +120,6 @@ public class AgentStarter {
 	}
 
 	public static void main(String[] args) {
-		/*PropertyConfigurator.configure(AgentStarter.class
-				.getResource("log4j.properties"));		*/
 		TableUtil.loadFont();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -133,13 +134,15 @@ public class AgentStarter {
 
 		this.runtime = jade.core.Runtime.instance();
 		if(container == MainContainer.local) {
-			
+
 			bootProfile = new ProfileImpl(true);
 			bootProfile.setParameter(Profile.GUI,String.valueOf(true) );
-			bootProfile.setParameter(Profile.LOCAL_HOST, "10.204.153.24");
-			bootProfile.setParameter(Profile.LOCAL_PORT, String.valueOf(1090) );
+			bootProfile.setParameter("export-host", "103.27.8.42");
+//			bootProfile.setParameter(Profile.LOCAL_HOST, "103.2.8.42");
+//			bootProfile.setParameter(Profile.LOCAL_PORT, String.valueOf(1099) );
 			controller = runtime.createMainContainer(bootProfile);
-			log.info("Host IP address of the system is : " + Utils.getMyIp());
+			log.info("Host IP address of the system is : " + Utils.getLocalIp());
+
 		}else {
 			bootProfile = new ProfileImpl(false);
 			bootProfile.setParameter(Profile.MAIN_HOST, ipAddress);

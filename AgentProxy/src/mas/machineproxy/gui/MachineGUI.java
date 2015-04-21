@@ -241,6 +241,7 @@ public class MachineGUI extends JFrame {
 
 		btnLoadJob = new JButton("Load Job");
 		btnLoadJob.setIcon(new ImageIcon(loadJobIcon));
+		btnLoadJob.setMultiClickThreshhold(1000);
 		btnLoadJob.setOpaque(false);
 		btnLoadJob.setFocusPainted(false);
 		btnLoadJob.setContentAreaFilled(false); 

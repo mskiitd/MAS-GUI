@@ -132,6 +132,8 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 		double processingCost = (batchToBidFor.getCurrentOperationProcessingTime()/1000)*
 				operationdb.getOperationInfo(id).getProcessingCost();
+		
+		log.info("" + id + " cost : " + operationdb.getOperationInfo(id).getProcessingCost());
 
 		bidNo = PenaltyAfter - PenaltyBefore + processingCost;
 		

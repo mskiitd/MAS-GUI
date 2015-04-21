@@ -163,7 +163,7 @@ public class CustomerProxyGUI extends JFrame{
 
 		this.loader = new Jobloader(cAgent.getLocalName());
 		this.loader.readFile();
-		this.jobVector = this.loader.getjobVector();
+		this.jobVector = this.loader.getBatchVector();
 		this.tableHeadersVector = this.loader.getJobHeaders();
 
 		this.acceptedJobTableHeaderVector = this.loader.getAcceptedJobTableHeader();
