@@ -19,7 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class CompletedJobTableRenderer extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
+public class CompletedJobTableRenderer /*extends AbstractCellEditor */implements /*TableCellEditor,*/ TableCellRenderer{
 	private static final long serialVersionUID = 1L;
 	//same as cyrrentJobTileCell without dynamic menu
 	private JLabel batchID,dueDate,/*startDate,*/priorityText,batchNo;
@@ -100,12 +100,12 @@ public class CompletedJobTableRenderer extends AbstractCellEditor implements Tab
 		}		
 	}
 	
-	@Override
+/*	@Override
 	public Object getCellEditorValue() {
 		return null;
-	}
+	}*/
 
-	@Override
+/*	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		//returns component in editatble format. So button will get clicked
@@ -116,12 +116,13 @@ public class CompletedJobTableRenderer extends AbstractCellEditor implements Tab
 		//as isSelected=false initially. So, even if u click, background colour will not change
 //		table.setRowHeight(tile.getHeight()); //table row height changed as per height of job tile
 		return tile;
-	}
+	}*/
 	
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 		//only renders component. So button will not be clicked
+		WebLafGSA.unloadCurrentJobInfoPanel();
 		JobTile feed = (JobTile)value;
 		updateData(feed, isSelected, table);
 		return tile;	

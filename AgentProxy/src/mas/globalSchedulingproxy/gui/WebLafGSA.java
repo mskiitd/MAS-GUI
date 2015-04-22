@@ -182,7 +182,7 @@ public class WebLafGSA {
 		completedJobListTable=new JTable(completedJobRenderer);
 
 		completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTableRenderer());
-		completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTableRenderer());
+//		completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTableRenderer());
 		completedJobListTable.setRowHeight(90);
 
 		completedJobsList=new WebScrollPane(completedJobListTable);
