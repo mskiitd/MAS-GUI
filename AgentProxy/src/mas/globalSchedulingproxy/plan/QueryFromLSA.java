@@ -54,7 +54,8 @@ public class QueryFromLSA extends Behaviour implements PlanBody {
 		QueryJobGoal queryGoal= ((QueryJobGoal)(PI.getGoal()));
 		this.queryJob=	queryGoal.getBatchToQuery();
 		requestType=queryGoal.getQueryType();
-		blackboard_AID = new AID(ID.Blackboard.LocalName, false);
+		blackboard_AID = (AID)bfBase.getBelief(
+				ID.GlobalScheduler.BeliefBaseConst.blackboardAgent).getValue();
 		mt = MessageTemplate.MatchConversationId(MessageIds.msgLSAQueryResponse);
 
 		weblafGSAgui=(WebLafGSA)bfBase.getBelief(ID.GlobalScheduler.BeliefBaseConst
