@@ -3,11 +3,15 @@ package mas.globalSchedulingproxy.gui;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,6 +21,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
+
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
@@ -27,12 +32,15 @@ import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
 import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
 import uiconstants.Labels;
+
 import com.alee.extended.label.WebHotkeyLabel;
 import com.alee.laf.panel.WebPanel;
 
@@ -201,8 +209,8 @@ public class NegotiationInfo {
 		myPanel.add(btnPanel);
 
 		buttonListener clickListener = new buttonListener();
-		confirmJob.addActionListener(clickListener);
-		negotiateJob.addActionListener(clickListener);
+		confirmJob.addMouseListener(clickListener);
+		negotiateJob.addMouseListener(clickListener);
 
 		_populate();
 	}
@@ -328,10 +336,11 @@ public class NegotiationInfo {
 		return status;
 	}
 
-	class buttonListener implements ActionListener {
+	class buttonListener extends MouseAdapter {
 
-		@Override
+/*		@Override
 		public void actionPerformed(ActionEvent e) {
+			log.info("Anand party jaa raha hai");
 			// handle create job button pressed event
 			if(e.getSource().equals(negotiateJob)) {
 
@@ -347,6 +356,48 @@ public class NegotiationInfo {
 					WebLafGSA.unloadNegotiationInfoPanel();
 				}
 			}
+		}*/
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			log.info(e);
+
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// handle create job button pressed event
+			if(e.getSource().equals(negotiateJob)) {
+
+				createJobFromParams();
+				if(dataOk) {
+					gAgent.negotiateJob(populatingBatch);
+					NegotiationJobTileTableModel negotiationRenderer=
+							(NegotiationJobTileTableModel)(WebLafGSA.
+									getNegotiationJobListTable().getModel());
+					negotiationRenderer.removeJob(populatingBatch);
+					WebLafGSA.getNegotiationJobListTable().revalidate();
+					WebLafGSA.getNegotiationJobListTable().repaint();
+					WebLafGSA.unloadNegotiationInfoPanel();
+				}
+			}
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			
 		}
 	}
 
