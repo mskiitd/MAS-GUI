@@ -38,8 +38,8 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 		this.copiedList = new ArrayList<Batch>(s);
 		fixedBatch = copiedList.get(0);
 		copiedList.remove(0);
-		
-		log.info("\n\n----------------------------------Scheduling beginning----------------------------\n\n");
+
+		log.info("\n\n---------------------------Scheduling beginning----------------------------\n\n");
 		log.info("Queue is  : " + s );
 		log.info("Fixed Batch : " + fixedBatch);
 
@@ -239,7 +239,11 @@ public class BranchNbound_RegretSlabbedPenalty implements ScheduleSequenceIFace 
 			if(lateness < 0)
 				lateness = 0;
 
-			node.sequence.get(i).setRegret(lateness/node.sequence.get(i).getSlack());
+			if(node.sequence.get(i).getSlack() != 0) {
+				node.sequence.get(i).setRegret(lateness/node.sequence.get(i).getSlack());
+			} else {
+				node.sequence.get(i).setRegret(Double.MAX_VALUE/100);
+			}
 		}
 	}
 

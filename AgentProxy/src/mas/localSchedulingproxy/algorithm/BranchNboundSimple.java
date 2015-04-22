@@ -25,11 +25,13 @@ public class BranchNboundSimple implements ScheduleSequenceIFace {
 	private Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
 	public Node rootNode;
 	public Batch fixedBatch;
+	private ArrayList<Batch> copiedList;
 	private Logger log;
 
 	public BranchNboundSimple(ArrayList<Batch> s) {
-		fixedBatch = s.get(0);
-		s.remove(0);
+		this.copiedList = new ArrayList<Batch>(s);
+		fixedBatch = copiedList.get(0);
+		copiedList.remove(0);
 		this.log = LogManager.getLogger();
 		/**
 		 * Store the position of all the jobs in the initial sequence so that 

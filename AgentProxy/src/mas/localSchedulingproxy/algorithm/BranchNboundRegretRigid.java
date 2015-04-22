@@ -27,10 +27,12 @@ public class BranchNboundRegretRigid implements ScheduleSequenceIFace {
 	public Batch fixedBatch;
 	private double regretCutOff;
 	private Logger log;
+	private ArrayList<Batch> copiedList;
 
 	public BranchNboundRegretRigid(ArrayList<Batch> s, double regretCuttOff) {
-		fixedBatch = s.get(0);
-		s.remove(0);
+		this.copiedList = new ArrayList<Batch>(s);
+		fixedBatch = copiedList.get(0);
+		copiedList.remove(0);
 		this.regretCutOff = regretCuttOff;
 		this.log = LogManager.getLogger();
 		/**
