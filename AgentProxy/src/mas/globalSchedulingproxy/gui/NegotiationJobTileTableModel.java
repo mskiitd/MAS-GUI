@@ -11,14 +11,14 @@ import org.apache.logging.log4j.Logger;
 
 import mas.jobproxy.Batch;
 
-public class NegotiationJobTileRenderer extends AbstractTableModel implements TableModel {
+public class NegotiationJobTileTableModel extends AbstractTableModel implements TableModel {
 
 	private static final long serialVersionUID = 1L;
 
 	List<JobTile> batchTiles;
 	private Logger log;
 
-	public NegotiationJobTileRenderer() {
+	public NegotiationJobTileTableModel() {
 		this.batchTiles = new ArrayList<JobTile>();
 		log = LogManager.getLogger(); 
 	}

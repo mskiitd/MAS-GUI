@@ -19,7 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class NegotitationJobTileCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
+public class NegotitationJobTileCellRenderer /*extends AbstractCellEditor*/ implements/* TableCellEditor, */TableCellRenderer{
 	private static final long serialVersionUID = 1L;
 	//same as cyrrentJobTileCell without dynamic menu
 	private JLabel batchID,dueDate,/*startDate,*/priorityText,batchNo;
@@ -30,7 +30,7 @@ public class NegotitationJobTileCell extends AbstractCellEditor implements Table
 	private final Format formatter = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
 	protected Logger log=LogManager.getLogger();
 
-	public NegotitationJobTileCell(){
+	public NegotitationJobTileCellRenderer(){
 		tile=new JPanel(new MigLayout("",
 				"[]10",
 				""
@@ -90,7 +90,9 @@ public class NegotitationJobTileCell extends AbstractCellEditor implements Table
 				comps[i].setForeground(Color.WHITE);
 			}
 
-
+			WebLafGSA.unloadNegotiationInfoPanel();
+			WebLafGSA.creatNegotiationInfoPanel(jobTileInCell);
+			
 		}else{
 			tile.setBackground(table.getSelectionForeground());
 			Component[] comps=tile.getComponents();
@@ -99,13 +101,13 @@ public class NegotitationJobTileCell extends AbstractCellEditor implements Table
 			}
 		}		
 	}
-
+/*
 	@Override
 	public Object getCellEditorValue() {
 		return null;
-	}
+	}*/
 
-	@Override
+/*	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		//returns component in editatble format. So button will get clicked
@@ -116,14 +118,16 @@ public class NegotitationJobTileCell extends AbstractCellEditor implements Table
 		//as isSelected=false initially. So, even if u click, background colour will not change
 		//		table.setRowHeight(tile.getHeight()); //table row height changed as per height of job tile
 		return tile;
-	}
+	}*/
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 		//only renders component. So button will not be clicked
+		WebLafGSA.unloadCurrentJobInfoPanel();
 		JobTile feed = (JobTile)value;
 		updateData(feed, isSelected, table);
+//		log.info("isSelected="+isSelected);
 		return tile;	
 	}
 

@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 
 import net.miginfocom.swing.MigLayout;
@@ -41,6 +42,7 @@ import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
+
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
 
@@ -169,6 +171,7 @@ public class WebLafGSA {
 		currentJobListTable.setDefaultRenderer(JobTile.class, new CurrentJobTableRenderer());
 		currentJobListTable.setDefaultEditor(JobTile.class, new CurrentJobTableRenderer());
 		currentJobListTable.setRowHeight(80);
+		currentJobListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		currentJobList=new WebScrollPane(currentJobListTable);
 		currentJobList.setPreferredWidth(350);
@@ -188,10 +191,10 @@ public class WebLafGSA {
 
 	private void initNegotiationListPanel() {
 
-		NegotiationJobTileRenderer negotiationRenderer= new NegotiationJobTileRenderer();
+		NegotiationJobTileTableModel negotiationRenderer= new NegotiationJobTileTableModel();
 		negotiationJobListTable=new JTable(negotiationRenderer);
-		negotiationJobListTable.setDefaultRenderer(JobTile.class, new NegotitationJobTileCell());
-		negotiationJobListTable.setDefaultEditor(JobTile.class, new NegotitationJobTileCell());
+		negotiationJobListTable.setDefaultRenderer(JobTile.class, new NegotitationJobTileCellRenderer());
+//		negotiationJobListTable.setDefaultEditor(JobTile.class, new NegotitationJobTileCellRenderer());
 		negotiationJobListTable.setRowHeight(80);
 
 		negotiationJobList=new WebScrollPane(negotiationJobListTable);
@@ -689,8 +692,8 @@ public class WebLafGSA {
 	}
 
 	public void addNegotiationBid(Batch jobUnderNegotiation) {
-		NegotiationJobTileRenderer negotiationRenderer =
-				(NegotiationJobTileRenderer)negotiationJobListTable.getModel();
+		NegotiationJobTileTableModel negotiationRenderer =
+				(NegotiationJobTileTableModel)negotiationJobListTable.getModel();
 		if(negotiationJobListTable.getCellEditor() != null ) {
 			negotiationJobListTable.getCellEditor().stopCellEditing();
 			//solves cell updating bug

@@ -338,10 +338,12 @@ public class NegotiationInfo {
 				createJobFromParams();
 				if(dataOk) {
 					gAgent.negotiateJob(populatingBatch);
-					NegotiationJobTileRenderer negotiationRenderer=
-							(NegotiationJobTileRenderer)(WebLafGSA.
+					NegotiationJobTileTableModel negotiationRenderer=
+							(NegotiationJobTileTableModel)(WebLafGSA.
 									getNegotiationJobListTable().getModel());
 					negotiationRenderer.removeJob(populatingBatch);
+					WebLafGSA.getNegotiationJobListTable().revalidate();
+					WebLafGSA.getNegotiationJobListTable().repaint();
 					WebLafGSA.unloadNegotiationInfoPanel();
 				}
 			}

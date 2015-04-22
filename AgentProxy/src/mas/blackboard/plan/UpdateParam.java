@@ -85,7 +85,7 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 		Belief<HashMap<String,ZoneSpace>> ws=(Belief<HashMap<String,ZoneSpace>>)BBBeliefBase.getBelief(AgentType);
 
 		if(ws == null) {
-			log.error("Could not find workspace for " + AgentType);
+//			log.error("Could not find workspace for " + AgentType);
 		}
 		else {					
 
