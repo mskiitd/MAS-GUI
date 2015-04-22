@@ -40,7 +40,7 @@ public class Batch implements Serializable {
 	private AID LSABidder;
 	private double BidByLSA ;
 
-	private double slack;
+	private long slack;
 	private double regret;
 
 	private int currentJobIndex = 0;
@@ -89,7 +89,7 @@ public class Batch implements Serializable {
 	/**
 	 * @return The slack for this batch.
 	 */
-	public double getSlack() {
+	public long getSlack() {
 		return slack;
 	}
 
@@ -99,7 +99,7 @@ public class Batch implements Serializable {
 	 * 
 	 * @param slack
 	 */
-	public void setSlack(double slack) {
+	public void setSlack(long slack) {
 		this.slack = slack;
 	}
 

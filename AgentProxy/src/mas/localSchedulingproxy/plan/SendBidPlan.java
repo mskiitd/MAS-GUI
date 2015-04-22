@@ -213,7 +213,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		long totalAvailableTime = batchForBidWinner.getDueDateByCustomer().getTime() -
 				batchForBidWinner.getStartTimeMillis();
 
-		long slack = totalAvailableTime - totalProcessingTime;
+		long slack = totalAvailableTime - totalProcessingTime; //in seconds
 		int NoOfOps = batchForBidWinner.getNumOperations();
 		long currTime = batchForBidWinner.getStartTimeMillis();
 
@@ -226,7 +226,6 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 			long slack_perOperation = (long)((double)slack)/(NoOfOps);
 
 //			for(int i = 0 ; i < NoOfOps; i++) {
-				
 				batchForBidWinner.setCurrentOperationStartTime(currTime);
 				currTime += batchForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
 				batchForBidWinner.setCurrentOperationDueDate(currTime);
