@@ -4,18 +4,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import javax.swing.AbstractCellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import mas.maintenanceproxy.classes.PMaintenance;
 import net.miginfocom.swing.MigLayout;
 
-public class PrevMaintTableRenderer extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
-
-	private static final long serialVersionUID = 1L;
+public class PrevMaintTableRenderer implements TableCellRenderer{
 
 	private JLabel lblActualStartDate,lblActualFinishDate;
 	private JLabel lblActivityCode;
@@ -61,20 +57,6 @@ public class PrevMaintTableRenderer extends AbstractCellEditor implements TableC
 				comps[i].setForeground(Color.BLACK);
 			}
 		}		
-	}
-
-	@Override
-	public Object getCellEditorValue() {
-		return null;
-	}
-
-	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value,
-			boolean isSelected, int row, int column) {
-		
-		PMaintenance feed = (PMaintenance)value;
-		updateData(feed, true , table);
-		return tile;
 	}
 
 	@Override

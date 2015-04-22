@@ -105,7 +105,6 @@ public class MaintenanceGUI extends JFrame {
 		this.pmScheduleTable = new JTable(tableModel);
 
 		pmScheduleTable.setDefaultRenderer(PMaintenance.class, tableRenderer);
-		pmScheduleTable.setDefaultEditor(PMaintenance.class, tableRenderer );
 		pmScheduleTable.setRowHeight(110);
 
 		maintScroller = new WebScrollPane(pmScheduleTable);

@@ -124,7 +124,7 @@ public class CustomJobQueue extends JPanel {
 		for ( int j = 0; j < remainderComps; j++ ) {
 
 			if(j == 0 && numLines == 0 ) {
-				g.setColor(firstJobColor);
+				graphics.setColor(firstJobColor);
 			}
 			graphics.fillRoundRect(j * cWidth  , i*cHeight ,
 					cWidth, cHeight, arcWidth, arcHeight);

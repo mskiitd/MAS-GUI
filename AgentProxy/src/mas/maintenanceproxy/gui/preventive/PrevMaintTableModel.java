@@ -1,13 +1,8 @@
 package mas.maintenanceproxy.gui.preventive;
 
 import java.util.ArrayList;
-
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import mas.maintenanceproxy.classes.PMaintenance;
 
 public class PrevMaintTableModel extends AbstractTableModel implements TableModel {
