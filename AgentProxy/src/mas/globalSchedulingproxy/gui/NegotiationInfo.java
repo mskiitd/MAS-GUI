@@ -99,7 +99,7 @@ public class NegotiationInfo {
 		btnPanel = new JPanel(new FlowLayout());
 		operationPanel = new JPanel(new MigLayout());
 		this.gAgent = cAgent;
-		this.confirmJob = new JButton("Confirm");
+//		this.confirmJob = new JButton("Confirm");
 		this.negotiateJob = new JButton("Send For Negotiation");
 
 		dateModel = new UtilDateModel();
@@ -203,13 +203,13 @@ public class NegotiationInfo {
 		myPanel.add(lblOpsHeading,"wrap");
 		myPanel.add(operationPanel,"wrap");
 
-		btnPanel.add(confirmJob);
+//		btnPanel.add(confirmJob);
 		btnPanel.add(negotiateJob);
 
 		myPanel.add(btnPanel);
 
 		buttonListener clickListener = new buttonListener();
-		confirmJob.addMouseListener(clickListener);
+//		confirmJob.addMouseListener(clickListener);
 		negotiateJob.addMouseListener(clickListener);
 
 		_populate();

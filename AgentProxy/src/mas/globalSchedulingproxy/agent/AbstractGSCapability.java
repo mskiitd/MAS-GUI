@@ -55,7 +55,6 @@ public abstract class AbstractGSCapability  extends Capability {
 		Belief<AID> BB_AID = new TransientBelief<AID>(
 				ID.GlobalScheduler.BeliefBaseConst.blackboardAgent);		
 
-
 		//no of machines = no. of LSA		
 		Belief<Integer> NoOfMachines = new TransientBelief<Integer>(ID.GlobalScheduler.
 				BeliefBaseConst.NoOfMachines);

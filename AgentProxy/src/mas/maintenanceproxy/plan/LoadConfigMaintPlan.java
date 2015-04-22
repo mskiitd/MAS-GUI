@@ -4,10 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-
 import mas.maintenanceproxy.goal.PeriodicPreventiveMaintenanceGoal;
 import mas.util.ID;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import bdi4jade.core.BDIAgent;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
@@ -24,7 +21,7 @@ import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 import jade.core.behaviours.OneShotBehaviour;
 
-public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody{
+public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;
@@ -76,11 +73,11 @@ public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody{
 
 			switch(rowCount) {
 			case 0:
-				maintPeriod = (long)cell.getNumericCellValue() * timeConversion;
+				maintPeriod = (long) (cell.getNumericCellValue()*timeConversion);
 				bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.maintenancePeriod, maintPeriod);
 				break;
 			case 1:
-				maintWarningPeriod = (long)cell.getNumericCellValue() * timeConversion;
+				maintWarningPeriod = (long) (cell.getNumericCellValue()*timeConversion);
 				bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.maintWarningPeriod, maintWarningPeriod);
 				break;
 			}

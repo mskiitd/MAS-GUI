@@ -4,11 +4,8 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
-import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.classes.MaintStatus;
 import mas.maintenanceproxy.classes.MaintenanceResponse;
 import mas.maintenanceproxy.classes.PMaintenance;
@@ -17,11 +14,9 @@ import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 
 public class MonitorMaintenanceStatusBehavior extends Behaviour{
@@ -100,8 +95,7 @@ public class MonitorMaintenanceStatusBehavior extends Behaviour{
 								ID.Maintenance.ZoneData.machineStatus).
 								value(reponse).
 								Build();
-						
-						done = true;
+//						done = true;
 						counter.cancel();
 						break;
 					}
