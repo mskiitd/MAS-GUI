@@ -104,9 +104,9 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 		log.info("total regret : " + totalRegret);
 		if(totalRegret > regretThreshold) {
 
-			if(gui != null) {
-				gui.showNotification("Scheduling", "Scheduling of batches starting", MessageType.INFO);
-			}
+//			if(gui != null) {
+//				gui.showNotification("Scheduling", "Scheduling of batches starting", MessageType.INFO);
+//			}
 
 			reset(10 * LocalSchedulingAgent.schedulingPeriod);
 			log.info("old queue : " + jobQueue);
