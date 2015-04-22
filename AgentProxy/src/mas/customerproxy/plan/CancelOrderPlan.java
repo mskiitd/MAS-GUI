@@ -3,7 +3,6 @@ package mas.customerproxy.plan;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
@@ -11,6 +10,13 @@ import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
+
+/**
+ * Plan to cancel a previously accepted order
+ * It updates zone-data of customer with the order to be cancelled.
+ * GSA is subscribed to this zone-data and as it receives message about change in this zone-data,
+ * It triggers its own plan to handle the scenario.
+ */
 
 public class CancelOrderPlan extends Behaviour implements PlanBody {
 	private static final long serialVersionUID = 1L;

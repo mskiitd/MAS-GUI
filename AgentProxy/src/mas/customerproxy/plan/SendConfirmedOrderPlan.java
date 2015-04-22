@@ -3,18 +3,20 @@ package mas.customerproxy.plan;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
+
+/**
+ * Once the batch under negotiation is confirmed by customer, this plan is triggered and it updates
+ * the confirmed batch into its zone-data from where other agents are notified
+ */
 
 public class SendConfirmedOrderPlan extends Behaviour implements PlanBody{
 

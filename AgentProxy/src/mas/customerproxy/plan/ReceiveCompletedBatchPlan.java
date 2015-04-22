@@ -12,6 +12,9 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * This plan receives the completed batch from GSA.
+ */
 public class ReceiveCompletedBatchPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;

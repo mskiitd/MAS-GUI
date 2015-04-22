@@ -19,9 +19,14 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * Plan to change due date of the batch. This copies the remaining operation of the batch and creates another batch
+ * with these remaining operations. This new batch follows the same procedure as any other batch ordered by customer
+ */
 public class ChangeDueDate extends OneShotBehaviour implements PlanBody {
 
-	private Logger log=LogManager.getLogger();
+	private static final long serialVersionUID = 1L;
+	private Logger log = LogManager.getLogger();
 	private Batch batchToChangeDueDate;
 
 	@Override
@@ -57,7 +62,7 @@ public class ChangeDueDate extends OneShotBehaviour implements PlanBody {
 
 			tempJob.setOperations(ops);
 			tempJob.resetOpnNoToZero();
-			
+
 
 			ArrayList<job> jobArray = new ArrayList<job>();
 			for(int count = 0; count < batchTosend.getBatchCount(); count++){
@@ -68,7 +73,6 @@ public class ChangeDueDate extends OneShotBehaviour implements PlanBody {
 
 			ChangeDueDateGUI gui = new ChangeDueDateGUI((CustomerAgent)myAgent, batchTosend);
 		}
-
 	}
 
 	@Override

@@ -13,6 +13,10 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * Plan to dispatch generated batch by customer to GSA.
+ * It updates zonedata of customer with the new generated order
+ */
 public class DispatchJobPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
