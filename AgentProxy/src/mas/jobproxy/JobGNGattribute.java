@@ -20,15 +20,32 @@ public class JobGNGattribute implements Serializable {
 		this.name = name;
 	}
 	
+	/**
+	 * @return Name of this dimension
+	 */
 	public String getName() {
 		return name;
 	}
+	
+	/**
+	 * Set name for this dimension
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	/**
+	 * @return Conforming status of this dimension
+	 */
 	public boolean isConforming() {
 		return conforming;
 	}
+	
+	/**
+	 * Set conforming status of this dimension
+	 * @param conforming
+	 */
 	public void setConforming(boolean conforming) {
 		this.conforming = conforming;
 	}

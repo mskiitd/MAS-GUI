@@ -5,20 +5,22 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import mas.jobproxy.OperationType;
 import mas.jobproxy.job;
 import mas.jobproxy.jobOperation;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
 
+/**
+ * @author Anand Prajapati
+ * to define operation within a job
+ *
+ */
 @SuppressWarnings("serial")
 public class DefineJobOperationsFrame extends JFrame{
 	private job passedJob;
@@ -99,12 +101,12 @@ public class DefineJobOperationsFrame extends JFrame{
 			lblOpeartionTitleList.add(lblOpHeading);
 
 			ArrayList<String> possibleOps = new ArrayList<String>();
-			for (OperationType op : OperationType.values()) {
-				String jobIdEnum = op.name().split("o")[0];
-				if(jobIdEnum.equals(jobIdJob)) {
-					possibleOps.add(op.name());
-				}
-			}
+//			for (OperationType op : OperationType.values()) {
+//				String jobIdEnum = op.name().split("o")[0];
+//				if(jobIdEnum.equals(jobIdJob)) {
+//					possibleOps.add(op.name());
+//				}
+//			}
 			JComboBox<?> opSpinner = new JComboBox<Object>(possibleOps.toArray());
 			
 			if(batchOperations != null && i < batchOperations.size()) {

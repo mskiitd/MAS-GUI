@@ -14,6 +14,11 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * Plan to register customer agent on blackboard.
+ * This plan creates necessary zonedata's for customer as well as subscribes the customer agent to GSA's zonedata
+ */
+
 public class RegisterCustomerAgentToBlackboardPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

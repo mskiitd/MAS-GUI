@@ -2,6 +2,10 @@ package mas.util;
 
 import jade.util.leap.Serializable;
 
+/**
+ * ID class for all ID-constants used while defining beliefs or messageIds or zonedata 
+ */
+
 public class ID implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -84,6 +88,7 @@ public class ID implements Serializable{
 			public static final String currentMaintJob = "LSA_Current_MaintJobOnMachine";
 			public static final String currentJobOnMachine =  "LSA_CurrentJobOnMachine";
 			public static final String DueDateCalcMethod = "DueDateCalculationMethod";
+			public static final String schedulingInterval = "LSA_schedulingInterval";
 		}
 
 		public class ZoneData {

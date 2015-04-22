@@ -31,9 +31,9 @@ import bdi4jade.util.plan.SimplePlan;
 /**
  * @author Anand Prajapati
  * 
- * This capability contains two goals of customer - one for generating jobs
- * and one for dispatching them to Global scheduling agent
- * 
+ * This capability contains goals of customer -
+ * For generating jobs
+ * For dispatching them to Global scheduling agent
  */
 
 public class parentBasicCapability extends Capability {
@@ -44,6 +44,18 @@ public class parentBasicCapability extends Capability {
 		super(new BeliefBase(getBeliefs()), new PlanLibrary(getPlans()));
 	}
 
+	/**
+	 * Add beliefs for
+	 * blackboard agent ID
+	 * Current Batch to be sent to blackboard
+	 * Current Confirmed batch (after negotiation)
+	 * Cancelled order by customer
+	 * Batch whose due date is changed
+	 * Current batch under negotiation
+	 * GUI of customer agent
+	 * 
+	 * @return set of beliefs
+	 */
 	public static Set<Belief<?>> getBeliefs() {
 		Set<Belief<?>> beliefs = new HashSet<Belief<?>>();
 
@@ -78,6 +90,18 @@ public class parentBasicCapability extends Capability {
 		return beliefs;
 	}
 
+	/**
+	 * Add plans for
+	 * Registering customer on blackboard
+	 * Dispatching generated batch
+	 * Sending confirmed batch ( after negotiation)
+	 * Canceling the order
+	 * Receiving completed batch
+	 * changing due date of batch
+	 * handling rejected order from GSA
+	 * 
+	 * @return set of plans for this agent
+	 */
 	public static Set<Plan> getPlans() {
 		Set<Plan> plans = new HashSet<Plan>();
 
@@ -87,12 +111,13 @@ public class parentBasicCapability extends Capability {
 		plans.add(new SimplePlan(dispatchJobGoal.class,DispatchJobPlan.class));
 		plans.add(new SimplePlan(SendConfirmedOrderGoal.class,SendConfirmedOrderPlan.class));
 		plans.add(new SimplePlan(CancelOrderGoal.class,CancelOrderPlan.class) );
-//		plans.add(new SimplePlan(ChangeDueDateGoal.class,ChangeDueDatePlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgJobCompletion),
 				ReceiveCompletedBatchPlan.class ));
+		
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgChangeDueDate),
 				ChangeDueDate.class));
+		
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.RejectedOrder)
 				, HandleRejectedOrder.class));
 
@@ -101,6 +126,5 @@ public class parentBasicCapability extends Capability {
 
 	@Override
 	protected void setup() {
-
 	}
 }

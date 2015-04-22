@@ -20,7 +20,7 @@ public class Batch implements Serializable {
 			HighRegretMultiplier = 3;
 
 	private ArrayList<job> jobsInBatch;
-	
+
 	private String customerId = null;
 	private String batchId = null;
 	private int batchNo;
@@ -52,20 +52,31 @@ public class Batch implements Serializable {
 	private int position;
 	private double profit;
 	private int currentOperationIndex = 0;
-	
+
 	public Batch(String batchId) {
 		this.batchId = batchId;
 		jobsInBatch = new ArrayList<job>();
 	}
 
+	/**
+	 * @return id of the customer who ordered this batch
+	 */
 	public String getCustomerId() {
 		return customerId;
 	}
 
+	/**
+	 * sets the id of the customer for this batchS
+	 * @param customerId
+	 */
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
 
+	/**
+	 * @return Regret multiplier for this batch. This multiplier is used for calculation of penalty
+	 * while creating schedules. Multiplier depends upon regret of the batch
+	 */
 	public double getRegretMultiplier() {
 		if(this.regret < 1.0)
 			return lowRegretMultiplier;
@@ -75,95 +86,166 @@ public class Batch implements Serializable {
 			return HighRegretMultiplier;
 	}
 
+	/**
+	 * @return The slack for this batch.
+	 */
 	public double getSlack() {
 		return slack;
 	}
 
+	/**
+	 * set the slack for this batch. Slack is the extra amount of time that we have before the batch gets delayed.
+	 * Batch can be delayed by this much amount without being actually late or causing any penalty.
+	 * 
+	 * @param slack
+	 */
 	public void setSlack(double slack) {
 		this.slack = slack;
 	}
 
+	/**
+	 * @return regret for this batch
+	 */
 	public double getRegret() {
 		return regret;
 	}
 
+	/**
+	 * Sets regret for this batch. Regret for any batch is defined as <code> lateness/slack </code>
+	 * @param regret
+	 */
 	public void setRegret(double regret) {
 		this.regret = regret;
 	}
 
+	/**
+	 * @return Customer priority number for the customer of this batch
+	 */
 	public double getCPN() {
 		return CPN;
 	}
 
+	/**
+	 * Set Customer priority number for the customer of this batch
+	 * @param cPN
+	 */
 	public void setCPN(double cPN) {
 		CPN = cPN;
 	}
 
+	/**
+	 * @return processing cost for this batch
+	 */
 	public double getCost() {
 		return Cost;
 	}
 
+	/**
+	 * Set processing cost for this batch
+	 * @param cost
+	 */
 	public void setCost(double cost) {
 		Cost = cost;
 	}
 
+	/**
+	 * @return penalty per unit time for this batch if it gets delayed
+	 */
 	public double getPenaltyRate() {
 		return penaltyRate;
 	}
 
+	/**
+	 * Set penalty per unit time for this batch in case it gets delayed
+	 * @param penaltyRate
+	 */
 	public void setPenaltyRate(double penaltyRate) {
 		this.penaltyRate = penaltyRate;
 	}
 
+	/**
+	 * @return Bid by Local Scheduling agent for this batch.
+	 * This is used while bidding for batches. GSA advertises new batch and all Local scheduling agents send their
+	 * bid for the advertised batch.
+	 */
 	public double getBidByLSA() {
 		return BidByLSA;
 	}
 
+	/**
+	 * Set Bid by Local scheduling agent for this batch.
+	 * @param bidByLSA
+	 */
 	public void setBidByLSA(double bidByLSA) {
 		BidByLSA = bidByLSA;
 	}
 
+	/**
+	 * @return position of this batch in the batch-queue of machine. This is used only while scheduling.
+	 */
 	public int getPosition() {
 		return position;
 	}
 
+	/**
+	 * Sets position of this batch in the batch-queue of machine. This is used only while scheduling.
+	 * @param position
+	 */
 	public void setPosition(int position) {
 		this.position = position;
 	}
 
 	/**
-	 * @return total processing time for this batch
+	 * @return total processing time for this batch ( include processing time for all jobs and all operations)
 	 */
 	public long getTotalBatchProcessingTime() {
 		return getFirstJob().getTotalProcessingTime() * getBatchCount();
 	}
 
-//	public void setBatchProcessingTime(long batchProcessingTime) {
-//		this.batchProcessingTime = batchProcessingTime;
-//	}
+	//	public void setBatchProcessingTime(long batchProcessingTime) {
+	//		this.batchProcessingTime = batchProcessingTime;
+	//	}
 
+	/**
+	 * @return completion status of this batch
+	 */
 	public boolean isBatchComplete() {
 		return getFirstJob().isComplete();
-//		return isBatchComplete;
+		//		return isBatchComplete;
 	}
 
+	/**
+	 * @return true if all jobs within this batch are completed
+	 */
 	public boolean isAllJobsComplete() {
 		return this.isAllJobsComplete;
 	}
 
+	/**
+	 * Resets the current job index to <code> 0 </code>
+	 */
 	public void resetJobsComplete() {
 		isAllJobsComplete = false;
 		this.currentJobIndex = 0;
 	}
 
+	/**
+	 * @return current job to be processed from this batch
+	 */
 	public job getCurrentJob() {
 		return jobsInBatch.get(currentJobIndex);
 	}
 
+	/**
+	 * @return index of current job to be processed from this batch
+	 */
 	public int getCurrentJobNo() {
 		return currentJobIndex;
 	}
 
+	/**
+	 * Increment the currentJobNumber by <code> 1 </code> 
+	 */
 	public void incrementCurrentJob() {
 		this.currentJobIndex++ ;
 		/**
@@ -177,133 +259,236 @@ public class Batch implements Serializable {
 		}
 	}
 
+	/**
+	 * @return the bid winner local scheduling agent for this batch
+	 */
 	public AID getWinnerLSA() {
 		return WinnerLSA;
 	}
 
+	/**
+	 * Set the bid winner local scheduling agent for this batch
+	 * @param winnerLSA
+	 */
 	public void setWinnerLSA(AID winnerLSA) {
 		WinnerLSA = winnerLSA;
 	}
 
+	/**
+	 * @return the profit for this batch
+	 */
 	public double getProfit() {
 		return profit;
 	}
 
+	/**
+	 * Set the profit for this batch
+	 * @param profit
+	 */
 	public void setProfit(double profit) {
 		this.profit = profit;
 	}
 
+	/**
+	 * @return AID of the bidder local scheduling agent for this batch
+	 */
 	public AID getLSABidder() {
 		return LSABidder;
 	}
 
+	/**
+	 * Sets AID of the bidder local scheduling agent for this batch
+	 * @param lSABidder
+	 */
 	public void setLSABidder(AID lSABidder) {
 		LSABidder = lSABidder;
 	}
 
+	/**
+	 * @return Due date for this batch as specified by the customer
+	 */
 	public Date getDueDateByCustomer() {
 		return dueDateByCustomer;
 	}
 
+	/**
+	 * Sets due date for this batch as specified by the customer
+	 * @param dueDateByCustomer
+	 */
 	public void setDueDateByCustomer(Date dueDateByCustomer) {
 		this.dueDateByCustomer = dueDateByCustomer;
 	}
 
+	/**
+	 * Sets due date(in milliseconds) for this batch as specified by the customer 
+	 * @param dueDateByCustomer
+	 */
 	public void setDueDateMillisByCustomer(long dueDateByCustomer) {
 		this.dueDateByCustomer = new Date(dueDateByCustomer);
 	}
 
+	/**
+	 * @return Expected due date for this batch. This is used while negotiating for a new order.
+	 * On arrival of a new order, GSA calculates and sets expected due date for the batch.
+	 */
 	public long getExpectedDueDate() {
 		return waitingTime;
 	}
 
+	/**
+	 * Set expected due date for this batch.
+	 * @param waitingTime
+	 */
 	public void setExpectedDueDate(long waitingTime) {
 		this.waitingTime = waitingTime;
 	}
 
+	/**
+	 * @return start time(in milliseconds) of this batch
+	 */
 	public long getStartTimeMillis() {
 		return startTime;
 	}
 
+	/**
+	 * Sets start time(in milliseconds) for this batch
+	 * @param startTime
+	 */
 	public void setStartTimeMillis(long startTime) {
 		this.startTime = startTime;
 	}
 
+	/**
+	 * @return completion time of this batch
+	 */
 	public long getCompletionTime() {
 		return completionTime;
 	}
 
+	/**
+	 * Sets completion time for this batch
+	 * @param completionTime
+	 */
 	public void setCompletionTime(long completionTime) {
 		this.completionTime = completionTime;
 	}
 
+	/**
+	 * @return batch number for this batch. Batch Number is a unique number alotted to each batch.
+	 * This is used to uniquely query /cancel any batch.
+	 */
 	public int getBatchNumber() {
 		return batchNo;
 	}
 
+	/**
+	 * Sets batch number for this batch
+	 * @param batchNumber
+	 */
 	public void setBatchNumber(int batchNumber) {
 		this.batchNo = batchNumber;
 	}
 
+	/**
+	 * @return Generation time for this batch
+	 */
 	public Date getGenerationTime() {
 		return generationTime;
 	}
 
+	/**
+	 * Sets generation time for this batch
+	 * @param generationTime
+	 */
 	public void setGenerationTime(Date generationTime) {
 		this.generationTime = generationTime;
 	}
 
+	/**
+	 * Set generation time(in milliseconds)
+	 * @param generationTime
+	 */
 	public void setGenerationTime(long generationTime) {
 		this.generationTime = new Date(generationTime);
 	}
 
+	/**
+	 * @return the size of the batch or total number of jobs within the batch
+	 */
 	public int getBatchCount() {
 		return jobsInBatch.size();
 	}
-	
+
+	/**
+	 * @return List of all jobs within this batch
+	 */
 	public ArrayList<job> getJobsInBatch() {
 		return jobsInBatch;
 	}
-	
+
+	/**
+	 * Sets list of jobs for this batch
+	 * @param jobsInBatch
+	 */
 	public void setJobsInBatch(ArrayList<job> jobsInBatch) {
 		this.jobsInBatch = jobsInBatch;
 		for(int i = 0; i < jobsInBatch.size() ; i++) {
 			jobsInBatch.get(i).setJobNo(i + 1);
 		}
 	}
-	
+
+	/**
+	 * @return Id of this batch
+	 */
 	public String getBatchId() {
 		return batchId;
 	}
-	
+
+	/**
+	 * Sets id for this batch
+	 * @param batchId
+	 */
 	public void setBatchId(String batchId) {
 		this.batchId = batchId;
 	}
 
+	/**
+	 * Removes all jobs from the list 
+	 */
 	public void clearAllJobs() {
 		this.jobsInBatch.clear();
 	}
 
+	/**
+	 * @return first job within the list of all jobs
+	 */
 	public job getFirstJob() {
-
 		if(! jobsInBatch.isEmpty())
 			return jobsInBatch.get(0);
 
 		return null;
 	}
-	
+
+	/**
+	 * @return Last job within the list of all jobs
+	 */
 	public job getLastJob() {
-		
 		if(! jobsInBatch.isEmpty())
 			return jobsInBatch.get(jobsInBatch.size() -1);
-		
+
 		return null;
 	}
 
+	/**
+	 * @return current operation number being done on this batch
+	 */
 	public int getCurrentOperationNumber() {
 		return currentOperationIndex;
 	}
 
+	/**
+	 * @return operation type for the current operation being done on this batch
+	 */
 	public String getCurrentOperationType() {
 		return getFirstJob().getCurrentOperation().getJobOperationType();
 	}
@@ -311,10 +496,9 @@ public class Batch implements Serializable {
 	/**
 	 * increment current operation index by 1 
 	 */
-
 	public void IncrementOperationNumber() {
 		this.currentOperationIndex ++ ;
-		
+
 		for(int i = 0; i < jobsInBatch.size(); i++) {
 			jobsInBatch.get(i).IncrementOperationNumber();
 		}
@@ -351,12 +535,14 @@ public class Batch implements Serializable {
 	 * set completion time of current operation for first job in the batch 
 	 * @param completiontime
 	 */
-
 	public void setCurrentOperationCompletionTime(long completionTime) {
 		this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
 		get(currentOperationIndex).setCompletionTime(completionTime);
 	}
 
+	/**
+	 * @return Completion time for the current operation for this batch
+	 */
 	public long getCurrentOperationCompletionTime() {
 		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
 				get(currentOperationIndex).getCompletionTime();
@@ -382,24 +568,34 @@ public class Batch implements Serializable {
 		}
 	}
 
+	/**
+	 * @return Due date for the current operation of this batch
+	 */
 	public long getCurrentOperationDueDate() {
 		return this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
 				get(currentOperationIndex).getGorLdueDate();
 	}
 	
+	/**
+	 * Sets due date for current operation of this batch
+	 * @param dueDate
+	 */
 	public void setCurrentOperationDueDate(long dueDate) {
 		this.jobsInBatch.get(jobsInBatch.size() - 1).getOperations().
-				get(currentOperationIndex).setGorLdueDate(dueDate);
-	}
-	
-	public long getTotalProcessingTime() {
-		return this.getFirstJob().getTotalProcessingTime()*getBatchCount();
+		get(currentOperationIndex).setGorLdueDate(dueDate);
 	}
 
+	/**
+	 * @return Number of operations within this batch
+	 */
 	public int getNumOperations() {
 		return getFirstJob().getOperations().size();
 	}
-	
+
+	/**
+	 * Sets list of operations to be done on this batch
+	 * @param ops
+	 */
 	public void setOperations(ArrayList<jobOperation> ops) {
 		for(int i = 0; i < jobsInBatch.size() ; i++) {
 			this.jobsInBatch.get(i).setOperations(ops);
@@ -419,6 +615,9 @@ public class Batch implements Serializable {
 		}
 	}
 
+	/**
+	 * Resets currentOperationIndex to <code> 0 </code>
+	 */
 	public void resetCurrentOperationNumber() {
 		this.currentOperationIndex = 0;
 		isBatchComplete = false;
@@ -467,5 +666,5 @@ public class Batch implements Serializable {
 		return "Batch [batchNo=" + batchNo + "]";
 	}
 
-	
+
 }

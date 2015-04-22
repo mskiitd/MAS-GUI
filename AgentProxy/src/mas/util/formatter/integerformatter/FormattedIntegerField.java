@@ -20,12 +20,11 @@ public class FormattedIntegerField extends JFormattedTextField implements Serial
 	private IntegerVerifier verifier;
 
 	private PropertyChangeSupport propertySupport;
-	/**
-	 * Default constructor
-	 */
+	
 	public FormattedIntegerField() {
 		this(Integer.MIN_VALUE, Integer.MAX_VALUE,0);
 	}
+	
 	/**
 	 *  Constructor that accepts a min and max allowed value
 	 * 
@@ -37,8 +36,6 @@ public class FormattedIntegerField extends JFormattedTextField implements Serial
 		this(min,max,0);
 	}
 	/**
-	 *  Working Constructor
-	 * 
 	 * @param min min allowed value
 	 * @param max max allowed value
 	 * @param value inital value
@@ -63,9 +60,7 @@ public class FormattedIntegerField extends JFormattedTextField implements Serial
 		dff = new DefaultFormatterFactory(def,disp,ed);
 		setFormatterFactory(dff);
 	}
-	/*
-	 * Accessor methods
-	 */ 
+	
 	public int getMinValue() {
 		return minValue;
 	}
@@ -73,9 +68,7 @@ public class FormattedIntegerField extends JFormattedTextField implements Serial
 	public int getMaxValue() {
 		return maxValue;
 	}
-	/*
-	 * mutator methods
-	 */
+	
 	public void setMinValue(int value) throws IllegalArgumentException{
 		if(value > maxValue)
 			throw new IllegalArgumentException("min value cannot be greater than max value");

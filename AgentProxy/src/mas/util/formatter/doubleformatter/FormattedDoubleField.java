@@ -11,10 +11,8 @@ import javax.swing.text.NumberFormatter;
 /**
  * Provides a JFormattedTextField that accepts only doubles. Allows for the setting of the number
  * of decimal places displayed, and min/max values allowed.
- * 
- * @author Mark Pendergast
- * Copyright Mark Pendergast
  */
+
 public class FormattedDoubleField extends JFormattedTextField implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -39,17 +37,11 @@ public class FormattedDoubleField extends JFormattedTextField implements Seriali
 	private static final int POSITIONS_LEFT_OF_DECIMALEDIT = editFormat.indexOf('.');
 
 	private PropertyChangeSupport propertySupport;
-	/**
-	 * Default constructor
-	 */
+	
 	public FormattedDoubleField() {
 		this(-Double.MAX_VALUE, Double.MAX_VALUE,0, DEFAULT_DECIMALPLACES);
 	}
-	/**
-	 * Constructor that accepts the number of decimal places to display 
-	 *
-	 * @param places number of decimal places to display
-	 */
+	
 	public FormattedDoubleField(int places) {
 		this(-Double.MAX_VALUE, Double.MAX_VALUE,0, places);
 	}
@@ -92,9 +84,7 @@ public class FormattedDoubleField extends JFormattedTextField implements Seriali
 		setFormatterFactory(dff);
 
 	}
-	/*
-	 * Accessor methods
-	 */
+	
 	public double getMinValue() {
 		return minValue;
 	}
@@ -103,13 +93,10 @@ public class FormattedDoubleField extends JFormattedTextField implements Seriali
 		return maxValue;
 	}
 
-	public int getDecimalPlaces()
-	{
+	public int getDecimalPlaces() {
 		return decimalPlaces;
 	}
-	/*
-	 * mutator methods
-	 */
+	
 	public void setMinValue(double value) throws IllegalArgumentException{
 		if(value > maxValue)
 			throw new IllegalArgumentException("min value cannot be greater than max value");

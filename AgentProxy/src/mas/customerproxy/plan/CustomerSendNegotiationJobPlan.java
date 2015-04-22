@@ -3,18 +3,22 @@ package mas.customerproxy.plan;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
+
+/**
+ * Plan to send batch under negotitation
+ * This plan updates the negotiation zonedata of customer with batch under negotiation (after making changes
+ * from the customer side). This change is notified to the GSA and it acts upon it.
+ * 
+ */ 
 
 public class CustomerSendNegotiationJobPlan extends Behaviour implements PlanBody{
 

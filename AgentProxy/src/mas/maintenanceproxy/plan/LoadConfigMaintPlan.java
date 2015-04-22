@@ -23,7 +23,6 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 import jade.core.behaviours.OneShotBehaviour;
-import jdk.nashorn.internal.runtime.regexp.joni.Warnings;
 
 public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody{
 
@@ -77,11 +76,11 @@ public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody{
 
 			switch(rowCount) {
 			case 0:
-				maintPeriod = (long)cell.getNumericCellValue()*timeConversion;
+				maintPeriod = (long)cell.getNumericCellValue() * timeConversion;
 				bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.maintenancePeriod, maintPeriod);
 				break;
 			case 1:
-				maintWarningPeriod = (long)cell.getNumericCellValue()*timeConversion;
+				maintWarningPeriod = (long)cell.getNumericCellValue() * timeConversion;
 				bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.maintWarningPeriod, maintWarningPeriod);
 				break;
 			}

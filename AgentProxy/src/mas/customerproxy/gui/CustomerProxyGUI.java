@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -138,8 +139,6 @@ public class CustomerProxyGUI extends JFrame{
 
 	private void _loadIconsAndFiles() {
 		new Thread(new Runnable() {
-
-			
 
 			@Override
 			public void run() {
@@ -320,7 +319,7 @@ public class CustomerProxyGUI extends JFrame{
 			customerTrayIcon.displayMessage( title,message, TrayIcon.MessageType.NONE);
 			break;
 		}
-		
+
 		try {
 			in = new FileInputStream(notificationSound);
 			audioStream = new AudioStream(in);
@@ -329,7 +328,7 @@ public class CustomerProxyGUI extends JFrame{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		// play the audio clip with the audio player class
 		AudioPlayer.player.start(audioStream);
 	}
@@ -367,7 +366,7 @@ public class CustomerProxyGUI extends JFrame{
 
 			} else if (menu == menuItemChangeDueDate) {
 				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
-//				cAgent.changeDueDate((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
+				//				cAgent.changeDueDate((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
 			} 
 		}
 	}
@@ -378,13 +377,20 @@ public class CustomerProxyGUI extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			// handle create job button pressed event
 			if(e.getSource().equals(createJob)) {
-				DefineJobFrame jobFrame;
-				if(currentJobToSend == -1)
-					jobFrame = new DefineJobFrame(cAgent,null);
-				else {
-					Batch j = jobVector.get(currentJobToSend);
-					jobFrame = new DefineJobFrame(cAgent,j);
-				}
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						if(currentJobToSend == -1) {
+							DefineJobFrame jobFrame = new DefineJobFrame(cAgent,null);
+						}
+						else {
+							Batch j = jobVector.get(currentJobToSend);
+							DefineJobFrame	jobFrame = new DefineJobFrame(cAgent,j);
+						}
+					}
+				});
+
 			}
 		}
 	};
@@ -522,7 +528,7 @@ public class CustomerProxyGUI extends JFrame{
 
 	public void clean() {
 		tray.remove(customerTrayIcon);
-		
+
 	}
 
 }

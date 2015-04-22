@@ -12,13 +12,13 @@ public class basicCapability extends parentBasicCapability{
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * add two plans: one for opening gui for negotiation
+	 * other for sending negotiation job back to the GSA 
+	 */
 	public basicCapability() {
 		super();
 
-		/**
-		 * add two plans: one for opening gui for negotiation
-		 * other for sending negotiation job back to the GSA 
-		 */
 		getPlanLibrary().addPlan(new SimplePlan(MessageTemplate.MatchConversationId(
 				MessageIds.msgGSAjobsUnderNegaotiation),NegotiationGuiPlan.class));
 

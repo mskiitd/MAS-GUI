@@ -20,7 +20,7 @@ public class JobTile {
 		custDueDate=batch.getDueDateByCustomer();
 		JobNo=batch.getBatchNumber();
 		priority=(int) batch.getCPN();
-		processingTime=(double)batch.getTotalProcessingTime()/1000.0;
+		processingTime=(double)batch.getTotalBatchProcessingTime()/1000.0;
 //		startDatebyGSA=new Date(0);
 //		dueDatebyGSA=new Date(0);
 		jobName="unknown";

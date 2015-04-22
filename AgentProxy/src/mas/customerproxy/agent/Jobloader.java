@@ -14,6 +14,13 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+
+/** 
+ * A class to read and load batch data from excel file.
+ * It picks up the excel files from resources/Customer/ folder.
+ * This is what is displayed in the GUI of customer
+ *
+ */
 public class Jobloader {
 
 	private int NumJobs;
@@ -39,6 +46,10 @@ public class Jobloader {
 		this.jobFilePath = "resources/customer/";
 	}
 
+	/**
+	 * Creates a vector of batch which are read from the excel file of customer
+	 * @return vector of batch read from the excel file
+	 */
 	public Vector<Batch> getBatchVector() {
 		Vector<Batch> jobs = new Vector<Batch>();
 
@@ -63,6 +74,9 @@ public class Jobloader {
 		return jobs;
 	}
 
+	/**
+	 * @return headers of the table which displays all the batches within the excel file
+	 */
 	public Vector<String> getJobHeaders(){
 		Vector<String> headers = new Vector<String>();
 
@@ -73,6 +87,10 @@ public class Jobloader {
 		return headers;
 	}
 
+	/**
+	 * 
+	 * @return headers of the table which displays all the accepted batches
+	 */
 	public Vector<String> getAcceptedJobTableHeader() {
 		Vector<String> headers = new Vector<String>();
 
@@ -84,6 +102,10 @@ public class Jobloader {
 		return headers;
 	}
 
+	/**
+	 * 
+	 * @return headers of the table which displays all the completed batches
+	 */
 	public Vector<String> getCompleteJobTableHeader() {
 		Vector<String> headers = new Vector<String>();
 
@@ -95,6 +117,9 @@ public class Jobloader {
 		return headers;
 	}
 
+	/**
+	 * Reads the excel file of batches
+	 **/
 	public void readFile() {
 		XSSFWorkbook wb;
 		try{

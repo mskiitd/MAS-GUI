@@ -15,6 +15,12 @@ import com.alee.extended.layout.VerticalFlowLayout;
 import com.alee.laf.radiobutton.WebRadioButton;
 import com.alee.utils.SwingUtils;
 
+/**
+ * @author Nikhil Chilwant
+ * 
+ * For input about Agents MAS container
+ *
+ */
 public class ConfigFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;

@@ -17,12 +17,12 @@ import mas.localSchedulingproxy.goal.RegisterLSAgentServiceGoal;
 import mas.localSchedulingproxy.goal.RegisterLSAgentToBlackboardGoal;
 import mas.localSchedulingproxy.goal.SendBatchToMachineGoal;
 import mas.localSchedulingproxy.goal.StartMaintenanceGoal;
-import mas.localSchedulingproxy.goal.UpdateOperationDatabaseGoal;
+import mas.localSchedulingproxy.goal.LoadConfigLSAGoal;
 import mas.localSchedulingproxy.plan.BatchSchedulingPlan;
 import mas.localSchedulingproxy.plan.EnqueueBatchPlan;
 import mas.localSchedulingproxy.plan.FinishMaintenancePlan;
 import mas.localSchedulingproxy.plan.GetCurrentJobOnMachinePlan;
-import mas.localSchedulingproxy.plan.LoadOperationDatabasePlan;
+import mas.localSchedulingproxy.plan.LoadConfigLSAPlan;
 import mas.localSchedulingproxy.plan.ReceiveCompletedBatchPlan;
 import mas.localSchedulingproxy.plan.ReceiveDelayedMaintenanceResponsePlan;
 import mas.localSchedulingproxy.plan.ReceiveMaintenanceJobPlan;
@@ -119,10 +119,13 @@ public class AbstractbasicCapability extends Capability {
 		Belief<PMaintenance> currentMaintJob = new TransientBelief<PMaintenance>(
 				ID.LocalScheduler.BeliefBaseConst.currentMaintJob);
 
-
 		Belief<String> DueDateCalcMethod = new TransientBelief<String>(ID.LocalScheduler.
 				BeliefBaseConst.DueDateCalcMethod);
 		
+		Belief<Double> schedulingPeriod = new TransientBelief<Double>(
+				ID.LocalScheduler.BeliefBaseConst.schedulingInterval);
+		
+		schedulingPeriod.setValue(null);
 		currentJob.setValue(null);
 		gui.setValue(null);
 		dtrack.setValue(new StatsTracker());
@@ -134,9 +137,7 @@ public class AbstractbasicCapability extends Capability {
 		jobSet.setValue(new ArrayList<Batch>());
 		operationDB.setValue(new OperationDataBase());
 		DueDateCalcMethod.setValue(ID.LocalScheduler.OtherConst.LocalDueDate);
-
-		double threshVal = 0;
-		regretThreshold.setValue(threshVal);
+		regretThreshold.setValue(null);
 
 		beliefs.add(bboard);
 		beliefs.add(jobSet);
@@ -156,6 +157,7 @@ public class AbstractbasicCapability extends Capability {
 		beliefs.add(currentMaintJob);
 		beliefs.add(currentJob);
 		beliefs.add(DueDateCalcMethod);
+		beliefs.add(schedulingPeriod);
 
 		return beliefs;
 	}
@@ -185,7 +187,7 @@ public class AbstractbasicCapability extends Capability {
 
 		plans.add(new SimplePlan(BatchSchedulingGoal.class,BatchSchedulingPlan.class));
 
-		plans.add(new SimplePlan(UpdateOperationDatabaseGoal.class, LoadOperationDatabasePlan.class));
+		plans.add(new SimplePlan(LoadConfigLSAGoal.class, LoadConfigLSAPlan.class));
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgGSAQuery)
 				,RespondToGSAQuery.class));
@@ -210,7 +212,7 @@ public class AbstractbasicCapability extends Capability {
 		myAgent.addGoal(new RegisterLSAgentServiceGoal());
 		myAgent.addGoal(new RegisterLSAgentToBlackboardGoal());
 		myAgent.addGoal(new BatchSchedulingGoal());
-		myAgent.addGoal(new UpdateOperationDatabaseGoal());
+		myAgent.addGoal(new LoadConfigLSAGoal());
 		myAgent.addGoal(new ReceiveMaintenanceJobGoal());
 		myAgent.addGoal(new SendBatchToMachineGoal());
 		/*	myAgent.addGoal(new SendBidGoal());

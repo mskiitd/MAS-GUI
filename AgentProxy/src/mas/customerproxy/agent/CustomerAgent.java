@@ -31,8 +31,6 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	public void sendGeneratedBatch(Batch batchOfJobs) {
 		//		log.info("Adding generated job " + j + " to belief base : " +bfBase);
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, batchOfJobs);
-
-
 		addGoal(new dispatchJobGoal());
 	}
 

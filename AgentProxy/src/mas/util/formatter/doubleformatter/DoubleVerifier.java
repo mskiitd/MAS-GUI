@@ -13,19 +13,16 @@ public class DoubleVerifier extends InputVerifier {
 	protected static final Color INVALID_COLOR = Color.red;
 	protected static final Color VALID_COLOR = Color.black;
 
-	/**
-	 * Creates an Verifier object that makes sure the text can be parsed into a double between MIN_VALUE and MAX_VALUE
-	 */            
 	public DoubleVerifier() {
 
 	}
+	
 	/**
 	 * Creates an Verifier object that makes sure the text can be parsed into a double between min and max
 	 * @param min lowest valid value
 	 * @param max highest valid value
 	 * @throws java.lang.IllegalArgumentException
 	 */    
-
 	public DoubleVerifier(double min, double max) throws IllegalArgumentException {
 		if(min  > max)
 			throw new IllegalArgumentException("min value must be less than max value");

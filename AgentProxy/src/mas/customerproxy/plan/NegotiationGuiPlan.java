@@ -19,6 +19,10 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * This plan accepts the batch under negotitation coming from GSA and shows the batch 
+ * in a GUI where customer can make modifications to this batch
+ */
 public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 	private static final long serialVersionUID = 1L;
 	private Logger log;

@@ -22,6 +22,9 @@ import org.apache.logging.log4j.Logger;
 import test.AgentStarter;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * For input about IP address of MAS remote container
+ */
 public class ShowIPFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -29,7 +32,7 @@ public class ShowIPFrame extends JFrame {
 	private JTextArea ipJtext,portJText;
 	private Logger log=LogManager.getLogger();
 	private FileOutputStream outputStream;
-	private Properties prop = new Properties();;
+	private Properties prop = new Properties();
 	
 	public ShowIPFrame(AgentToStart a) {
 		
@@ -56,7 +59,6 @@ public class ShowIPFrame extends JFrame {
 						try {
 							outputStream= new FileOutputStream("resources/mas.properties");
 						} catch (FileNotFoundException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						
@@ -67,13 +69,11 @@ public class ShowIPFrame extends JFrame {
 						try {
 							prop.store(outputStream, "Comment");
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						try {
 							outputStream.close();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						
