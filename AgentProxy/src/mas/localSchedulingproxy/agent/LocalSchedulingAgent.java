@@ -18,6 +18,12 @@ import org.apache.logging.log4j.Logger;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Local Scheduling Agent. The agent is a BDI agent.
+ */
+
 public class LocalSchedulingAgent extends AbstractlocalSchedulingAgent{
 
 	private static final long serialVersionUID = 1L;

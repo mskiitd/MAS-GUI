@@ -2,43 +2,41 @@ package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import mas.jobproxy.Batch;
 
-public class BranchNboundRegretRigid implements ScheduleSequenceIFace {
-	/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 
-	 *  To use it, create a node with state equal to ArrayList of a sequence of jobs
-	 *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
-	 *  Minimum penalty will be given by the variables "lowBound".
-	 *  @author Anand Prajapati 
-	 *  @Email  anandprajapati389@gmail.com
-	 */ 
+/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 
+ *  To use it, create a node with state equal to ArrayList of a sequence of jobs
+ *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
+ *  Minimum penalty will be given by the variables "lowBound".
+ *  
+ *  This takes into account the regret of a particular batch also. If a batch, whose regret has crossed the regret threshold,
+ *  is delayed, then we discard that node. Thus batches whose regret is beyond threshold can't be delayed anymore. They can only
+ *  be left shifted.
+ *  
+ *  @author Anand Prajapati 
+ */
 
-	/**
-	 * depth of tree starts from zero
-	 * Level of tree with depth of 0 is ignored
-	 */
-	ArrayList<Batch> best = new ArrayList<Batch>();		// best solution stored in this ArrayList when algo runs
-	private Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
+public class BranchNboundRegretRigid implements ScheduleSequenceIFace {
+
+	// best solution stored in this ArrayList when algorithm runs
+	ArrayList<Batch> best = new ArrayList<Batch>();		
+	// lower bound for best solution
+	private Double lowBound = Double.MAX_VALUE;			
 	public Node rootNode;
 	public Batch fixedBatch;
 	private double regretCutOff;
-	private Logger log;
 	private ArrayList<Batch> copiedList;
 
+	/**
+	 * Store the position of all the jobs in the initial sequence so that 
+	 * we can compare regret factor of jobs after sequencing
+	 */
 	public BranchNboundRegretRigid(ArrayList<Batch> s, double regretCuttOff) {
 		this.copiedList = new ArrayList<Batch>(s);
 		fixedBatch = copiedList.get(0);
 		copiedList.remove(0);
 		this.regretCutOff = regretCuttOff;
-		this.log = LogManager.getLogger();
-		/**
-		 * Store the position of all the jobs in the initial sequence so that 
-		 * we can compare regret factor of jobs after sequencing
-		 */
+
 		for(int i= 0; i < s.size() ;i++) {
 			s.get(i).setPosition(i);
 		}
@@ -46,16 +44,21 @@ public class BranchNboundRegretRigid implements ScheduleSequenceIFace {
 	}
 
 	public class Node {
-		ArrayList<Batch> sequence;		//sequence of batch
-		Node[] child;				//  child nodes at any point
-		private Node parent;				// parent node
-		int depth;					// depth of node in tree
-		double penalty;				// penalty of node
+		//sequence of batch
+		ArrayList<Batch> sequence;	
+		//  child nodes at any point
+		Node[] child;				
+		// parent node
+		private Node parent;	
+		// depth of node in tree
+		int depth;				
+		// penalty of node
+		double penalty;			
 
-		public Node(ArrayList<Batch> s) {
+		public Node(ArrayList<Batch> seq) {
 			depth = 0;		
 			penalty = 0;
-			this.sequence = new ArrayList<Batch>(s);
+			this.sequence = new ArrayList<Batch>(seq);
 			int n = sequence.size();
 			// i'th child will be equal to that of its parent and one job kept at last
 			child = new Node [n];		
@@ -209,11 +212,11 @@ public class BranchNboundRegretRigid implements ScheduleSequenceIFace {
 
 		// end is the number of children that any particular node will have in the tree
 		int elements = node.sequence.size() - 1;
-		
+
 		// don't branch further if job crossing threshold is delayed
 		for ( int i = 0; i < elements ; i++) {
 			if(node.sequence.get(i).getRegret() > this.regretCutOff) {
-				
+
 				// if its position is shifted to right in this sequence then return
 				int position = i;
 				if( position > node.sequence.get(i).getPosition() ) {

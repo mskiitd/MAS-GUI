@@ -18,6 +18,11 @@ import org.apache.logging.log4j.Logger;
 
 import bdi4jade.core.BeliefBase;
 
+/**
+ * @author Anand Prajapati
+ * Behavior to performing scheduling, if required, at regular intervals
+ *
+ */
 public class JobSchedulingTickerBehavior extends TickerBehaviour {
 
 	private static final long serialVersionUID = 1L;
@@ -62,9 +67,10 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 	}
 
 	/**
-	 * Schedules the sequence of batches based on processing time of current operation
+	 * Performs scheduling of the current sequence of batches if the total regret of the sequence
+	 * has gone beyond some threshold.
+	 * Schedules the sequence of batches based on processing time of only the current operation.
 	 */
-
 	@SuppressWarnings("unchecked")
 	private void calculateRegretAndSchedule() {
 		int qSize = jobQueue.size();
@@ -103,10 +109,6 @@ public class JobSchedulingTickerBehavior extends TickerBehaviour {
 		}
 		log.info("total regret : " + totalRegret);
 		if(totalRegret > regretThreshold) {
-
-//			if(gui != null) {
-//				gui.showNotification("Scheduling", "Scheduling of batches starting", MessageType.INFO);
-//			}
 
 			reset(10 * LocalSchedulingAgent.schedulingPeriod);
 			log.info("old queue : " + jobQueue);

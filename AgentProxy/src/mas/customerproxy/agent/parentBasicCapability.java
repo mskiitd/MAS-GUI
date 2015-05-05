@@ -91,16 +91,16 @@ public class parentBasicCapability extends Capability {
 	}
 
 	/**
-	 * Add plans for
-	 * Registering customer on blackboard
-	 * Dispatching generated batch
-	 * Sending confirmed batch ( after negotiation)
-	 * Canceling the order
-	 * Receiving completed batch
-	 * changing due date of batch
-	 * handling rejected order from GSA
+	 * <h2>Add plans for </h2>
+	 * Registering customer on blackboard </br>
+	 * Dispatching generated batch </br>
+	 * Sending confirmed batch ( after negotiation) </br>
+	 * Canceling the order </br>
+	 * Receiving completed batch </br>
+	 * changing due date of batch </br>
+	 * handling rejected order from GSA </br>
 	 * 
-	 * @return set of plans for this agent
+	 * @return Set of plans for this agent
 	 */
 	public static Set<Plan> getPlans() {
 		Set<Plan> plans = new HashSet<Plan>();

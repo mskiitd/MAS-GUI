@@ -19,7 +19,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * A class to read and load batch data from excel file.
  * It picks up the excel files from resources/Customer/ folder.
  * This is what is displayed in the GUI of customer
- *
  */
 public class Jobloader {
 

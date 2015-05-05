@@ -61,7 +61,7 @@ public class AbstractbasicCapability extends Capability {
 
 	private static final long serialVersionUID = 1L;
 
-	public AbstractbasicCapability(){
+	public AbstractbasicCapability() {
 		super(new BeliefBase(getBeliefs()), new PlanLibrary(getPlans()));
 		log = LogManager.getLogger();
 	}

@@ -2,41 +2,34 @@ package mas.localSchedulingproxy.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import mas.jobproxy.Batch;
 
-public class BranchNboundSimple implements ScheduleSequenceIFace {
-	/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 
-	 *  To use it, create a node with state equal to ArrayList of a sequence of jobs
-	 *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
-	 *  Minimum penalty will be given by the variables "lowBound".
-	 *  @author Anand Prajapati 
-	 *  @Email  anandprajapati389@gmail.com
-	 */ 
+/** Minimizes penalty of a given sequence of jobs by using branch and bound algorithm 
+ *  To use it, create a node with state equal to ArrayList of a sequence of jobs
+ *  The solution for the given job sequence will be calculated and stored in the ArrayList "best"
+ *  Minimum penalty will be given by the variables "lowBound".
+ * 
+ *  @author Anand Prajapati 
+ */ 
 
-	/**
-	 * depth of tree starts from zero
-	 * Level of tree with depth of 0 is ignored
-	 */
-	ArrayList<Batch> best = new ArrayList<Batch>();		// best solution stored in this ArrayList when algo runs
-	private Double lowBound = Double.MAX_VALUE;			// Upper bound for solutions
+public class BranchNboundSimple implements ScheduleSequenceIFace {
+
+	// best solution stored in this ArrayList when algorithm runs
+	ArrayList<Batch> best = new ArrayList<Batch>();		
+	// lower bound for best solution
+	private Double lowBound = Double.MAX_VALUE;			
 	public Node rootNode;
 	public Batch fixedBatch;
 	private ArrayList<Batch> copiedList;
-	private Logger log;
 
+	/**
+	 * Store the position of all the jobs in the initial sequence so that 
+	 * we can compare regret factor of jobs after sequencing
+	 */
 	public BranchNboundSimple(ArrayList<Batch> s) {
 		this.copiedList = new ArrayList<Batch>(s);
 		fixedBatch = copiedList.get(0);
 		copiedList.remove(0);
-		this.log = LogManager.getLogger();
-		/**
-		 * Store the position of all the jobs in the initial sequence so that 
-		 * we can compare regret factor of jobs after sequencing
-		 */
 		for(int i= 0; i < s.size() ;i++) {
 			s.get(i).setPosition(i);
 		}
@@ -44,11 +37,16 @@ public class BranchNboundSimple implements ScheduleSequenceIFace {
 	}
 
 	public class Node {
-		ArrayList<Batch> sequence;		//sequence of batch
-		Node[] child;				//  child nodes at any point
-		private Node parent;				// parent node
-		int depth;					// depth of node in tree
-		double penalty;				// penalty of node
+		//sequence of batch
+		ArrayList<Batch> sequence;	
+		//  child nodes at any point
+		Node[] child;				
+		// parent node
+		private Node parent;		
+		// depth of node in tree
+		int depth;					
+		// penalty of node
+		double penalty;				
 
 		public Node(ArrayList<Batch> s) {
 			depth = 0;		
@@ -169,7 +167,7 @@ public class BranchNboundSimple implements ScheduleSequenceIFace {
 		for ( int i = 0; i < end ; i++) {
 			Node tempRootNode = new Node(rootNode.sequence);
 			Collections.swap(tempRootNode.sequence, i, tempRootNode.sequence.size() - 1);
-//			log.info(tempRootNode.sequence);
+			//			log.info(tempRootNode.sequence);
 			tempRootNode.updatePenaltyValue();
 			RecursiveSolver(tempRootNode);
 		}
@@ -193,8 +191,8 @@ public class BranchNboundSimple implements ScheduleSequenceIFace {
 					best.add(parent.sequence.get(parent.sequence.size() -1 ));
 					parent = parent.getParent();
 				}
-//				log.info("last : " + node.sequence);
-//				log.info("best :  " + best);
+				//				log.info("last : " + node.sequence);
+				//				log.info("best :  " + best);
 				setLowBound(val);
 			}
 			return ;
@@ -209,7 +207,7 @@ public class BranchNboundSimple implements ScheduleSequenceIFace {
 		int end = node.sequence.size() - 1;
 		for ( int i = 0; i < end ; i++) {
 			Node child = node.getChildNode(i);
-//			log.info(" child : " + child.sequence + " parent "+ child.getParent().sequence.get(child.getParent().sequence.size()-1));
+			//			log.info(" child : " + child.sequence + " parent "+ child.getParent().sequence.get(child.getParent().sequence.size()-1));
 
 			child.updatePenaltyValue();
 			RecursiveSolver(child);
