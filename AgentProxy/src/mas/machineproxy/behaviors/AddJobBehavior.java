@@ -54,24 +54,9 @@ public class AddJobBehavior extends Behaviour {
 				gui.machineProcessing(comingJob.getJobID(),
 						comingJob.getCurrentOperation().getJobOperationType());
 
-				double ProcessingTimeInSeconds = comingJob.getCurrentOperationProcessingTime()/1000.0;
-
 				comingJob.setCurrentOperationStartTime(System.currentTimeMillis());
 				/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time before loading/unloading: " + comingJob.getCurrentOperationProcessTime());*/
-
-				double newProcessingTime =
-						Methods.normalRandom(ProcessingTimeInSeconds,/*
-						getCurrentOperationProcessTime gives time in milliseconds*/
-								ProcessingTimeInSeconds*machineSimulator.getPercentProcessingTimeVariation())+
-								Methods.getLoadingTime(machineSimulator.getMeanLoadingTime(),
-										machineSimulator.getSdLoadingTime()) +
-										Methods.getunloadingTime(machineSimulator.getMeanUnloadingTime(),
-												machineSimulator.getSdUnloadingTime());
-
-				//this will introduce error
-				comingJob.setCurrentOperationProcessingTime((long) newProcessingTime) ; 
-				//ex. 0.1 with be converted into 0
 
 				processingTime = comingJob.getCurrentOperationProcessingTime();
 				passedTime = 0;

@@ -169,7 +169,7 @@ public class MachineGUI extends JFrame {
 			mcPanel.add(Box.createRigidArea(new Dimension(mcPanel.getWidth(),50)) );
 
 			mcPanel.add(machineSubPanel);
-			mcPanel.add(Box.createRigidArea(new Dimension(mcPanel.getWidth(),120)) );
+			mcPanel.add(Box.createRigidArea(new Dimension(mcPanel.getWidth(),80)) );
 
 			mcPanel.add(lowerButtonPanel);
 

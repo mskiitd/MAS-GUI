@@ -58,18 +58,6 @@ public class LoadJobBehavior extends Behaviour {
 			/*	log.info("Job No : '" + comingJob.getJobNo() + "' loading with" +
 						"processing time before loading/unloading: " + comingJob.getCurrentOperationProcessTime());*/
 
-			double newProcessingTime =
-					Methods.normalRandom(ProcessingTimeInSeconds,/*
-						getCurrentOperationProcessTime gives time in milliseconds*/
-							ProcessingTimeInSeconds*machineSimulator.getPercentProcessingTimeVariation())+
-							Methods.getLoadingTime(machineSimulator.getMeanLoadingTime(),
-									machineSimulator.getSdLoadingTime()) +
-									Methods.getunloadingTime(machineSimulator.getMeanUnloadingTime(),
-											machineSimulator.getSdUnloadingTime());
-
-			//this will introduce error
-//			comingJob.setCurrentOperationProcessingTime((long) newProcessingTime*1000) ; 
-
 			processingTime = comingJob.getCurrentOperationProcessingTime();
 			passedTime = 0;
 

@@ -1,7 +1,6 @@
 package mas.util;
 
 import java.io.IOException;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -13,6 +12,10 @@ import mas.blackboard.nameZoneData.NamedZoneData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Utility class for MAS.
+ * Contains methods which are called by other agents multiple number of times
+ */
 public class AgentUtil {
 	private static AID blackBoard = null;
 	private static Logger log = LogManager.getLogger();

@@ -38,13 +38,10 @@ public class StringFormatter extends DefaultFormatter implements Serializable {
 	 * 
 	 * @param text from the JFormattedTextField
 	 * @return 
-	 * @throws java.text.ParseException
 	 */
-	public Object stringToValue(String text) throws ParseException
-	{
+	public Object stringToValue(String text) throws ParseException {
 		Matcher m = pattern.matcher(text);
-		if(!m.matches())
-		{
+		if(!m.matches()) {
 			throw new ParseException(text,0);        
 		}
 		else

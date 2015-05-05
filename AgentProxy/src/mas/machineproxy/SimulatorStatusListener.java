@@ -5,6 +5,12 @@ import java.beans.PropertyChangeListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * A listener class to listen for machine's failure.
+ * handle any event related to machine's failure here
+ */
 public class SimulatorStatusListener implements PropertyChangeListener {
 
 	private transient Logger log;

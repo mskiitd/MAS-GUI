@@ -12,6 +12,13 @@ import org.apache.commons.math3.random.GaussianRandomGenerator;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Contains utility methods which are called by simulator class or component class
+ * to generate random numbers, get loading time, get unloading time 
+ *
+ */
 public class Methods implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

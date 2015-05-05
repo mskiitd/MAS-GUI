@@ -20,8 +20,7 @@ public class ValidStringVerifier extends InputVerifier {
 	 * @param jc the component to be checked
 	 * @return true if valid, false if not
 	 */
-	public boolean verify(javax.swing.JComponent jc)
-	{
+	public boolean verify(javax.swing.JComponent jc) {
 
 		try {
 			JFormattedTextField ftf = (JFormattedTextField)jc;
@@ -29,12 +28,10 @@ public class ValidStringVerifier extends InputVerifier {
 			jc.setForeground(VALID_COLOR); 
 			return true;
 		}
-		catch(Exception e)
-		{
+		catch(Exception e) {
 			Toolkit.getDefaultToolkit().beep();
 			jc.setForeground(INVALID_COLOR);
 			return false;
 		}
-
 	}
 }

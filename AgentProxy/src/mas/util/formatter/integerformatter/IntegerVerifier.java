@@ -21,8 +21,7 @@ public class IntegerVerifier extends InputVerifier {
 	 * @param max highest valid value
 	 * @throws java.lang.IllegalArgumentException
 	 */    
-	public IntegerVerifier(int min, int max) throws IllegalArgumentException
-	{
+	public IntegerVerifier(int min, int max) throws IllegalArgumentException {
 		if(min  > max)
 			throw new IllegalArgumentException("min value must be less than max value");
 
@@ -31,18 +30,16 @@ public class IntegerVerifier extends InputVerifier {
 	}
 
 	public boolean verify(JComponent jc) {
-		try{
+		try {
 			String text = ((JTextComponent)jc).getText();
 			int val = Integer.parseInt(text);
-			if(val < minValue || val > maxValue)
-			{
+			if(val < minValue || val > maxValue) {
 				Toolkit.getDefaultToolkit().beep();
 				jc.setForeground(INVALID_COLOR);
 				return false;
 			}
 		}
-		catch(Exception e)
-		{
+		catch(Exception e) {
 			Toolkit.getDefaultToolkit().beep();
 			jc.setForeground(INVALID_COLOR);  
 			return false;  
@@ -56,8 +53,7 @@ public class IntegerVerifier extends InputVerifier {
 	 * @param value
 	 * @throws java.lang.IllegalArgumentException
 	 */       
-	public void setMinValue(int value) throws IllegalArgumentException
-	{
+	public void setMinValue(int value) throws IllegalArgumentException {
 		if(value > maxValue)
 			throw new IllegalArgumentException("value must be less than maxvalue");
 		minValue = value;
@@ -68,8 +64,7 @@ public class IntegerVerifier extends InputVerifier {
 	 * @param value new maximum value
 	 * @throws java.lang.IllegalArgumentException
 	 */       
-	public void setMaxValue(int value) throws IllegalArgumentException
-	{
+	public void setMaxValue(int value) throws IllegalArgumentException {
 		if(value < minValue)
 			throw new IllegalArgumentException("value must be greater than minvalue");
 		maxValue = value;

@@ -61,28 +61,28 @@ public class LoadSimulatorParamsBehavior extends OneShotBehaviour{
 					switch (rowNumber) {
 
 					case 0:
-						machineSimulator.setPercentProcessingTimeVariation(
-								(double)cell.getNumericCellValue());
-
-						machineSimulator.setPercentProcessingTimeVariation(
-								machineSimulator.getPercentProcessingTimeVariation()/100);
+//						machineSimulator.setPercentProcessingTimeVariation(
+//								(double)cell.getNumericCellValue());
+//
+//						machineSimulator.setPercentProcessingTimeVariation(
+//								machineSimulator.getPercentProcessingTimeVariation()/100);
 						break;
 
 					case 1:
-						machineSimulator.setMeanLoadingTime(
-								(double)cell.getNumericCellValue());
+//						machineSimulator.setMeanLoadingTime(
+//								(double)cell.getNumericCellValue());
 						break;
 					case 2:
-						machineSimulator.setSdLoadingTime(
-								(double)cell.getNumericCellValue());
+//						machineSimulator.setSdLoadingTime(
+//								(double)cell.getNumericCellValue());
 						break;
 					case 3:
-						machineSimulator.setMeanUnloadingTime(
-								(double)cell.getNumericCellValue() );
+//						machineSimulator.setMeanUnloadingTime(
+//								(double)cell.getNumericCellValue() );
 						break;
 					case 4:
-						machineSimulator.setSdUnloadingTime(
-								(double)cell.getNumericCellValue());
+//						machineSimulator.setSdUnloadingTime(
+//								(double)cell.getNumericCellValue());
 						break;
 
 					case 5:
