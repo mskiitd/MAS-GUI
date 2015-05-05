@@ -10,11 +10,21 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import bdi4jade.core.BDIAgent;
 import mas.util.*;
 
+/**
+ * class for creating Blackboard in BDI form.
+ * There should be only one instance of blackboard in system.
+ * 
+ */
+
 public class blackboard extends BDIAgent {
 	
 	private static final long serialVersionUID = 1L;
-	public static BDIAgent BBagent;
+	
+//	instance if blackboard
+	public static BDIAgent BBagent; 
+
 	private Logger log;
+	
 	
 	public void init() {
 		log = LogManager.getLogger(this.getClass());
@@ -38,6 +48,7 @@ public class blackboard extends BDIAgent {
 		/* Registering with DF finished*/
 
 		BBagent = this;
+		
 		addCapability(new CommunicationCenter(BBagent));
 	}
 }

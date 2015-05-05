@@ -14,20 +14,40 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Contains parameters of agent
+ * @author NikhilChilwant
+ *
+ */
 public class ZoneData implements ZoneDataIFace, Serializable{
 
 	private static final long serialVersionUID = 1L;
 	protected NamedZoneData name;
+	
+	//data stored
 	private LinkedList<Object> data;
+	
+	//subscribers of zone data
 	private HashSet<AID> subscribers;
 	private Logger log;
+	
+	//message ID to be used when updates to sent
 	private String UpdateMessageID;
-	private Agent bb; //needed for sending update message
+	private Agent bb;
+	
+	//Whether multiple valus to be stored or not
 	private boolean appendValues;
 
-	public ZoneData(NamedZoneData name2, String UpdateMsgID, Agent blackboard, boolean appendValues){
+	/**
+	 * 
+	 * @param zoneDataName Name of zone data
+	 * @param UpdateMsgID Message ID to be used when update of this paramter to be sent
+	 * @param blackboard instance of blackboard
+	 * @param appendValues whether to store multiple values in paramter
+	 */
+	public ZoneData(NamedZoneData zoneDataName, String UpdateMsgID, Agent blackboard, boolean appendValues){
 		log = LogManager.getLogger();
-		this.name = name2;
+		this.name = zoneDataName;
 		this.data = new LinkedList<Object>();
 		this.subscribers = new HashSet<AID>();
 		//ID of message to be used while sending update of data
@@ -127,6 +147,10 @@ public class ZoneData implements ZoneDataIFace, Serializable{
 		return data.pop();
 
 	}
+
+	/**
+	 * sends update of parameter
+	 */
 	public void sendUpdate(MessageParams msgStruct){
 
 		ACLMessage update=new ACLMessage(ACLMessage.INFORM);		

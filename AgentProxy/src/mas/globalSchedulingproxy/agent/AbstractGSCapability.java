@@ -39,7 +39,11 @@ import bdi4jade.core.Capability;
 import bdi4jade.core.PlanLibrary;
 import bdi4jade.plan.Plan;
 import bdi4jade.util.plan.SimplePlan;
-
+/**
+ * Global Scheduling Agent capability. Currently, only one capability exists.
+ * @author NikhilChilwant
+ *
+ */
 public abstract class AbstractGSCapability  extends Capability {
 
 	private static final long serialVersionUID = 1L;
@@ -59,17 +63,21 @@ public abstract class AbstractGSCapability  extends Capability {
 		Belief<Integer> NoOfMachines = new TransientBelief<Integer>(ID.GlobalScheduler.
 				BeliefBaseConst.NoOfMachines);
 
+		//batch abou which query was done
 		Belief<Batch> query = new TransientBelief<Batch>(
 				ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob);
 
+		//batch under negotaition
 		Belief<Batch> underNegotiation = new TransientBelief<Batch>(
-				ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job);
+				ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Batch);
 
+		//stores instance of GUI
 		Belief<WebLafGSA> GSA_gui = new TransientBelief<WebLafGSA>(
 				ID.GlobalScheduler.BeliefBaseConst.GSA_GUI_instance); 
 
 		Belief<BatchDataBase> dBase = new TransientBelief<BatchDataBase>(
 				ID.GlobalScheduler.BeliefBaseConst.batchDatabase);
+		
 		
 		Belief<Integer> batchCount = new TransientBelief<Integer>(
 				ID.GlobalScheduler.BeliefBaseConst.batchCount);
@@ -95,21 +103,28 @@ public abstract class AbstractGSCapability  extends Capability {
 	public static Set<Plan> getPlans() {
 		Set<Plan> plans = new HashSet<Plan>();
 
+		//register Global Scheduling Agent service on blackboard
 		plans.add(new SimplePlan(RegisterServiceGoal.class, RegisterServicePlan.class));
 
+		//register Global Scheduling Agent on blackboard
 		plans.add(new SimplePlan(RegisterAgentToBlackBoardGoal.class,
 				RegisterAgentToBlackboardPlan.class));
 
+		//return no. of machines connected to GLobal Scheduling Agent.
 		plans.add(new SimplePlan(GetNoOfMachinesGoal.class, GetNoOfMachinesPlan.class));
 
+		//ask for waiting from Local Scheduling Agents
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgnewWorkOrderFromCustomer),
 				AskForWaitingTime.class));
 
+		//Negotiation between customer and Global SCheduling Agent
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(
 				MessageIds.msgcustomerJobsUnderNegotiation), NegotiateViaGuiPlan.class));
 
+		//send negotiation to customer
 		plans.add(new SimplePlan(GSASendNegotitationGoal.class, GSASendNegotiationJobPlan.class));
 
+		//raise bid from Local Scheduling Agent for confrimed job
 		plans.add(new SimplePlan(
 				MessageTemplate.MatchConversationId(MessageIds.msgcustomerConfirmedJobs),
 				TakeOrderAndRaiseBidPlan.class));

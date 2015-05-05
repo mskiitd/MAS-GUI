@@ -6,22 +6,28 @@ import mas.blackboard.namedWorkspace.NamedWorkspace;
 import mas.blackboard.namezonespace.NamedZoneSpace;
 import mas.blackboard.zonespace.ZoneSpace;
 
+/**
+ * Workspace containing agents
+ * @author NikhilChilwant
+ *
+ * 
+ */
 public class Workspace<T> extends Belief<T>implements WorkspaceIFace{
 
 	private static final long serialVersionUID = 1L;
 	private String WSname;
 	private HashMap<NamedZoneSpace, ZoneSpace> ZSpaces;
 	
-	public Workspace(NamedWorkspace n){
-		super(n.name());
-		this.WSname = n.name();
+	public Workspace(NamedWorkspace named_worspace){
+		super(named_worspace.name());
+		this.WSname = named_worspace.name();
 		this.ZSpaces = new HashMap<NamedZoneSpace, ZoneSpace>();
 	}
 	
-	@Override
+/*	@Override
 	public void dropZoneSpace(NamedZoneSpace title) {
 		
-	}
+	}*/
 
 	@Override
 	public ZoneSpace findZoneSpace(NamedZoneSpace title) {
@@ -34,10 +40,10 @@ public class Workspace<T> extends Belief<T>implements WorkspaceIFace{
 		return false;
 	}
 */
-	@Override
+/*	@Override
 	public void removeItem(Object obj) {
 		
-	}
+	}*/
 
 	@Override
 	public T getValue() {

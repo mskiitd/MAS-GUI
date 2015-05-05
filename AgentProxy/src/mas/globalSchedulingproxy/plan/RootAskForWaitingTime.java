@@ -162,9 +162,10 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 		case 3:
 			try {
 				ACLMessage max = getWorstWaitingTime(WaitingTime);
+				
 				CumulativeWaitingTime = CumulativeWaitingTime +
 						((Batch)max.getContentObject()).getExpectedDueDate();
-
+				log.info("CumulativeWaitingTime="+CumulativeWaitingTime+max.getSender().getLocalName());
 				JobToSend = (Batch)(max.getContentObject());
 				comingBatch.IncrementOperationNumber();
 

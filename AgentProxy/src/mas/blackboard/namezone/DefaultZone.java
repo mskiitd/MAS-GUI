@@ -1,5 +1,11 @@
 package mas.blackboard.namezone;
 
+/**
+ * Creates zone without name "DEFAULT_ZONE". Used in creation of Named Workspace.
+ * Recommendation: not to use unless you are changing code in library
+ * @author NikhilChilwant
+ *
+ */
 public final class DefaultZone implements ZoneName
 {
    public String name() {

@@ -1,5 +1,11 @@
 package mas.blackboard.namezonespace;
 
+/**
+ * Used in creation of Named Zone Space.
+ * Recommonded to use only when you understand library code
+ * @author NikhilChilwant
+ *
+ */
 public final class DefaultZoneSpace implements ZoneSpaceName
 {
    public String getLocalName() {

@@ -2,6 +2,12 @@ package mas.blackboard.namedWorkspace;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+/**
+ * Workspace. Contains agents of same service type.
+ * ex. All local scheduling type agents will be placed in same workspace
+ * @author NikhilChilwant
+ *
+ */
 public class NamedWorkspace implements WorkspaceName
 {
    private String name = null;

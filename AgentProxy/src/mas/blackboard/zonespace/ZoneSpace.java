@@ -13,21 +13,27 @@ import mas.blackboard.namezonespace.NamedZoneSpace;
 import mas.blackboard.zonedata.ZoneData;
 
 /**
- * @author Anand Prajapati
+ * One zone space contains one agent. 
+ * @author NikhilChilwant
+ *
  */
-
 public class ZoneSpace implements ZoneSpaceIFace, Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private String Zname;
+	
 	private HashMap<NamedZoneData, ZoneData> Zdata;
 	private Logger log;
 	private Agent bb;
 
-
-	public ZoneSpace(NamedZoneSpace n, Agent blacboard){
+/**
+ * 
+ * @param named_zone_space instance of named zone space containing name and relevent details
+ * @param blacboard instance of blackboard
+ */
+	public ZoneSpace(NamedZoneSpace named_zone_space, Agent blacboard){
 		log = LogManager.getLogger();
-		this.Zname = n.getLocalName();
+		this.Zname = named_zone_space.getLocalName();
 		this.Zdata = new HashMap<NamedZoneData,ZoneData>();
 		this.bb = blacboard;
 	}
@@ -40,6 +46,7 @@ public class ZoneSpace implements ZoneSpaceIFace, Serializable{
 		}		
 	}
 
+	
 	public void subscribeZoneData(String ZoneDataName, AID subscriber){
 		NamedZoneData nzd=new NamedZoneData.Builder(ZoneDataName).build();
 

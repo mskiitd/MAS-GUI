@@ -39,7 +39,7 @@ public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 				.getValue();
 
 		this.negotiationJob = (Batch) bfBase.
-				getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job).
+				getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Batch).
 				getValue();
 
 	}
@@ -57,12 +57,12 @@ public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 			AgentUtil.sendZoneDataUpdate( this.bba,
 					negotiationJobDataUpdate,myAgent);
 			
-			bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job, null);
+			bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Batch, null);
 			done = true;
 		}else {
 			log.info("GSA : reading negotiation : " + negotiationJob );
 			this.negotiationJob = (Batch) bfBase.
-					getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job).
+					getBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Batch).
 					getValue();
 			block(200);
 		}

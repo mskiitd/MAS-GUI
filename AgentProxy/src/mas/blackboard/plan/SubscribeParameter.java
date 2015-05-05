@@ -26,8 +26,9 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 
 	//agent which wants to subscribe
 	private AID WhoWantsTOSubscribe; 
+
+	//balckboard beleif base.
 	private BeliefBase BBBeliefbase; 
-	//	private String AgentType; 
 	private ArrayList<SubscriptionForm.parameterSubscription> Subscriptions; 
 	private boolean IsActionComplete=false;
 	private SubscriptionForm ps;
@@ -69,6 +70,7 @@ public class SubscribeParameter extends OneShotBehaviour implements PlanBody {
 		for(int k = 0; k < Subscriptions.size(); k++) {
 			
 			AID AgentToReg = Subscriptions.get(k).Agent;
+			//start one behaviour per agent to subscribe. 
 			myAgent.addBehaviour(new SubscribeAgentBehavior(AgentToReg, BBBeliefbase, Subscriptions.get(k),WhoWantsTOSubscribe));						
 		}
 		IsActionComplete=true;

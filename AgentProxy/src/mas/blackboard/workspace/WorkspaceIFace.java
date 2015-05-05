@@ -1,6 +1,7 @@
 package mas.blackboard.workspace;
 
 import java.io.Serializable;
+
 import mas.blackboard.namezonespace.NamedZoneSpace;
 import mas.blackboard.zonespace.ZoneSpace;
 
@@ -9,8 +10,12 @@ import mas.blackboard.zonespace.ZoneSpace;
  */
 
 public interface WorkspaceIFace extends Serializable {
-	
-	public void dropZoneSpace(NamedZoneSpace title);
+	/**
+	 * 
+	 * @param title instance of Named Zone Space
+	 * @return if found, returns Zone Space 
+	 */
 	public ZoneSpace findZoneSpace(NamedZoneSpace title);
-	public void removeItem(Object obj);
+
+
 }

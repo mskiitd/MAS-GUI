@@ -20,7 +20,10 @@ import org.apache.logging.log4j.Logger;
 
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
-
+/*
+ * Handles negotiation with customer and LSAs.
+ * Refer reports for working of Global Scheduling Agent (GSA)
+ */
 public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 
 	private static final long serialVersionUID = 1L;
@@ -63,9 +66,9 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 
 	}
 
-	public void negotiateJob(Batch myJob) {
+	public void negotiateBatch(Batch myJob) {
 		log.info("GSA - Sending negotitaion job : " + myJob.getDueDateByCustomer());
-		bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Job, myJob);
+		bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.Current_Negotiation_Batch, myJob);
 		
 		addGoal(new GSASendNegotitationGoal());
 	}
