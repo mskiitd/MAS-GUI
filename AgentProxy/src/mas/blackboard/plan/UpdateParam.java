@@ -32,6 +32,8 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 	private static final long serialVersionUID = 1L;
 
 	private ACLMessage msg;
+	
+	//agent desiring to subscribe
 	private AID Agent;
 	private ZoneDataUpdate info;
 	private BeliefBase BBBeliefBase;
@@ -67,6 +69,11 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 				getValue();
 	}
 
+	/**
+	 * 
+	 * @param agentToRegister AID of agent for which you want to get service
+	 * @return Agent service
+	 */
 	private String getService(AID agentToRegister) {
 		if(serviceBase != null && serviceBase.containsKey(agentToRegister)) {
 			return serviceBase.get(agentToRegister);
@@ -81,11 +88,9 @@ public class UpdateParam extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		String AgentType = getService(Agent);
-
 		Belief<HashMap<String,ZoneSpace>> ws=(Belief<HashMap<String,ZoneSpace>>)BBBeliefBase.getBelief(AgentType);
 
 		if(ws == null) {
-//			log.error("Could not find workspace for " + AgentType);
 		}
 		else {					
 

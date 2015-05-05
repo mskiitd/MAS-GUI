@@ -21,6 +21,11 @@ import bdi4jade.core.PlanLibrary;
 import bdi4jade.plan.Plan;
 import bdi4jade.util.plan.SimplePlan;
 
+/**
+ * Blackboard acts as communication center. This is capability of blackboard making it communication center
+ * @author NikhilChilwant
+ *
+ */
 public class CommunicationCenter extends Capability {
 
 	private static final long serialVersionUID = 4783226881361023418L;
@@ -30,6 +35,10 @@ public class CommunicationCenter extends Capability {
 		log = LogManager.getLogger();
 	}
 
+	/**
+	 * 
+	 * @param bBagent instance of Blackboard agent
+	 */
 	public CommunicationCenter(BDIAgent bBagent) {
 		super(new BeliefBase(getBeliefs(bBagent)), new PlanLibrary(getPlans()));
 	}
@@ -38,13 +47,14 @@ public class CommunicationCenter extends Capability {
 
 		Set<Plan> plans = new HashSet<Plan>();
 
+		//triggered when an agent request for registration on blackboard
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.RegisterMe ), AddAgent.class));
 
+		//triggered when agent sends update for paramter
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.UpdateParameter), UpdateParam.class));
 
+		//triggered when agent request subscription for parameters
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.SubscribeParameter), SubscribeParameter.class));
-
-		//log.info("Added plans for bloackboard");
 
 		return plans;
 	}
@@ -52,9 +62,10 @@ public class CommunicationCenter extends Capability {
 	private static Set<Belief<?>> getBeliefs(BDIAgent bBagent) {
 
 		//  '?' means Any type extending Object (including Object)
+		// stores Workspaces
 		Set<Belief<?>> beliefs = new HashSet<Belief<?>>(); 
-		// WorkspaceSet stores Workspaces
 
+		//stores services
 		Belief<HashMap<AID,String> > services =
 				new TransientBelief<HashMap<AID,String> >(ID.Blackboard.BeliefBaseConst.serviceDiary);
 

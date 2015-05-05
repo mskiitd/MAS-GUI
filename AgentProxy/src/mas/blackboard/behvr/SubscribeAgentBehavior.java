@@ -17,6 +17,11 @@ import jade.core.behaviours.Behaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
+/**
+ * Runs continuously and registers with specified parameters of specified agent
+ * @author NikhilChilwant
+ *
+ */
 public class SubscribeAgentBehavior extends Behaviour {
 
 	private static final long serialVersionUID = 1L;
@@ -32,8 +37,15 @@ public class SubscribeAgentBehavior extends Behaviour {
 	private static NamedZoneData nzd;
 	//AID of agent whose ZoneData subscriber wants to subscribe
 	private AID AgentToReg; 
-	private HashMap<AID, String> serviceBase;
+		private HashMap<AID, String> serviceBase;
 
+	/**
+	 * 
+	 * @param agent_to_reg AID of agent which has the parameter mentioned in subscriptionForm 
+	 * @param tempBeliefbase Belief base of Blackboard agent
+	 * @param subscription you subscription form containing parameters to register and corresponding details
+	 * @param whoWantsTOSubscribe AID of agent which has you parameters mentioned in subscription
+	 */
 	public SubscribeAgentBehavior(AID agent_to_reg, BeliefBase tempBeliefbase,
 			SubscriptionForm.parameterSubscription subscription, AID whoWantsTOSubscribe) {
 
@@ -45,11 +57,18 @@ public class SubscribeAgentBehavior extends Behaviour {
 		dfa.addServices(sd);
 		this.AgentToReg = agent_to_reg;
 		log = LogManager.getLogger();
+		
+		//Belief base contaning services of agents
 		serviceBase = (HashMap<AID, String>) BBbeliefBase.
 				getBelief(ID.Blackboard.BeliefBaseConst.serviceDiary).
 				getValue();
 	}
 	
+	/**
+	 * 
+	 * @param agentToRegister
+	 * @return agent service
+	 */
 	private String getService(AID agentToRegister) {
 		if(serviceBase != null && serviceBase.containsKey(agentToRegister)) {
 			return serviceBase.get(agentToRegister);
@@ -61,12 +80,15 @@ public class SubscribeAgentBehavior extends Behaviour {
 		return agentType;
 	}
 
+	
 	@Override
 	public void action() {
 		step = 1;
 		switch(step) {
 		case 1:
 
+			//try to get agent service
+			//helps to get workspace of agent
 			this.AgentType = AgentUtil.GetAgentService(AgentToReg,myAgent);
 			if(AgentType != null) { //check if agent exists in DF
 				step++;
@@ -83,19 +105,17 @@ public class SubscribeAgentBehavior extends Behaviour {
 			}
 			else {
 				HashMap<String, ZoneSpace> ZoneSpaceHashMap = (HashMap<String, ZoneSpace>) ws.getValue();
-
 				ZoneSpace zs = ZoneSpaceHashMap.get(tempSubscription.Agent.getLocalName());
 
 				if(zs != null) {
 					for (String parameter : tempSubscription.parameters) {
 
 						nzd = new NamedZoneData.Builder(parameter).build();
-						//								log.info("finding zone data: "+nzd.getName());
 						if(zs.findZoneData(nzd) != null) {
 							//Throws null pointer exception if ZoneData doesnn't exists
 							zs.findZoneData(nzd).subscribe(subscriber); 
 
-							//without this sendupdate() from zoneData was not working. Don't know why.
+							//BugFix comment: without this sendupdate() from zoneData was not working. Don't know why.
 							try {
 								Thread.sleep(1); 
 							} catch (InterruptedException e) {
@@ -111,7 +131,6 @@ public class SubscribeAgentBehavior extends Behaviour {
 					ZoneSpaceHashMap.put(tempSubscription.Agent.getLocalName(), zs);
 
 					((Belief<HashMap<String, ZoneSpace>>)BBbeliefBase.getBelief(AgentType)).setValue(ZoneSpaceHashMap);
-//					step++;	
 				}
 			}
 		}
@@ -119,7 +138,6 @@ public class SubscribeAgentBehavior extends Behaviour {
 
 	@Override
 	public boolean done() {
-		//		log.info("ending susbscribe behvr"+step+" searching "+AgentToReg.getLocalName());
 		return step > 2;
 	}
 

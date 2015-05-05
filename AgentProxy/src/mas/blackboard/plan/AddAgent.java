@@ -25,9 +25,10 @@ import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
 /**
- *  adds agent in blackboard workspace
+ * Adds agent to blackboard.
+ * @author NikhilChilwant
+ *
  */
-
 public class AddAgent extends OneShotBehaviour implements PlanBody {
 	private static final long serialVersionUID = 1L;
 
@@ -70,6 +71,11 @@ public class AddAgent extends OneShotBehaviour implements PlanBody {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param agentToRegister AID of agent you want to register
+	 * @return Agent service
+	 */
 	private String getService(AID agentToRegister) {
 		if(serviceBase != null && serviceBase.containsKey(agentToRegister)) {
 			return serviceBase.get(agentToRegister);

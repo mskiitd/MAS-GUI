@@ -7,11 +7,20 @@ public class MessageParams {
 	public MessageParams(Builder builder) {
 		this.replyWith=builder.builder_replyWith;
 	}
-	 
+	
+	/**
+	 * 
+	 * @return 'replyWith' from JADE messaging
+	 */
 	public String getReplyWith(){
 		return this.replyWith;
 	}
 
+	/**
+	 * Creates builder
+	 * @author NikhilChilwant
+	 *
+	 */
 	public static class Builder {
 		   private String builder_name = null;
 		   private String builder_replyWith = null;
