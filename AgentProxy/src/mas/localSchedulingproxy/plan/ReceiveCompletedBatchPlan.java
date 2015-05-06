@@ -7,8 +7,7 @@ import jade.lang.acl.UnreadableException;
 import java.util.ArrayList;
 
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
-import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
+import mas.localSchedulingproxy.algorithm.StatsTracker;
 import mas.machineproxy.gui.MachineGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -23,11 +22,17 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanBody {
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Plan to receive the complete batch from the machine.
+ * It receives this value from the blackboard. Based on whether the received batch is complete or marked canceled or 
+ * marked for change in due date, appropriate action is taken. It batch isn't complete then it's sent to GSA again
+ * for bidding.
+ * </p>
+ */
 
-	/**
-	 * Takes the complete job from the simulator
-	 */
+public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private Batch batch;
@@ -55,7 +60,7 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 		} catch (UnreadableException e) {			
 			e.printStackTrace();
 		}
-		
+
 		gui = (MachineGUI) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.gui_machine).
 				getValue();
@@ -67,38 +72,38 @@ public class ReceiveCompletedBatchPlan extends OneShotBehaviour implements PlanB
 	public void action() {
 		// since job is done update current job with null value
 		bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.currentBatchOnMachine, null);
-		
+
 		ArrayList<Batch> BatchToTakeAction = (ArrayList<Batch>)
 				bfBase.getBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch).getValue();
 
 		for(int i = 0 ; i < BatchToTakeAction.size(); i++) {
-			if(BatchToTakeAction.get(i).getBatchNumber()==comingBatch.getBatchNumber()){
+			if(BatchToTakeAction.get(i).getBatchNumber() == comingBatch.getBatchNumber()){
 				BatchToTakeAction.remove(i);
 				bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.actionOnCompletedBatch
 						, BatchToTakeAction);
 				isJobCancelled = true;
 				log.info("cancelled batch No. "+comingBatch.getBatchNumber());
-				
+
 				if(gui != null) {
 					gui.removeFromQueue(comingBatch);
 				}
 			}
 		}
-		
-		if(!isJobCancelled){
-			
+
+		if(!isJobCancelled) {
+
 			comingBatch.IncrementOperationNumber();
-			
+
 			ZoneDataUpdate CompletedBatchUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.finishedBatch)
 			.value(comingBatch).setReplyWith(Integer.toString(comingBatch.getBatchNumber())).Build();
-	
+
 			AgentUtil.sendZoneDataUpdate(blackboard_AID, CompletedBatchUpdate, myAgent);
 			if(gui != null) {
 				gui.removeFromQueue(comingBatch);
 			} else {
 				log.info("Gui of machine is null");
 			}
-	
+
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.doneBatchFromMachine, comingBatch);
 		}
 

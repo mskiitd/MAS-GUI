@@ -13,7 +13,12 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
-public class GetCurrentJobOnMachinePlan extends OneShotBehaviour implements PlanBody{
+/**
+ * @author Anand Prajapati
+ * Plan to read current job being processed on the machine.
+ * It receives this value from the blackboard.
+ */
+public class GetCurrentJobOnMachinePlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
 	private BeliefBase bfBase;

@@ -4,11 +4,10 @@ import bdi4jade.goal.Goal;
 
 /**
  * @author Anand Prajapati
- * 
- * Goal to load configuration for the agent
  *
+ * Goal to receive completed batch from machine
  */
-public class LoadConfigLSAGoal implements Goal{
+public class ReceiveCompletedMachineGoal implements Goal{
 
 	private static final long serialVersionUID = 1L;
 

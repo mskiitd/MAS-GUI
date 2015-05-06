@@ -8,6 +8,7 @@ import jade.lang.acl.UnreadableException;
 import java.util.ArrayList;
 
 import mas.jobproxy.Batch;
+import mas.localSchedulingproxy.algorithm.StatsTracker;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationItemId;
 import mas.util.AgentUtil;
@@ -25,9 +26,13 @@ import bdi4jade.plan.PlanInstance.EndState;
 
 /**
  *  @author Anand Prajapati
- *	Sends average waiting time for the new job to global scheduling agent
- *  Based on this waiting time global scheduling accepts/negotiates the job 
- *  from customer 
+ *  <p>
+ *	Sends average waiting time for the new batch to global scheduling agent
+ *  Based on this waiting time global scheduling accepts/negotiates the batch 
+ *  from customer.
+ *  </br> If operation for this batch isn't supported on the machine, then LSA replies with a very high negative 
+ *  value, -3x(10^10) in this case.
+ *  </p>
  */
 
 public class SendExpectedDueDatePlan extends OneShotBehaviour implements PlanBody{

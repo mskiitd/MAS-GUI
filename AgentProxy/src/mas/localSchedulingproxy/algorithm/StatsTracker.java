@@ -1,23 +1,22 @@
-package mas.localSchedulingproxy.plan;
+package mas.localSchedulingproxy.algorithm;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-
 import mas.jobproxy.Batch;
-import mas.jobproxy.job;
 
 /**
  * @author Anand Prajapati
- * 
+ *  <p>
  *  To calculate utilization and average processing times, it stores a queue of 
- *  completed jobs with a maximum size limit of 200;
- *  
+ *  completed jobs with a maximum size limit of 200.
+ *  </br>
  *  list 'sizeQueue' contains snapshots of size of queue of jobs
  *  CumulatedQueueSize stores summation of queue sizes up to now
  *  Average queue size will simply be CumulatedQueueSize/(size of sizeQueue)
+ *  </p>
  */
 
 public class StatsTracker {
@@ -55,6 +54,10 @@ public class StatsTracker {
 		}
 	}
 
+	/**
+	 * @param complete
+	 * @param n
+	 */
 	public void storeJob(Batch complete, int n) {
 		if( this.doneJobs.size() >= SIZE_LIMIT){
 			this.doneJobs.remove();
@@ -62,6 +65,11 @@ public class StatsTracker {
 		this.doneJobs.add(new Node(complete,n));
 	}
 
+	/**
+	 * @param num
+	 * </br>
+	 * Store value of current queue size
+	 */
 	public void addSize(double num) {
 		BigDecimal bNum = new BigDecimal(num);
 		// Add passed size to cumulative size
@@ -72,6 +80,9 @@ public class StatsTracker {
 		}
 	}
 
+	/**
+	 * @return Average queue size for the machine
+	 */
 	public BigDecimal getAverageQueueSize() {
 
 		if (sizeQueue.isEmpty()) return BigDecimal.ZERO; 
@@ -121,7 +132,10 @@ public class StatsTracker {
 		return utilization;
 	}
 
-	public double getAvgProcessingTime(){
+	/**
+	 * @return Average processing time of the machine
+	 */
+	public double getAvgProcessingTime() {
 		double procTimes = 0;
 
 		if (doneJobs.size() <= SIZE_LIMIT && doneJobs.size() > 0) {

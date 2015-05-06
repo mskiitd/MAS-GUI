@@ -20,6 +20,12 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Plan to receive preventive maintenance job from the maintenance agent.
+ *
+ */
 public class ReceiveMaintenanceJobPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;

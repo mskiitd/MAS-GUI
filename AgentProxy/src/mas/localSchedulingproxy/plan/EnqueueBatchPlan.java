@@ -3,19 +3,14 @@ package mas.localSchedulingproxy.plan;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-
 import java.util.ArrayList;
-import java.util.Date;
-
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationItemId;
 import mas.machineproxy.gui.MachineGUI;
 import mas.util.ID;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
@@ -25,7 +20,7 @@ import bdi4jade.plan.PlanInstance.EndState;
 /**
  * @author Anand Prajapati
  *
- * this picks a job from the queue and sends it to the machine for processing
+ * This plan receives incoming batches to the machine and adds them to the queue of batch
  */
 
 public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
@@ -92,9 +87,9 @@ public class EnqueueBatchPlan extends OneShotBehaviour implements PlanBody {
 			comingBatch.setCurrentOperationProcessingTime(operationdb.getOperationInfo(id).getProcessingTime());
 		
 			jobQueue.add(comingBatch);
-			/**
-			 * update the belief base
-			 */
+			
+			//update the belief base
+			
 //			log.info(jobQueue);
 			bfBase.updateBelief(ID.LocalScheduler.BeliefBaseConst.batchQueue, jobQueue);	
 

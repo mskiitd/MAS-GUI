@@ -1,27 +1,29 @@
 package mas.localSchedulingproxy.plan;
 
 import jade.core.AID;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-
 import java.util.ArrayList;
-
 import mas.jobproxy.Batch;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.MessageIds;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
+
+/**
+ * @author Anand Prajapati
+ * 
+ * Plan to send batch to machine, whenever machine asks for it. This takes the first batch from the queue and sends
+ * to machine.
+ */
 
 public class SendBatchToMachinePlan extends CyclicBehaviour implements PlanBody {
 
@@ -66,6 +68,7 @@ public class SendBatchToMachinePlan extends CyclicBehaviour implements PlanBody 
 
 		switch(step) {
 		case 0:
+			// wait for machine to ask for a new batch
 			msg = myAgent.receive(sendJobMsgTemplate);
 			if(msg != null) {
 

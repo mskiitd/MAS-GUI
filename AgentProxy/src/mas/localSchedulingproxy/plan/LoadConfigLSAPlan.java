@@ -20,6 +20,14 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * 
+ * @author Anand Prajapati
+ * <p> Plan to load configuration for the agent.
+ * This reads values of some parameters from a configuration file <i> "mas.properties" </i>
+ * 
+ * </p>
+ */
 public class LoadConfigLSAPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

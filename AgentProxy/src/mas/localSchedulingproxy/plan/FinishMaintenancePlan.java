@@ -15,6 +15,13 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * 
+ * @author Anand Prajapati
+ * Plan to finish preventive maintenance activity on the machine.
+ * This prompts for a maintenance code and unpauses the GUI of machine if it were paused due to delaying maintenance.
+ * 
+ */
 public class FinishMaintenancePlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;

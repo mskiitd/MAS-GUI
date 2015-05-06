@@ -21,6 +21,14 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Plan to start maintenance activity on the machine.
+ * Maintenance activity is picked from the list of pending maintenance schedules for the machine.
+ * This updates machine's status to Under Maintenance.
+ *
+ */
 public class StartMaintenancePlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;

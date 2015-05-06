@@ -27,9 +27,10 @@ import bdi4jade.plan.PlanInstance.EndState;
 
 /**
  * @author Anand Prajapati
- * 
- * receives job from global scheduling agent for bid and then sends a bid 
- * for the received job 
+ *  <p>
+ * Receives batch from global scheduling agent for bid and then sends a bid 
+ * for the received batch. For bid, please calculation refer to report. 
+ * </p>
  */
 
 public class SendBidPlan extends OneShotBehaviour implements PlanBody {
@@ -55,7 +56,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	public void init(PlanInstance pInstance) {
 		log = LogManager.getLogger();
 		bfBase = pInstance.getBeliefBase();
-		
+
 		this.blackboard = (AID) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.blackboardAgent).
 				getValue();
@@ -72,7 +73,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		this.operationdb = (OperationDataBase) bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.operationDatabase).
 				getValue();
-		
+
 		dueDateMethod = (String)bfBase.
 				getBelief(ID.LocalScheduler.BeliefBaseConst.DueDateCalcMethod).
 				getValue();
@@ -81,7 +82,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 	@Override
 	public void action() {
 		try{
-			
+
 			jobToBidFor = setBid(jobToBidFor);
 
 			ZoneDataUpdate bidForJobUpdate = new ZoneDataUpdate.Builder(ID.LocalScheduler.ZoneData.bidForJob)
@@ -104,7 +105,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 		log.info("bidding for batch : " + batchToBidFor.getBatchCount() + " operation : " +
 				batchToBidFor.getFirstJob().getCurrentOperation());
-		
+
 		batchToBidFor=SetDueDates(batchToBidFor);
 
 		OperationItemId id = new OperationItemId(batchToBidFor.getCurrentOperationType(), batchToBidFor.getCustomerId());
@@ -138,11 +139,11 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 		double processingCost = (batchToBidFor.getCurrentOperationProcessingTime()/1000)*
 				operationdb.getOperationInfo(id).getProcessingCost();
-		
+
 		log.info("" + id + " cost : " + operationdb.getOperationInfo(id).getProcessingCost());
 
 		bidNo = PenaltyAfter - PenaltyBefore + processingCost;
-		
+
 		batchToBidFor.setBidByLSA(bidNo);
 		batchToBidFor.setLSABidder(myAgent.getAID());
 
@@ -178,11 +179,11 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 				tardiness = 0.0;
 			}
 			log.info("tardiness="+tardiness+" penalty rate="+sequence.get(i).getPenaltyRate()+
-								"finishTime="+new Date(finishTime)+"CurrentOperationDueDate="+
-								new Date(sequence.get(i).getCurrentOperationDueDate())+
-								"CurrentOperationStartTime="+new Date(sequence.get(i).getCurrentOperationStartTime())
-						+"cumulativeProcessingTime="+cumulativeProcessingTime);
-			 
+					"finishTime="+new Date(finishTime)+"CurrentOperationDueDate="+
+					new Date(sequence.get(i).getCurrentOperationDueDate())+
+					"CurrentOperationStartTime="+new Date(sequence.get(i).getCurrentOperationStartTime())
+			+"cumulativeProcessingTime="+cumulativeProcessingTime);
+
 			cost += tardiness * sequence.get(i).getPenaltyRate() ;/*+ sequence.get(i).getCost();*/
 		}
 		log.info(myAgent.getLocalName() + " cost = " + cost + " with L = " + sequenceSize );
@@ -206,7 +207,7 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 		}
 		return sequence;
 	}
-	
+
 	private Batch SetDueDates(Batch batchForBidWinner) {
 
 		long totalProcessingTime = batchForBidWinner.getTotalBatchProcessingTime();
@@ -219,40 +220,40 @@ public class SendBidPlan extends OneShotBehaviour implements PlanBody {
 
 		//		log.info("due date " + new Date(jobForBidWinner.getJobDuedatebyCust().getTime())+
 		//				" start time " + new Date(jobForBidWinner.getStartTimeByCust().getTime()));
-//		log.info("batch : " + batchForBidWinner.getJobsInBatch()   );
+		//		log.info("batch : " + batchForBidWinner.getJobsInBatch()   );
 
 		if(dueDateMethod.equals(ID.LocalScheduler.OtherConst.LocalDueDate)) {
 
 			long slack_perOperation = (long)((double)slack)/(NoOfOps);
 
-//			for(int i = 0 ; i < NoOfOps; i++) {
-				batchForBidWinner.setCurrentOperationStartTime(currTime);
-				currTime += batchForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
-				batchForBidWinner.setCurrentOperationDueDate(currTime);
-				log.info("curr op due date = "+new
-						Date(batchForBidWinner.getCurrentOperationDueDate()));
-//				batchForBidWinner.IncrementOperationNumber();
-				
-				if(slack_perOperation<0){
-					slack_perOperation=0;
-				}
+			//			for(int i = 0 ; i < NoOfOps; i++) {
+			batchForBidWinner.setCurrentOperationStartTime(currTime);
+			currTime += batchForBidWinner.getCurrentOperationProcessingTime() + slack_perOperation;
+			batchForBidWinner.setCurrentOperationDueDate(currTime);
+			log.info("curr op due date = "+new
+					Date(batchForBidWinner.getCurrentOperationDueDate()));
+			//				batchForBidWinner.IncrementOperationNumber();
 
-				batchForBidWinner.setSlack(slack_perOperation);
-				
-				
-//			}
+			if(slack_perOperation<0){
+				slack_perOperation=0;
+			}
+
+			batchForBidWinner.setSlack(slack_perOperation);
+
+
+			//			}
 		}
 		else if(dueDateMethod.equals(ID.LocalScheduler.OtherConst.GlobalDueDate)) {
-//			for(int i = 0 ; i  < NoOfOps; i++) {
-				batchForBidWinner.setCurrentOperationStartTime(currTime);
-				currTime += batchForBidWinner.getCurrentOperationProcessingTime();
-				// shift whole slack to the last operation
-				if(batchForBidWinner.getCurrentOperationNumber() == NoOfOps-1) {
-					currTime = currTime + slack;
-				}
-				batchForBidWinner.setCurrentOperationDueDate(currTime);
-//				batchForBidWinner.IncrementOperationNumber();
-//			}
+			//			for(int i = 0 ; i  < NoOfOps; i++) {
+			batchForBidWinner.setCurrentOperationStartTime(currTime);
+			currTime += batchForBidWinner.getCurrentOperationProcessingTime();
+			// shift whole slack to the last operation
+			if(batchForBidWinner.getCurrentOperationNumber() == NoOfOps-1) {
+				currTime = currTime + slack;
+			}
+			batchForBidWinner.setCurrentOperationDueDate(currTime);
+			//				batchForBidWinner.IncrementOperationNumber();
+			//			}
 		}
 		return batchForBidWinner;
 	}

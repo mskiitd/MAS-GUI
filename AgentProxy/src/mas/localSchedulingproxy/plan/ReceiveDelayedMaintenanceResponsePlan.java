@@ -15,6 +15,15 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Plan to negotiate with maintenance agent when maintenance is delayed.
+ * When preventive maintenance schedule is delayed, maintenance agent sends warnings to LSA
+ * LSA takes some action based on these warnings. Currently, it show warning notifications for the
+ * first two times. Third time, it stops the machine until preventive maintenance activity is completed.
+ */
+
 public class ReceiveDelayedMaintenanceResponsePlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
@@ -31,9 +40,8 @@ public class ReceiveDelayedMaintenanceResponsePlan extends Behaviour implements 
 
 	@Override
 	public void init(PlanInstance pInstance) {
-		
-		log = LogManager.getLogger();
 
+		log = LogManager.getLogger();
 		ACLMessage msg = ((MessageGoal) pInstance.getGoal()).getMessage();
 
 		try {
@@ -52,12 +60,10 @@ public class ReceiveDelayedMaintenanceResponsePlan extends Behaviour implements 
 	@Override
 	public void action() {
 		if(response != null) {
-			
 			if(gui != null) {
 				gui.delayedMaintWarning(response);
 			}
 		}
-
 		done = true;
 	}
 

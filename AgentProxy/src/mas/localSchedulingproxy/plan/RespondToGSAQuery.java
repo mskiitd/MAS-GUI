@@ -19,6 +19,22 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * 
+ * @author Anand Prajapati
+ * <p>
+ * Plan for responding to GSA queries.
+ * </br>
+ * GSA queries are of 3 types :
+ * </br> i) Current status of batch
+ * </br> ii) Change due date
+ * </br> iii) Cancel an order
+ * </br> Based on type of query, LSA responds.
+ * If it's due date change or order-cancellation, then it stores it in the belief base and next time
+ * when it receives completed batch from machine, then it triggers appropriate action for that batch.
+ * 
+ * </p>
+ */
 public class RespondToGSAQuery extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

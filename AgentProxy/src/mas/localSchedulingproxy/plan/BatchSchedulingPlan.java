@@ -13,6 +13,12 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * Plan for performing scheduling of the sequence of batches.
+ * This plan triggers a ticker behavior, which keeps checking the regret of the sequence periodically
+ * If the regret goes beyond a certain threshold value, then scheduling is performed.
+ */
 public class BatchSchedulingPlan extends Behaviour implements PlanBody  {
 
 	private Logger log;

@@ -12,6 +12,12 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Plan to register services of this agent on DF
+ *
+ */
 public class RegisterLSAgentServicePlan extends OneShotBehaviour implements PlanBody{
 	private static final long serialVersionUID = 1L;
 	private Logger log;

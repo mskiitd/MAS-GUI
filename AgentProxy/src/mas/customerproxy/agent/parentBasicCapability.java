@@ -45,14 +45,15 @@ public class parentBasicCapability extends Capability {
 	}
 
 	/**
-	 * Add beliefs for
-	 * blackboard agent ID
-	 * Current Batch to be sent to blackboard
-	 * Current Confirmed batch (after negotiation)
-	 * Cancelled order by customer
-	 * Batch whose due date is changed
-	 * Current batch under negotiation
-	 * GUI of customer agent
+	 * <b> Add beliefs for </b> <i>
+	 * </br> blackboard agent ID
+	 * </br> Current Batch to be sent to blackboard
+	 * </br> Current Confirmed batch (after negotiation)
+	 * </br>  Cancelled order by customer
+	 * </br> Batch whose due date is changed
+	 * </br> Current batch under negotiation
+	 * </br> GUI of customer agent
+	 * </i>
 	 * 
 	 * @return set of beliefs
 	 */
@@ -76,7 +77,7 @@ public class parentBasicCapability extends Capability {
 
 		// for current job which is under negotiation
 		Belief<Batch> currentNegJob = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH);
-		
+
 		Belief<Batch> customerGUI = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CUSTOMER_GUI);
 
 		beliefs.add(bboard);
@@ -114,10 +115,10 @@ public class parentBasicCapability extends Capability {
 
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgJobCompletion),
 				ReceiveCompletedBatchPlan.class ));
-		
+
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.msgChangeDueDate),
 				ChangeDueDate.class));
-		
+
 		plans.add(new SimplePlan(MessageTemplate.MatchConversationId(MessageIds.RejectedOrder)
 				, HandleRejectedOrder.class));
 

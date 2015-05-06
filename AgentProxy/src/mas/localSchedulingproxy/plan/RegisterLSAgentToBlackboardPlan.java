@@ -13,6 +13,13 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * Plan to register this agent on blackboad.
+ * It creates zonedata's for this agent as well as subscribes to zonedata's of other agents
+ */
+
 public class RegisterLSAgentToBlackboardPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
