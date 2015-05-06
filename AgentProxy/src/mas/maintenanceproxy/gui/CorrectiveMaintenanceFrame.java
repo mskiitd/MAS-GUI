@@ -22,6 +22,13 @@ import org.apache.logging.log4j.Logger;
 
 import uiconstants.Labels;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * GUI to take input of repair time when the machine fails.
+ * </p>
+ */
+
 public class CorrectiveMaintenanceFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -64,6 +71,10 @@ public class CorrectiveMaintenanceFrame extends JFrame{
 		showGui();
 	}
 
+	/**
+	 * Initialized the parameters of display of the frame and make it visible at appropriate location 
+	 * with desired size
+	 */
 	private void showGui() {
 		
 		setTitle(" Machine Failed ");
@@ -77,6 +88,10 @@ public class CorrectiveMaintenanceFrame extends JFrame{
 		super.setVisible(true);
 	}
 
+	/**
+	 * Check if repair time format is correct. If correct then set the repair time to the value in the field,
+	 * else show an error message and return.
+	 */
 	private void checkRepairTime() {
 		if(txtRepairTime.getText().matches("-?\\d+(\\.\\d+)?")) {
 			double rTime = 60 * 1000 * Double.parseDouble(txtRepairTime.getText());
@@ -90,6 +105,9 @@ public class CorrectiveMaintenanceFrame extends JFrame{
 		}
 	}
 
+	/**
+	 * Action listener for send button
+	 */
 	class buttonListener implements ActionListener {
 
 		@Override

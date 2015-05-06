@@ -11,6 +11,13 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Plan to register LMA on blackboard.
+ * It creates zonedata's for this agent as well as subscribes to zonedata's of other agents
+ * </p>
+ */
 public class RegisterMaintenanceAgentToBlackboardPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

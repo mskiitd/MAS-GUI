@@ -19,6 +19,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bdi4jade.core.BeliefBase;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Behavior to monitor status of the scheduled maintenance activity for machine. 
+ * When maintenance agent generates and sends maintenance activity, it keeps track of whether maintenance is performed
+ * within the time frame or not through this behavior. If it is delayed then it first sends 2 warnings and 3rd time
+ * it cooperates with LSA to stop the machine.
+ * </p>
+ */
 public class MonitorMaintenanceStatusBehavior extends Behaviour{
 
 	private static final long serialVersionUID = 1L;
@@ -62,6 +71,7 @@ public class MonitorMaintenanceStatusBehavior extends Behaviour{
 		timeStopWatch = new StopWatch();
 		timeStopWatch.start();
 
+		// start a timer to keep track of scheduled maintenance activity on the machine
 		new Timer().schedule(counter, 0, interval);
 	}
 

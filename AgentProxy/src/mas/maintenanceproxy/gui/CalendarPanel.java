@@ -6,6 +6,9 @@ import javax.swing.border.LineBorder;
 import java.util.*;
 import java.text.*;
 
+/**
+ * Custom panel which displays a calender
+ */
 public class CalendarPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 

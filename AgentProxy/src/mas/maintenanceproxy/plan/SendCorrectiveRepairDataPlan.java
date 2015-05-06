@@ -10,6 +10,13 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * 
+ * <p>
+ * Plan to send corrective repair data to machine.
+ * </p>
+ */
 public class SendCorrectiveRepairDataPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

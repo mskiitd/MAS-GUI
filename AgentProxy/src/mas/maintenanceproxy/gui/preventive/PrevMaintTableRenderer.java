@@ -11,6 +11,13 @@ import javax.swing.table.TableCellRenderer;
 import mas.maintenanceproxy.classes.PMaintenance;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Custom table renderer for table of preventive maintenance activities
+ * </p>
+ */
+
 public class PrevMaintTableRenderer implements TableCellRenderer{
 
 	private JLabel lblActualStartDate,lblActualFinishDate;

@@ -28,6 +28,14 @@ import mas.maintenanceproxy.gui.preventive.PrevMaintTableModel;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableRenderer;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Main GUI of maintenance agent. This shows a table of all done preventive maintenance jobs and time remaining for 
+ * next preventive maintenance activity generation.
+ * </p>
+ */
+
 public class MaintenanceGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -99,6 +107,9 @@ public class MaintenanceGUI extends JFrame {
 		showGui();
 	}
 
+	/*
+	 * Initialize the panel containing table of done preventive maintenance activities 
+	 */
 	private void initTablePanel() {
 		tableRenderer = new PrevMaintTableRenderer();
 		tableModel = new PrevMaintTableModel();
@@ -117,6 +128,7 @@ public class MaintenanceGUI extends JFrame {
 	/**
 	 * Runs on EDT
 	 * @param prevMaint
+	 * </br> Add preventive maintenance job to GUI
 	 */
 	public void addMaintJobToDisplay(PMaintenance prevMaint) {
 		final PMaintenance pm = prevMaint;
@@ -128,48 +140,53 @@ public class MaintenanceGUI extends JFrame {
 		});
 	}
 
-	private void initCalenderPane() {
-		months = new DateFormatSymbols().getMonths();
-		spinnerListModel = new SpinnerListModel(Arrays.asList(months).subList(0, 12));
-		spinnerNumberModel = new SpinnerNumberModel(2012, 0, 3000, 1);
+//	private void initCalenderPane() {
+//		months = new DateFormatSymbols().getMonths();
+//		spinnerListModel = new SpinnerListModel(Arrays.asList(months).subList(0, 12));
+//		spinnerNumberModel = new SpinnerNumberModel(2012, 0, 3000, 1);
+//
+//		jSpinnerMonth = new JSpinner(spinnerListModel);
+//		jSpinnerYear = new JSpinner(spinnerNumberModel);
+//
+//		calendarPanel = new CalendarPanel();
+//
+//		jpNorth = new JPanel(new GridLayout(1, 2));
+//		jpNorth.add(jSpinnerMonth);
+//		jpNorth.add(jSpinnerYear);
+//
+//		calendarPanel.setMonth(spinnerListModel.
+//				getList().indexOf(spinnerListModel.getValue()));
+//
+//		calendarPanel.setYear(((Integer)spinnerNumberModel.
+//				getValue()).intValue());
+//
+//		JSpinner.NumberEditor numberEditor = new JSpinner.NumberEditor(jSpinnerYear, "####");
+//		jSpinnerYear.setEditor(numberEditor);
+//
+//		jSpinnerMonth.addChangeListener(new ChangeListener() {
+//			public void stateChanged(ChangeEvent e) {
+//				calendarPanel.setMonth(spinnerListModel.getList().indexOf(spinnerListModel.getValue()));
+//			}
+//		});
+//
+//		jSpinnerYear.addChangeListener(new ChangeListener() {
+//			public void stateChanged(ChangeEvent e) {
+//				calendarPanel.setYear(((Integer)spinnerNumberModel.getValue()).intValue());
+//			}
+//		});
+//	}
 
-		jSpinnerMonth = new JSpinner(spinnerListModel);
-		jSpinnerYear = new JSpinner(spinnerNumberModel);
-
-		calendarPanel = new CalendarPanel();
-
-		jpNorth = new JPanel(new GridLayout(1, 2));
-		jpNorth.add(jSpinnerMonth);
-		jpNorth.add(jSpinnerYear);
-
-		calendarPanel.setMonth(spinnerListModel.
-				getList().indexOf(spinnerListModel.getValue()));
-
-		calendarPanel.setYear(((Integer)spinnerNumberModel.
-				getValue()).intValue());
-
-		JSpinner.NumberEditor numberEditor = new JSpinner.NumberEditor(jSpinnerYear, "####");
-		jSpinnerYear.setEditor(numberEditor);
-
-		jSpinnerMonth.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				calendarPanel.setMonth(spinnerListModel.getList().indexOf(spinnerListModel.getValue()));
-			}
-		});
-
-		jSpinnerYear.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				calendarPanel.setYear(((Integer)spinnerNumberModel.getValue()).intValue());
-			}
-		});
-	}
-
+	/**
+	 * @param prevMaintPeriod
+	 * </br> Set remaining time for next preventive maintenance job generation
+	 */
 	public void setNextMaintTime(long prevMaintPeriod) {
 		pmPanel.setNextMaintTime(prevMaintPeriod);
 	}
 
 	/**
 	 * Runs on EDT
+	 * </br> Pops up a windows asking for repair time when the machine is failed
 	 */
 	public void showRepairTimeInput() {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -181,6 +198,10 @@ public class MaintenanceGUI extends JFrame {
 		});
 	}
 
+	/**
+	 * Initialized the parameters of display of the frame and make it visible at appropriate location 
+	 * with desired size
+	 */
 	private void showGui() {
 		setTitle(" Local Maintenance Agent # " + mAgent.getLocalName().split("#")[1] );
 		setPreferredSize(new Dimension(800,600));
@@ -193,6 +214,9 @@ public class MaintenanceGUI extends JFrame {
 		super.setVisible(true);
 	}
 
+	/**
+	 * Remove the tray icon from action tray 
+	 */
 	public void clean() {
 		
 	}

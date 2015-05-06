@@ -13,6 +13,12 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Plan to register services of LMA on DF (JADE)
+ * </p>
+ */
 public class RegisterMaintenanceAgentServicePlan extends OneShotBehaviour implements PlanBody{
 	private static final long serialVersionUID = 1L;
 	private Logger log;

@@ -5,6 +5,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import mas.maintenanceproxy.classes.PMaintenance;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Table Model for table of done preventive maintenance activities
+ * </p>
+ *
+ */
 public class PrevMaintTableModel extends AbstractTableModel implements TableModel {
 
 	private static final long serialVersionUID = 1L;

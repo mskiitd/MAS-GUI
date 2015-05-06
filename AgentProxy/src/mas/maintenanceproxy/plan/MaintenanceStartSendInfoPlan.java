@@ -17,7 +17,10 @@ import bdi4jade.plan.PlanInstance.EndState;
 
 /**
  * @author Anand Prajapati
- *
+ * <p>
+ * Plan to send information about maintenance activity to machine.
+ * When maintenance job is started on machine, it sends data about what needs to be performed on machine.
+ * </p>
  */
 public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 
@@ -55,6 +58,7 @@ public class MaintenanceStartSendInfoPlan extends Behaviour implements PlanBody{
 	public void action() {
 		switch(step) {
 		case 0:
+			// receive maintenance-start message
 			msg = myAgent.receive(msgTemplate);
 			if(msg != null) {
 				try {

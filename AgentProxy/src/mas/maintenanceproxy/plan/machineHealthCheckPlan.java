@@ -14,6 +14,13 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Plan to check health of machine.
+ * Health check implies checking age and life of components of machine.
+ * </p>
+ */
 public class machineHealthCheckPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

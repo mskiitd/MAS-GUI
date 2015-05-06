@@ -18,6 +18,10 @@ import bdi4jade.plan.PlanInstance.EndState;
 
 /**
  * @author Anand Prajapati
+ * <p>
+ * Plan to perform manual repair of machine.
+ * This prompts a gui asking for repair time.
+ * </p>
  */
 
 public class ManualMachineRepairPlan extends Behaviour implements PlanBody {

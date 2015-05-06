@@ -6,6 +6,13 @@ import java.util.Calendar;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Formatter for Date label from calender value.
+ * </br>Date Format = "dd-MM-yyyy"
+ * </p>
+ */
 public class DateLabelFormatter extends AbstractFormatter {
 
 	private static final long serialVersionUID = 1L;

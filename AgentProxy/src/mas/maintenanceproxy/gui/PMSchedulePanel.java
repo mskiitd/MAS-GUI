@@ -11,6 +11,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Custom panel to display time remaining for next preventive maintenance schedule.
+ * </p>
+ */
+
 public class PMSchedulePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -39,6 +46,10 @@ public class PMSchedulePanel extends JPanel {
 		new Timer(interval, counter).start();
 	}
 
+	/**
+	 * @param time
+	 * </br> Set remaining time for generation of next maintenance
+	 */
 	public void setNextMaintTime(long time) {
 		remainingTime = time;
 	}
@@ -55,8 +66,4 @@ public class PMSchedulePanel extends JPanel {
 
 	}
 
-	public void setSchedule(long time) {
-		lblNextSchedule.setText("<html><h1>" +
-				new Date(time) + "</h1></html>");
-	}
 }

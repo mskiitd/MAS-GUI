@@ -13,6 +13,13 @@ import org.apache.logging.log4j.Logger;
 import bdi4jade.core.BeliefBase;
 import bdi4jade.core.Capability;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Local maintenance agent. It is a BDI agent.
+ * </p>
+ *
+ */
 public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 
 	private static final long serialVersionUID = 1L;
@@ -23,9 +30,12 @@ public class LocalMaintenanceAgent extends AbstractLocalMaintenanceAgent {
 
 	public MaintenanceGUI mgui = null;
 
-	public void sendCorrectiveMaintenanceRepairTime(long mtime) {
-
-		String repairData = String.valueOf(mtime);
+	/**
+	 * @param maintenanceRepairTime
+	 * Sends corrective maintenance repair time to LSA
+	 */
+	public void sendCorrectiveMaintenanceRepairTime(long maintenanceRepairTime) {
+		String repairData = String.valueOf(maintenanceRepairTime);
 		bfBase.updateBelief(ID.Maintenance.BeliefBaseConst.correctiveRepairData, repairData);
 		log.info("Sending repair data : " + repairData);
 		addGoal(new SendCorrectiveRepairDataGoal());

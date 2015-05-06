@@ -30,10 +30,10 @@ import bdi4jade.util.plan.SimplePlan;
 
 /**
  * @author Anand Prajapati
- * 
- * This capability contains goals of customer -
- * For generating jobs
- * For dispatching them to Global scheduling agent
+ * <p>
+ * Capability of customer agent. Capability consists of beliefs and plans associated with goals of the agent.
+ * Each capability has its own belief base.
+ * </p>
  */
 
 public class parentBasicCapability extends Capability {

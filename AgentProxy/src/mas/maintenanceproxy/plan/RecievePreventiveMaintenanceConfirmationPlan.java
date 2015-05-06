@@ -17,6 +17,13 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ *  Plan to receive preventive maintenance confirmation from machine.
+ * </p>
+ */
+
 public class RecievePreventiveMaintenanceConfirmationPlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

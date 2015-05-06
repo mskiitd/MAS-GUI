@@ -9,6 +9,15 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 
+/**
+ * 
+ * @author Anand Prajapati
+ * <p>
+ * Plan to generate and send periodic preventive maintenance activity to the machine.
+ * This add a ticker behavior which periodically generates and sends the maintenance activity for machine.
+ * </p>
+ */
+
 public class PeriodicPreventiveMaintenancePlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

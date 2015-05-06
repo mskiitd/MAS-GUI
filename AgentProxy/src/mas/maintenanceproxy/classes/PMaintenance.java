@@ -3,6 +3,15 @@ package mas.maintenanceproxy.classes;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Class to represent a preventive maintenance activity.
+ * It contains an ID, Activity code (which tells what activities need were performed in this activity),
+ * expected and actual start and finish times and status. 
+ * </p>
+ *
+ */
 public class PMaintenance implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

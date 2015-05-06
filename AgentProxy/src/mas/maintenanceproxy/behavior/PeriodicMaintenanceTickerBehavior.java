@@ -3,22 +3,25 @@ package mas.maintenanceproxy.behavior;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
-
 import java.util.Date;
-
 import mas.machineproxy.MachineStatus;
 import mas.machineproxy.SimulatorInternals;
-import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.AgentUtil;
 import mas.util.ID;
 import mas.util.ZoneDataUpdate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import bdi4jade.core.BeliefBase;
+
+/**
+ * @author Anand Prajapati
+ * <p>
+ *  Ticker Behavior to periodically generate and send preventive maintenance schedules to the machine. 
+ *  For each maintenance schedule, it runs a monitor behavior which keeps track of the maintenance.
+ * </p>
+ */
 
 public class PeriodicMaintenanceTickerBehavior extends TickerBehaviour{
 

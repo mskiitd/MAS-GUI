@@ -21,6 +21,13 @@ import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 import jade.core.behaviours.OneShotBehaviour;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Plan to load configuration for LMA.
+ * It reads values of some parameters from a configuration file.
+ * </p>
+ */
 public class LoadConfigMaintPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

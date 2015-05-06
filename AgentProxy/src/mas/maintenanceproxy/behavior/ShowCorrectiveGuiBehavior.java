@@ -14,6 +14,12 @@ import mas.maintenanceproxy.gui.MaintenanceGUI;
 import mas.util.ID;
 import mas.util.MessageIds;
 
+/**
+ * @author Anand Prajapati
+ * <p>
+ * Behavior to display a GUI to take repair time input when machine is failed.
+ * </p>
+ */
 public class ShowCorrectiveGuiBehavior extends Behaviour {
 
 	private static final long serialVersionUID = 1L;
@@ -46,6 +52,7 @@ public class ShowCorrectiveGuiBehavior extends Behaviour {
 
 		switch(step) {
 		case 0:
+			// wait for machine's failure message
 			msg = myAgent.receive(machineFailureMSG);
 			if(msg != null) {
 				try {
