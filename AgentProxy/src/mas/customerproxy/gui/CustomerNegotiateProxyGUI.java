@@ -44,6 +44,13 @@ import com.alee.extended.label.WebHotkeyLabel;
 
 import uiconstants.Labels;
 
+/**
+ * @author Anand Prajapati
+ * GUI which displays the batch under negotiation between customer and GSA.
+ * This displays information about batch. Customer can make changes to the batch and then
+ * either send it back for negotiation to GSA or confirm it or reject it.
+ *
+ */
 public class CustomerNegotiateProxyGUI extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -183,7 +190,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		myPanel.add(lblCustomerIdHeading);
 		myPanel.add(lblCustomerId,"wrap");
-		
+
 		myPanel.add(lblJobID);
 		myPanel.add(txtJobID,"wrap");
 
@@ -230,7 +237,7 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 	private void _populate() {
 		if(populatingBatch != null) {
 			lblCustomerId.setText(populatingBatch.getCustomerId());
-			
+
 			txtJobID.setText(populatingBatch.getBatchId());
 			txtJobID.setEnabled(false);
 
@@ -264,6 +271,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		}
 	}
 
+	/**
+	 * Create new batch with its parameters read from the fields in GUI
+	 */
 	private void createJobFromParams() {
 
 		boolean x2 = true, x3 = true,x4 = true,x5 = true;
@@ -286,6 +296,10 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		}
 	}
 
+	/**
+	 * @return True if the batch size is a valid integer
+	 * </br> Sets batch size of the batch to the value in the field
+	 */
 	private boolean checkBatchSize() {
 		boolean status = true;
 		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
@@ -314,23 +328,28 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		return status;
 	}
 
-	private boolean checkJobOperations() {
-		boolean status = true;
-		if(generatedJob.getOperations() == null || generatedJob.getOperations().isEmpty()) {
 
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
-							"Please Give job Operation Details !!", "Error" , JOptionPane.ERROR_MESSAGE );
-				}
-			});
+	//	private boolean checkJobOperations() {
+	//		boolean status = true;
+	//		if(generatedJob.getOperations() == null || generatedJob.getOperations().isEmpty()) {
+	//
+	//			SwingUtilities.invokeLater(new Runnable() {
+	//				@Override
+	//				public void run() {
+	//					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this,
+	//							"Please Give job Operation Details !!", "Error" , JOptionPane.ERROR_MESSAGE );
+	//				}
+	//			});
+	//
+	//			status = false;
+	//		}
+	//		return status;
+	//	}
 
-			status = false;
-		}
-		return status;
-	}
-
+	/**
+	 * @return True if the due date is in the poper format.
+	 * Sets due date of batch to the value in the field
+	 */
 	private boolean checkDueDate() {
 		boolean status = true;
 		Date time = (Date) timeSpinner.getValue();
@@ -377,6 +396,10 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if penalty rate entered by customer is in the proper format and set penalty rate of 
+	 * current batch to the value in the field
+	 */
 	private boolean checkPenaltyRate() {
 		boolean status = true;
 		if(! txtPenaltyRate.getText().matches("-?\\d+(\\.\\d+)?") ) {
@@ -397,6 +420,10 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if CPN entered by customer is valid. Otherwise show an error message and return false
+	 * . Sets value of CPN of batch to the value in the field, if in proper format.
+	 */
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
@@ -417,39 +444,43 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		return status;
 	}
 
-	class AddOperationListener implements ActionListener {
+	//	class AddOperationListener implements ActionListener {
+	//
+	//		@Override
+	//		public void actionPerformed(ActionEvent e) {
+	//			checkOperations();
+	//
+	//			if(operationDataOk) {
+	//				DefineJobOperationsFrame ops = new 
+	//						DefineJobOperationsFrame(populatingBatch.getFirstJob(), NumOps, populatingBatch.getFirstJob());
+	//			}
+	//		}
+	//	}
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			checkOperations();
+	//	private void checkOperations() {
+	//		boolean  x2 = true;
+	//
+	//		if(! txtNumOps.getText().matches("-?\\d+?")) {
+	//
+	//			SwingUtilities.invokeLater(new Runnable() {
+	//				@Override
+	//				public void run() {
+	//					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this, 
+	//							"Invalid input for number of operations.", "Error", JOptionPane.ERROR_MESSAGE );
+	//				}
+	//			});
+	//
+	//			x2 = false;
+	//		} else {
+	//			NumOps = Integer.parseInt(txtNumOps.getText());
+	//		}
+	//		operationDataOk = x2;
+	//	}
 
-			if(operationDataOk) {
-				DefineJobOperationsFrame ops = new 
-						DefineJobOperationsFrame(populatingBatch.getFirstJob(), NumOps, populatingBatch.getFirstJob());
-			}
-		}
-	}
-
-	private void checkOperations() {
-		boolean  x2 = true;
-
-		if(! txtNumOps.getText().matches("-?\\d+?")) {
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(CustomerNegotiateProxyGUI.this, 
-							"Invalid input for number of operations.", "Error", JOptionPane.ERROR_MESSAGE );
-				}
-			});
-
-			x2 = false;
-		} else {
-			NumOps = Integer.parseInt(txtNumOps.getText());
-		}
-		operationDataOk = x2;
-	}
-
+	/**
+	 * Initialized the parameters of display of the frame and make it visible at appropriate location 
+	 * with desired size
+	 */
 	private void showGui() {
 		setTitle("Customer - Negotiation Job");
 		//		setPreferredSize(new Dimension(600,500));
@@ -462,6 +493,12 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 		super.setVisible(true);
 	}
 
+	/**
+	 * Action listener for buttons in this UI
+	 * </br> Confirm 
+	 * </br> Send For Negotiation 
+	 * </br> Reject
+	 */
 	class buttonListener implements ActionListener {
 
 		@Override

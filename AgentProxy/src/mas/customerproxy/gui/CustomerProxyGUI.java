@@ -48,8 +48,13 @@ import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 import uiconstants.Labels;
 
+/**
+ * @author Anand Prajapati
+ * Main UI for customer agent. This is a tabbed display with first one showing list of predefined batches to choose from.
+ * Second tab displays all the confirmed batches and third one displays the completed batches
+ */
 @SuppressWarnings("serial")
-public class CustomerProxyGUI extends JFrame{
+public class CustomerProxyGUI extends JFrame {
 
 	private JScrollPane scroller;
 	private JButton createJob;
@@ -63,23 +68,23 @@ public class CustomerProxyGUI extends JFrame{
 
 	private JTable jobChooserTable;
 	private Jobloader loader;
-	private jobGeneratorTableModel jobChooserTableModel;
+	private batchGeneratorTableModel jobChooserTableModel;
 	private Vector<Batch> jobVector;
 	private Vector<String> tableHeadersVector;
 	private JPanel jobGenPanel, buttonPanel;
 
-	private JTable acceptedJobsTable;
+	private JTable acceptedBatchesTable;
 	private JPanel acceptedJobsPanel;
-	private AcceptedJobsTableModel acceptedJobsTableModel;
-	private Vector<Object> acceptedJobVector;
+	private AcceptedBatchesTableModel acceptedJobsTableModel;
+	private Vector<Object> acceptedBatchVector;
 
 	private JPanel completedJobsPanel;
 	private JTable completedJobsTable;
-	private CompletedJobsTableModel completedJobTableModel;
+	private CompletedBatchesTableModel completedJobTableModel;
 	private Vector<Object> completedJobVector;
 
 	private int currentJobToSend = -1;
-	private int currentAcceptedSelectedJob = -1;
+	private int currentAcceptedSelectedBatch = -1;
 
 	// menu items here
 	private JMenuItem menuItemCancel ;
@@ -112,7 +117,7 @@ public class CustomerProxyGUI extends JFrame{
 		}
 
 		_loadIconsAndFiles();
-		_initGeneratorJobsPanel();
+		_initGeneratorBatchesPanel();
 
 		panelsForTab[0] = new JPanel(new MigLayout());
 		panelsForTab[0].add(jobGenPanel,"wrap");
@@ -122,10 +127,10 @@ public class CustomerProxyGUI extends JFrame{
 		this.scroller = new JScrollPane(this.panelsForTab[0]);
 		this.tPanes.addTab(tabTitles[0],this.scroller );
 
-		_initAcceptedJobsPanel();
+		_initAcceptedbatchesPanel();
 		panelsForTab[1].add(acceptedJobsPanel, BorderLayout.CENTER);
 
-		_initCompletedJobsPanel();
+		_initCompletedBatchesPanel();
 		panelsForTab[2].add(completedJobsPanel, BorderLayout.CENTER);
 
 		// start from 1 index as the 0th index has already been added
@@ -137,6 +142,9 @@ public class CustomerProxyGUI extends JFrame{
 		showGui();
 	}
 
+	/**
+	 * Load icons from the image files
+	 */
 	private void _loadIconsAndFiles() {
 		new Thread(new Runnable() {
 
@@ -158,7 +166,10 @@ public class CustomerProxyGUI extends JFrame{
 		}).start();
 	}
 
-	private void _initGeneratorJobsPanel() {
+	/*
+	 * Initialize panel of the first tab which shows the predefined batches to choose from
+	 */
+	private void _initGeneratorBatchesPanel() {
 
 		this.loader = new Jobloader(cAgent.getLocalName());
 		this.loader.readFile();
@@ -169,9 +180,9 @@ public class CustomerProxyGUI extends JFrame{
 		this.completeJobTableHeaderVector = this.loader.getCompleteJobTableHeader();
 
 		this.createJob = new JButton(Labels.createJobButton);
-		this.createJob.addActionListener(new createJobListener());
+		this.createJob.addActionListener(new createBatchListener());
 
-		this.jobChooserTableModel = new jobGeneratorTableModel();
+		this.jobChooserTableModel = new batchGeneratorTableModel();
 		this.jobChooserTable = new JTable(this.jobChooserTableModel);
 
 		this.jobChooserTable.setRowHeight(30);
@@ -206,35 +217,38 @@ public class CustomerProxyGUI extends JFrame{
 				});
 	}
 
-	private void _initAcceptedJobsPanel() {
+	/*
+	 * Initialize panel for all the confirmed batches in the second tab
+	 */
+	private void _initAcceptedbatchesPanel() {
 		// setup second tab for accepted jobs
 		acceptedJobsPanel = new JPanel(new BorderLayout());
-		acceptedJobVector = new Vector<Object>();
+		acceptedBatchVector = new Vector<Object>();
 
-		acceptedJobsTableModel = new AcceptedJobsTableModel();
-		acceptedJobsTable = new JTable(acceptedJobsTableModel);
+		acceptedJobsTableModel = new AcceptedBatchesTableModel();
+		acceptedBatchesTable = new JTable(acceptedJobsTableModel);
 
-		TableUtil.setColumnWidths(acceptedJobsTable);
+		TableUtil.setColumnWidths(acceptedBatchesTable);
 
-		this.acceptedJobsTable.setRowHeight(30);
-		this.acceptedJobsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		this.acceptedBatchesTable.setRowHeight(30);
+		this.acceptedBatchesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		acceptedJobsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		acceptedJobsPanel.add(new JScrollPane(acceptedJobsTable), BorderLayout.CENTER);
-		acceptedJobsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		acceptedJobsPanel.add(new JScrollPane(acceptedBatchesTable), BorderLayout.CENTER);
+		acceptedBatchesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		acceptedJobsTable.addMouseListener(new MouseListener() {
+		acceptedBatchesTable.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				int r = acceptedJobsTable.rowAtPoint(e.getPoint());
-				if (r >= 0 && r < acceptedJobsTable.getRowCount()) {
-					acceptedJobsTable.setRowSelectionInterval(r, r);
+				int r = acceptedBatchesTable.rowAtPoint(e.getPoint());
+				if (r >= 0 && r < acceptedBatchesTable.getRowCount()) {
+					acceptedBatchesTable.setRowSelectionInterval(r, r);
 				} else {
-					acceptedJobsTable.clearSelection();
+					acceptedBatchesTable.clearSelection();
 				}
 
-				int rowindex = acceptedJobsTable.getSelectedRow();
+				int rowindex = acceptedBatchesTable.getSelectedRow();
 				if (rowindex < 0)
 					return;
 				if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
@@ -262,6 +276,9 @@ public class CustomerProxyGUI extends JFrame{
 		});
 	}
 
+	/*
+	 * Show the pop up menu for confirmed batches
+	 */
 	private JPopupMenu createPopUpMenu(){
 		JPopupMenu menu = new JPopupMenu();
 
@@ -271,12 +288,15 @@ public class CustomerProxyGUI extends JFrame{
 		return menu;
 	}
 
-	private void _initCompletedJobsPanel() {
+	/*
+	 * Initialize the panel containing completed batches
+	 */
+	private void _initCompletedBatchesPanel() {
 		// setup third tab for completed jobs
 		completedJobsPanel = new JPanel(new BorderLayout());
 		completedJobVector = new Vector<Object>();
 
-		completedJobTableModel = new CompletedJobsTableModel();
+		completedJobTableModel = new CompletedBatchesTableModel();
 		completedJobsTable = new JTable(completedJobTableModel);
 
 		TableUtil.setColumnWidths(completedJobsTable);
@@ -288,6 +308,10 @@ public class CustomerProxyGUI extends JFrame{
 		completedJobsPanel.add(new JScrollPane(completedJobsTable), BorderLayout.CENTER);
 	}
 
+	/*
+	 * Initialized the parameters of display of the frame and make it visible at appropriate location 
+	 * with desired size
+	 */
 	private void showGui() {
 		setTitle(cAgent.getLocalName());
 		//		setPreferredSize(new Dimension(800,800));
@@ -300,6 +324,12 @@ public class CustomerProxyGUI extends JFrame{
 		super.setVisible(true);
 	}
 
+	/**
+	 * This display a notification message in the action bar with the given title, content(message), icon
+	 * @param title
+	 * @param message
+	 * @param type
+	 */
 	public static void showNotification(String title, String message,TrayIcon.MessageType type){
 
 		switch(type){
@@ -333,11 +363,14 @@ public class CustomerProxyGUI extends JFrame{
 		AudioPlayer.player.start(audioStream);
 	}
 
+	/*
+	 * Add completed batch to the GUI i.e. third tab
+	 */
 	public void addCompletedBatch(Batch j) {
-		/**if(acceptedJobVector.contains(j)) {
+		/*if(acceptedJobVector.contains(j)) {
 			acceptedJobVector.remove(j);
 		}
-		 **/
+		 */
 		completedJobVector.addElement(j);
 		TableUtil.setColumnWidths(completedJobsTable);
 		completedJobsTable.revalidate();
@@ -347,31 +380,39 @@ public class CustomerProxyGUI extends JFrame{
 				" completed ",MessageType.INFO); 
 	}
 
+	/*
+	 * Add accepted batch to the GUI i.e. second tab
+	 */
 	public void addAcceptedJob(Batch j) {
-		acceptedJobVector.addElement(j);
-		TableUtil.setColumnWidths(acceptedJobsTable);
-		acceptedJobsTable.revalidate();
-		acceptedJobsTable.repaint();
+		acceptedBatchVector.addElement(j);
+		TableUtil.setColumnWidths(acceptedBatchesTable);
+		acceptedBatchesTable.revalidate();
+		acceptedBatchesTable.repaint();
 	}
 
-
+	/*
+	 * action listener for menu options which are clicked on accepted batches
+	 */
 	class rightClickListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			JMenuItem menu = (JMenuItem) event.getSource();
 			if (menu == menuItemCancel) {
-				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
-				cAgent.cancelOrder((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
+				currentAcceptedSelectedBatch = acceptedBatchesTable.getSelectedRow();
+				cAgent.cancelOrder((Batch) acceptedBatchVector.get(currentAcceptedSelectedBatch));
 
 			} else if (menu == menuItemChangeDueDate) {
-				currentAcceptedSelectedJob = acceptedJobsTable.getSelectedRow();
+				currentAcceptedSelectedBatch = acceptedBatchesTable.getSelectedRow();
 				//				cAgent.changeDueDate((Batch) acceptedJobVector.get(currentAcceptedSelectedJob));
 			} 
 		}
 	}
 
-	class createJobListener implements ActionListener {
+	/*
+	 * This pops up a window where you can enter details and create a new batch
+	 */
+	class createBatchListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -382,11 +423,11 @@ public class CustomerProxyGUI extends JFrame{
 					@Override
 					public void run() {
 						if(currentJobToSend == -1) {
-							DefineJobFrame jobFrame = new DefineJobFrame(cAgent,null);
+							DefineBatchFrame jobFrame = new DefineBatchFrame(cAgent,null);
 						}
 						else {
 							Batch j = jobVector.get(currentJobToSend);
-							DefineJobFrame	jobFrame = new DefineJobFrame(cAgent,j);
+							DefineBatchFrame	jobFrame = new DefineBatchFrame(cAgent,j);
 						}
 					}
 				});
@@ -395,7 +436,10 @@ public class CustomerProxyGUI extends JFrame{
 		}
 	};
 
-	class jobGeneratorTableModel extends AbstractTableModel {
+	/*
+	 * Table model for table of predefined batches
+	 */
+	class batchGeneratorTableModel extends AbstractTableModel {
 
 		@Override
 		public int getColumnCount() {
@@ -437,7 +481,10 @@ public class CustomerProxyGUI extends JFrame{
 		}
 	}
 
-	class AcceptedJobsTableModel extends AbstractTableModel {
+	/*
+	 * Table model for table of accepted/confirmed batches
+	 */
+	class AcceptedBatchesTableModel extends AbstractTableModel {
 
 		@Override
 		public int getColumnCount() {
@@ -446,13 +493,13 @@ public class CustomerProxyGUI extends JFrame{
 
 		@Override
 		public int getRowCount() {
-			return acceptedJobVector.size();
+			return acceptedBatchVector.size();
 		}
 
 		@Override
 		public Object getValueAt(int row, int col) {
 			Object value;
-			Batch j = (Batch) acceptedJobVector.get(row);
+			Batch j = (Batch) acceptedBatchVector.get(row);
 			switch(col) {
 			case 0:
 				value = j.getBatchId();
@@ -482,7 +529,10 @@ public class CustomerProxyGUI extends JFrame{
 		}
 	}
 
-	class CompletedJobsTableModel extends AbstractTableModel {
+	/*
+	 * Table model for table of completed batches
+	 */
+	class CompletedBatchesTableModel extends AbstractTableModel {
 
 		@Override
 		public int getColumnCount() {
@@ -526,9 +576,11 @@ public class CustomerProxyGUI extends JFrame{
 			return completeJobTableHeaderVector.get(column);		}
 	}
 
+	/**
+	 * removes customer icon from the action tray
+	 */
 	public void clean() {
 		tray.remove(customerTrayIcon);
-
 	}
 
 }

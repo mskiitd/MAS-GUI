@@ -5,12 +5,10 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,28 +19,31 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
-
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
 import mas.jobproxy.jobOperation;
 import mas.util.DateLabelFormatter;
-import mas.util.DefineJobOperationsFrame;
 import mas.util.TableUtil;
 import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
 import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-
 import uiconstants.Labels;
-
 import com.alee.extended.label.WebHotkeyLabel;
+
+/**
+ * @author Anand Prajapati
+ * 
+ * GUI to change due date by customer.
+ * This displays the information about the batch whose due date is to be changed.
+ * Customer can make change in the information of batch and then it for negotiation with GSA.
+ */
 
 public class ChangeDueDateGUI extends JFrame{
 
@@ -260,6 +261,9 @@ public class ChangeDueDateGUI extends JFrame{
 		}
 	}
 
+	/**
+	 * Create a new batch with the details read from the fields in the GUI
+	 */
 	private void createJobFromParams() {
 
 		boolean x2 = true, x3 = true,x4 = true,x5 = true;
@@ -279,6 +283,10 @@ public class ChangeDueDateGUI extends JFrame{
 		}
 	}
 
+	/**
+	 * @return True if the batch size is a valid integer
+	 * </br> Sets batch size of the batch to the value in the field
+	 */
 	private boolean checkBatchSize() {
 		boolean status = true;
 		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
@@ -307,6 +315,10 @@ public class ChangeDueDateGUI extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if the due date is in the poper format.
+	 * Sets due date of batch to the value in the field
+	 */
 	private boolean checkDueDate() {
 		boolean status = true;
 		Date time = (Date) timeSpinner.getValue();
@@ -353,6 +365,10 @@ public class ChangeDueDateGUI extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if penalty rate entered by customer is in the proper format and set penalty rate of 
+	 * current batch to the value in the field
+	 */
 	private boolean checkPenaltyRate() {
 		boolean status = true;
 		if(! txtPenaltyRate.getText().matches("-?\\d+(\\.\\d+)?") ) {
@@ -373,6 +389,10 @@ public class ChangeDueDateGUI extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if CPN entered by customer is valid. Otherwise show an error message and return false
+	 * . Sets value of CPN of batch to the value in the field, if in proper format.
+	 */
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
@@ -393,6 +413,10 @@ public class ChangeDueDateGUI extends JFrame{
 		return status;
 	}
 
+	/**
+	 * Initialized the parameters of display of the frame and make it visible at appropriate location 
+	 * with desired size
+	 */
 	private void showGui() {
 		setTitle("Customer - Change Due Date");
 		//		setPreferredSize(new Dimension(600,500));
@@ -405,6 +429,9 @@ public class ChangeDueDateGUI extends JFrame{
 		super.setVisible(true);
 	}
 
+	/**
+	 * Action listener for buttons in this UI
+	 */
 	class buttonListener implements ActionListener {
 
 		@Override

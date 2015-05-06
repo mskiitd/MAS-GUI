@@ -43,8 +43,13 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import uiconstants.Labels;
 
+/**
+ * @author Anand Prajapati
+ * GUI to define new Batch to be sent to GSA.
+ * This displays parameters of batch. Once a batch is generated this 
+ */
 @SuppressWarnings("serial")
-public class DefineJobFrame extends JFrame{
+public class DefineBatchFrame extends JFrame{
 
 	private CustomerAgent cAgent;
 	private job generatedJob;
@@ -83,7 +88,7 @@ public class DefineJobFrame extends JFrame{
 
 	private Logger log;
 
-	public DefineJobFrame(CustomerAgent cAgent, Batch passedBatch) {
+	public DefineBatchFrame(CustomerAgent cAgent, Batch passedBatch) {
 
 		log = LogManager.getLogger();
 
@@ -142,7 +147,7 @@ public class DefineJobFrame extends JFrame{
 		txtBatchSize.setValue(1);
 
 		this.sendJob = new JButton(Labels.sendJobButton);
-		sendJob.addActionListener(new sendJobListener());
+		sendJob.addActionListener(new sendBatchListener());
 
 		this.lblHeading.setFont(TableUtil.headings);
 		myPanel.add(lblHeading,"wrap");
@@ -187,7 +192,10 @@ public class DefineJobFrame extends JFrame{
 		}
 	}
 
-	private void createJobFromParams() {
+	/*
+	 * Create a new batch having the paremeters picked up from the appropriate fields in the UI 
+	 */
+	private void createBatchFromParams() {
 
 		boolean x1 = true;
 		if(generatedJob == null) {
@@ -196,7 +204,7 @@ public class DefineJobFrame extends JFrame{
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						JOptionPane.showMessageDialog(DefineJobFrame.this,
+						JOptionPane.showMessageDialog(DefineBatchFrame.this,
 								"Please enter batch ID !!");
 					}
 				});
@@ -250,6 +258,10 @@ public class DefineJobFrame extends JFrame{
 		}
 	}
 
+	/**
+	 * @return True if the due date is in the poper format.
+	 * Sets due date of batch to the value in the field
+	 */
 	private boolean checkDueDate() {
 		boolean status = true;
 		Date time = (Date) timeSpinner.getValue();
@@ -260,7 +272,7 @@ public class DefineJobFrame extends JFrame{
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(DefineJobFrame.this,
+					JOptionPane.showMessageDialog(DefineBatchFrame.this,
 							"Invalid input for due date.", "Error" , JOptionPane.ERROR_MESSAGE );
 				}
 			});
@@ -283,7 +295,7 @@ public class DefineJobFrame extends JFrame{
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						JOptionPane.showMessageDialog(DefineJobFrame.this,
+						JOptionPane.showMessageDialog(DefineBatchFrame.this,
 								"Please enter a due date after current Date.", "Error" , JOptionPane.ERROR_MESSAGE );						
 					}
 				});
@@ -296,6 +308,10 @@ public class DefineJobFrame extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if penalty rate entered by customer is in the proper format and set penalty rate of 
+	 * current batch to the value in the field
+	 */
 	private boolean checkPenaltyRate() {
 		boolean status = true;
 		if(! txtPenalty.getText().matches("-?\\d+(\\.\\d+)?") ) {
@@ -303,7 +319,7 @@ public class DefineJobFrame extends JFrame{
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(DefineJobFrame.this,
+					JOptionPane.showMessageDialog(DefineBatchFrame.this,
 							"Invalid input for penalty rate !!", "Error", JOptionPane.ERROR_MESSAGE );
 				}
 			});
@@ -316,13 +332,17 @@ public class DefineJobFrame extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if CPN entered by customer is valid. Otherwise show an error message and return false
+	 * . Sets value of CPN of batch to the value in the field, if in proper format.
+	 */
 	private boolean checkCPN() {
 		boolean status = true;
 		if(! txtCPN.getText().matches("-?\\d+(\\.\\d+)?") ) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(DefineJobFrame.this,
+					JOptionPane.showMessageDialog(DefineBatchFrame.this,
 							"Invalid input for CPN.", "Error", JOptionPane.ERROR_MESSAGE );
 				}
 			});
@@ -335,6 +355,10 @@ public class DefineJobFrame extends JFrame{
 		return status;
 	}
 
+	/**
+	 * @return True if the batch size is a valid integer
+	 * </br> Sets batch size of the batch to the value in the field
+	 */
 	private boolean checkBatchSize() {
 		boolean status = true;
 		if(! txtBatchSize.getText().matches("-?\\d+?") ) {
@@ -342,7 +366,7 @@ public class DefineJobFrame extends JFrame{
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(DefineJobFrame.this,
+					JOptionPane.showMessageDialog(DefineBatchFrame.this,
 							"Invalid input for batch size.", "Error" , JOptionPane.ERROR_MESSAGE );
 				}
 			});
@@ -364,60 +388,63 @@ public class DefineJobFrame extends JFrame{
 		return status;
 	}
 
-	class AddOperationListener implements ActionListener {
+//	class AddOperationListener implements ActionListener {
+//
+//		@Override
+//		public void actionPerformed(ActionEvent e) {
+//			checkOperations();
+//
+//			if(operationDataOk) {
+//				DefineJobOperationsFrame ops = new 
+//						DefineJobOperationsFrame(generatedJob, NumOps, populatingBatch.getFirstJob());
+//			}
+//		}
+//	}
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			checkOperations();
+//	private void checkOperations() {
+//		boolean x1 = true, x2 = true;
+//		if(generatedJob == null) {
+//			if(txtJobID.getText().isEmpty()) {
+//
+//				SwingUtilities.invokeLater(new Runnable() {
+//					@Override
+//					public void run() {
+//						JOptionPane.showMessageDialog(DefineBatchFrame.this,
+//								"Please enter job ID.","Error" , JOptionPane.ERROR_MESSAGE );						
+//					}
+//				});
+//
+//				x1 = false;
+//			}else {
+//				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
+//			}
+//		}
+//		if(! txtNumOps.getText().matches("-?\\d+?")) {
+//
+//			SwingUtilities.invokeLater(new Runnable() {
+//				@Override
+//				public void run() {
+//					JOptionPane.showMessageDialog(DefineBatchFrame.this,
+//							"Invalid input for number of operations.", "Error" , JOptionPane.ERROR_MESSAGE );					
+//				}
+//			});
+//
+//			x2 = false;
+//		} else {
+//			NumOps = Integer.parseInt(txtNumOps.getText());
+//		}
+//		operationDataOk = x1&x2;
+//	}
 
-			if(operationDataOk) {
-				DefineJobOperationsFrame ops = new 
-						DefineJobOperationsFrame(generatedJob, NumOps, populatingBatch.getFirstJob());
-			}
-		}
-	}
-
-	private void checkOperations() {
-		boolean x1 = true, x2 = true;
-		if(generatedJob == null) {
-			if(txtJobID.getText().isEmpty()) {
-
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						JOptionPane.showMessageDialog(DefineJobFrame.this,
-								"Please enter job ID.","Error" , JOptionPane.ERROR_MESSAGE );						
-					}
-				});
-
-				x1 = false;
-			}else {
-				generatedJob = new job.Builder(txtJobID.getText().toString()).build();
-			}
-		}
-		if(! txtNumOps.getText().matches("-?\\d+?")) {
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(DefineJobFrame.this,
-							"Invalid input for number of operations.", "Error" , JOptionPane.ERROR_MESSAGE );					
-				}
-			});
-
-			x2 = false;
-		} else {
-			NumOps = Integer.parseInt(txtNumOps.getText());
-		}
-		operationDataOk = x1&x2;
-	}
-
-	class sendJobListener implements ActionListener {
+	/*
+	 * Sends the generated batch to blackboard
+	 */
+	class sendBatchListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// build the job
-			createJobFromParams();
+			createBatchFromParams();
 			log.info("data format : " + dataOk);
 			if(dataOk) {
 				dispose();
@@ -434,6 +461,10 @@ public class DefineJobFrame extends JFrame{
 		}
 	}
 
+	/**
+	 * Initialized the parameters of display of the frame and make it visible at appropriate location 
+	 * with desired size
+	 */
 	private void showGui() {
 		setTitle(" Define Job ");
 		setPreferredSize(new Dimension(700,500));

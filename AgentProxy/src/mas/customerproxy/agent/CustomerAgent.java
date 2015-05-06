@@ -6,9 +6,9 @@ import jade.domain.DFService;
 import javax.swing.SwingUtilities;
 
 import mas.customerproxy.goal.CancelOrderGoal;
-import mas.customerproxy.goal.CustomerSendNegotiationJobGoal;
+import mas.customerproxy.goal.CustomerSendNegotiationBatchGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
-import mas.customerproxy.goal.dispatchJobGoal;
+import mas.customerproxy.goal.DispatchBatchGoal;
 import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.jobproxy.Batch;
 import mas.util.AgentUtil;
@@ -31,7 +31,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 	public void sendGeneratedBatch(Batch batchOfJobs) {
 		//		log.info("Adding generated job " + j + " to belief base : " +bfBase);
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_JOB2SEND, batchOfJobs);
-		addGoal(new dispatchJobGoal());
+		addGoal(new DispatchBatchGoal());
 	}
 
 	public void cancelOrder(Batch j) {
@@ -64,7 +64,7 @@ public class CustomerAgent extends AbstractCustomerAgent {
 
 	public void negotiateJob(Batch batch) {
 		bfBase.updateBelief(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH, batch);
-		this.addGoal(new CustomerSendNegotiationJobGoal());
+		this.addGoal(new CustomerSendNegotiationBatchGoal());
 	}
 
 	@Override

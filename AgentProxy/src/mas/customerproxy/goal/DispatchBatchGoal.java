@@ -4,11 +4,11 @@ import bdi4jade.goal.Goal;
 
 /**
  * @author Anand Prajapati
- * Goal to register this agent on blackboard
+ * Goal to dispatch generated batch to blackboard
  *
  */
-public class RegisterAgentToBlackboardGoal implements Goal{
+public class DispatchBatchGoal implements Goal{
 
 	private static final long serialVersionUID = 1L;
-
+	
 }

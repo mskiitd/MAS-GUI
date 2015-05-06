@@ -9,7 +9,7 @@ import java.util.Set;
 import mas.customerproxy.goal.CancelOrderGoal;
 import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
-import mas.customerproxy.goal.dispatchJobGoal;
+import mas.customerproxy.goal.DispatchBatchGoal;
 import mas.customerproxy.plan.CancelOrderPlan;
 import mas.customerproxy.plan.ChangeDueDate;
 import mas.customerproxy.plan.DispatchJobPlan;
@@ -108,7 +108,7 @@ public class parentBasicCapability extends Capability {
 		plans.add(new SimplePlan(RegisterAgentToBlackboardGoal.class,
 				RegisterCustomerAgentToBlackboardPlan.class));
 
-		plans.add(new SimplePlan(dispatchJobGoal.class,DispatchJobPlan.class));
+		plans.add(new SimplePlan(DispatchBatchGoal.class,DispatchJobPlan.class));
 		plans.add(new SimplePlan(SendConfirmedOrderGoal.class,SendConfirmedOrderPlan.class));
 		plans.add(new SimplePlan(CancelOrderGoal.class,CancelOrderPlan.class) );
 
