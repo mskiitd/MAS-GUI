@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * @author Anand Prajapati
+ * <p>
  * The weibull distribution being used here follows a constructor
  * weibull ( shape parameter, scale parameter)
  * weibull ( beta  , eta )
@@ -23,7 +24,7 @@ import org.apache.logging.log4j.Logger;
  * imperfect repairs of component. LifeToFailure is used as the life of component
  * i.e. when the component will fail i.e.
  * 'currentAge - initialAge' becomes equal to 'lifeToFailure' 
- *
+ *</p>
  */
 
 public class Component implements IComponent,Serializable {
@@ -237,11 +238,6 @@ public class Component implements IComponent,Serializable {
 		double wbrnd = wb.inverseCumulativeProbability( 1.0 - reliability);
 		return wbrnd;
 	}
-	/**
-	 * 
-	 * @param millis
-	 *  Ages this component by millis amount
-	 */
 	
 	public void addAge(long millis) { 
 		this.currentAge += millis;
@@ -251,13 +247,19 @@ public class Component implements IComponent,Serializable {
 			this.mySimulator.setStatus(MachineStatus.FAILED);
 		}
 		
-//		log.info("Current age " + this.currentAge + "life " + this.lifeToFailure);
 	}
 
+	/**
+	 * @return ID of this component
+	 */
 	public String getComponentID() {
 		return ComponentID;
 	}
 
+	/**
+	 * @param componentID
+	 * </br> Sets id of this component
+	 */
 	public void setComponentID(String componentID) {
 		this.ComponentID = componentID;
 	}

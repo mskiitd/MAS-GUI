@@ -7,9 +7,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -20,7 +17,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -39,9 +35,7 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import mas.globalSchedulingproxy.goal.LoadBatchOperationDetailsGoal;
-import mas.globalSchedulingproxy.gui.WebLafGSA;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.database.OperationDataBase;
 import mas.localSchedulingproxy.database.OperationInfo;

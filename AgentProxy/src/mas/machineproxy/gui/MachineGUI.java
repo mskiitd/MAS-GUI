@@ -94,7 +94,7 @@ public class MachineGUI extends JFrame {
 	private JLabel lblMachineIcon;
 	private JLabel lblMachineStatus;
 	private TrayIcon machineTrayIcon;
-	private CustomJobQueue queuePanel;
+	private CustomBatchQueue queuePanel;
 	private ArrayList<Batch> jobQ;
 
 	public static Color failColor = Color.RED;
@@ -178,7 +178,7 @@ public class MachineGUI extends JFrame {
 		}
 		jobQ = new ArrayList<Batch>();
 
-		this.queuePanel = new CustomJobQueue(jobQ);
+		this.queuePanel = new CustomBatchQueue(jobQ);
 		queuePanel.setBorder((new EmptyBorder(10,10,10,10) ));
 
 		this.queueScroller = new JScrollPane(queuePanel);

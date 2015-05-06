@@ -5,22 +5,23 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import uiconstants.Labels;
+
+/**
+ * @author Anand Prajapati
+ * <p>
+ * GUI for entering maintenance activity code after preventive maintenance is done on the machine.
+ * </p>
+ */
 
 public class MaintenanceActivityCodeFrame extends JFrame {
 
