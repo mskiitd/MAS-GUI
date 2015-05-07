@@ -75,6 +75,7 @@ public class NegotitationJobTileCellRenderer extends AbstractCellEditor implemen
 			@Override
 			public void mousePressed ( final MouseEvent e )
 			{
+				fireEditingStopped();
 				WebLafGSA.unloadNegotiationInfoPanel();
 				WebLafGSA.creatNegotiationInfoPanel(jobTileInCell);
 			}
