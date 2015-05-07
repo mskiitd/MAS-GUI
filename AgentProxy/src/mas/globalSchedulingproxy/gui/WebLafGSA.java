@@ -196,7 +196,7 @@ public class WebLafGSA {
 		NegotiationJobTileTableModel negotiationRenderer= new NegotiationJobTileTableModel();
 		negotiationJobListTable=new JTable(negotiationRenderer);
 		negotiationJobListTable.setDefaultRenderer(JobTile.class, new NegotitationJobTileCellRenderer());
-//		negotiationJobListTable.setDefaultEditor(JobTile.class, new NegotitationJobTileCellRenderer());
+		negotiationJobListTable.setDefaultEditor(JobTile.class, new NegotitationJobTileCellRenderer());
 		negotiationJobListTable.setRowHeight(80);
 
 		negotiationJobList=new WebScrollPane(negotiationJobListTable);

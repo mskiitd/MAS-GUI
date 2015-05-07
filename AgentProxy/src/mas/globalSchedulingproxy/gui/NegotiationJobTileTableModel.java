@@ -58,16 +58,24 @@ public class NegotiationJobTileTableModel extends AbstractTableModel implements 
 		super.fireTableRowsInserted(0, getRowCount()-1);
 	}
 
-	public void removeJob(Batch j) {
+	public void removeBatch(Batch j) {
 		log.info("fired remove job");
 		int count=0;
-		while(count<batchTiles.size() && (!j.getBatchId().equals(batchTiles.get(count).getBatchID()))){
+		while(count<batchTiles.size() && (j.getBatchNumber()!=
+				(batchTiles.get(count).getBatch().getBatchNumber()))){
 			count++;
 		}
+		
 		log.info("count="+count);
 		if(count!=batchTiles.size()){
 			batchTiles.remove(count);
-			super.fireTableRowsDeleted(0, count);
+//			super.fireTableRowsDeleted(0, count);
 		}
+		if(getRowCount()>=1){
+			super.fireTableRowsDeleted(0, getRowCount()-1);
+			super.fireTableCellUpdated(0, getRowCount()-1);
+			super.fireTableDataChanged();
+		}
+		
 	}
 }

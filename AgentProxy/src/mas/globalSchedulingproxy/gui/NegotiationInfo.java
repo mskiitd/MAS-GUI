@@ -388,7 +388,7 @@ public class NegotiationInfo {
 					NegotiationJobTileTableModel negotiationTableModel=
 							(NegotiationJobTileTableModel)(WebLafGSA.
 									getNegotiationJobListTable().getModel());
-					negotiationTableModel.removeJob(populatingBatch);
+					negotiationTableModel.removeBatch(populatingBatch);
 					WebLafGSA.getNegotiationJobListTable().revalidate();
 					WebLafGSA.getNegotiationJobListTable().repaint();
 					WebLafGSA.unloadNegotiationInfoPanel();

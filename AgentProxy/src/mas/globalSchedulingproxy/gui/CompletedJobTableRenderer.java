@@ -287,6 +287,6 @@ public class CompletedJobTableRenderer extends AbstractCellEditor implements Tab
 		JobTile feed = (JobTile)value;
 		updateData(feed, isSelected, table);
 		return tile;	
-		}
+	}
 
 }
