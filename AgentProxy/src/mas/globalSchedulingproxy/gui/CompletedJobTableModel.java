@@ -2,10 +2,14 @@ package mas.globalSchedulingproxy.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
-import mas.jobproxy.Batch;
 
+import mas.jobproxy.Batch;
+/*
+ * Table model for completed job table shown as table on left side
+ */
 public class CompletedJobTableModel extends AbstractTableModel implements TableModel {
 
 	private static final long serialVersionUID = 1L;
@@ -57,6 +61,10 @@ public class CompletedJobTableModel extends AbstractTableModel implements TableM
 
 	public void addBatch(Batch b){
 		jobTiles.add(new JobTile(b));
-		super.fireTableRowsInserted(getRowCount()+1, getRowCount()+1);
+//		super.fireTableRowsInserted(getRowCount()+1, getRowCount()+1);
+
+		super.fireTableRowsInserted(0, getRowCount()-1);
+		super.fireTableCellUpdated(0, getRowCount()-1);
+		super.fireTableDataChanged();
 	}
 }

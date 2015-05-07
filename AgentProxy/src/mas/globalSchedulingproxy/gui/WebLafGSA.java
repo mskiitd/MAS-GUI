@@ -2,6 +2,7 @@ package mas.globalSchedulingproxy.gui;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -25,6 +26,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 
@@ -182,7 +184,7 @@ public class WebLafGSA {
 		completedJobListTable=new JTable(completedJobRenderer);
 
 		completedJobListTable.setDefaultRenderer(JobTile.class, new CompletedJobTableRenderer());
-//		completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTableRenderer());
+		completedJobListTable.setDefaultEditor(JobTile.class, new CompletedJobTableRenderer());
 		completedJobListTable.setRowHeight(90);
 
 		completedJobsList=new WebScrollPane(completedJobListTable);
@@ -318,7 +320,6 @@ public class WebLafGSA {
 		detailsPanel.add(prioritylbl,"wrap, growx");
 //		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
 //		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
-
 		
 		
 //		detailsPanel.add(jobGSAStartDatelbl,"growx");
@@ -436,6 +437,7 @@ public class WebLafGSA {
 		
 		detailsPanel.add(priorityTextlbl,"growx");
 		detailsPanel.add(prioritylbl,"wrap, growx");
+		
 //		detailsPanel.add(jobGSAStartDateTxtlbl,"growx");
 //		detailsPanel.add(jobGSADueDateTxtlbl,"wrap, growx");
 
@@ -673,7 +675,7 @@ public class WebLafGSA {
 		String msg="Batch No. "+b.getBatchNumber()+" completed";
 		showNotification("Batch Completed",msg, MessageType.INFO);
 
-		currentJobList.repaint();
+		completedJobsList.repaint();
 	}
 
 	public void addAcceptedJobToList(Batch order) {

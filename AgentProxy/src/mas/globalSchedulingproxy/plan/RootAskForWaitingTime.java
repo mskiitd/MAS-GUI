@@ -218,7 +218,11 @@ public class RootAskForWaitingTime extends Behaviour implements PlanBody {
 			break;
 		}   
 	}
-
+/**
+ * 
+ * @param WaitingTime reply messages from local schedulign agent with waiting time
+ * @return message with maximum waiting time
+ */
 	public ACLMessage getWorstWaitingTime(ACLMessage[] WaitingTime ) {
 		ACLMessage MaxwaitingTimeMsg = WaitingTime[0]; 
 		for(int i = 0; i < WaitingTime.length; i++){

@@ -43,7 +43,9 @@ import uiconstants.Labels;
 
 import com.alee.extended.label.WebHotkeyLabel;
 import com.alee.laf.panel.WebPanel;
-
+/*
+ * Shows  negotiation details on right side
+ */
 public class NegotiationInfo {
 
 	private static final long serialVersionUID = 1L;
@@ -383,10 +385,10 @@ public class NegotiationInfo {
 				createJobFromParams();
 				if(dataOk) {
 					gAgent.negotiateBatch(populatingBatch);
-					NegotiationJobTileTableModel negotiationRenderer=
+					NegotiationJobTileTableModel negotiationTableModel=
 							(NegotiationJobTileTableModel)(WebLafGSA.
 									getNegotiationJobListTable().getModel());
-					negotiationRenderer.removeJob(populatingBatch);
+					negotiationTableModel.removeJob(populatingBatch);
 					WebLafGSA.getNegotiationJobListTable().revalidate();
 					WebLafGSA.getNegotiationJobListTable().repaint();
 					WebLafGSA.unloadNegotiationInfoPanel();

@@ -97,7 +97,7 @@ public class CurrentJobTableRenderer extends AbstractCellEditor implements Table
         }
          );
 		 
-		
+		log.info("update data of current job");
 		if (isSelected) {
 			tile.setBackground(table.getSelectionBackground());
 			Component[] comps=tile.getComponents();

@@ -86,10 +86,10 @@ public class GlobalSchedulingAgent extends AbstractGlobalSchedulingAgent{
 			weblafgui.dispose();
 		}
 	}
-
+/*
 	public static void showQueryResponse(BatchQueryObject response) {
 		
-	}
+	}*/
 
 	/*public void queryJob(Batch job) {
 		bfBase.updateBelief(ID.GlobalScheduler.BeliefBaseConst.GSAqueryJob, job);

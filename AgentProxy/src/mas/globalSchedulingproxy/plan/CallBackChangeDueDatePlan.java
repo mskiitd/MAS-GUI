@@ -8,7 +8,12 @@ import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ *
+ * Call back batch from local scheduling agent. 
+ * @author NikhilChilwant
+ *
+ */
 public class CallBackChangeDueDatePlan extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

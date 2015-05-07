@@ -14,7 +14,11 @@ import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ * Asks bid from LSAs, waits for reply from them and calculates best bid.
+ * @author NikhilChilwant
+ *
+ */
 public class AskForBidPlan extends Behaviour implements PlanBody{
 
 	private int step = 0;

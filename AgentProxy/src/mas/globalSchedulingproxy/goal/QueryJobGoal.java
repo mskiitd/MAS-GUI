@@ -2,7 +2,9 @@ package mas.globalSchedulingproxy.goal;
 
 import mas.jobproxy.Batch;
 import bdi4jade.goal.Goal;
-
+/*
+ * Query about batch
+ */
 public class QueryJobGoal implements Goal {
 
 	private static final long serialVersionUID = 1L;

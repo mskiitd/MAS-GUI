@@ -8,6 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import mas.jobproxy.Batch;
 
+/*
+ * Table model for current job table shown as table on left side
+ */
 public class CurrentJobTableModel extends AbstractTableModel implements TableModel {
 
 	private static final long serialVersionUID = 1L;
