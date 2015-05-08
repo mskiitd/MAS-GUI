@@ -8,6 +8,7 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -77,6 +78,9 @@ public class MaintenanceGUI extends JFrame {
 
 	public MaintenanceGUI(LocalMaintenanceAgent lmAgent) {
 
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		this.mAgent = lmAgent;
 
 		prevMaintSchedules = new ArrayList<PMaintenance>();

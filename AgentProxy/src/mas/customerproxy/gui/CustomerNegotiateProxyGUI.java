@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -104,6 +105,9 @@ public class CustomerNegotiateProxyGUI extends JFrame{
 
 		log = LogManager.getLogger();
 
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		this.populatingBatch = passedBatch;
 		if(populatingBatch != null) {
 			generatedJob = populatingBatch.getFirstJob();

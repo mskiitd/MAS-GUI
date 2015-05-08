@@ -84,6 +84,9 @@ public class UpdateOperationDbGUI extends JFrame implements WindowListener {
 
 	public UpdateOperationDbGUI(LocalSchedulingAgent lAgent) {
 
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		this.lschAgent = lAgent;
 		this.aName = lAgent.getLocalName();
 		path = "resources/LSA/database/" + aName + "_db.data";

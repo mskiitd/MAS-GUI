@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -100,6 +101,9 @@ public class CustomerProxyGUI extends JFrame {
 
 	public CustomerProxyGUI(CustomerAgent cAgent) {
 
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		log = LogManager.getLogger();
 		this.cAgent = cAgent;
 

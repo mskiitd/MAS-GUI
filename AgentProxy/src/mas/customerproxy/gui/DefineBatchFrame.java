@@ -90,6 +90,9 @@ public class DefineBatchFrame extends JFrame{
 
 	public DefineBatchFrame(CustomerAgent cAgent, Batch passedBatch) {
 
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		log = LogManager.getLogger();
 
 		this.populatingBatch = passedBatch;

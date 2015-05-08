@@ -117,6 +117,9 @@ public class MachineGUI extends JFrame {
 
 	public MachineGUI(LocalSchedulingAgent agent) {
 
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		this.lAgent = agent;
 
 		log = LogManager.getLogger();

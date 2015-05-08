@@ -5,12 +5,15 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
@@ -39,7 +42,9 @@ public class MaintenanceActivityCodeFrame extends JFrame {
 	private PMaintenance localPm;
 
 	public MaintenanceActivityCodeFrame(PMaintenance pm) {
-
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		this.localPm = pm;
 		setLayout(new BorderLayout());
 		this.myPanel = new JPanel(new MigLayout());
