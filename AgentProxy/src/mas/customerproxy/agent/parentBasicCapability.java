@@ -10,6 +10,7 @@ import mas.customerproxy.goal.CancelOrderGoal;
 import mas.customerproxy.goal.RegisterAgentToBlackboardGoal;
 import mas.customerproxy.goal.SendConfirmedOrderGoal;
 import mas.customerproxy.goal.DispatchBatchGoal;
+import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.customerproxy.plan.CancelOrderPlan;
 import mas.customerproxy.plan.ChangeDueDate;
 import mas.customerproxy.plan.DispatchJobPlan;
@@ -78,7 +79,8 @@ public class parentBasicCapability extends Capability {
 		// for current job which is under negotiation
 		Belief<Batch> currentNegJob = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CURRENT_NEGOTIATION_BATCH);
 
-		Belief<Batch> customerGUI = new TransientBelief<Batch>(ID.Customer.BeliefBaseConst.CUSTOMER_GUI);
+		Belief<CustomerProxyGUI> customerGUI = new TransientBelief<CustomerProxyGUI>
+		(ID.Customer.BeliefBaseConst.CUSTOMER_GUI);
 
 		beliefs.add(bboard);
 		beliefs.add(currentJob);

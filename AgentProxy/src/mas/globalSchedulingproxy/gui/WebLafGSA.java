@@ -3,6 +3,7 @@ package mas.globalSchedulingproxy.gui;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -19,12 +20,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
@@ -117,7 +124,9 @@ public class WebLafGSA {
 			}
 		}
 
-		this.welcomeScreenFrame=new WebFrame();
+		this.welcomeScreenFrame=new WebFrame("Smart manager");
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		welcomeScreenFrame.setIconImage(img.getImage());
 		this.layout=new BorderLayout();
 		this.MainPanel=new WebPanel(layout);
 		//		this.MainPanel.setOpaque(false);
@@ -485,11 +494,7 @@ public class WebLafGSA {
 			public void actionPerformed(ActionEvent e){
 	                untoggleAllBottonButtons();
 					About.setSelected(true);
-					cleanMainPanel();	
-					welcomeScreenFrame.revalidate();
-					welcomeScreenFrame.repaint();
-					welcomeScreenFrame.setVisible(true);
-
+					createAndShowAboutWindow();
 			}
 		});  
 		About.setRolloverDecoratedOnly ( true );
@@ -613,6 +618,96 @@ public class WebLafGSA {
 		buttons[3]=completedJobs;
 
 		return buttons;
+	}
+
+	protected static void createAndShowAboutWindow() {
+		JFrame AboutFrame=new JFrame("About");
+		AboutFrame.setLayout(new MigLayout());
+		JPanel panel1=new JPanel(new FlowLayout());
+		JPanel panel2=new JPanel(new FlowLayout());
+		JPanel panel3=new JPanel(new FlowLayout());
+
+		JLabel thankYoulbl=new JLabel("We thank ");
+		JLabel thankYoulbl2=new JLabel("for giving us opportunity ");
+		JLabel thankYoulbl3=new JLabel("to contribute in this project.");
+		JButton names=new JButton("- Developers");
+		JButton ProfNameButton=new JButton("Prof. M. S. Kulkarni");
+
+		ProfNameButton.addActionListener(new ActionListener() {
+	    	 
+            public void actionPerformed(ActionEvent e)
+            {
+            	URI linkToOpen = null;
+				try {
+					linkToOpen = new URI("http://web.iitd.ac.in/~mskulkarni/");
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+            	openWebpage(linkToOpen);
+            }
+        });
+		
+		names.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showDeveloperList();
+				
+			}
+
+			private void showDeveloperList() {
+				JFrame developersFrame = new JFrame("Developers");
+				developersFrame.setLayout(new MigLayout());
+				String[] columnNames = {"Name",
+                        "IIT Delhi Entry Number"};
+				String[][] namesData={{"Nikhil Chilwant","2011ME20769"},{"Anand Prajapati", "2011ME20764"},
+				{"Rohit Kumar","2010ME20797"},{"Viplov Arora","2010ME20807"},{"Pranam Bansal","2010me20786"}
+				,{"Pankaj Kumawat","2010me20784"}};
+				JTable developersTable=new JTable(namesData,columnNames);
+				developersTable.setShowGrid(false);
+				JScrollPane scrollPane = new JScrollPane(developersTable);
+				
+				developersFrame.add(scrollPane);
+				developersFrame.pack();
+				
+				int centerX = (int)screenSize.getWidth() / 2;
+				int centerY = (int)screenSize.getHeight() / 2;
+				developersFrame.setLocation(centerX - developersFrame.getWidth() / 2, 
+						centerY - developersFrame.getHeight() / 2);
+				developersFrame.setVisible(true);
+			}
+		});
+		
+		panel1.add(thankYoulbl);
+		panel1.add(ProfNameButton);
+		panel2.add(thankYoulbl2,"wrap");
+		panel2.add(thankYoulbl3,"wrap");
+		panel3.add(names);
+		
+		AboutFrame.add(panel1,"wrap");
+		AboutFrame.add(panel2,"wrap");
+		AboutFrame.add(panel3,"wrap");
+		
+		AboutFrame.pack();
+		
+		int centerX = (int)screenSize.getWidth() / 2;
+		int centerY = (int)screenSize.getHeight() / 2;
+		AboutFrame.setLocation(centerX - AboutFrame.getWidth() / 2, 
+				centerY - AboutFrame.getHeight() / 2);
+		
+		AboutFrame.setVisible(true);
+		
+	}
+	
+	private static void openWebpage(URI uri) {
+	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+	        try {
+	            desktop.browse(uri);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
 
 	private static void untoggleAllBottonButtons(){

@@ -6,6 +6,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.gui.CustomerNegotiateProxyGUI;
+import mas.customerproxy.gui.CustomerProxyGUI;
 import mas.jobproxy.Batch;
 import mas.util.AgentUtil;
 import mas.util.ID;
@@ -92,7 +93,8 @@ public class NegotiationGuiPlan extends Behaviour implements PlanBody {
 
 			// Update this job in the list of completed jobs of customer GUI
 			log.info("Updating accepted jobs in the queue of customer");
-			CustomerAgent.customerGUI.addAcceptedJob(j);
+			((CustomerProxyGUI)bfBase.getBelief(ID.Customer.BeliefBaseConst.CUSTOMER_GUI)
+					.getValue()).addAcceptedJob(j);
 
 			return;
 		}else {

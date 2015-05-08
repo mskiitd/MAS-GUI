@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +21,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
+
 import mas.customerproxy.agent.CustomerAgent;
 import mas.jobproxy.Batch;
 import mas.jobproxy.job;
@@ -29,12 +32,15 @@ import mas.util.formatter.doubleformatter.FormattedDoubleField;
 import mas.util.formatter.integerformatter.FormattedIntegerField;
 import mas.util.formatter.stringformatter.FormattedStringField;
 import net.miginfocom.swing.MigLayout;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
 import uiconstants.Labels;
+
 import com.alee.extended.label.WebHotkeyLabel;
 
 /**
@@ -46,7 +52,7 @@ import com.alee.extended.label.WebHotkeyLabel;
  */
 
 public class ChangeDueDateGUI extends JFrame{
-
+	
 	private static final long serialVersionUID = 1L;
 	private CustomerAgent cAgent;
 
@@ -93,6 +99,9 @@ public class ChangeDueDateGUI extends JFrame{
 
 	public ChangeDueDateGUI(CustomerAgent cAgent, Batch passedBatch) {
 
+		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
+		this.setIconImage(img.getImage());
+		
 		log = LogManager.getLogger();
 
 		this.populatingBatch = passedBatch;

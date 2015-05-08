@@ -376,7 +376,7 @@ public class CustomerProxyGUI extends JFrame {
 		completedJobsTable.revalidate();
 		completedJobsTable.repaint();
 
-		showNotification("Order Completed", "Order with ID "+j.getBatchId()+
+		showNotification("Order Completed for "+cAgent.getLocalName(), "Order with ID "+j.getBatchId()+
 				" completed ",MessageType.INFO); 
 	}
 
