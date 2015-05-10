@@ -2,6 +2,7 @@ package mas.machineproxy.gui;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -22,8 +23,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,7 +44,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+
 import mas.jobproxy.Batch;
 import mas.localSchedulingproxy.agent.LocalSchedulingAgent;
 import mas.localSchedulingproxy.goal.FinishMaintenanceGoal;
@@ -588,17 +595,22 @@ public class MachineGUI extends JFrame {
 	private JMenuBar createMenuBar() {
 		JMenuBar menuBar;
 		JMenu menu;
+		JButton IITDbutton;
 		//Create the menu bar.
 		menuBar = new JMenuBar();
 
 		//Build the first menu.
 		menu = new JMenu("Options");
-
+		
 		menu.setMnemonic(KeyEvent.VK_A);
 		menu.getAccessibleContext().setAccessibleDescription(
 				"The only menu in this program that has menu items");
 		menuBar.add(menu);
-
+		
+		
+		IITDbutton=createIIDbutton();
+		menuBar.add(IITDbutton);
+		
 		menuItemListener mListener = new menuItemListener();
 		try {
 			upIcon = ImageIO.read(new File("resources/upload_48.jpg"));
@@ -626,9 +638,40 @@ public class MachineGUI extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return menuBar;
 	}
+	private JButton createIIDbutton() {
+	
+		JButton temp = new JButton("Developed by Indian Institute of Technology, Delhi");
+
+		temp.addActionListener(new ActionListener() {
+	    	 
+            public void actionPerformed(ActionEvent e)
+            {
+            	URI linkToOpen = null;
+				try {
+					linkToOpen = new URI("http://www.iitd.ac.in/");
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+            	openWebpage(linkToOpen);
+            }
+
+        	private void openWebpage(URI uri) {
+        	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        	        try {
+        	            desktop.browse(uri);
+        	        } catch (Exception e) {
+        	            e.printStackTrace();
+        	        }
+        	    }
+        	}
+        });
+	
+		return temp;	
+	}
+
 	/**
 	 * Runs on EDT
 	 */

@@ -15,6 +15,7 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -153,15 +154,18 @@ public class WebLafGSA {
 		initNegotiationListPanel();
 
 //		WebPanel menu = new WebPanel ( new HorizontalFlowLayout ( 5, false ) );
-		WebPanel menu=new WebPanel(new FlowLayout());
+		WebPanel menu=new WebPanel(new MigLayout());
 //		 WebPanel menu = new WebPanel ( new HorizontalFlowLayout ( 5, false ) );
 		menu.setPreferredSize(new Dimension((int)width, 100));
 		bottomButtons=getButtons();
 		
-
-//		Color panelColor = Color.decode("#A2A3A2");
-//		menu.setBackground(panelColor);
-
+		ImageIcon img2 = new ImageIcon("resources/IITDlogo.png");
+		JLabel label = new JLabel(""
+				, img2, JLabel.CENTER);
+//		JPanel panel = new JPanel(new BorderLayout());
+//		panel.add( label, BorderLayout.CENTER );
+		menu.add(label, FlowLayout.LEFT);
+		
 		for(int i=0;i<bottomButtons.length;i++){
 			menu.add(bottomButtons[i]);	
 		}

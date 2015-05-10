@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -27,6 +28,7 @@ import mas.maintenanceproxy.agent.LocalMaintenanceAgent;
 import mas.maintenanceproxy.classes.PMaintenance;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableModel;
 import mas.maintenanceproxy.gui.preventive.PrevMaintTableRenderer;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -76,6 +78,8 @@ public class MaintenanceGUI extends JFrame {
 
 	private ArrayList<PMaintenance> prevMaintSchedules;
 
+	private JLabel IITDlogolabel;
+
 	public MaintenanceGUI(LocalMaintenanceAgent lmAgent) {
 
 		ImageIcon img = new ImageIcon("resources/smartManager.png","Logo icon");
@@ -92,6 +96,7 @@ public class MaintenanceGUI extends JFrame {
 		panelsForTab = new JPanel[tabTitles.length];
 
 		initTablePanel();
+		initIITDlogo();
 		//		initCalenderPane();
 
 		for (int i = 0, n = tabTitles.length; i < n; i++ ) {
@@ -101,7 +106,11 @@ public class MaintenanceGUI extends JFrame {
 		schedulePanel.add(maintScroller,BorderLayout.CENTER);
 		//		schedulePanel.add(calendarPanel);
 
-		panelsForTab[0].add(schedulePanel);
+		panelsForTab[0].add(schedulePanel,"wrap");
+		
+		CC componentConstraints = new CC();
+		componentConstraints.alignX("center").spanX();
+		panelsForTab[0].add(IITDlogolabel,componentConstraints);
 
 		for (int i = 0, n = tabTitles.length; i < n; i++) {
 			this.tPanes.addTab(tabTitles[i],panelsForTab[i] );
@@ -111,6 +120,11 @@ public class MaintenanceGUI extends JFrame {
 		showGui();
 	}
 
+	private void initIITDlogo(){
+		ImageIcon img2 = new ImageIcon("resources/IITDlogo.png");
+		IITDlogolabel = new JLabel(""
+				, img2, JLabel.CENTER);
+	}
 	/*
 	 * Initialize the panel containing table of done preventive maintenance activities 
 	 */

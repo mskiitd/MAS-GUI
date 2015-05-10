@@ -23,6 +23,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -40,6 +41,7 @@ import mas.customerproxy.agent.CustomerAgent;
 import mas.customerproxy.agent.Jobloader;
 import mas.jobproxy.Batch;
 import mas.util.TableUtil;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.logging.log4j.LogManager;
@@ -93,6 +95,7 @@ public class CustomerProxyGUI extends JFrame {
 	private static TrayIcon customerTrayIcon;
 	private Logger log;
 	protected SystemTray tray;
+	private JLabel IITDlogolabel;
 
 	public static int countBatch = 1;
 	private static InputStream in;
@@ -125,8 +128,11 @@ public class CustomerProxyGUI extends JFrame {
 
 		panelsForTab[0] = new JPanel(new MigLayout());
 		panelsForTab[0].add(jobGenPanel,"wrap");
-		panelsForTab[0].add(buttonPanel);
-
+		panelsForTab[0].add(buttonPanel,"wrap");
+		CC componentConstraints = new CC();
+		componentConstraints.alignX("center").spanX();
+		panelsForTab[0].add(IITDlogolabel,componentConstraints);
+		
 		tPanes.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 		this.scroller = new JScrollPane(this.panelsForTab[0]);
 		this.tPanes.addTab(tabTitles[0],this.scroller );
@@ -219,6 +225,11 @@ public class CustomerProxyGUI extends JFrame {
 							currentJobToSend = selectedRow[0];
 					}
 				});
+		
+		ImageIcon img2 = new ImageIcon("resources/IITDlogo.png");
+		IITDlogolabel = new JLabel(""
+				, img2, JLabel.CENTER);
+		
 	}
 
 	/*
