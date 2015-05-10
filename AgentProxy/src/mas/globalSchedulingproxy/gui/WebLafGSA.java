@@ -52,6 +52,7 @@ import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
+import com.alee.managers.hotkey.Hotkey;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
@@ -109,8 +110,7 @@ public class WebLafGSA {
 
 	}
 
-	private void init(){
-
+	private void init() {
 
 		Image image = Toolkit.getDefaultToolkit().getImage("resources/smartMachine.png");
 		GSAguiIcon= new TrayIcon(image, "GSA");
@@ -177,7 +177,6 @@ public class WebLafGSA {
 		welcomeScreenFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		welcomeScreenFrame.setVisible(true);
 		bottomButtons[2].doClick();
-
 	}
 
 	protected static void initCurrentJobListPanel() {
@@ -639,8 +638,7 @@ public class WebLafGSA {
 
 		ProfNameButton.addActionListener(new ActionListener() {
 	    	 
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
             	URI linkToOpen = null;
 				try {
 					linkToOpen = new URI("http://web.iitd.ac.in/~mskulkarni/");
@@ -660,16 +658,26 @@ public class WebLafGSA {
 			}
 
 			private void showDeveloperList() {
-				JFrame developersFrame = new JFrame("Developers");
+				JFrame developersFrame = new JFrame("Developer Credits");
 				developersFrame.setLayout(new MigLayout());
+				
 				String[] columnNames = {"Name",
                         "IIT Delhi Entry Number"};
-				String[][] namesData={{"Nikhil Chilwant","2011ME20769"},{"Anand Prajapati", "2011ME20764"},
-				{"Rohit Kumar","2010ME20797"},{"Viplov Arora","2010ME20807"},{"Pranam Bansal","2010me20786"}
-				,{"Pankaj Kumawat","2010me20784"}};
-				JTable developersTable=new JTable(namesData,columnNames);
-				developersTable.setShowGrid(false);
-				JScrollPane scrollPane = new JScrollPane(developersTable);
+//				String[][] namesData={{"Nikhil Chilwant","2011ME20769"},{"Anand Prajapati", "2011ME20764"},
+//				{"Rohit Kumar","2010ME20797"},{"Viplov Arora","2010ME20807"},{"Pranam Bansal","2010me20786"}
+//				,{"Pankaj Kumawat","2010me20784"}};
+				
+				JPanel devCreditPanel = new JPanel(new MigLayout());
+				devCreditPanel.add(new WebHotkeyLabel("<html><b>Core developers</b></html>"),"wrap");
+				devCreditPanel.add(new JLabel("<html><p>Nikhil Chilwant (2011ME20769), Anand Prajapati (2011ME20764)</p></html>"),
+						"wrap");
+				
+				devCreditPanel.add(new WebHotkeyLabel("<html><b>Special thanks to </b></html>"),"wrap");
+				devCreditPanel.add(new JLabel("<html><p>Rohit Kumar (2010ME20797), Viplov Arora (2010ME20807),<br/> Pranam Bansal (2010ME20786),"+
+						" Pankaj Kumawat (2010ME20784)</p></html>"));
+//				JTable developersTable=new JTable(namesData,columnNames);
+//				developersTable.setShowGrid(false);
+				JScrollPane scrollPane = new JScrollPane(devCreditPanel);
 				
 				developersFrame.add(scrollPane);
 				developersFrame.pack();
