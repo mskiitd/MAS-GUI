@@ -586,7 +586,7 @@ public class MachineGUI extends JFrame {
 		setTitle(" Machine GUI : " + lAgent.getLocalName().split("#")[1]);
 		setJMenuBar(createMenuBar());
 		setPreferredSize(windowSize);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		setLocation(0,0);
 		super.setVisible(true);

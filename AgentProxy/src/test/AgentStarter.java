@@ -60,27 +60,23 @@ public class AgentStarter {
 			break;
 
 		case Machine:
-//			LocalSchedulingAgent lagent1 = new LocalSchedulingAgent();
-//			lAgents.add(lagent1);
-//			agents.put(ID.LocalScheduler.LocalName + "#1", lagent1);
-//			agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
+			LocalSchedulingAgent lagent1 = new LocalSchedulingAgent();
+			lAgents.add(lagent1);
+			agents.put(ID.LocalScheduler.LocalName + "#1", lagent1);
+			agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
 			container = MainContainer.remote;
 
-//			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
-//			lAgents.add(lagent2);
-//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
-//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
-			
-			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
+/*			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
 			lAgents.add(lagent2);
-			agents.put(ID.LocalScheduler.LocalName+"#3", lagent2);
-			agents.put(ID.Maintenance.LocalName+"#3", new LocalMaintenanceAgent());
+			agents.put(ID.LocalScheduler.LocalName+"#2", lagent2);
+			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());*/
+
 			
 			break;
 
 		case customer:
-//			agents.put(ID.Customer.LocalName+"#1", new CustomerAgent());
-			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
+			agents.put(ID.Customer.LocalName+"#1", new CustomerAgent());
+			/*agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());*/
 			container = MainContainer.remote;
 			break;
 
@@ -96,13 +92,13 @@ public class AgentStarter {
 			agents.put(ID.LocalScheduler.LocalName + "#1", lagent_1);
 			agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
 
-//			LocalSchedulingAgent lagent_2 = new LocalSchedulingAgent();
-//			lAgents.add(lagent_2);
-//			agents.put(ID.LocalScheduler.LocalName+"#2", lagent_2);
-//			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
+			LocalSchedulingAgent lagent_2 = new LocalSchedulingAgent();
+			lAgents.add(lagent_2);
+			agents.put(ID.LocalScheduler.LocalName+"#2", lagent_2);
+			agents.put(ID.Maintenance.LocalName+"#2", new LocalMaintenanceAgent());
 			
 			agents.put(ID.Customer.LocalName + "#1", new CustomerAgent());	
-//			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
+			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
 			container = MainContainer.local;
 			break;
 		}

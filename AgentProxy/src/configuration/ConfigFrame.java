@@ -118,7 +118,7 @@ public class ConfigFrame extends JFrame {
 		setTitle("Configuration Screen");
 		//		setPreferredSize(new Dimension(600,500));
 
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;

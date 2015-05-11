@@ -182,6 +182,8 @@ public class WebLafGSA {
 		welcomeScreenFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		welcomeScreenFrame.setVisible(true);
 		bottomButtons[2].doClick();
+		
+		welcomeScreenFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	protected static void initCurrentJobListPanel() {
