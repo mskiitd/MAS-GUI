@@ -42,9 +42,11 @@ public class HandleRejectedOrder extends OneShotBehaviour implements PlanBody{
 
 	@Override
 	public void action() {
-		String message = "batch with ID " + rejectedBatch.getBatchId() + " was rejected";
-		customer_gui.showNotification("Batch Rejected ", message, MessageType.INFO);
-		Log.info("displayed notification");
+		if(rejectedBatch.getCustomerId().equals(myAgent.getLocalName())){
+			String message = "batch with ID " + rejectedBatch.getBatchId() + " was rejected";
+			customer_gui.showNotification("Batch Rejected ", message, MessageType.INFO);
+			Log.info("displayed notification");
+		}
 	}
 
 }

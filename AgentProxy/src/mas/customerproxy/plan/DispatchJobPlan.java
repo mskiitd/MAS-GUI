@@ -55,7 +55,6 @@ public class DispatchJobPlan extends Behaviour implements PlanBody{
 		if(batchToDispatch != null) {
 			log.info("customer - sending job : " + batchToDispatch);
 			log.info("batch : " + batchToDispatch.getJobsInBatch());
-
 			replyWith = Integer.toString(batchToDispatch.getBatchNumber());
 
 			ZoneDataUpdate jobOrderZoneDataUpdate = new ZoneDataUpdate.
