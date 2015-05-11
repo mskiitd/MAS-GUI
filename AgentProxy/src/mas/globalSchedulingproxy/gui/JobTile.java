@@ -2,8 +2,10 @@ package mas.globalSchedulingproxy.gui;
 
 import java.util.Date;
 import mas.jobproxy.Batch;
-/*
- * Used in table model displayed on left side
+/**
+ * Used as clickable rectangle in table
+ * @author NikhilChilwant
+ *
  */
 public class JobTile {
 

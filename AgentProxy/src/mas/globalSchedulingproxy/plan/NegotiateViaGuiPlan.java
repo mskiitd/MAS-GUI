@@ -11,7 +11,11 @@ import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ * Handles negotiation
+ * @author NikhilChilwant
+ *
+ */
 public class NegotiateViaGuiPlan extends OneShotBehaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;

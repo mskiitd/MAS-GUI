@@ -24,7 +24,13 @@ import bdi4jade.message.MessageGoal;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ * Handles batch completed by LSA
+ * Batch can be either complete/incomplete.
+ * If complete, notifies customer. Otherwise, does re-bidding with LSAs.
+ * @author NikhilChilwant
+ *
+ */
 public class HandleCompletedOrderbyLSAPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;

@@ -14,7 +14,11 @@ import mas.jobproxy.Batch;
 import mas.util.BatchQueryObject;
 import net.miginfocom.swing.MigLayout;
 import uiconstants.Labels;
-
+/**
+ * Shows current status of order
+ * @author NikhilChilwant
+ *
+ */
 public class JobQueryReplyFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;

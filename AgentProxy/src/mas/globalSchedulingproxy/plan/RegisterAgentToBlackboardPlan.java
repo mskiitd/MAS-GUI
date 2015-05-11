@@ -12,7 +12,12 @@ import mas.util.SubscriptionForm;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ * Registers with blackboard.
+ * GSA needs to subscribe to all LSAs. Hence, changes should be made here if you want MAS to support more than 2 LSAs
+ * @author NikhilChilwant
+ *
+ */
 public class RegisterAgentToBlackboardPlan extends OneShotBehaviour implements PlanBody {
 	
 	private static final long serialVersionUID = 1L;

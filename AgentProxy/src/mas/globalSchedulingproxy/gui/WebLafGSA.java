@@ -56,7 +56,12 @@ import com.alee.managers.hotkey.Hotkey;
 
 import mas.globalSchedulingproxy.agent.GlobalSchedulingAgent;
 import mas.jobproxy.Batch;
-
+/**
+ * 
+ * Main GUI class for GSA
+ * @author NikhilChilwant
+ *
+ */
 public class WebLafGSA {
 
 	private static GlobalSchedulingAgent GSA=null;

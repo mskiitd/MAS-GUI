@@ -13,7 +13,11 @@ import org.apache.logging.log4j.Logger;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ * Registers JADE service with DF (refer JADE DF)
+ * @author NikhilChilwant
+ *
+ */
 public class RegisterServicePlan extends OneShotBehaviour implements PlanBody{
 	private static final long serialVersionUID = 1L;
 	private Logger log;

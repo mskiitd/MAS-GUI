@@ -15,7 +15,11 @@ import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ * Handles negotiation with customer
+ * @author NikhilChilwant
+ *
+ */
 public class GSASendNegotiationJobPlan extends Behaviour implements PlanBody {
 	
 	private static final long serialVersionUID = 1L;

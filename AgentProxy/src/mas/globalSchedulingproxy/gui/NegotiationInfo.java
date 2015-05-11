@@ -43,8 +43,10 @@ import uiconstants.Labels;
 
 import com.alee.extended.label.WebHotkeyLabel;
 import com.alee.laf.panel.WebPanel;
-/*
- * Shows  negotiation details on right side
+/**
+ * Shows  negotiation details 
+ * @author NikhilChilwant
+ *
  */
 public class NegotiationInfo {
 

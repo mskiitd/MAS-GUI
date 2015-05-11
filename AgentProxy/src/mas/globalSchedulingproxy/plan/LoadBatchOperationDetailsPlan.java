@@ -23,7 +23,11 @@ import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
 import jade.core.behaviours.Behaviour;
-
+/**
+ * Loads details like number of operations to be done on batch
+ * @author NikhilChilwant
+ *
+ */
 public class LoadBatchOperationDetailsPlan extends Behaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;

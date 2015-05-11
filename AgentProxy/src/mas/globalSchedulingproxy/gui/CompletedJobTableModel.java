@@ -7,8 +7,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import mas.jobproxy.Batch;
-/*
- * Table model for completed job table shown as table on left side
+/**
+ * Table model for completed batch table 
+ * @author NikhilChilwant
+ *
  */
 public class CompletedJobTableModel extends AbstractTableModel implements TableModel {
 

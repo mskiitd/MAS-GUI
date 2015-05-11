@@ -27,8 +27,10 @@ import mas.jobproxy.Batch;
 import mas.util.BatchQueryObject;
 import mas.util.TableUtil;
 import net.miginfocom.swing.MigLayout;
-/*
- * GUI for GSA
+/**
+ * Most of the part is not used. Only few methods are used.
+ * @author NikhilChilwant
+ *
  */
 @SuppressWarnings("serial")
 public class GSAproxyGUI extends JFrame{

@@ -22,7 +22,11 @@ import bdi4jade.core.BeliefBase;
 import bdi4jade.plan.PlanBody;
 import bdi4jade.plan.PlanInstance;
 import bdi4jade.plan.PlanInstance.EndState;
-
+/**
+ * Queries about: 1.Order status 2.Requests cancellation 3.Changing due date
+ * @author NikhilChilwant
+ *
+ */
 public class QueryFromLSA extends Behaviour implements PlanBody {
 
 	private static final long serialVersionUID = 1L;
