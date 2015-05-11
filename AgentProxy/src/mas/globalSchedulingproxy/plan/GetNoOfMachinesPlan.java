@@ -20,7 +20,12 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-
+/**
+ * Gets count of no. of machines connected to MAS and puts in belief base.
+ * Executed only for once when GSA starts.
+ * @author NikhilChilwant
+ *
+ */
 public class GetNoOfMachinesPlan extends OneShotBehaviour implements PlanBody{
 
 	private static final long serialVersionUID = 1L;
