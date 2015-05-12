@@ -1,4 +1,4 @@
-package test;
+package starter;
 
 import jade.BootProfileImpl;
 import jade.core.Agent;
@@ -31,7 +31,20 @@ import configuration.AgentToStart;
 import configuration.ConfigFrame;
 import configuration.MainContainer;
 import configuration.Utils;
+/**
+ * Used for starting MAS
+ * @author NikhilChilwant
+ *
+ */
 
+/*
+ * IMPROTANT: Since this version uses some of legacy code, you will find method names, variables
+ * names like 'sendJobPlan'. It doesn't mean that method sends job.
+ *  All methods are made compatible for working with batch.
+ * Its just that method names need to be changed for suitability with batch.
+ * If you find ay such mistake, please do understand that 
+ * ALL methods, variables are meant for batch unless mentioned in comments. 
+ */
 public class AgentStarter {
 
 	private static Map<String, Agent> agents;
@@ -64,6 +77,7 @@ public class AgentStarter {
 			lAgents.add(lagent1);
 			agents.put(ID.LocalScheduler.LocalName + "#1", lagent1);
 			agents.put(ID.Maintenance.LocalName + "#1", new LocalMaintenanceAgent());
+			
 			container = MainContainer.remote;
 
 /*			LocalSchedulingAgent lagent2 = new LocalSchedulingAgent();
@@ -76,7 +90,7 @@ public class AgentStarter {
 
 		case customer:
 			agents.put(ID.Customer.LocalName+"#1", new CustomerAgent());
-			/*agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());*/
+//			agents.put(ID.Customer.LocalName+"#2", new CustomerAgent());
 			container = MainContainer.remote;
 			break;
 

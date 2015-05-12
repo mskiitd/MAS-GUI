@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-import test.AgentStarter;
+import starter.AgentStarter;
 import net.miginfocom.swing.MigLayout;
 
 import com.alee.extended.breadcrumb.WebBreadcrumbPanel;

@@ -20,7 +20,7 @@ import javax.swing.JTextArea;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import test.AgentStarter;
+import starter.AgentStarter;
 import net.miginfocom.swing.MigLayout;
 
 /**
