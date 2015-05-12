@@ -1,2 +1,2 @@
 # MAS-GUI
-For more information, refer javadocs (AgentProxy\doc)
+For more information, refer javadocs (AgentProxy\doc\index.html)
