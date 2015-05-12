@@ -4,12 +4,16 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+
 import test.AgentStarter;
 import net.miginfocom.swing.MigLayout;
+
 import com.alee.extended.breadcrumb.WebBreadcrumbPanel;
 import com.alee.extended.layout.VerticalFlowLayout;
 import com.alee.laf.radiobutton.WebRadioButton;
@@ -75,6 +79,9 @@ public class ConfigFrame extends JFrame {
 		};
 		submit.addActionListener(selectionListener);
 		add(submit, "wrap");
+		
+		ImageIcon img = new ImageIcon("resources/smartManager.png");
+		this.setIconImage(img.getImage());
 		showGui();
 	}
 

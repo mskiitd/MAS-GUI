@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -87,6 +88,10 @@ public class ShowIPFrame extends JFrame {
 		add(msg2);
 		add(portJText,"wrap");
 		add(OKbtn);
+		
+		ImageIcon img = new ImageIcon("resources/smartManager.png");
+		this.setIconImage(img.getImage());
+		
 		showGui();
 	}
 	
